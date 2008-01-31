@@ -1,0 +1,2 @@
+class SurveyInvitation < Invitation
+end
