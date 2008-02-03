@@ -3,20 +3,17 @@ ActionController::Routing::Routes.draw do |map|
     survey.resources :questions do |question|
       question.resources :responses
     end
-    survey.resources :comments
-    survey.resources :invites
-    survey.resource :position
+    survey.resources :discussions
+    survey.resources :invitations, :controller => :survey_invitations
   end
   
-  map.resources :groups do |group|
-    group.resources :users
+  map.resources :networks do |network|
+    network.resources :organizations
+    network.resources :invitations, :controller => :network_invitations
   end
   
-  map.resource :user do |user|
-      user.resources :logins
-  end
-  map.resource :account, :controller => :user, :action => :edit
-  map.resource :logins, :controller => :logins
-  
+  map.resources :invitations
+  map.resource :account, :controller => :organization, :action => :edit
+  map.resource :dashboard
   map.resources :messages
 end
