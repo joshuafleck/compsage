@@ -1,4 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :organizations
+
+  map.resource :session
+
   map.resources :surveys do |survey|
     survey.resources :questions do |question|
       question.resources :responses
