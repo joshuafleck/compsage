@@ -14,9 +14,6 @@ describe OrganizationsController do
     end.should change(Organization, :count).by(1)
   end
 
-  
-
-  
   it 'requires password on signup' do
     lambda do
       create_organization(:password => nil)

@@ -20,26 +20,40 @@ describe Organization do
       @creating_organization.should change(Organization, :count).by(1)
     end
   end
-
+  
+  it 'should have many discussions' do
+    Organization.reflect_on_association(:discussions).should_not be_nil
+  end
+  
+  it 'should have many invitations' do
+    Organization.reflect_on_association(:invitations).should_not be_nil
+  end
+  
+  it 'should have many networks' do
+    Organization.reflect_on_association(:networks).should_not be_nil
+  end
+  
+  it 'should have many surveys' do
+    Organization.reflect_on_association(:surveys).should_not be_nil
+  end
+  
+  it 'should have many messages' do
+    Organization.reflect_on_association(:messages).should_not be_nil
+  end
+  
   it 'requires password' do
-    lambda do
-      u = create_organization(:password => nil)
-      u.errors.on(:password).should_not be_nil
-    end.should_not change(Organization, :count)
+    u = create_organization(:password => nil)
+    u.errors.on(:password).should_not be_nil
   end
 
   it 'requires password confirmation' do
-    lambda do
-      u = create_organization(:password_confirmation => nil)
-      u.errors.on(:password_confirmation).should_not be_nil
-    end.should_not change(Organization, :count)
+    u = create_organization(:password_confirmation => nil)
+    u.errors.on(:password_confirmation).should_not be_nil
   end
 
   it 'requires email' do
-    lambda do
-      u = create_organization(:email => nil)
-      u.errors.on(:email).should_not be_nil
-    end.should_not change(Organization, :count)
+    u = create_organization(:email => nil)
+    u.errors.on(:email).should_not be_nil
   end
 
   it 'resets password' do

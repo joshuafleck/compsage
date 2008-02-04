@@ -17,7 +17,7 @@ ActionController::Routing::Routes.draw do |map|
   end
   
   map.resources :invitations
-  map.resource :account, :controller => :organization, :action => :edit
+  map.resource :account
   map.resource :dashboard
   map.resources :messages
 end
