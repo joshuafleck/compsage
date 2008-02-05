@@ -1,5 +1,13 @@
 require 'digest/sha1'
 class Organization < ActiveRecord::Base
+
+  has_many :networks
+  has_many :surveys
+  has_many :discussions
+  has_many :messages
+  has_many :network_invitations
+  has_many :survey_invitations
+
   # Virtual attribute for the unencrypted password
   attr_accessor :password
 
