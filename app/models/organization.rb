@@ -1,12 +1,17 @@
 require 'digest/sha1'
 class Organization < ActiveRecord::Base
 
-  has_many :networks
-  has_many :surveys
-  has_many :discussions
-  has_many :messages
-  has_many :network_invitations
-  has_many :survey_invitations
+  has_and_belongs_to_many :joined_networks, :join_table => "networks_organizations", :association_foreign_key => "organization_id", :foreign_key => "network_id", :class_name => "Network"
+  has_many :networks, :foreign_key => "owner_id"
+  has_and_belongs_to_many :surveys
+  has_many :surveys, :dependent => :destroy
+  has_many :discussions, :dependent => :destroy
+  has_many :sent_messages, :class_name => "Message", :foreign_key => "sender_id", :dependent => :destroy
+  has_many :received_messages, :class_name => "Message", :foreign_key => "receiver_id",  :dependent => :destroy
+  has_many :sent_network_invitations, :class_name => "NetworkInvitation", :foreign_key => "invitor_id", :dependent => :destroy
+  has_many :sent_survey_invitations, :class_name => "SurveyInvitation", :foreign_key => "invitor_id", :dependent => :destroy
+  has_many :received_network_invitations, :class_name => "NetworkInvitation", :foreign_key => "invitee_id", :dependent => :destroy
+  has_many :received_survey_invitations, :class_name => "SurveyInvitation", :foreign_key => "invitee_id", :dependent => :destroy  
 
   # Virtual attribute for the unencrypted password
   attr_accessor :password

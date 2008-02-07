@@ -15,7 +15,7 @@ class NetworkTest < ActiveSupport::TestCase
   end
   
   def test_create_success
-    network = Network.create(:title => 'Ping Pong', :organization_id => organizations(:one))
+    network = Network.create(:title => 'Ping Pong', :owner_id => organizations(:one))
     assert_valid network
   end
   
@@ -23,10 +23,11 @@ class NetworkTest < ActiveSupport::TestCase
     assert @network_one.organizations.count == 0, "No organizations"
     @network_one.organizations << organizations(:one)
     @network_one.organizations << organizations(:two) 
+    @network_one.save
     assert @network_one.organizations.count == 2, "Two organizations"
-    assert @network_one.organization == organizations(:one), "Parent organization"
-    #print @organization_one.networks
-    #print @organization_two.networks
+    assert @network_one.owner == organizations(:one), "Parent organization"
+    assert @organization_one.networks[0] == @network_one, "Parent organization reverse"
+    assert @organization_one.joined_networks[0] == @network_one, "One network membership"
   end
   
 end

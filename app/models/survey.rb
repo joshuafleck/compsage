@@ -1,6 +1,6 @@
 class Survey < ActiveRecord::Base
 
-  belongs_to :organization
-  has_many :discussions
-  has_many :survey_invitations
+  belongs_to :sponsor, :class_name => "Organization"
+  has_many :discussions, :dependent => :destroy
+  has_many :survey_invitations, :dependent => :destroy
 end

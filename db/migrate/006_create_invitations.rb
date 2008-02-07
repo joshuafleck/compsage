@@ -3,10 +3,10 @@ class CreateInvitations < ActiveRecord::Migration
     create_table :invitations do |t|
       t.column :network_id,  :integer, :null => true
       t.column :survey_id,   :integer, :null => true
-      t.column :invitee_id,  :integer
-      t.column :inviter_id,  :integer
-      t.column :created_at,  :timestamp
-      t.column :status,      :string,  :limit => 10, :default => "active"
+      t.column :invitee_id,  :integer, :null => false
+      t.column :inviter_id,  :integer, :null => false
+      t.column :created_at,  :timestamp, :null => false
+      t.column :type,        :string, :null => false
     end
   end
 

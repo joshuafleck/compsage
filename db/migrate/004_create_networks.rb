@@ -3,9 +3,9 @@ class CreateNetworks < ActiveRecord::Migration
     create_table :networks do |t|
       t.column :title,           :string,  :limit => 128, :null => false
       t.column :description,     :string,  :limit => 512
-      t.column :created_at,      :timestamp
+      t.column :created_at,      :timestamp, :null => false
       t.column :public,          :boolean
-      t.column :organization_id, :integer, :null => false
+      t.column :owner_id, :integer, :null => true
     end
   end
 
