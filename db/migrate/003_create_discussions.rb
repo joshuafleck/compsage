@@ -2,6 +2,8 @@ class CreateDiscussions < ActiveRecord::Migration
   def self.up
     create_table :discussions do |t|
       t.column :parent_id,       :integer, :null => true
+      t.column :lft,             :integer, :null => true
+      t.column :rgt,             :integer, :null => true
       t.column :survey_id,       :integer, :null => false
       t.column :organization_id, :integer, :null => false
       t.column :created_at,      :timestamp, :null => false
