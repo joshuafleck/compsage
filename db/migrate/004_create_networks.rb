@@ -1,9 +1,9 @@
 class CreateNetworks < ActiveRecord::Migration
   def self.up
     create_table :networks do |t|
-      t.column :title,           :string,  :limit => 128
+      t.column :title,           :string,  :limit => 128, :null => false
       t.column :description,     :text,  :limit => 1028
-      t.column :created_at,      :datetime
+      t.column :created_at,      :datetime, :null => false
       t.column :public,          :boolean
       t.column :owner_id, :integer, :null => true
     end

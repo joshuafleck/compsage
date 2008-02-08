@@ -1,12 +1,11 @@
 class CreateInvitations < ActiveRecord::Migration
   def self.up
     create_table :invitations do |t|
-      t.column :network_id,  :integer, :null => true
-      t.column :survey_id,   :integer, :null => true
-      t.column :invitee_id,  :integer
-      t.column :inviter_id,  :integer
-      t.column :created_at,  :datetime
-      t.column :type,        :string
+      t.column :network_id,  :integer
+      t.column :survey_id,   :integer
+      t.column :invitee_id,  :integer,  :null => false
+      t.column :inviter_id,  :integer,  :null => false
+      t.column :created_at,  :datetime, :null => false
     end
     
     add_index :invitations, [:network_id, :invitee_id], :name => "index_invitations_on_network_id_and_invitee_id"

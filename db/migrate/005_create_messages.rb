@@ -4,9 +4,9 @@ class CreateMessages < ActiveRecord::Migration
       t.column :parent_id,   :integer
       t.column :title,       :string,  :limit => 128
       t.column :body,        :text, :limit => 1024
-      t.column :created_at,  :datetime
-      t.column :sender_id,   :integer
-      t.column :receiver_id, :integer
+      t.column :created_at,  :datetime, :null => false
+      t.column :sender_id,   :integer,  :null => false
+      t.column :receiver_id, :integer,  :null => false
     end
     
     add_index :messages, :sender_id, :name => "index_messages_on_sender_id"
