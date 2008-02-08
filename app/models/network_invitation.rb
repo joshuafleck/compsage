@@ -1,5 +1,3 @@
 class NetworkInvitation < Invitation
-  belongs_to :network
-  belongs_to :invitee, :class_name => "Organization", :foreign_key => "invitee_id"
-  belongs_to :inviter, :class_name => "Organization", :foreign_key => "inviter_id"  
+  belongs_to :network  
 end
