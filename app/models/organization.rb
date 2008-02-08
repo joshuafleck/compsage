@@ -4,7 +4,7 @@ class Organization < ActiveRecord::Base
   has_and_belongs_to_many :joined_networks, :join_table => "networks_organizations", :association_foreign_key => "organization_id", :foreign_key => "network_id", :class_name => "Network"
   has_many :networks, :foreign_key => "owner_id"
   has_and_belongs_to_many :joined_surveys, :join_table => "organizations_surveys", :association_foreign_key => "organization_id", :foreign_key => "survey_id", :class_name => "Survey"
-  has_many :surveys, :foreign_key => "sponsor", :dependent => :destroy
+  has_many :surveys, :foreign_key => "sponsor_id", :dependent => :destroy
   has_many :discussions, :dependent => :destroy
   has_many :sent_messages, :class_name => "Message", :foreign_key => "sender_id", :dependent => :destroy
   has_many :received_messages, :class_name => "Message", :foreign_key => "receiver_id",  :dependent => :destroy

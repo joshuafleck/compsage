@@ -1,11 +1,11 @@
 class CreateSurveys < ActiveRecord::Migration
   def self.up
     create_table :surveys do |t|
-      t.column  :sponsor,   :integer
-      t.column  :title,             :string,    :limit => 128,  :null => false
+      t.column  :sponsor_id,   :integer
+      t.column  :title,             :string,    :limit => 128
       t.column  :description,       :text  
-      t.column  :start_date,        :timestamp
-      t.column  :end_date,          :timestamp
+      t.column  :start_date,        :datetime
+      t.column  :end_date,          :datetime
     end
   end
 

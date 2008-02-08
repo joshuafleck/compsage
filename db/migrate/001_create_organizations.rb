@@ -10,7 +10,7 @@ class CreateOrganizations < ActiveRecord::Migration
       t.column :remember_token_expires_at, :datetime
       t.column :public,                    :boolean
       t.column :location,                  :string,  :limit => 64
-      t.column :contact_name,              :string,  :limit => 128,  :null => false
+      t.column :contact_name,              :string,  :limit => 128
       t.column :city,                      :string,  :limit => 50
       t.column :state,                     :string,  :limit => 30
     end

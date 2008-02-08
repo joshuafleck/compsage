@@ -4,9 +4,9 @@ class CreateDiscussions < ActiveRecord::Migration
       t.column :parent_id,       :integer, :null => true
       t.column :lft,             :integer, :null => true
       t.column :rgt,             :integer, :null => true
-      t.column :survey_id,       :integer, :null => false
-      t.column :organization_id, :integer, :null => false
-      t.column :created_at,      :timestamp, :null => false
+      t.column :survey_id,       :integer
+      t.column :organization_id, :integer
+      t.column :created_at,      :datetime
       t.column :title,           :string,  :limit => 128
       t.column :body,            :text, :limit => 1024
     end
