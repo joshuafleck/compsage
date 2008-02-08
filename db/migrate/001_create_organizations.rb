@@ -14,6 +14,8 @@ class CreateOrganizations < ActiveRecord::Migration
       t.column :city,                      :string,  :limit => 50
       t.column :state,                     :string,  :limit => 30
     end
+    
+    add_index :organizations, :email, :name => "index_organizations_on_email"
   end
 
   def self.down

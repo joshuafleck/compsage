@@ -7,6 +7,8 @@ class CreateNetworks < ActiveRecord::Migration
       t.column :public,          :boolean
       t.column :owner_id, :integer, :null => true
     end
+    
+    add_index :networks, :owner_id, :name => "index_networks_on_owner_id"
   end
 
   def self.down
