@@ -5,3 +5,13 @@
 #
 # two:
 #   column: value
+
+one:
+  id: 1
+  sponsor_id: 1
+  title: "test survey 1"
+  
+two:
+  id: 2
+  sponsor_id: 2
+  title: "test survey 2"  

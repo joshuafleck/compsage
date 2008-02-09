@@ -11,8 +11,6 @@ class CreateInvitations < ActiveRecord::Migration
     
     add_index :invitations, [:invitee_id, :type], :name => "index_invitations_on_invitee_id_and_type"
     add_index :invitations, [:inviter_id, :type], :name => "index_invitations_on_inviter_id_and_type"
-    add_index :invitations, :invitee_id, :name => "index_invitations_on_invitee_id"
-    add_index :invitations, :inviter_id, :name => "index_invitations_on_inviter_id"
   end
 
   def self.down
