@@ -6,10 +6,11 @@ class CreateInvitations < ActiveRecord::Migration
       t.column :invitee_id,  :integer,  :null => false
       t.column :inviter_id,  :integer,  :null => false
       t.column :created_at,  :datetime, :null => false
+      t.column :type,        :string,   :null => false
     end
     
-    add_index :invitations, [:network_id, :invitee_id], :name => "index_invitations_on_network_id_and_invitee_id"
-    add_index :invitations, [:survey_id, :inviter_id], name => "index_invitations_on_network_id_and_inviter_id"
+    add_index :invitations, [:invitee_id, :type], :name => "index_invitations_on_invitee_id_and_type"
+    add_index :invitations, [:inviter_id, :type], :name => "index_invitations_on_inviter_id_and_type"
     add_index :invitations, :invitee_id, :name => "index_invitations_on_invitee_id"
     add_index :invitations, :inviter_id, :name => "index_invitations_on_inviter_id"
   end
