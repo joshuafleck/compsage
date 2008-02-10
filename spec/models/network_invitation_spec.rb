@@ -9,7 +9,7 @@ module NetworkInvitationSpecHelper
   end
 end
 
-describe NetworkInvitation do
+describe NetworkInvitation, "class relationships" do
   
   it "should respond to network" do
   #future code here pending review
@@ -22,7 +22,7 @@ describe NetworkInvitation do
  
 end
 
-describe NetworkInvitation do
+describe NetworkInvitation, "creating/updating" do
    
   include NetworkInvitationSpecHelper
 

@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 module MessageSpecHelper
 
-  def valid_Message_attributes
+  def valid_message_attributes
     {
       :title => 'Test Message',
       :body => 'Body of message',
@@ -11,7 +11,7 @@ module MessageSpecHelper
   end
 end
 
-describe Message do
+describe Message, "class relationships" do
 
   it "should know its related children" do
   #future code here pending review
@@ -31,7 +31,7 @@ describe Message do
 
 end  
   
-describe Message do
+describe Message, "creating/updating" do
 
   include MessageSpecHelper
 
@@ -57,7 +57,7 @@ describe Message do
   
 end
 
-describe Message do
+describe Message, "destruction" do
 
   include MessageSpecHelper
 

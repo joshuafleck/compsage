@@ -10,7 +10,7 @@ module NetworkSpecHelper
   
 end
 
-describe Network do
+describe Network, "class relationships" do
 
   it "should have many network invitations" do
   #future code here pending review
@@ -26,9 +26,9 @@ describe Network do
   
 end  
 
-describe Network do
+describe Network, "creating/updating" do
 
-  include NetworkInvitationSpecHelper
+  include NetworkSpecHelper
 
   before(:each) do
     @network = Network.new
@@ -60,9 +60,9 @@ describe Network do
   
 end
 
-describe Network do
+describe Network, "destruction" do
 
-  include NetworkInvitationSpecHelper
+  include NetworkSpecHelper
 
   before(:each) do
     @network = Network.new
