@@ -2,12 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe SurveyInvitation do
   it "should belong to a survey"
-end
-
-describe SurveyInvitation, "fetch by invitee" do
-  it "should return Surveys"
-end
-
-describe SurveyInvitation, "fetch by inviter" do
-  it "should return Surveys"
+  it "should require a survey_id"
+  it "should have the type 'Survey'"
+  it "can be fetched by survey_id"
 end
