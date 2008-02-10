@@ -8,6 +8,5 @@ class Message < ActiveRecord::Base
    validates_presence_of :sender
    validates_presence_of :receiver
    validates_length_of :title, :allow_nil => true, :maximum => 128
-   validates_length_of :body, :allow_nil => true, :maximum => 1024
    
 end
