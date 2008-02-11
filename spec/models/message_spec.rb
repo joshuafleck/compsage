@@ -13,19 +13,19 @@ end
 
 describe Message, "class relationships" do
 
-  it "should know its related children" do
+  it "has many children" do
   #future code here pending review
   end
     
-  it "should know its related root" do
+  it "has one parent" do
   #future code here pending review
   end
   
-  it "should know its related sender" do
+  it "has one sender" do
   #future code here pending review
   end
     
-  it "should know its related receiver" do
+  it "has one receiver" do
   #future code here pending review
   end  
 

@@ -11,7 +11,7 @@ end
 
 describe NetworkInvitation, "class relationships" do
   
-  it "should respond to network" do
+  it "belongs to a network" do
   #future code here pending review
   end
    

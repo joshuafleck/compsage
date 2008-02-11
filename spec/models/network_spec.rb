@@ -12,15 +12,15 @@ end
 
 describe Network, "class relationships" do
 
-  it "should have many network invitations" do
+  it "has many network invitations" do
   #future code here pending review
   end
   
-  it "should have many member organizations" do
+  it "has many member organizations" do
   #future code here pending review
   end
   
-  it "should have an owner" do
+  it "has an owner" do
   #future code here pending review
   end
   
