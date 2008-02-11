@@ -9,7 +9,7 @@ module NetworkInvitationSpecHelper
   end
 end
 
-describe NetworkInvitation, "class relationships" do
+describe NetworkInvitation, "that does exist" do
   
   it "belongs to a network" do
   #future code here pending review
@@ -22,7 +22,7 @@ describe NetworkInvitation, "class relationships" do
  
 end
 
-describe NetworkInvitation, "creating/updating" do
+describe NetworkInvitation, "that does not exist" do
    
   include NetworkInvitationSpecHelper
 
@@ -30,7 +30,11 @@ describe NetworkInvitation, "creating/updating" do
     @network_invitation = NetworkInvitation.new
   end
   
-  it "requires that a network is specified" do
+  it "should be valid on create" do
+  #future code here pending review
+  end  
+    
+  it "should be invalid if a network is not specified" do
   #future code here pending review
   end  
   

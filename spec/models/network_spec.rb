@@ -10,7 +10,7 @@ module NetworkSpecHelper
   
 end
 
-describe Network, "class relationships" do
+describe Network, "that does not exist" do
 
   it "has many network invitations" do
   #future code here pending review
@@ -26,7 +26,7 @@ describe Network, "class relationships" do
   
 end  
 
-describe Network, "creating/updating" do
+describe Network, "that does exist" do
 
   include NetworkSpecHelper
 
@@ -34,42 +34,37 @@ describe Network, "creating/updating" do
     @network = Network.new
   end  
   
-  it "requires a title" do
-  #future code here pending review
-  end
-  
-  it "does not allow a title longer then 128 characters" do
+  it "should be valid on create" do
   #future code here pending review
   end  
   
-  it "does not allow a description longer then 1024 characters" do
+  it "should be invalid without a title" do
+  #future code here pending review
+  end
+  
+  it "should be invalid with a title longer than 128 characters" do
+  #future code here pending review
+  end  
+  
+  it "should be invalid with a description longer than 1024 characters" do
   #future code here pending review
   end   
 
-  it "allows a nil description" do
+  it "should allow a nil description" do
   #future code here pending review
   end   
     
-  it "requires an owner on create" do
+  it "should be invalid without an owner specified" do
   #future code here pending review
   end
   
-  it "does not require an owner on update" do
+  it "should not require an owner on update" do
   #future code here pending review
   end  
-  
+ 
+  it "should be public by default" do
+  #future code here pending review
+  end  
+       
 end
-
-describe Network, "destruction" do
-
-  include NetworkSpecHelper
-
-  before(:each) do
-    @network = Network.new
-  end  
-    
-  it "destroys related invitations on destroy" do
-  #future code here pending review
-  end  
-  
-end 
+ 

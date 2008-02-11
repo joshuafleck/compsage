@@ -11,7 +11,7 @@ module MessageSpecHelper
   end
 end
 
-describe Message, "class relationships" do
+describe Message, "that does not exist" do
 
   it "has many children" do
   #future code here pending review
@@ -31,14 +31,18 @@ describe Message, "class relationships" do
 
 end  
   
-describe Message, "creating/updating" do
+describe Message, "that does exist" do
 
   include MessageSpecHelper
 
   before(:each) do
     @message = Message.new
   end
-  
+
+  it "should be valid on create" do
+  #future code here pending review
+  end  
+    
   it "should be sent by an organization" do
   #future code here pending review
   end
@@ -47,26 +51,12 @@ describe Message, "creating/updating" do
   #future code here pending review
   end
   
-  it "should not have a title longer then 128 characters" do
+  it "should be invalid with a title longer than 128 characters" do
   #future code here pending review
   end
   
   it "should allow nil title" do
   #future code here pending review
   end  
-  
+
 end
-
-describe Message, "destruction" do
-
-  include MessageSpecHelper
-
-  before(:each) do
-    @message = Message.new
-  end
-
-  it "destroys related messages on destroy" do
-  #future code here pending review
-  end  
-
-end 
