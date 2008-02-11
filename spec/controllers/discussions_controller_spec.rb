@@ -68,7 +68,7 @@ describe DiscussionsController, " handling GET /discussions/1/edit" do
   it "should assign the found discussion to the view"
 end
 
-describe SurveyController, " handling POST /discussions" do
+describe DiscussionsController, " handling POST /discussions" do
   it "should create a new discussion for a survey_id"
   it "should redirect to the new discussion"
 end

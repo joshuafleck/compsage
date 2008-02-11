@@ -2,6 +2,7 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  # Pick a unique cookie name to distinguish our session data from others'
+  include AuthenticatedSystem
+  
   session :session_key => '_shawarma_session_id'
 end

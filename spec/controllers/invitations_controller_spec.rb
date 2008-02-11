@@ -68,7 +68,7 @@ describe InvitationsController, " handling GET /invitations/1/edit" do
   it "should assign the found invitation to the view"
 end
 
-describe InvitationController, " handling POST /invitations" do
+describe InvitationsController, " handling POST /invitations" do
   it "should create a new invitation by type"
   it "should have a survey_id is type is 'Survey'"
   it "should have a network_id if the type is 'Network'"
