@@ -1,0 +1,2 @@
+module SurveyInvitationsHelper
+end
