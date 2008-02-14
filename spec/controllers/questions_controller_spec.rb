@@ -32,15 +32,17 @@ end
 describe QuestionsController, "handling POST /questions from xml" do
   it "should create a new question"
   it "should render an error without a survey specified"
+  it "should return an error if the survey is closed"
+  it "should return an error if current organizatin is not invited to survey"
 end
 
 describe QuestionsController, "handling PUT /questions/1.xml from xml" do 
   it "should create a new question"
-  it "should return an error when the question belongs to a survey that doesn't belong to the current user"
+  it "should return an error when the question belongs to a survey that doesn't belong to the current organization"
 end
 
 describe QuestionsController, "handling DELETE /questions/1.xml from xml" do
   it "should find the requested question"
   it "should destroy the specified question"
-  it "should return an error when the question belongs to a survey that doesn't belong to the current user"
+  it "should return an error when the question belongs to a survey that doesn't belong to the current organization"
 end

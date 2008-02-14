@@ -5,6 +5,8 @@ describe Question do
     @question = Question.new
   end
   
+  it "should be valid"
+  
   it "should be invalid without a survey"
   
   it "should have many responses"
@@ -34,7 +36,7 @@ describe Question, "with radio buttons" do
   
   it "should render radio buttons"
   
-  it "should only accept one answer"
+  it "should only accept one response"
   
 end
 
@@ -43,7 +45,7 @@ describe Question, "with check boxes" do
   
   it_should_behave_like "Question with options"
   
-  it "should accept multiple answers"
+  it "should accept multiple responses"
   
 end
 
@@ -52,7 +54,7 @@ describe Question, "with select box" do
   
   it_should_behave_like "Question with options"
   
-  it "should only accept one answer"
+  it "should only accept one response"
   
 end
 

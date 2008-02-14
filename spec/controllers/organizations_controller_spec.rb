@@ -53,7 +53,7 @@ describe OrganizationsController, " handling sign up stuff" do
     end.should_not change(Organization, :count)
   end
   
-  it "should redirect to index page"
+  it "should redirect to dashboard"
   
   def create_organization(options = {})
     post :create, :organization => { :email => 'quire@example.com',

@@ -9,6 +9,7 @@ ActionController::Routing::Routes.draw do |map|
     end
     survey.resources :discussions
     survey.resources :invitations, :controller => :survey_invitations
+    survey.resource :report
   end
   
   map.resources :networks do |network|

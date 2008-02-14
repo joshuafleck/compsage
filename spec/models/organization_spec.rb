@@ -1,11 +1,9 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-# Be sure to include AuthenticatedTestHelper in spec/spec_helper.rb instead.
-# Then, you can remove it from this and the functional test.
-include AuthenticatedTestHelper
-
 describe Organization do
   fixtures :organizations
+  
+  it 'should be valid'
   
   it 'should have many discussions' do
     Organization.reflect_on_association(:discussions).should_not be_nil
@@ -33,6 +31,10 @@ describe Organization do
   
   it 'should have many received messages' do
     Organization.reflect_on_association(:received_messages).should_not be_nil
+  end
+  
+  it 'should have many responses' do
+    Organization.reflect_on_association(:responses).should_not be_nil
   end
   
   it 'should require a password' do

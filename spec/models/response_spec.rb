@@ -4,8 +4,11 @@ describe Response do
   before(:each) do
     @response = Response.new
   end
-
-  it 'should be invalid without a survey'
+  # test that the associations are here
+  
+  it 'should be valid'
+  
+  it 'should be invalid without a question'
   
   it 'should be invalid without an organization'
   
