@@ -1,9 +1,24 @@
 require File.dirname(__FILE__) + '/../spec_helper'
-
+module OrganizationSpecHelper
+  def valid_organization_attributes
+    {
+      :email => 'brian.terlson@gmail.com',
+      :password => 'test',
+      :password_confirmation => 'test'
+    }
+  end
+end
 describe Organization do
-  fixtures :organizations
+  include OrganizationSpecHelper
   
-  it 'should be valid'
+  before(:each) do
+    @organization = Organization.new
+  end
+  
+  it 'should be valid' do
+    @organization.attributes = valid_organization_attributes
+    @organization.should be_valid
+  end
   
   it 'should have many discussions' do
     Organization.reflect_on_association(:discussions).should_not be_nil
@@ -46,22 +61,24 @@ describe Organization do
   end
   
   it 'should require a password' do
-    u = create_organization(:password => nil)
-    u.errors.on(:password).should_not be_nil
+    @organization.attributes = valid_organization_attributes.except(:password)
+    @organization.should have(3).errors_on(:password)
   end
 
   it 'should require a password confirmation' do
-    u = create_organization(:password_confirmation => nil)
-    u.errors.on(:password_confirmation).should_not be_nil
+    @organization.attributes = valid_organization_attributes.except(:password_confirmation)
+    @organization.should have(1).error_on(:password_confirmation)
   end
 
   it 'should require an email' do
-    u = create_organization(:email => nil)
-    u.errors.on(:email).should_not be_nil
+    @organization.attributes = valid_organization_attributes.except(:email)
+    @organization.should have(2).errors_on(:email)
   end
 
   it 'should authenticate an organization by email and password' do
-    Organization.authenticate('quentin@example.com', 'test').should == organizations(:quentin)
+    @organization.attributes = valid_organization_attributes
+    @organization.save
+    Organization.authenticate('brian.terlson@gmail.com', 'test').should == @organization
   end
 end
 
