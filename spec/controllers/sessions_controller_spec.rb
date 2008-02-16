@@ -16,7 +16,7 @@ describe SessionsController do
   it 'fails login and does not redirect' do
     post :create, :email => 'quentin@example.com', :password => 'bad password'
     session[:organization_id].should be_nil
-    response.should be_success
+    response.should render_template('new')
   end
 
   it 'logs out' do

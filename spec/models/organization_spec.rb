@@ -17,6 +17,14 @@ describe Organization do
     Organization.reflect_on_association(:survey_invitations).should_not be_nil
   end
   
+  it 'should have many sent network invitations' do
+    Organization.reflect_on_association(:sent_network_invitations).should_not be_nil
+  end
+  
+  it 'should have many sent survey invitations' do
+    Organization.reflect_on_association(:sent_survey_invitations).should_not be_nil
+  end
+  
   it 'should have many networks' do
     Organization.reflect_on_association(:networks).should_not be_nil
   end
@@ -58,6 +66,7 @@ describe Organization do
 end
 
 describe Organization, "that already exists" do
+  fixtures :organizations
   it 'should reset password' do
     organizations(:quentin).update_attributes(:password => 'new password', :password_confirmation => 'new password')
     Organization.authenticate('quentin@example.com', 'new password').should == organizations(:quentin)

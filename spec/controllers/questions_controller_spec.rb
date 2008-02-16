@@ -3,8 +3,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe QuestionsController, "#route_for" do
   
-  it "should map { :controller => 'questions', :action => 'index', :survey_id => 1 } to /surveys/1/questions/1/questions" do
-    route_for(:controller => "questions", :action => "index", :survey_id => 1).should == "/surveys/1/questions/1"
+  it "should map { :controller => 'questions', :action => 'index', :survey_id => 1 } to /surveys/1/questions" do
+    route_for(:controller => "questions", :action => "index", :survey_id => 1).should == "/surveys/1/questions"
   end
   
   it "should map { :controller => 'questions', :action => 'show', :id => 1, :survey_id => 1 } to /surveys/1/questions/1" do
