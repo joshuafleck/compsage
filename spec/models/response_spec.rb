@@ -29,3 +29,8 @@ describe Response, "to question with text based response" do
   
 end
 
+describe Response, "to quesiton with fill-in numerical response" do
+  
+  it "should return a numerical response"
+
+end

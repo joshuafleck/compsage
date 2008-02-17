@@ -6,13 +6,20 @@ describe ReportsController, "#route_for" do
   end
 end
 
-describe ReportsController, "handling GET /survey/1/report" do
-  it "should be successful"
+describe ReportsController, "with access limits", :shared => true do
   it "should return an error if the organization has not responded to the survey or isn't the sponsor"
+  it "should return an error if the survey participation window is not finished"
+end
+
+describe ReportsController, "handling GET /survey/1/report" do
+  it_should_behave_like "ReportsController with access limits"
+  
+  it "should be successful"
 end
 
 describe ReportsController, "handling GET /responses/1.xml" do
+  it_should_behave_like "ReportsController with access limits"
+  
   it "should be successful"
-  it "should return an error if the organization has not responded to the survey or isn't the sponsor"
   it "should render the aggregate report as xml"
 end

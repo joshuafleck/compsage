@@ -83,54 +83,60 @@ describe Organization do
 end
 
 describe Organization, "that already exists" do
-  fixtures :organizations
+  include  OrganizationSpecHelper
+  before(:each) do
+    @organization = Organization.new(valid_organization_attributes)
+  end
+  
   it 'should reset password' do
-    organizations(:quentin).update_attributes(:password => 'new password', :password_confirmation => 'new password')
-    Organization.authenticate('quentin@example.com', 'new password').should == organizations(:quentin)
+    @organization.save
+    @organization.update_attributes(:password => 'new password', :password_confirmation => 'new password')
+    Organization.authenticate('brian.terlson@gmail.com', 'new password').should == @organization
   end
 
   it 'should not rehash password when updating other attributes' do
-    organizations(:quentin).update_attributes(:email => 'quentin2@quentin2.com')
-    Organization.authenticate('quentin2@quentin2.com', 'test').should == organizations(:quentin)
+    @organization.save
+    @organization.update_attributes(:email => 'brian.terlson@gmail2.com')
+    Organization.authenticate('brian.terlson@gmail2.com', 'test').should == @organization
   end
 
   it 'should set remember token' do
-    organizations(:quentin).remember_me
-    organizations(:quentin).remember_token.should_not be_nil
-    organizations(:quentin).remember_token_expires_at.should_not be_nil
+    @organization.remember_me
+    @organization.remember_token.should_not be_nil
+    @organization.remember_token_expires_at.should_not be_nil
   end
 
   it 'should unset remember token' do
-    organizations(:quentin).remember_me
-    organizations(:quentin).remember_token.should_not be_nil
-    organizations(:quentin).forget_me
-    organizations(:quentin).remember_token.should be_nil
+    @organization.remember_me
+    @organization.remember_token.should_not be_nil
+    @organization.forget_me
+    @organization.remember_token.should be_nil
   end
 
   it 'should remember me for one week' do
     before = 1.week.from_now.utc
-    organizations(:quentin).remember_me_for 1.week
+    @organization.remember_me_for 1.week
     after = 1.week.from_now.utc
-    organizations(:quentin).remember_token.should_not be_nil
-    organizations(:quentin).remember_token_expires_at.should_not be_nil
-    organizations(:quentin).remember_token_expires_at.between?(before, after).should be_true
+    @organization.remember_token.should_not be_nil
+    @organization.remember_token_expires_at.should_not be_nil
+    @organization.remember_token_expires_at.between?(before, after).should be_true
   end
 
   it 'should remembers me until one week' do
     time = 1.week.from_now.utc
-    organizations(:quentin).remember_me_until time
-    organizations(:quentin).remember_token.should_not be_nil
-    organizations(:quentin).remember_token_expires_at.should_not be_nil
-    organizations(:quentin).remember_token_expires_at.should == time
+    @organization.remember_me_until time
+    @organization.remember_token.should_not be_nil
+    @organization.remember_token_expires_at.should_not be_nil
+    @organization.remember_token_expires_at.should == time
   end
 
   it 'remember me should default to two weeks' do
     before = 2.weeks.from_now.utc
-    organizations(:quentin).remember_me
+    @organization.remember_me
     after = 2.weeks.from_now.utc
-    organizations(:quentin).remember_token.should_not be_nil
-    organizations(:quentin).remember_token_expires_at.should_not be_nil
-    organizations(:quentin).remember_token_expires_at.between?(before, after).should be_true
+    @organization.remember_token.should_not be_nil
+    @organization.remember_token_expires_at.should_not be_nil
+    @organization.remember_token_expires_at.between?(before, after).should be_true
   end
 
 protected
