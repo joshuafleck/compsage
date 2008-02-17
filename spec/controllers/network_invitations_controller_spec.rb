@@ -78,5 +78,3 @@ describe NetworkInvitationsController, " #route for" do
     it "should redirect to the dashboard"
     it "should error if requesting organization is not sponsor"  
   end
-
-end
