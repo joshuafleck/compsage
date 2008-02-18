@@ -2,31 +2,44 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 module MessageSpecHelper
 
+	def message_mock 
+		mock_model(
+				Message, 
+      	:title => 'Test Message',
+      	:body => 'Body of message',
+      	:sender => organization_mock,
+      	:receiver => organization_mock,
+      	:root => nil)
+	end
+
   def valid_message_attributes
     {
       :title => 'Test Message',
       :body => 'Body of message',
-      
+      :sender => organization_mock,
+      :receiver => organization_mock,
+      :root => message_mock
     }
   end
+
 end
 
 describe Message, "that does not exist" do
-
+	
   it "has many children" do
-  #future code here pending review
+  	Message.reflect_on_association(:messages).should_not be_nil
   end
     
   it "has one parent" do
-  #future code here pending review
+  	Message.reflect_on_association(:root).should_not be_nil
   end
   
   it "has one sender" do
-  #future code here pending review
+  	Message.reflect_on_association(:sender).should_not be_nil
   end
     
   it "has one receiver" do
-  #future code here pending review
+  	Message.reflect_on_association(:receiver).should_not be_nil
   end  
 
 end  
@@ -40,7 +53,8 @@ describe Message, "that does exist" do
   end
 
   it "should be valid on create" do
-  #future code here pending review
+  	@message.attributes = valid_message_attributes
+		@message.should be_valid
   end  
     
   it "should be sent by an organization" do

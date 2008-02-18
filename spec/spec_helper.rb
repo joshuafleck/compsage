@@ -81,3 +81,26 @@ class Hash
   end
 
 end
+
+
+	##
+	# Section for our custom helpers
+	#
+	#
+	#
+	
+  def valid_organization_attributes
+    {
+      :email => 'brian.terlson@gmail.com',
+      :password => 'test',
+      :password_confirmation => 'test'
+    }
+  end
+
+	def organization_mock 
+		mock_model(
+				Organization, 
+				valid_organization_attributes)
+	
+	end
+

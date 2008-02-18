@@ -1,13 +1,9 @@
 require File.dirname(__FILE__) + '/../spec_helper'
+
 module OrganizationSpecHelper
-  def valid_organization_attributes
-    {
-      :email => 'brian.terlson@gmail.com',
-      :password => 'test',
-      :password_confirmation => 'test'
-    }
-  end
+
 end
+
 describe Organization do
   include OrganizationSpecHelper
   
