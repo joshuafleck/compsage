@@ -1,64 +1,67 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-# Be sure to include AuthenticatedTestHelper in spec/spec_helper.rb instead
-# Then, you can remove it from this and the units test.
-include AuthenticatedTestHelper
 
 describe SessionsController do
-  fixtures :organizations
-
+  before(:all) do
+    # set up an organization
+    @brian = Organization.new(
+      :email => 'brian.terlson@gmail.com',
+      :password => 'test',
+      :password_confirmation => 'test')
+    @brian.save
+  end
   it 'logins and redirects' do
-    post :create, :email => 'quentin@example.com', :password => 'test'
+    post :create, :email => 'brian.terlson@gmail.com', :password => 'test'
     session[:organization_id].should_not be_nil
     response.should be_redirect
   end
   
   it 'fails login and does not redirect' do
-    post :create, :email => 'quentin@example.com', :password => 'bad password'
+    post :create, :email => 'brian.terlson@gmail.com', :password => 'bad password'
     session[:organization_id].should be_nil
     response.should render_template('new')
   end
 
   it 'logs out' do
-    login_as :quentin
+    login_as @brian
     get :destroy
     session[:organization_id].should be_nil
     response.should be_redirect
   end
 
   it 'remembers me' do
-    post :create, :email => 'quentin@example.com', :password => 'test', :remember_me => "1"
+    post :create, :email => 'brian.terlson@gmail.com', :password => 'test', :remember_me => "1"
     response.cookies["auth_token"].should_not be_nil
   end
   
   it 'does not remember me' do
-    post :create, :email => 'quentin@example.com', :password => 'test', :remember_me => "0"
+    post :create, :email => 'brian.terlson@gmail.com', :password => 'test', :remember_me => "0"
     response.cookies["auth_token"].should be_nil
   end
 
   it 'deletes token on logout' do
-    login_as :quentin
+    login_as @brian
     get :destroy
     response.cookies["auth_token"].should == []
   end
 
   it 'logs in with cookie' do
-    organizations(:quentin).remember_me
-    request.cookies["auth_token"] = cookie_for(:quentin)
+    @brian.remember_me
+    request.cookies["auth_token"] = cookie_for(@brian)
     get :new
     controller.send(:logged_in?).should be_true
   end
   
   it 'fails expired cookie login' do
-    organizations(:quentin).remember_me
-    organizations(:quentin).update_attribute :remember_token_expires_at, 5.minutes.ago
-    request.cookies["auth_token"] = cookie_for(:quentin)
+    @brian.remember_me
+    @brian.update_attribute :remember_token_expires_at, 5.minutes.ago
+    request.cookies["auth_token"] = cookie_for(@brian)
     get :new
     controller.send(:logged_in?).should_not be_true
   end
   
   it 'fails cookie login' do
-    organizations(:quentin).remember_me
+    @brian.remember_me
     request.cookies["auth_token"] = auth_token('invalid_auth_token')
     get :new
     controller.send(:logged_in?).should_not be_true
@@ -69,6 +72,6 @@ describe SessionsController do
   end
     
   def cookie_for(organization)
-    auth_token organizations(organization).remember_token
+    auth_token organization.remember_token
   end
 end

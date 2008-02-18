@@ -1,7 +1,7 @@
 module AuthenticatedTestHelper
   # Sets the current organization in the session from the organization fixtures.
   def login_as(organization)
-    @request.session[:organization_id] = organization ? organizations(organization).id : nil
+    @request.session[:organization_id] = organization ? organization.id : nil
   end
 
   def authorize_as(user)
