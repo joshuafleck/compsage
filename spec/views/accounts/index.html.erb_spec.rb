@@ -7,5 +7,6 @@ describe "/accounts/index" do
   end
   
   it "should render the account attributes"
+  it "should have an edit account link"  
 
 end

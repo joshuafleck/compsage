@@ -34,6 +34,10 @@ describe NetworksController, "#route_for" do
     #route_for(:controller => "networks", :action => "join", :id => 1).should == "/networks/1/join"
   end
   
+  it "should map { :controller => 'networks', :action => 'search' } to /networks/search" do
+    #route_for(:controller => "networks", :action => "search").should == "/networks/search"
+  end
+  
 end
 
 describe NetworksController, " handling GET /networks" do
@@ -77,8 +81,8 @@ end
 
 describe NetworksController, " handling GET /networks/1/edit" do
   it "should be successful"
-  it "should render the edit template if the org is the owner of the network"
   it "should find the network requested"
+  it "should render the edit template if the org is the owner of the network"
   it "should assign the found network to the view if the org is the owner of the network"
   it "should redirect to the show network and flash a message if the org is not the owner of the network"
 end
@@ -103,8 +107,8 @@ end
 
 describe NetworksController, " handling PUT /networks/1/join" do
   it "should find the network requested"
-  it "should allow the org to join the network if it is not a member of the network and the network is public"
-  it "should destroy the network invitation when an invited org joins the network"
+  it "should allow the org to join the network if it is not a member of the network and the network is public or the org is invited to the network"
+  it "should destroy the network invitation when an invited org joins the network if an ivitation exists"
   it "should assign the found network to the view"
   it "should return an error if the network is private and the org is not invited to the network"
   it "should redirect to the joined network"
@@ -116,3 +120,11 @@ describe NetworksController, " handling DELETE /networks/1" do
   it "should return an error if the org does not own the network"
   it "should redirect to the network index"
 end
+
+describe NetworksController, "handling GET /networks/search" do
+	it "should find public networks by the input text"
+	it "should assign the found networks to the view"
+	it "should render the search page"
+  it "should flash a message if no networks were found after a search was performed"
+end
+

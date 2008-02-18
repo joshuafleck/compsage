@@ -4,7 +4,7 @@ class CreateSurveys < ActiveRecord::Migration
       t.column  :sponsor_id,        :integer,   :null => false
       t.column  :title,             :string,    :limit => 128,  :null => false
       t.column  :description,       :text  
-      t.column  :start_date,        :datetime
+      t.column  :created_at,        :datetime
       t.column  :end_date,          :datetime
     end
     

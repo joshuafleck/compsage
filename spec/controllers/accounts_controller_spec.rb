@@ -16,8 +16,6 @@ describe AccountsController, "#route_for" do
 
 end
 
-#I will need to add more functionality e.g. forgotten password
-
 describe AccountsController, " handling GET /accounts" do
   it "should be successful"
   it "should render show template"

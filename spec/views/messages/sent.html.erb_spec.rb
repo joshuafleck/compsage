@@ -6,6 +6,8 @@ describe "/messages/sent" do
     render 'messages/sent'
   end
   
-  it "should render the messages list"
+  it "should render the messages list" 
+  it "should have a link for viewing each message"
+  it "should display attributes for each message" 
 
 end

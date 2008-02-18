@@ -7,5 +7,10 @@ describe "/messages/new" do
   end
   
   it "should render the new message form"
+  it "should have a means for selecting the recipient"
+  it "should have a means for inserting a subject"
+  it "should have a means for inserting the body"
+  it "should have a cancel button"
+  it "should have a submit"
 
 end

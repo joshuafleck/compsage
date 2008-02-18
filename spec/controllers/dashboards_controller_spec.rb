@@ -21,7 +21,8 @@ describe DashboardsController, " handling GET /dashboards" do
   it "should find all received messages since last login"
   it "should find all survey invitations received since last login"
   it "should find all network invitations received since last login"
-  it "should find all completed surveys for your org since last login"
+  it "should find all surveys with activity since the users last login. Activity includes: new discussion posts..."
+  it "should find all completed surveys the organization sponsored or participated in since last login"
   it "should assign the found information for the view"
 end
 

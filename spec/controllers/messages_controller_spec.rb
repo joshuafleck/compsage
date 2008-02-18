@@ -18,8 +18,9 @@ describe MessagesController, "#route_for" do
     #route_for(:controller => "messages", :action => "destroy", :id => 1).should == "/messages/1"
   end
 
-  it "should map { :controller => 'messages', :action => 'sent', :id => 1} to /messages/sent" do
-    #route_for(:controller => "messages", :action => "sent", :id => 1).should == "/messages/sent"
+  it "should map { :controller => 'messages', :action => 'sent'} to /messages/sent" do
+    #route_for(:controller => "messages", :action => "sent").should == "/messages/sent"
+    #see :collection and :member info in Resources rubydoc
   end
  
 end
@@ -43,6 +44,7 @@ describe MessagesController, " handling GET /messages/1" do
   it "should find the related messages if the org is the sender or receiver?"
   it "should flash an error and redirect to the message index if the org is not the sender or receiver"
   it "should render the show template"
+  it "should render the new template and prepopulate the receiver, subject, and root message"
   it "should assign the found message (and related messages)? to the view"
 end
 
