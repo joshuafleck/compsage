@@ -12,5 +12,5 @@ describe "accounts/edit" do
   it "should have a means for allowing the org to change its state"
   it "should have a means for allowing the org to change its contact name"
   it "should have a submit button"
-  it "should have a cancel button"
+  it "should have a cancel button that links back to the show page"
 end

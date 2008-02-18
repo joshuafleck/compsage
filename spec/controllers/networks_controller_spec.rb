@@ -43,8 +43,8 @@ end
 describe NetworksController, " handling GET /networks" do
   it "should be successful"
   it "should render index template"
-  it "should find all public networks"
-  it "should find all private networks the org belongs to"
+  it "should find all networks the org belongs to"
+  it "should find all networks the org owns"
   it "should assign the found networks for the view"
 end
 
@@ -89,6 +89,7 @@ end
 
 describe NetworksController, " handling POST /networks" do
   it "should create a new network by owner"
+  it "should make the owner a member of the network"
   it "should redirect to the new network"
 end
 
@@ -103,6 +104,7 @@ describe NetworksController, " handling PUT /networks/1/leave" do
   it "should find the network requested"
   it "should allow the org to leave the network if it is a member of the network"
   it "should redirect to the network index"
+  it "should flash a message regarding the success of the action"
 end
 
 describe NetworksController, " handling PUT /networks/1/join" do
@@ -112,6 +114,7 @@ describe NetworksController, " handling PUT /networks/1/join" do
   it "should assign the found network to the view"
   it "should return an error if the network is private and the org is not invited to the network"
   it "should redirect to the joined network"
+  it "should flash a message regarding the success of the action"
 end
 
 describe NetworksController, " handling DELETE /networks/1" do
@@ -122,7 +125,7 @@ describe NetworksController, " handling DELETE /networks/1" do
 end
 
 describe NetworksController, "handling GET /networks/search" do
-	it "should find public networks by the input text"
+	it "should find public networks of which the organization is not a member by the input text"
 	it "should assign the found networks to the view"
 	it "should render the search page"
   it "should flash a message if no networks were found after a search was performed"

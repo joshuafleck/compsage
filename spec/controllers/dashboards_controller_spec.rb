@@ -2,8 +2,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe DashboardsController, "#route_for" do
 
-  it "should map { :controller => 'dashboards', :action => 'index' } to /dashboards" do
-    #route_for(:controller => "dashboards", :action => "index").should == "/dashboards"
+  it "should map { :controller => 'dashboards', :action => 'show' } to /dashboards" do
+    #route_for(:controller => "dashboards", :action => "show").should == "/dashboards"
   end
 
 end
@@ -21,7 +21,7 @@ describe DashboardsController, " handling GET /dashboards" do
   it "should find all received messages since last login"
   it "should find all survey invitations received since last login"
   it "should find all network invitations received since last login"
-  it "should find all surveys with activity since the users last login. Activity includes: new discussion posts..."
+  it "should find all running surveys with activity since the users last login. Activity includes: new discussion posts..."
   it "should find all completed surveys the organization sponsored or participated in since last login"
   it "should assign the found information for the view"
 end

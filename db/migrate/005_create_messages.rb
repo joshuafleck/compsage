@@ -7,6 +7,7 @@ class CreateMessages < ActiveRecord::Migration
       t.column :created_at,  :datetime, :null => false
       t.column :sender_id,   :integer,  :null => false
       t.column :receiver_id, :integer,  :null => false
+      t.column :read,        :boolean      
     end
     
     add_index :messages, :sender_id, :name => "index_messages_on_sender_id"

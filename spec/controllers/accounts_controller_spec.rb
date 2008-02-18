@@ -2,8 +2,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe AccountsController, "#route_for" do
 
-  it "should map { :controller => 'accounts', :action => 'index' } to /accounts" do
-    #route_for(:controller => "accounts", :action => "index").should == "/accounts"
+  it "should map { :controller => 'accounts', :action => 'show' } to /accounts" do
+    #route_for(:controller => "accounts", :action => "show").should == "/accounts"
   end
 
   it "should map { :controller => 'accounts', :action => 'edit'} to /accounts;edit" do

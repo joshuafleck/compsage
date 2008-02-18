@@ -1,9 +1,9 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "/accounts/index" do
+describe "/accounts/show" do
 
   before(:each) do
-    render 'accounts/index'
+    render 'accounts/show'
   end
   
   it "should display the email address"

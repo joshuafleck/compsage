@@ -42,6 +42,7 @@ describe MessagesController, " handling GET /messages/1" do
   it "should be successful"
   it "should find the message if the org is the sender or receiver"
   it "should find the related messages if the org is the sender or receiver?"
+  it "should set the read status to true if the receiver is retrieving the message"
   it "should flash an error and redirect to the message index if the org is not the sender or receiver"
   it "should render the show template"
   it "should render the new template and prepopulate the receiver, subject, and root message"

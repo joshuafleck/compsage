@@ -6,8 +6,9 @@ describe "/messages/sent" do
     render 'messages/sent'
   end
   
-  it "should render the messages list" 
-  it "should have a link for viewing each message"
-  it "should display attributes for each message" 
+  it "should render the list of messages"
+  it "should render the message subjects with a link to show the message"
+  it "should display attributes for each message including the created_at date and receiver with a link to their org page" 
+  it "should have a link to the inbox (index) page"
 
 end

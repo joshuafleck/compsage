@@ -11,6 +11,6 @@ describe "/networks/new" do
   it "should have a means for editing the description"
   it "should have a means for editing the public/private status"
   it "should have a submit button"
-  it "should have a cancel button"
+  it "should have a cancel button that links back to the index page"
 
 end

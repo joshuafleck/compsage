@@ -10,7 +10,7 @@ describe "/messages/new" do
   it "should have a means for selecting the recipient"
   it "should have a means for inserting a subject"
   it "should have a means for inserting the body"
-  it "should have a cancel button"
+  it "should have a cancel button that links back to the index page"
   it "should have a submit"
 
 end

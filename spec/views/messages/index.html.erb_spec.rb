@@ -7,10 +7,12 @@ describe "/messages/index" do
   end
 
   it "should render the list of messages"
-  it "should have a link for viewing each message"
+  it "should render the message subjects with a link to show the message"
   it "should have a link for deleting each message"
-  it "should display attributes for each message" 
+  it "should have a link for replying to each message"
+  it "should display attributes for each message including the created_at date and sender with a link to thier org page" 
   it "should denote unread messages"
   it "should have a link for creating a new message"
+  it "should have a link to the sent messages page"
 
 end
