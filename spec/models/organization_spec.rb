@@ -1,18 +1,13 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-module OrganizationSpecHelper
-
-end
-
 describe Organization do
-  include OrganizationSpecHelper
-  
   before(:each) do
     @organization = Organization.new
   end
   
   it 'should be valid' do
     @organization.attributes = valid_organization_attributes
+    @organization.save
     @organization.should be_valid
   end
   
@@ -79,7 +74,6 @@ describe Organization do
 end
 
 describe Organization, "that already exists" do
-  include  OrganizationSpecHelper
   before(:each) do
     @organization = Organization.new(valid_organization_attributes)
   end
@@ -133,12 +127,5 @@ describe Organization, "that already exists" do
     @organization.remember_token.should_not be_nil
     @organization.remember_token_expires_at.should_not be_nil
     @organization.remember_token_expires_at.between?(before, after).should be_true
-  end
-
-protected
-  def create_organization(options = {})
-    record = Organization.new({ :email => 'quire@example.com', :password => 'quire', :password_confirmation => 'quire' }.merge(options))
-    record.save
-    record
   end
 end

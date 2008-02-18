@@ -4,12 +4,14 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe SessionsController do
   before(:all) do
     # set up an organization
-    @brian = Organization.new(
-      :email => 'brian.terlson@gmail.com',
-      :password => 'test',
-      :password_confirmation => 'test')
+    @brian = Organization.new(valid_organization_attributes)
     @brian.save
   end
+  
+  after(:all) do
+    @brian.destroy
+  end
+  
   it 'logins and redirects' do
     post :create, :email => 'brian.terlson@gmail.com', :password => 'test'
     session[:organization_id].should_not be_nil
