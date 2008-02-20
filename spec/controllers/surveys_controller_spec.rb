@@ -90,6 +90,6 @@ end
 describe SurveysController, " handling DELETE /surveys/1" do
   it "should find the survey requested"
   it "should destory the survey requested"
-  it "should redirect to the dashboard"
+  it "should redirect to the index view"
   it "should error if requesting organization is not sponsor"  
 end
