@@ -60,9 +60,10 @@ describe NetworksController, " handling GET /networks/1" do
   it "should find the network requested if it is public"
   it "should find the network requested if it is private and the org is a member of the network"
   it "should find the network requested if it is private and the org is invited to the network"
+  it "should find all members of the network"
   it "should flash an error and redirect to the network index if it is private and the org is not a member of the network"
   it "should render the show template"
-  it "should assign the found network to the view"
+  it "should assign the found network and network members to the view"
 end
 
 describe NetworksController, " handling GET /networks/1.xml" do
@@ -71,7 +72,8 @@ describe NetworksController, " handling GET /networks/1.xml" do
   it "should find the network requested if it is private and the org is a member of the network"
   it "should find the network requested if it is private and the org is invited to the network"
   it "should return an error if it is private and the org is not a member of the network"
-  it "should render the found network as XML"
+  it "should find all members of the network"
+  it "should render the found network and network members as XML"
 end
 
 describe NetworksController, " handling GET /networks/new" do
@@ -126,8 +128,18 @@ end
 
 describe NetworksController, "handling GET /networks/search" do
 	it "should find public networks of which the organization is not a member by the input text"
+	it "should search by title and/or description"
 	it "should assign the found networks to the view"
+	it "should assign the search terms to the view"
 	it "should render the search page"
   it "should flash a message if no networks were found after a search was performed"
+end
+
+describe NetworksController, "handling GET /networks/search.xml" do
+	it "should find public networks of which the organization is not a member by the input text"
+	it "should search by title and/or description"
+	it "should list the found networks in the XML"
+	it "should list the search text in the XML"
+	it "should list the search terms (title and/or description) in the XML"
 end
 

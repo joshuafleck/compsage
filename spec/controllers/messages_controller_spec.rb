@@ -51,8 +51,10 @@ end
 
 describe MessagesController, " handling GET /messages/1.xml" do
   it "should be successful"
+  it "should set the read status to true if the receiver is retrieving the message"
   it "should find the message if the org is the sender or receiver"
   it "should return an error if the org is not the sender or receiver"
+  it "should find the related messages if the org is the sender or receiver? and render them in the xml"
   it "should render the found message as XML"
 end
 
@@ -78,5 +80,11 @@ describe MessagesController, " handling GET /messages/sent" do
   it "should render index template"
   it "should find all sent messages"
   it "should assign the found messages for the view"
+end
+
+describe MessagesController, " handling GET /messages/sent.xml" do
+  it "should be successful"
+  it "should find all sent messages"
+  it "should render the found messages as XML"
 end
 
