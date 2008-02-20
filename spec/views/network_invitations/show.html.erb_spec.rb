@@ -7,5 +7,7 @@ describe "/network_invitations/show" do
   end
   
   it "should render the network_invitations attributes"
-
+  it "should have a decline button"
+  it "should have an accept button"
+  it "should have a form that redirects to a network"
 end

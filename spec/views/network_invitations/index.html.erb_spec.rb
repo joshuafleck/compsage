@@ -6,6 +6,9 @@ describe "/network_invitations/index" do
     render 'network_invitations/index'
   end
   
-  it "should render the network_invitations attributes"
-
+  it "should render the the users current network_invitations"
+  it "should have a way to decline each invitation"
+  it "should have a way to accept each invitation"
+  it "should have a form that redirects to a network"
+  it "should have a link to create a new invitation"
 end
