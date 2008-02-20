@@ -65,6 +65,7 @@ end
 
 describe MessagesController, " handling POST /messages" do
   it "should create a new message by owner"
+  it "should flash a message regarding the success of the create"
   it "should redirect to the new message"
 end
 
@@ -72,6 +73,7 @@ describe MessagesController, " handling DELETE /messages/1" do
   it "should find the message requested"
   it "should destroy the message requested if the org is the receiver of the message"
   it "should return an error if the org is not the receiver of the message"
+  it "should flash a message regarding the success of the delete"
   it "should redirect to the message index"
 end
 

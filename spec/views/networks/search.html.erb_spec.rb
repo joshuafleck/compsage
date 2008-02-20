@@ -14,6 +14,7 @@ describe "/networks/search" do
   it "should display the network attributes for all listed networks including the number of members"
   it "should each network title with a link to show each network"
   it "should have a link for joining all listed networks"
+  it "should have a disabled link for joining all listed networks if the org is in private mode"
   it "should have a link to the index page"
 
 end

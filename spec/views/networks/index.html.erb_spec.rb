@@ -12,6 +12,7 @@ describe "/networks/index" do
   it "should have a link to edit any networks owned by the organization"
   it "should have a link to delete any networks owned by the organization"
   it "should have a link for creating a new network"
+  it "should have a disabled link for creating a new network if the org is in private mode"
   it "should have a link for leaving all listed networks of which the org is a member"
 
 end

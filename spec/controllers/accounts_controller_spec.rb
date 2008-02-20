@@ -41,4 +41,5 @@ describe AccountsController, " handling PUT /accounts" do
   it "should update the selected account"
   it "should assign the found account to the view"
   it "should redirect to accounts default view"
+  it "should flash a message regarding the success of the edit"
 end
