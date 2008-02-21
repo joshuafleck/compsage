@@ -13,7 +13,7 @@ describe "/messages/index" do
   it "should display attributes for each message including the created_at date and sender with a link to thier org page" 
   it "should denote unread messages"
   it "should have a link for creating a new message if the organization is public"
-  it "should have a disabled link for creating a new message if the organization is public"
+  it "should have a disabled link for creating a new message if the organization is private"
   it "should have a link to the sent messages page"
 
 end
