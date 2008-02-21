@@ -60,11 +60,13 @@ end
 
 describe MessagesController, " handling GET /messages/new" do
   it "should be successful"
+  it "should redirect to the message index page and flash an error if the organization is private"
   it "should render new template"
 end
 
 describe MessagesController, " handling POST /messages" do
-  it "should create a new message by owner"
+  it "should create a new message by owner if the sending organization is public"
+  it "should return an error if the sending organization is private"
   it "should flash a message regarding the success of the create"
   it "should redirect to the new message"
 end
