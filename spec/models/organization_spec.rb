@@ -71,6 +71,11 @@ describe Organization do
     @organization.save
     Organization.authenticate('brian.terlson@gmail.com', 'test').should == @organization
   end
+  
+  it "should be invalid when location is longer than 64 chars"
+  it "should be invalid when contact name is longer than 128 chars"
+  it "should be invalid when city is longer than 50 chars"
+  it "should be invalid when state is longer than 30 chars"
 end
 
 describe Organization, "that already exists" do

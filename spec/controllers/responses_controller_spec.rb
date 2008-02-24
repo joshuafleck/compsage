@@ -24,7 +24,6 @@ end
 
 describe ResponsesController, "handling GET /responses/1.xml" do
   it "should be successful"
-  it "should render the response as xml without the organization that made the response"
   it "should find the response requested"
   it "should return an error if response doesn't belong to current organization"
 end
