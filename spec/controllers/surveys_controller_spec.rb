@@ -62,7 +62,8 @@ describe SurveysController, " handling GET /surveys/new" do
   it "should create a new survey"
   it "should not save the new survey"
   it "should assign the new survey to the view"
-  it "should error if requesting organization is not invited or sponsor"  
+  it "should error if requesting organization is not invited or sponsor"
+  it "should redirect to new survey_invitation upon success"
 end
 
 describe SurveysController, " handling GET /surveys/1/edit" do

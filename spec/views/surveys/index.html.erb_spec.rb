@@ -11,4 +11,5 @@ describe "/surveys/index" do
   it "should have a link to see the results of each complete survey"
   it "should have an accept or decline buton next to each pending survey"
   it "should have a link to the discussion for each survey"
+  it "should have a link to invite users to the survey if the organization is the sponsor"
 end

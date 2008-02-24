@@ -80,6 +80,7 @@ describe NetworksController, " handling GET /networks/new" do
   it "should be successful"
   it "should fail, redirect to the network index, and flash a message if the organization is in private mode"
   it "should render new template"
+  it "should redirect to the network_invitations new view"
 end
 
 describe NetworksController, " handling GET /networks/1/edit" do
