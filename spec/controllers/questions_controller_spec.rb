@@ -27,6 +27,7 @@ describe QuestionsController, "handling GET /questions/1.xml" do
   it "should be successful"
   it "should render the question as xml"
   it "should find the question requested"
+  it "should return xml"
 end
 
 describe QuestionsController, "handling POST /questions from xml" do

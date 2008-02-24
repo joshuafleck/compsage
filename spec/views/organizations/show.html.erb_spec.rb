@@ -5,5 +5,7 @@ describe "/organizations/show" do
     render 'organizations/show'
   end
   
-  it "should show the organization attributes in some way"
+  it "should show the organization name and location"
+  it "should show the contacts at that organization"
+  it "should have a button to send this organization a message"
 end
