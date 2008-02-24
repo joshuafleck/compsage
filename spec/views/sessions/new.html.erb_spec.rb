@@ -1,8 +1,8 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "/session/new" do
+describe "/sessions/new" do
   before(:each) do
-    render 'session/new'
+    render 'sessions/new'
   end
   
   it "should display an email field"
