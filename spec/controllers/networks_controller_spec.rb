@@ -80,7 +80,6 @@ describe NetworksController, " handling GET /networks/new" do
   it "should be successful"
   it "should fail, redirect to the network index, and flash a message if the organization is in private mode"
   it "should render new template"
-  it "should redirect to the network_invitations new view"
 end
 
 describe NetworksController, " handling GET /networks/1/edit" do
@@ -95,7 +94,7 @@ describe NetworksController, " handling POST /networks" do
   it "should create a new network by owner"
   it "should make the owner a member of the network"
   it "should fail, redirect to the network index, and flash a message if the organization is in private mode"
-  it "should redirect to the new network"
+  it "should redirect to the network_invitations new view"
   it "should flash a message regarding the success of the creation"
 end
 

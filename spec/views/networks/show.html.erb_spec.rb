@@ -17,6 +17,5 @@ describe "/networks/show" do
 	it "should have a link for leaving the network if the org is a member of the network"
 	it "should have a link for joining the network if the org is not a member of the network and the network is public"	
 	it "should have a disabled link for joining the network if the org is in private mode and the network is public"
-	it "should have a link for inviting users if the organization is the network owner"
 
 end
