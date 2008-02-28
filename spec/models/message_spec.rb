@@ -41,7 +41,23 @@ describe Message, "that does not exist" do
   it "has one receiver" do
   	Message.reflect_on_association(:receiver).should_not be_nil
   end  
-
+    
+  it "should be invalid without a sending organization" do
+  #future code here pending review
+  end
+  
+  it "should be invalid without a receiving organization" do
+  #future code here pending review
+  end
+  
+  it "should be invalid with a title longer than 128 characters" do
+  #future code here pending review
+  end
+ 
+  it "should be valid with a nil title" do
+  #future code here pending review
+  end  
+ 
 end  
   
 describe Message, "that does exist" do
@@ -55,22 +71,6 @@ describe Message, "that does exist" do
   it "should be valid on create" do
   	@message.attributes = valid_message_attributes
 		@message.should be_valid
-  end  
-    
-  it "should be sent by an organization" do
-  #future code here pending review
-  end
-  
-  it "should be received by an organization" do
-  #future code here pending review
-  end
-  
-  it "should be invalid with a title longer than 128 characters" do
-  #future code here pending review
-  end
-  
-  it "should allow nil title" do
-  #future code here pending review
   end  
 
 end

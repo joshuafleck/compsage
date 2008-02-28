@@ -5,6 +5,10 @@ describe AccountsController, "#route_for" do
   it "should map { :controller => 'accounts', :action => 'show' } to /accounts" do
     #route_for(:controller => "accounts", :action => "show").should == "/accounts"
   end
+  
+  it "should map { :controller => 'accounts', :action => 'new' } to /accounts/new" do
+    #route_for(:controller => "accounts", :action => "new").should == "/accounts/new"
+  end  
 
   it "should map { :controller => 'accounts', :action => 'edit'} to /accounts;edit" do
     #route_for(:controller => "accounts", :action => "edit").should == "/accounts;edit"
@@ -21,6 +25,16 @@ describe AccountsController, " handling GET /accounts" do
   it "should render show template"
   it "should find account(organization)"
   it "should assign the found organization for the view"
+end
+
+describe AccountsController, " handling GET /accounts/new" do
+  it "should be successful"
+  it "should render new template"
+  #More to come...
+end
+
+describe AccountsController, " handling POST /accounts" do
+  #More to come...
 end
 
 describe AccountsController, " handling GET /accounts.xml" do

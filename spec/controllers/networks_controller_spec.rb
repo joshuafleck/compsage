@@ -124,7 +124,8 @@ describe NetworksController, " handling PUT /networks/1/join" do
   it "should return an error if the network is private and the org is not invited to the network"
   it "should return an error if the network is public and the org is already a member"
   it "should return an error if the organization is in private mode"
-  it "should redirect to the target network on success or failure"
+  it "should redirect to the target network on success"
+  it "should redirect to the network index on failure"
   it "should flash a message regarding the success of the action"
 end
 
@@ -136,7 +137,7 @@ describe NetworksController, " handling DELETE /networks/1" do
 end
 
 describe NetworksController, "handling GET /networks/search" do
-	it "should find public networks of which the organization is not a member by the input text"
+	it "should find public networks by the input text"
 	it "should search by title and/or description depending on the arguments provided"
 	it "should assign the found networks to the view"
 	it "should assign the search terms to the view"

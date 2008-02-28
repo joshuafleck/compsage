@@ -18,21 +18,21 @@ describe DashboardsController, " handling GET /dashboards" do
   end
   
   it "should render index template"
-  it "should find all received messages since last login"
-  it "should find all survey invitations received since last login"
-  it "should find all network invitations received since last login"
-  it "should find all running surveys with activity since the users last login. Activity includes: new discussion posts..."
-  it "should find all completed surveys the organization sponsored or participated in since last login"
+  it "should find X most recent received messages"
+  it "should find X most recent survey invitations received"
+  it "should find X most recent network invitations received"
+  it "should find X most recent running surveys the organization sponsored or participated in"
+  it "should find X most recent completed surveys the organization sponsored or participated in"
   it "should assign the found information for the view"
 end
 
 describe DashboardsController, " handling GET /dashboards.xml" do
 
-  it "should find all received messages since last login"
-  it "should find all survey invitations received since last login"
-  it "should find all network invitations received since last login"
-  it "should find all running surveys with activity since the users last login. Activity includes: new discussion posts..."
-  it "should find all completed surveys the organization sponsored or participated in since last login"
+  it "should find X most recent received messages"
+  it "should find X most recent survey invitations received"
+  it "should find X most recent network invitations received"
+  it "should find X most recent running survey the organization sponsored or participated ins"
+  it "should find X most recent completed surveys the organization sponsored or participated in"
   it "should list all found objects in the XML"
   
 end

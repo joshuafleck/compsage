@@ -5,9 +5,10 @@ describe "/dashboards/show" do
     render 'dashboards/show'
   end
   
-  it "shows a count of survey invitations with a link to view the invitations"
-  it "shows a count of network invitations with a link to view the invitations"
-  it "shows a count of messages with a link to view the messages"
-  it "shows a count of running surveys with activity with a link to the surveys"
-  it "shows a count of recently completed surveys with a link to the surveys"
+  it "shows survey invitations with a link to view the invitations"
+  it "shows network invitations with a link to view the invitations"
+  it "shows messages with a link to view the messages"
+  it "shows running surveys with activity with a link to the surveys"
+  it "shows recently completed surveys with a link to the surveys"
+  it "has a link for creating a new survey"
 end
