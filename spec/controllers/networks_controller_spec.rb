@@ -119,7 +119,7 @@ describe NetworksController, " handling PUT /networks/1/join" do
   it "should allow the org to join the network if it is not a member of the network and the network is public"
   it "should not allow the organization to join the network if it is in private mode"
   it "should allow the org to join the network if it is invited to the network"
-  it "should destroy the network invitation when an invited org joins the network if an ivitation exists"
+  it "should update the status of the network invitation when an invited org joins the network if an ivitation exists"
   it "should assign the found network to the view"
   it "should return an error if the network is private and the org is not invited to the network"
   it "should return an error if the network is public and the org is already a member"

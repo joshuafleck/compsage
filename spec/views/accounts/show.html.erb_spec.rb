@@ -12,6 +12,7 @@ describe "/accounts/show" do
   it "should display the city"
   it "should display the state"
   it "should display the name"
+  it "should display the image"
   it "should have an edit account link"  
 
 end

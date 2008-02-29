@@ -12,7 +12,7 @@ describe "/networks/show" do
   it "should display the public/private status"
   it "should list the organizations belonging to the network with a link to each org page"
   it "should display the owner with a link to their org page"
-  it "should have the ability to invite new members if the network is public, or the current org is the owner of the network"
+  it "should have the ability to invite new members if the network is public and the org is a member of the network, or the current org is the owner of the network"
 	it "should have a link for editing/deleting the network if the org is the owner of the network"
 	it "should have a link for leaving the network if the org is a member of the network"
 	it "should have a link for joining the network if the org is not a member of the network and the network is public"	

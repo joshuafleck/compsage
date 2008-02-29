@@ -10,7 +10,7 @@ describe "/networks/edit" do
   it "should have a means for editing the title"
   it "should have a means for editing the description"
   it "should have a means for editing the public/private status"
-  it "should have a means for changing the owner"
+  it "should have a means for changing the owner- with the option to choose the new owner, or the next owner in line"
   it "should prepopulate the editable fields with their current values"
   it "should have a submit button"
   it "should have a cancel button"

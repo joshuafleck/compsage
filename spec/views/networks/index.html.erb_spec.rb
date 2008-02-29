@@ -14,6 +14,7 @@ describe "/networks/index" do
   it "should have a link for creating a new network"
   it "should have a disabled link for creating a new network if the org is in private mode"
   it "should have a link for leaving all listed networks of which the org is a member"
-  it "should have a link for inviting users if the organization is the network owner"
+  it "should have a link for inviting users if the organization is the network owner and the network is private"
+  it "should have a link for inviting users if the network is public"
 
 end
