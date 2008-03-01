@@ -5,13 +5,13 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe "general invitation controller, handling GET all", :shared => true do
   it "should be successful"
   it "should render index template"
-  it "should find all invitation"
+  it "should find all invitations"
   it "should only be able to get if organization has been invited"
 end
 
 describe "general invitation controller, handling GET all, XML", :shared => true do
   it "should be successful"
-  it "should find all invitation"
+  it "should find all invitations"
   it "should only be able to get if organization has been invited"
   it "should render the found invitations in XML"
 end

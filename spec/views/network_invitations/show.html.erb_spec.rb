@@ -6,8 +6,6 @@ describe "/network_invitations/show" do
     render 'network_invitations/show'
   end
   
-  it "should render the network_invitations attributes"
-  it "should have a decline button"
-  it "should have an accept button"
-  it "should have a form that redirects to a network"
+  it "should render the nework invitation attributes"
+  it "should have a delete button"
 end

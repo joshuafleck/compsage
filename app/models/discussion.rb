@@ -6,5 +6,6 @@ class Discussion < ActiveRecord::Base
   acts_as_nested_set :scope => 'survey_id = #{survey_id}'
   
   validates_length_of :title, :maximum => 128, :message => "Title cannot exceed 128 characters"
+  validates_length_of :body, :maximum => 1024, :message => "Body cannot exceed 1024 characters"
   
 end

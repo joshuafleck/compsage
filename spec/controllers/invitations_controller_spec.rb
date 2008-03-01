@@ -20,7 +20,7 @@ describe InvitationsController, " handling GET /invitations" do
   it "should be successful"
   it "should render index template"
   it "should find all invitations"
-  it "should assign the found invitations for the view"
+  it "should assign the found invitations to the view"
 end
 
 describe InvitationsController, " handling GET /invitations.xml" do

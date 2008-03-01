@@ -7,9 +7,9 @@ describe "/surveys/show" do
   end
   
   it "should render the survey attributes"
-  it "should have an edit button for each sponsored survey"
-  it "should have a link to see the results of each complete survey"
-  it "should have an accept or decline buton next to each pending survey"
-  it "should have a link to the discussion for each survey"
+  it "should have an edit button for a sponsored survey"
+  it "should have a link to see the results of a complete survey"
+  it "should have an 'Take Now' or 'Decline' buton next to each pending survey"
+  it "should have a link to the discussion for the survey"
 
 end

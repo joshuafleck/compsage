@@ -6,9 +6,8 @@ describe "/survey_invitations/show" do
     render 'survey_invitations/show'
   end
   
-  it "should render the survey_invitations attributes"
+  it "should render the survey invitation attributes"
   it "should have a form that redirects to a survey"
-  it "should have an accept button for each invitation"
-  it "should have a decline button for each invitation"
+  it "should have an delete button for each invitation"
 
 end

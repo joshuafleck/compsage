@@ -7,8 +7,8 @@ describe "/invitations/index" do
   end
   
   it "should render the invitation attributes"
-  it "should render a list of network_invitations"
-  it "should render a list of survey_invitations"
+  it "should render a list of invited networks"
+  it "should render a list of invited surveys"
   it "should have one or more accept button"
   it "should have one or more decline button"
 
