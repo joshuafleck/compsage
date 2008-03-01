@@ -25,12 +25,19 @@ module MessageSpecHelper
 end
 
 describe Message, "that does not exist" do
-	
-  it "has many children" do
+
+  include MessageSpecHelper
+
+  before(:each) do
+    @message = Message.new
+  	@message.attributes = valid_message_attributes
+  end
+  	
+  it "has many child messages" do
   	Message.reflect_on_association(:messages).should_not be_nil
   end
     
-  it "has one parent" do
+  it "has one parent message" do
   	Message.reflect_on_association(:root).should_not be_nil
   end
   
@@ -42,20 +49,24 @@ describe Message, "that does not exist" do
   	Message.reflect_on_association(:receiver).should_not be_nil
   end  
     
-  it "should be invalid without a sending organization" do
-  #future code here pending review
+  it "should be invalid without a sender" do
+  pending
   end
   
-  it "should be invalid without a receiving organization" do
-  #future code here pending review
+  it "should be invalid without a receiver" do
+  pending
   end
   
   it "should be invalid with a title longer than 128 characters" do
-  #future code here pending review
+  pending
   end
  
-  it "should be valid with a nil title" do
-  #future code here pending review
+  it "should be valid with no title" do
+  pending
+  end  
+
+  it "should be valid" do
+		@message.should be_valid
   end  
  
 end  
@@ -66,11 +77,12 @@ describe Message, "that does exist" do
 
   before(:each) do
     @message = Message.new
-  end
-
-  it "should be valid on create" do
   	@message.attributes = valid_message_attributes
-		@message.should be_valid
+  	@message.save
+  end
+  
+  after(:each) do
+  	@message.destroy
   end  
 
 end

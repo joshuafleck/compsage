@@ -7,34 +7,56 @@ module InvitationSpecHelper
       
     }
   end
+  
 end
 
 describe Invitation, "that does not exist", :shared => true do
+   
+  include InvitationSpecHelper
 
+  before(:each) do
+    @invitation = Invitation.new
+    @invitation.attributes = valid_invitation_attributes
+  end
+  
   it "should belong to an invitee" do
-  #future code here pending review
+  pending
   end
   
   it "should belong to an inviter" do
-  #future code here pending review
+  pending
   end
   
+  it "is invalid without an invitee" do
+  pending
+  end
+  
+  it "is invalid without an inviter" do
+  pending
+  end
+ 
 end
 
 describe Invitation, "that does exist", :shared => true do
    
   include InvitationSpecHelper
 
-  it "is invalid without an invitee" do
-  #future code here pending review
+  before(:each) do
+    @invitation = Invitation.new
+    @invitation.attributes = valid_invitation_attributes
+    @invitation.save
   end
   
-  it "is invalid without an inviter" do
-  #future code here pending review
-  end
+  after(:each) do
+    @invitation.destroy
+  end  
+       
+  it "should not be accepted" do
+  pending
+  end  
   
-end
-
+end  
+ 
 module NetworkInvitationSpecHelper
 
   def valid_network_invitation_attributes
@@ -42,20 +64,36 @@ module NetworkInvitationSpecHelper
       
     }
   end
+  
 end
 
 describe NetworkInvitation, "that does not exist" do
+   
+  include NetworkInvitationSpecHelper
+
+  before(:each) do
+    @network_invitation = NetworkInvitation.new
+    @network_invitation.attributes = valid_network_invitation_attributes
+  end
 
   it_should_behave_like "Invitation that does not exist"  
 
   it "belongs to a network" do
-  #future code here pending review
+  pending
   end
    
   it "inherits from invitation" do
   #network_invite.class.superclass.name.should == "Invite"
-  #future code here pending review
+  pending
   end    
+     
+  it "should be invalid if a network is not specified" do
+  pending
+  end  
+   
+  it "should be valid" do
+  pending
+  end  
  
 end
 
@@ -65,18 +103,16 @@ describe NetworkInvitation, "that does exist" do
 
   before(:each) do
     @network_invitation = NetworkInvitation.new
+    @network_invitation.attributes = valid_network_invitation_attributes
+    @network_invitation.save
   end
+  
+  after(:each) do
+    @network_invitation.destroy
+  end  
 
   it_should_behave_like "Invitation that does exist" 
-  
-  it "should be valid on create" do
-  #future code here pending review
-  end  
-    
-  it "should be invalid if a network is not specified" do
-  #future code here pending review
-  end  
-  
+
  end 
  
 module SurveyInvitationSpecHelper
@@ -86,21 +122,37 @@ module SurveyInvitationSpecHelper
       
     }
   end
+  
 end
 
 describe SurveyInvitation, "that does not exist" do
+   
+  include SurveyInvitationSpecHelper
+
+  before(:each) do
+    @survey_invitation = SurveyInvitation.new
+    @survey_invitation.attributes = valid_survey_invitation_attributes
+  end
 
   it_should_behave_like "Invitation that does not exist"  
 
   it "inherits from invitation" do
   #survey_invite.class.superclass.name.should == "Invite"
-  #future code here pending review
+  pending
   end    
  
   it "should belong to a survey" do
-  #future code here pending review  
+  pending 
   end
   
+  it "should be invalid if a survey is not specified" do
+  pending
+  end
+       
+  it "should be valid" do
+  pending
+  end  
+ 
 end
 
 describe SurveyInvitation, "that does exist" do
@@ -109,16 +161,14 @@ describe SurveyInvitation, "that does exist" do
 
   before(:each) do
     @survey_invitation = SurveyInvitation.new
-  end
-
-  it_should_behave_like "Invitation that does exist" 
-      
-  it "should be valid on create" do
-  #future code here pending review
-  end  
- 
-  it "should be invalid if a survey is not specified" do
-    #future code here pending review
+    @survey_invitation.attributes = valid_survey_invitation_attributes
+    @survey_invitation.save
   end
   
+  after(:each) do
+    @survey_invitation.destroy
+  end  
+
+  it_should_behave_like "Invitation that does exist" 
+
 end 

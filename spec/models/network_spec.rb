@@ -12,38 +12,48 @@ end
 
 describe Network, "that does not exist" do
 
-  it "has many network invitations" do
-  #future code here pending review
+  include NetworkSpecHelper
+
+  before(:each) do
+    @network = Network.new
+  end  
+  
+  it "has many invitations" do
+  pending
   end
   
   it "has many member organizations" do
-  #future code here pending review
+  pending
   end
   
   it "has an owner" do
-  #future code here pending review
+  pending
   end
   
   it "should be invalid without a title" do
-  #future code here pending review
+  pending
   end
   
   it "should be invalid with a title longer than 128 characters" do
-  #future code here pending review
+  pending
   end  
   
   it "should be invalid with a description longer than 1024 characters" do
-  #future code here pending review
+  pending
   end   
     
   it "should be invalid without an owner specified" do
-  #future code here pending review
+  pending
   end
 
-  it "should be valid with a nil description" do
-  #future code here pending review
+  it "should be valid with no description" do
+  pending
   end   
    
+  it "should be valid" do
+  pending
+  end  
+
 end  
 
 describe Network, "that does exist" do
@@ -52,18 +62,16 @@ describe Network, "that does exist" do
 
   before(:each) do
     @network = Network.new
+    @network.attributes = valid_network_attributes
+    @network.save
   end  
   
-  it "should be valid on create" do
-  #future code here pending review
+  after(:each) do
+    @network.destroy
   end  
- 
-  it "should not require an owner on update" do
-  #future code here pending review
-  end  
- 
-  it "should be public by default" do
-  #future code here pending review
+  
+  it "should be public" do
+  pending
   end  
        
 end
