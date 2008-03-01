@@ -106,7 +106,15 @@ describe MessagesController, " handling GET /messages/1" do
   
   end
 
+  it "should find the other messages in the thread (related messages)" do
+  	pending
+  end
+  
   it "should assign the message to the view" do
+  	pending
+  end
+  
+  it "should assign the related messages to the view" do
   	pending
   end
 
@@ -140,13 +148,17 @@ describe MessagesController, " handling GET /messages/1.xml" do
   
   end
 
-  it "should find the related messages if the organization is the sender or receiver and render them in the xml" do
+  it "should find the other messages in the thread (related messages)" do
   	pending
   end
   
   it "should render the found message as XML" do
   	pending
   end
+  
+  it "should render the related messages as XML" do
+  	pending
+  end  
   
 end
 
