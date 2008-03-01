@@ -1,155 +1,479 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
+describe NetworksController, "when an illegal action has been attempted", :shared => true do
+
+	describe "when the request is XML" do
+	 	
+	 		it "should return an error" do
+	 			pending	 		
+	 		end
+	 	
+	 	end
+	 	
+	 	describe "when the request is HTML" do
+	 	
+		 	it "should redirect to the network index page" do
+		 		pending
+		 	end
+		 	
+		 	it "should flash an error message" do
+		 		pending
+		 	end
+	 	
+	 	end
+
+end
+
 describe NetworksController, "#route_for" do
 
   it "should map { :controller => 'networks', :action => 'index' } to /networks" do
     #route_for(:controller => "networks", :action => "index").should == "/networks"
+    pending
   end
 
   it "should map { :controller => 'networks', :action => 'new' } to /networks/new" do
     #route_for(:controller => "networks", :action => "new").should == "/networks/new"
+    pending    
   end
 
   it "should map { :controller => 'networks', :action => 'show', :id => 1 } to /networks/1" do
     #route_for(:controller => "networks", :action => "show", :id => 1).should == "/networks/1"
+    pending    
   end
 
-  it "should map { :controller => 'networks', :action => 'edit', :id => 1 } to /networks/1;edit" do
-    #route_for(:controller => "networks", :action => "edit", :id => 1).should == "/networks/1;edit"
+  it "should map { :controller => 'networks', :action => 'edit', :id => 1 } to /networks/1/edit" do
+    #route_for(:controller => "networks", :action => "edit", :id => 1).should == "/networks/1/edit"
+    pending    
   end
 
   it "should map { :controller => 'networks', :action => 'update', :id => 1} to /networks/1" do
     #route_for(:controller => "networks", :action => "update", :id => 1).should == "/networks/1"
+    pending    
   end
 
   it "should map { :controller => 'networks', :action => 'destroy', :id => 1} to /networks/1" do
     #route_for(:controller => "networks", :action => "destroy", :id => 1).should == "/networks/1"
+    pending    
   end
   
   it "should map { :controller => 'networks', :action => 'leave', :id => 1} to /networks/1/leave" do
     #route_for(:controller => "networks", :action => "leave", :id => 1).should == "/networks/1/leave"
+    pending    
   end
 
   it "should map { :controller => 'networks', :action => 'join', :id => 1} to /networks/1/join" do
     #route_for(:controller => "networks", :action => "join", :id => 1).should == "/networks/1/join"
+    pending    
   end
   
   it "should map { :controller => 'networks', :action => 'search' } to /networks/search" do
     #route_for(:controller => "networks", :action => "search").should == "/networks/search"
+    pending    
   end
   
 end
 
 describe NetworksController, " handling GET /networks" do
-  it "should be successful"
-  it "should render index template"
-  it "should find all networks the org belongs to"
-  it "should find all networks the org owns"
-  it "should assign the found networks for the view"
+
+  it "should be successful" do
+    pending    
+  end
+  
+  it "should render index template" do
+    pending    
+  end
+  
+  it "should find all networks the organization belongs to" do
+    pending    
+  end
+  
+  it "should assign the found networks for the view" do
+    pending    
+  end
+  
 end
 
 describe NetworksController, " handling GET /networks.xml" do
-  it "should be successful"
-  it "should find all networks owned by the organization"
-  it "should find all networks the org belongs to"
-  it "should render the found networks as XML"
+
+  it "should be successful" do
+    pending    
+  end
+  
+  it "should find all networks the organization belongs to" do
+    pending    
+  end
+  
+  it "should render the found networks as XML" do
+    pending    
+  end
+  
 end
 
 describe NetworksController, " handling GET /networks/1" do
-  it "should be successful"
-  it "should find the network requested if it is public"
-  it "should find the network requested if it is private and the org is a member of the network"
-  it "should find the network requested if it is private and the org is invited to the network"
-  it "should find all members of the network"
-  it "should flash an error and redirect to the network index if it is private and the org is not a member of the network"
-  it "should render the show template"
-  it "should assign the found network and network members to the view"
+
+  it "should be successful" do
+    pending    
+  end
+ 
+  describe " for a private network" do
+    	
+    describe "where the organization is not a member of the network" do
+    
+			it_should_behave_like "NetworksController when an illegal action has been attempted"
+		
+    end
+
+	end
+
+  it "should find the network requested" do
+	  pending    
+  end  
+  
+  it "should render the show template" do
+    pending    
+  end
+  
+  it "should assign the found network to the view" do
+    pending    
+  end
+  
 end
 
 describe NetworksController, " handling GET /networks/1.xml" do
-  it "should be successful"
-  it "should find the network requested if it is public"
-  it "should find the network requested if it is private and the org is a member of the network"
-  it "should find the network requested if it is private and the org is invited to the network"
-  it "should return an error if it is private and the org is not a member of the network"
-  it "should find all members of the network"
-  it "should render the found network and network members as XML"
+
+  it "should be successful" do
+    pending    
+  end
+
+  describe " for a private network" do
+  
+  	describe "when the organization is not a member of the network" do
+    
+			it_should_behave_like "NetworksController when an illegal action has been attempted"
+		
+  	end
+  	
+  end
+   
+  it "should find the network requested" do
+    pending    
+  end
+
+  it "should find all members of the network" do
+    pending    
+  end
+  
+  it "should render the found network and network members as XML" do
+    pending    
+  end
+  
 end
 
 describe NetworksController, " handling GET /networks/new" do
-  it "should be successful"
-  it "should fail, redirect to the network index, and flash a message if the organization is in private mode"
-  it "should render new template"
+
+  it "should be successful" do
+    pending    
+  end
+  
+  describe " when the organization is in private mode" do
+    
+			it_should_behave_like "NetworksController when an illegal action has been attempted"
+		
+  end
+
+  it "should render new template" do
+    pending    
+  end
+  
 end
 
 describe NetworksController, " handling GET /networks/1/edit" do
-  it "should be successful"
-  it "should find the network requested"
-  it "should render the edit template if the org is the owner of the network"
-  it "should assign the found network to the view if the org is the owner of the network"
-  it "should redirect to the show network page and flash a message if the org is not the owner of the network"
+
+  it "should be successful" do
+    pending    
+  end
+  
+  it "should find the network requested" do
+    pending    
+  end
+  
+  describe "when the organization is not the owner of the network" do
+    
+			it_should_behave_like "NetworksController when an illegal action has been attempted"
+		
+  end
+  
+  it "should render the edit template" do
+    pending    
+  end
+  
+  it "should assign the found network to the view" do
+    pending    
+  end
+
 end
 
 describe NetworksController, " handling POST /networks" do
-  it "should create a new network by owner"
-  it "should make the owner a member of the network"
-  it "should fail, redirect to the network index, and flash a message if the organization is in private mode"
-  it "should redirect to the network_invitations new view"
-  it "should flash a message regarding the success of the creation"
+
+ 	describe "when the organization is in private mode" do
+
+		it_should_behave_like "NetworksController when an illegal action has been attempted"
+		 		
+ 	end
+
+  it "should create a new network by owner" do
+    pending    
+  end
+  
+  it "should make the owner a member of the network" do
+    pending    
+  end
+  
+  it "should redirect to the new invitation view" do
+    pending    
+  end
+  
+  it "should flash a message regarding the success of the creation" do
+    pending    
+  end
+  
 end
 
 describe NetworksController, " handling PUT /networks/1" do
-  it "should find the network requested"
-  it "should update the selected network if the org is the owner of the network"
-  it "should return an error if the org is not the owner of the network"
-  it "should redirect to the updated network show page"
-  it "should flash a message regarding the success of the edit"
+
+  it "should find the network requested" do
+    pending    
+  end
+  
+  describe "when the organization is not the owner of the network" do
+    
+		it_should_behave_like "NetworksController when an illegal action has been attempted"
+		
+  end
+  
+  it "should update the selected network" do
+    pending    
+  end
+ 
+  it "should redirect to the network show page" do
+    pending    
+  end
+  
+  it "should flash a message regarding the success of the edit" do
+    pending    
+  end
+  
 end
 
 describe NetworksController, " handling PUT /networks/1/leave" do
-  it "should find the network requested"
-  it "should allow the org to leave the network if it is a member of the network"
-  it "should return an error if the org is not member of the network"
-  it "should redirect to the network index"
-  it "should flash a message regarding the success of the action"
+
+	describe "when the organization is not a member of the network" do
+    
+		it_should_behave_like "NetworksController when an illegal action has been attempted"
+		
+	end
+
+  it "should find the network requested" do
+    pending    
+  end
+  
+  #We cannot allow the owner to leave the network without changing the owner
+  #If the owner leaves the network, the network will no longer show up in that owner's index page
+  describe "when the organization is the owner of the network" do
+  
+  	describe "when the request is XML" do
+  	
+  		it "should return an error" do
+  			pending
+  		end
+  	
+  	end
+  	
+  	it "should redirect to the network edit page" do
+  		pending
+  	end
+  	
+  	it "should flash a message instructing the organization to change the owner of the network" do
+  		pending
+  	end
+  
+  end
+  
+  it "should allow the organization to leave the network" do
+    pending    
+  end
+
+  it "should redirect to the network index" do
+    pending    
+  end
+  
+  it "should flash a message regarding the success of the action" do
+    pending    
+  end
+  
 end
 
 describe NetworksController, " handling PUT /networks/1/join" do
-  it "should find the network requested"
-  it "should allow the org to join the network if it is not a member of the network and the network is public"
-  it "should not allow the organization to join the network if it is in private mode"
-  it "should allow the org to join the network if it is invited to the network"
-  it "should update the status of the network invitation when an invited org joins the network if an ivitation exists"
-  it "should assign the found network to the view"
-  it "should return an error if the network is private and the org is not invited to the network"
-  it "should return an error if the network is public and the org is already a member"
-  it "should return an error if the organization is in private mode"
-  it "should redirect to the target network on success"
-  it "should redirect to the network index on failure"
-  it "should flash a message regarding the success of the action"
+
+	describe "when the organization is in private mode" do
+    
+		it_should_behave_like "NetworksController when an illegal action has been attempted"
+		
+	end
+
+	describe "when the organization is already a member of the network" do
+    
+		it_should_behave_like "NetworksController when an illegal action has been attempted"
+		
+	end
+	
+	describe "when the network is private" do
+	
+		describe "when the organization is not invited to the network" do
+    
+			it_should_behave_like "NetworksController when an illegal action has been attempted"
+		
+		end
+	
+	end
+
+	it "should add the organization to the network"	do
+		pending
+	end
+	 
+	describe "when an invitation exists" do
+	
+		it "should update the status of the invitation to accepted" do
+			pending
+		end
+	
+	end
+
+  it "should redirect to the network show page" do
+    pending    
+  end
+
+  it "should flash a message regarding the success of the action" do
+    pending    
+  end
+  
 end
 
 describe NetworksController, " handling DELETE /networks/1" do
-  it "should find the network requested"
-  it "should destroy the network requested if the org is the owner of the network"
-  it "should return an error if the org does not own the network"
-  it "should redirect to the network index"
+
+  it "should find the network requested" do
+    pending    
+  end
+  
+  describe "when the organization is not the owner of the network" do
+    
+		it_should_behave_like "NetworksController when an illegal action has been attempted"
+		
+  end
+  
+  it "should destroy the network requested" do
+    pending    
+  end
+ 
+  it "should redirect to the network index" do
+    pending    
+  end
+  
+  it "should flash a message regarding the success of the delete" do
+  	pending
+  end
+  
 end
 
 describe NetworksController, "handling GET /networks/search" do
-	it "should find public networks by the input text"
-	it "should search by title and/or description depending on the arguments provided"
-	it "should assign the found networks to the view"
-	it "should assign the search terms to the view"
-	it "should render the search page"
-  it "should flash a message if no networks were found after a search was performed"
+
+	it "should search for public networks" do
+		pending
+	end
+	
+	describe "when the search excludes joined networks"do
+	
+		it "should search unjoined networks" do
+			pending
+		end
+	
+	end
+
+	describe "when the search is by title" do
+	
+		it "should search for networks with titles containing the search text" do
+			pending
+		end
+	
+	end
+	
+	describe "when the search is by description"do
+	
+		it "should search for networks with descriptions containing the search text" do
+			pending
+		end
+	
+	end
+	
+	describe "when the search is by description and title"do
+	
+		it "should search for networks with descriptions or titles containing the search text" do
+			pending
+		end
+	
+	end	
+
+	it "should assign the found networks to the view" do
+    pending    
+  end
+  
+	it "should assign the search terms to the view" do
+    pending    
+  end
+
 end
 
 describe NetworksController, "handling GET /networks/search.xml" do
-	it "should find public networks of which the organization is not a member by the input text"
-	it "should search by title and/or description depending on the arguments provided"
-	it "should list the found networks in the XML"
-	it "should list the search text in the XML"
-	it "should list the search terms (title and/or description) in the XML"
+
+	it "should search for public networks" do
+		pending
+	end
+	
+	describe "when the search excludes joined networks"do
+	
+		it "should search unjoined networks" do
+			pending
+		end
+	
+	end
+
+	describe "when the search is by title" do
+	
+		it "should search for networks with titles containing the search text" do
+			pending
+		end
+	
+	end
+	
+	describe "when the search is by description"do
+	
+		it "should search for networks with descriptions containing the search text" do
+			pending
+		end
+	
+	end
+	
+	describe "when the search is by description and title" do
+	
+		it "should search for networks with descriptions or titles containing the search text" do
+			pending
+		end
+	
+	end	
+
+	it "should render the found networks as XML" do
+    pending    
+  end
+   
 end
 

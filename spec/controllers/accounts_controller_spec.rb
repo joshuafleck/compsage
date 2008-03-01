@@ -10,8 +10,8 @@ describe AccountsController, "#route_for" do
     #route_for(:controller => "accounts", :action => "new").should == "/accounts/new"
   end  
 
-  it "should map { :controller => 'accounts', :action => 'edit'} to /accounts;edit" do
-    #route_for(:controller => "accounts", :action => "edit").should == "/accounts;edit"
+  it "should map { :controller => 'accounts', :action => 'edit'} to /accounts/edit" do
+    #route_for(:controller => "accounts", :action => "edit").should == "/accounts/edit"
   end
 
   it "should map { :controller => 'accounts', :action => 'update'} to /accounts" do

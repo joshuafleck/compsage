@@ -40,10 +40,10 @@ end
 
 describe MessagesController, " handling GET /messages/1" do
   it "should be successful"
-  it "should find the message if the org is the sender or receiver"
-  it "should find the related messages if the org is the sender or receiver?"
+  it "should find the message if the organization is the sender or receiver"
+  it "should find the related messages if the organization is the sender or receiver?"
   it "should set the read status to true if the receiver is retrieving the message"
-  it "should flash an error and redirect to the message index if the org is not the sender or receiver"
+  it "should flash an error and redirect to the message index if the organization is not the sender or receiver"
   it "should render the show template"
   it "should render the new template and prepopulate the receiver, subject, and root message"
   it "should assign the found message (and related messages)? to the view"
@@ -52,9 +52,9 @@ end
 describe MessagesController, " handling GET /messages/1.xml" do
   it "should be successful"
   it "should set the read status to true if the receiver is retrieving the message"
-  it "should find the message if the org is the sender or receiver"
-  it "should return an error if the org is not the sender or receiver"
-  it "should find the related messages if the org is the sender or receiver? and render them in the xml"
+  it "should find the message if the organization is the sender or receiver"
+  it "should return an error if the organization is not the sender or receiver"
+  it "should find the related messages if the organization is the sender or receiver? and render them in the xml"
   it "should render the found message as XML"
 end
 
@@ -73,8 +73,8 @@ end
 
 describe MessagesController, " handling DELETE /messages/1" do
   it "should find the message requested"
-  it "should destroy the message requested if the org is the receiver of the message"
-  it "should return an error if the org is not the receiver of the message"
+  it "should destroy the message requested if the organization is the receiver of the message"
+  it "should return an error if the organization is not the receiver of the message"
   it "should flash a message regarding the success of the delete"
   it "should redirect to the message index"
 end
