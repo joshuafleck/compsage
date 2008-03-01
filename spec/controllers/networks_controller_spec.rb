@@ -221,7 +221,7 @@ describe NetworksController, " handling POST /networks" do
 		 		
  	end
 
-  it "should create a new network by owner" do
+  it "should create a new network" do
     pending    
   end
   
@@ -229,12 +229,24 @@ describe NetworksController, " handling POST /networks" do
     pending    
   end
   
-  it "should redirect to the new invitation view" do
-    pending    
+  describe "when the request is XML" do
+  
+  	it "should return a response regarding the success of the action" do
+  		pending
+  	end
+  
   end
   
-  it "should flash a message regarding the success of the creation" do
-    pending    
+  describe "when the request is HTML" do
+  
+	  it "should redirect to the show invitation view" do
+	    pending    
+	  end
+	  
+	  it "should flash a message regarding the success of the creation" do
+	    pending    
+	  end
+	  
   end
   
 end
@@ -254,13 +266,25 @@ describe NetworksController, " handling PUT /networks/1" do
   it "should update the selected network" do
     pending    
   end
- 
-  it "should redirect to the network show page" do
-    pending    
-  end
   
-  it "should flash a message regarding the success of the edit" do
-    pending    
+  describe "when the request is XML" do
+  
+  	it "should return a response regarding the success of the action" do
+  		pending
+  	end
+  
+  end  
+  
+  describe "when the request is HTML" do
+	 
+	  it "should redirect to the network show page" do
+	    pending    
+	  end
+	  
+	  it "should flash a message regarding the success of the edit" do
+	    pending    
+	  end
+	  
   end
   
 end
@@ -302,13 +326,25 @@ describe NetworksController, " handling PUT /networks/1/leave" do
   it "should allow the organization to leave the network" do
     pending    
   end
-
-  it "should redirect to the network index" do
-    pending    
-  end
   
-  it "should flash a message regarding the success of the action" do
-    pending    
+  describe "when the request is XML" do
+  
+  	it "should return a response regarding the success of the action" do
+  		pending
+  	end
+  
+  end
+
+	describe "when the request is HTML" do
+
+	  it "should redirect to the network index" do
+	    pending    
+	  end
+	  
+	  it "should flash a message regarding the success of the action" do
+	    pending    
+	  end
+  
   end
   
 end
@@ -348,13 +384,25 @@ describe NetworksController, " handling PUT /networks/1/join" do
 		end
 	
 	end
-
-  it "should redirect to the network show page" do
-    pending    
+	
+  describe "when the request is XML" do
+  
+  	it "should return a response regarding the success of the action" do
+  		pending
+  	end
+  
   end
+  
+  describe "when the request it HTML"	do
 
-  it "should flash a message regarding the success of the action" do
-    pending    
+	  it "should redirect to the network show page" do
+	    pending    
+	  end
+
+	  it "should flash a message regarding the success of the action" do
+	    pending    
+	  end
+  
   end
   
 end
@@ -371,16 +419,28 @@ describe NetworksController, " handling DELETE /networks/1" do
 		
   end
   
-  it "should destroy the network requested" do
-    pending    
-  end
- 
-  it "should redirect to the network index" do
+  it "should destroy the network" do
     pending    
   end
   
-  it "should flash a message regarding the success of the delete" do
-  	pending
+  describe "when the request is XML" do
+  
+  	it "should return a response regarding the success of the action" do
+  		pending
+  	end
+  
+  end
+  
+  describe "when the request is HTML" do
+	 
+	  it "should redirect to the network index" do
+	    pending    
+	  end
+	  
+	  it "should flash a message regarding the success of the delete" do
+	  	pending
+	  end
+	  
   end
   
 end
