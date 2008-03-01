@@ -91,6 +91,10 @@ describe NetworksController, " handling GET /networks" do
     pending    
   end
   
+  it "should support sorting the networks..." do
+  	pending
+  end
+  
 end
 
 describe NetworksController, " handling GET /networks.xml" do
@@ -485,6 +489,10 @@ describe NetworksController, "handling GET /networks/search" do
 
 	it "should assign the found networks to the view" do
     pending    
+  end
+    
+  it "should support sorting the networks..." do
+  	pending
   end
   
 	it "should assign the search terms to the view" do

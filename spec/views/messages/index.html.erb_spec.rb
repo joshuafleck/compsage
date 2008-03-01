@@ -6,14 +6,22 @@ describe "/messages/index" do
     render 'messages/index'
   end
 
-  it "should render the list of messages"
+  it "should show the list of messages"
+  it "should allow pagination..."
+  it "should have a means for sorting the messages..."
   it "should render the message subjects with a link to show the message"
   it "should have a link for deleting each message"
   it "should have a link for replying to each message"
-  it "should display attributes for each message including the created_at date and sender with a link to thier org page" 
+  it "should display the date/time the message was received"
+  it "should display the sender with a link to the sender's page"
   it "should denote unread messages"
-  it "should have a link for creating a new message if the organization is public"
-  it "should have a disabled link for creating a new message if the organization is private"
+  describe "when the organization is public" do
+	  it "should have a link for creating a new message"
+  end
+  describe "when the organization is private" do
+	  it "should have a disabled link for creating a new message"
+	  it "should have an explanation for why it cannot create a message"
+  end
   it "should have a link to the sent messages page"
 
 end
