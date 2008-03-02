@@ -64,6 +64,10 @@ describe Message, "that does not exist" do
   it "should be valid with no title" do
   pending
   end  
+  
+  it "should be invalid when title and body are both missing" do
+  	pending
+  end
 
   it "should be valid" do
 		@message.should be_valid

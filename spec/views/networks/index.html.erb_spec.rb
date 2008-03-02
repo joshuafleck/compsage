@@ -61,5 +61,29 @@ describe "/networks/index" do
  	it "should have a link for leaving each network" do
   	pending
   end
-   
+  
+  it "should show a search form" do
+  	pending
+  end
+  
+  it "should have a means for submitting search text" do
+  	pending
+  end
+  
+  it "should have a checkbox for allowing the organization to search by title" do
+  	pending
+  end
+  
+  it "should have a checkbox for allowing the organization to search by description" do
+  	pending
+  end
+  
+  it "should have a checkbox for excluding networks the organization is already a member of" do
+  	pending
+  end
+  
+  it "should have a submit button" do
+  	pending
+  end
+     
 end

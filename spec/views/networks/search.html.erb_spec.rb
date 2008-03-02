@@ -5,27 +5,7 @@ describe "/networks/search" do
   before(:each) do
     render 'networks/search'
   end
-  
-  it "should have a means for submitting search text" do
-  	pending
-  end
-  
-  it "should have a checkbox for allowing the organization to search by title" do
-  	pending
-  end
-  
-  it "should have a checkbox for allowing the organization to search by description" do
-  	pending
-  end
-  
-  it "should have a checkbox for excluding networks the organization is already a member of" do
-  	pending
-  end
-  
-  it "should have a submit button" do
-  	pending
-  end
-  
+
   it "should have a link to the network index page" do
   	pending
   end
