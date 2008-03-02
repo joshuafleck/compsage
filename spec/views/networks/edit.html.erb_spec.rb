@@ -38,7 +38,7 @@ describe "/networks/edit" do
   	pending
   end
   
-  it "should have a cancel button that links to the network show page" do
+  it "should have a cancel link that links to the network show page" do
   	pending
   end
   

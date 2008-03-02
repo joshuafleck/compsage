@@ -22,7 +22,7 @@ describe "/messages/new" do
   	pending
   end
   
-  it "should have a cancel button that links back to the index page" do
+  it "should have a cancel link that links back to the index page" do
   	pending
   end
   

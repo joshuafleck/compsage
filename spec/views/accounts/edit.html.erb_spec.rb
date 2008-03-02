@@ -50,7 +50,7 @@ describe "accounts/edit" do
   	pending
   end
   
-  it "should have a cancel button that links back to the show page" do
+  it "should have a cancel link that links back to the show page" do
   	pending
   end
   
