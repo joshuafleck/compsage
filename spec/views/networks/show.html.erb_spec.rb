@@ -6,16 +6,85 @@ describe "/networks/show" do
     render 'networks/show'
   end
   
-  it "should render the show form"
-  it "should display the title"
-  it "should display the description"
-  it "should display the public/private status"
-  it "should list the organizations belonging to the network with a link to each org page"
-  it "should display the owner with a link to their org page"
-  it "should have the ability to invite new members if the network is public and the org is a member of the network, or the current org is the owner of the network"
-	it "should have a link for editing/deleting the network if the org is the owner of the network"
-	it "should have a link for leaving the network if the org is a member of the network"
-	it "should have a link for joining the network if the org is not a member of the network and the network is public"	
-	it "should have a disabled link for joining the network if the org is in private mode and the network is public"
+  it "should display the title" do
+  	pending
+  end
+  
+  it "should display the description" do
+  	pending
+  end
+  
+  it "should display the public/private status" do
+  	pending
+  end
+  
+  it "should list the members of the network" do
+  	pending
+  end
+  
+  it "should display the owner with a link to their organization's page" do
+  	pending
+  end
+  
+  describe "when the organization is the owner of the network" do
+  
+  	describe "when the network is private" do
+  	
+  		it "should have a link for inviting organizations" do
+  			pending
+  		end
+  	
+  	end
+  	
+  	it "should have a button for deleting the network" do
+  		pending
+  	end
+  	
+  	it "should have a link for editing the network" do
+  		pending
+  	end
+  
+  end
+  
+  
+  describe "when the organization is a member of the network" do
+  
+	  describe "when the network is public" do
+	  
+			it "should have a link for inviting organizations to the network" do
+				pending
+			end
+		  
+	  end
+	  
+	  it "should have a button for leaving the network" do
+	  	pending
+	  end
+  
+  end
+  
+  describe "when the organization is not a member of the network" do
+  
+	  describe "when the network is public" do
+
+			describe "when the organization is in private mode" do
+			
+				it "should have a disabled link for joining the network" do
+					pending
+				end
+				
+				it "should have a link explaining why the organzization is unable to join networks" do
+					pending
+				end
+			
+			end
+			
+		  it "should have a button for joining the network" do
+		  	pending
+		  end
+	  
+	  end
+	  
+  end  
 
 end

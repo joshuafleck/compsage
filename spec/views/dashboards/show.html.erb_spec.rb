@@ -6,27 +6,27 @@ describe "/dashboards/show" do
     render 'dashboards/show'
   end
   
-  it "shows links to survey invitations" do
+  it "should show links to survey invitations" do
   	pending
   end
   
-  it "shows links to network invitations" do
+  it "should show links to network invitations" do
   	pending
   end
   
-  it "shows links to messages" do
+  it "should show links to messages" do
   	pending
   end
   
-  it "shows links to running surveys" do
+  it "should show links to running surveys" do
   	pending
   end
   
-  it "shows to completed surveys" do
+  it "should show links to completed surveys" do
   	pending
   end
   
-  it "has a link for creating a new survey" do
+  it "should have a link for creating a new survey" do
   	pending
   end
   

@@ -91,7 +91,11 @@ describe NetworksController, " handling GET /networks" do
     pending    
   end
   
-  it "should support sorting the networks..." do
+  it "should support sorting..." do
+  	pending
+  end
+    
+  it "should support pagination..." do
   	pending
   end
   
@@ -132,6 +136,14 @@ describe NetworksController, " handling GET /networks/1" do
   it "should find the network requested" do
 	  pending    
   end  
+  
+  describe "when the organization is a member of the network" do
+  
+	  it "should set the 'joined' flag" do
+		  pending    
+	  end  
+  
+  end
   
   it "should render the show template" do
     pending    
@@ -486,12 +498,24 @@ describe NetworksController, "handling GET /networks/search" do
 		end
 	
 	end	
-
+  
+  describe "when the organization is a member of a found network" do
+  
+	  it "should set the 'joined' flag" do
+		  pending    
+	  end  
+  
+  end
+  
 	it "should assign the found networks to the view" do
     pending    
   end
+  
+  it "should support sorting..." do
+  	pending
+  end
     
-  it "should support sorting the networks..." do
+  it "should support pagination..." do
   	pending
   end
   

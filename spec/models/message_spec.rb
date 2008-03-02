@@ -33,19 +33,19 @@ describe Message, "that does not exist" do
   	@message.attributes = valid_message_attributes
   end
   	
-  it "has many child messages" do
+  it "should have many child messages" do
   	Message.reflect_on_association(:messages).should_not be_nil
   end
     
-  it "has one parent message" do
+  it "should have one parent message" do
   	Message.reflect_on_association(:root).should_not be_nil
   end
   
-  it "has one sender" do
+  it "should have one sender" do
   	Message.reflect_on_association(:sender).should_not be_nil
   end
     
-  it "has one receiver" do
+  it "should have one receiver" do
   	Message.reflect_on_association(:receiver).should_not be_nil
   end  
     

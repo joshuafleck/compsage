@@ -6,15 +6,60 @@ describe "/networks/index" do
     render 'networks/index'
   end
   
-  it "should render the list of networks"
-  it "should display the title and number of members in all listed networks"
-  it "should have a link to show each network"
-  it "should have a link to edit any networks owned by the organization"
-  it "should have a link to delete any networks owned by the organization"
-  it "should have a link for creating a new network"
-  it "should have a disabled link for creating a new network if the org is in private mode"
-  it "should have a link for leaving all listed networks of which the org is a member"
-  it "should have a link for inviting users if the organization is the network owner and the network is private"
-  it "should have a link for inviting users if the network is public"
+  it "should show the list of networks" do
+  	pending
+  end
+  
+  it "should display the title of each network" do
+  	pending
+  end
+  
+  it "should display the number of members for each network" do
+  	pending
+  end
+  
+  it "should have a link to show each network" do
+  	pending
+  end
+  
+  describe "when a network is owned by the organization" do
+  
+  	it "should have a link to edit the network" do
+  		pending
+  	end
+  	
+  	it "should have a link to delete the network" do 
+  		pending
+  	end
+  
+  end
 
+  describe "when the organization is in private mode" do
+   
+	  it "should have a disabled link for creating a new network" do
+	  	pending
+	  end
+	  
+	  it "should have a link explaining why the organization cannot create a network" do
+	  	pending
+	  end
+  
+  end
+
+	describe "when displaying a public network" do
+	
+		it "should have a link for inviting organizations" do
+  		pending
+	  end
+	
+	end
+  
+  it "should have a link for creating a new network" do
+  	pending
+  end
+  
+ 	it "should have a link for leaving each network" do
+  	pending
+  end
+   
 end

@@ -6,11 +6,33 @@ describe "/networks/new" do
     render 'networks/new'
   end
   
-  it "should render the new form"
-  it "should have a means for editing the title"
-  it "should have a means for editing the description"
-  it "should have a means for editing the public/private status"
-  it "should have a submit button"
-  it "should have a cancel button that links back to the index page"
+  it "should show the new form" do
+  	pending
+  end
+  
+  it "should have a means for setting a title" do
+  	pending
+  end
+  
+  it "should have a means for setting a description" do
+  	pending
+  end
+  
+  it "should have a means for setting the public/private status" do
+  	pending
+  end
+  
+  it "should have a link for describing what public/private status means" do
+  	pending
+  end
+  
+  it "should have a submit button" do
+  	pending
+  end
+  
+  it "should have a cancel button that links back to the index page" do
+  	pending
+  end
+  
 
 end

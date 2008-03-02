@@ -71,8 +71,12 @@ describe MessagesController, " handling GET /messages" do
   it "should assign the found messages for the view" do
   	pending
   end
+  
+  it "should support sorting..." do
+  	pending
+  end
     
-  it "should support sorting the messages..." do
+  it "should support pagination..." do
   	pending
   end
   
@@ -273,11 +277,15 @@ describe MessagesController, " handling GET /messages/sent" do
   it "should assign the found messages for the view" do
   	pending
   end
-   
-  it "should support sorting the messages..." do
+  
+  it "should support sorting..." do
   	pending
   end
-   
+    
+  it "should support pagination..." do
+  	pending
+  end
+  
 end
 
 describe MessagesController, " handling GET /messages/sent.xml" do

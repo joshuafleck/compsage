@@ -18,15 +18,15 @@ describe Network, "that does not exist" do
     @network = Network.new
   end  
   
-  it "has many invitations" do
+  it "should have many invitations" do
   pending
   end
   
-  it "has many member organizations" do
+  it "should have many member organizations" do
   pending
   end
   
-  it "has an owner" do
+  it "should have an owner" do
   pending
   end
   
