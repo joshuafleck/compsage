@@ -5,6 +5,10 @@ describe SurveysController, "#route_for" do
   it "should map { :controller => 'surveys', :action => 'index' } to /surveys" do
     #route_for(:controller => "surveys", :action => "index").should == "/surveys"
   end
+  
+  it "should map { :controller => 'surveys', :action => 'search' } to /search" do
+    #route_for(:controller => "surveys", :action => "index").should == "/surveys"
+  end
 
   it "should map { :controller => 'surveys', :action => 'new' } to /surveys/new" do
     #route_for(:controller => "surveys", :action => "new").should == "/surveys/new"
@@ -81,3 +85,18 @@ describe SurveysController, " handling PUT /surveys/1" do
   it "should flash an error mesage upon failure"
   it "should error if requesting organization is not sponsor"  
 end
+
+describe SurveysController, "handling GET /surveys/search" do
+  it "should search the users surveys"
+  it "should find surveys by title"
+  it "should find surveys by description"
+  it "should assign found surveys to the view"
+end
+
+describe SurveysController, "handling GET /surveys/search.xml" do
+  it "should search the users surveys"
+  it "should find surveys by title"
+  it "should find surveys by description"
+  it "should render the found surveys in XML"
+end
+
