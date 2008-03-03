@@ -28,12 +28,8 @@ describe "/networks/show" do
   
   describe "when the organization is the owner of the network" do
   
-  	describe "when the network is private" do
-  	
-  		it "should have a link for inviting organizations" do
-  			pending
-  		end
-  	
+  	it "should have a link for inviting organizations when the network is private" do
+  		pending
   	end
   	
   	it "should have a button for deleting the network" do
@@ -45,46 +41,21 @@ describe "/networks/show" do
   	end
   
   end
-  
-  
+    
   describe "when the organization is a member of the network" do
   
-	  describe "when the network is public" do
-	  
-			it "should have a link for inviting organizations to the network" do
-				pending
-			end
-		  
-	  end
-	  
+		it "should have a link for inviting organizations to the network when the network is public" do
+			pending
+		end
+		 
 	  it "should have a button for leaving the network" do
 	  	pending
 	  end
   
   end
   
-  describe "when the organization is not a member of the network" do
-  
-	  describe "when the network is public" do
-
-			describe "when the organization is in private mode" do
-			
-				it "should have a disabled link for joining the network" do
-					pending
-				end
-				
-				it "should have a link explaining why the organzization is unable to join networks" do
-					pending
-				end
-			
-			end
-			
-		  it "should have a button for joining the network" do
-		  	pending
-		  end
-	  
-	  end
-	  
-  end  
+	it "should have a button for joining the network when the organization is not a member of the network when the network is public" do
+		pending
+	end
 
 end

@@ -10,7 +10,7 @@ module NetworkSpecHelper
   
 end
 
-describe Network, "that does not exist" do
+describe Network do
 
   include NetworkSpecHelper
 
@@ -19,39 +19,39 @@ describe Network, "that does not exist" do
   end  
   
   it "should have many invitations" do
-  pending
+  	pending
   end
   
   it "should have many member organizations" do
-  pending
+  	pending
   end
   
   it "should have an owner" do
-  pending
+  	pending
   end
   
   it "should be invalid without a title" do
-  pending
+  	pending
   end
   
   it "should be invalid with a title longer than 128 characters" do
-  pending
+  	pending
   end  
   
   it "should be invalid with a description longer than 1024 characters" do
-  pending
+  	pending
   end   
     
-  it "should be invalid without an owner specified" do
-  pending
+  it "should be invalid without an owner" do
+  	pending
   end
 
   it "should be valid with no description" do
-  pending
+  	pending
   end   
    
   it "should be valid" do
-  pending
+  	pending
   end  
 
 end  
@@ -71,7 +71,7 @@ describe Network, "that does exist" do
   end  
   
   it "should be public" do
-  pending
+  	pending
   end  
        
 end

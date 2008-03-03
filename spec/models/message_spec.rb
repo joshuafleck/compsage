@@ -24,7 +24,7 @@ module MessageSpecHelper
 
 end
 
-describe Message, "that does not exist" do
+describe Message do
 
   include MessageSpecHelper
 
@@ -50,19 +50,19 @@ describe Message, "that does not exist" do
   end  
     
   it "should be invalid without a sender" do
-  pending
+  	pending
   end
   
   it "should be invalid without a receiver" do
-  pending
+  	pending
   end
   
   it "should be invalid with a title longer than 128 characters" do
-  pending
+  	pending
   end
  
   it "should be valid with no title" do
-  pending
+  	pending
   end  
   
   it "should be invalid when title and body are both missing" do
@@ -74,19 +74,4 @@ describe Message, "that does not exist" do
   end  
  
 end  
-  
-describe Message, "that does exist" do
 
-  include MessageSpecHelper
-
-  before(:each) do
-    @message = Message.new
-  	@message.attributes = valid_message_attributes
-  	@message.save
-  end
-  
-  after(:each) do
-  	@message.destroy
-  end  
-
-end

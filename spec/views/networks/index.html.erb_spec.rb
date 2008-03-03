@@ -34,26 +34,10 @@ describe "/networks/index" do
   
   end
 
-  describe "when the organization is in private mode" do
-   
-	  it "should have a disabled link for creating a new network" do
-	  	pending
-	  end
-	  
-	  it "should have a link explaining why the organization cannot create a network" do
-	  	pending
-	  end
-  
-  end
-
-	describe "when displaying a public network" do
-	
-		it "should have a link for inviting organizations" do
-  		pending
-	  end
-	
+	it "should have a link for inviting organizations when displaying a public network" do
+  	pending
 	end
-  
+	
   it "should have a link for creating a new network" do
   	pending
   end

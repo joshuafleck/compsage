@@ -38,12 +38,8 @@ describe "/accounts/show" do
   	pending
   end
     
-  describe "when the organization is in private mode" do
-  
-	  it "should have a link for explaining private mode" do
-	  	pending
-	  end
-	  
+	it "should have a link for explaining private mode when the organization is in private mode" do
+	 	pending
 	end
-	 
+ 
 end

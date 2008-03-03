@@ -10,7 +10,7 @@ module InvitationSpecHelper
   
 end
 
-describe Invitation, "that does not exist", :shared => true do
+describe Invitation, :shared => true do
    
   include InvitationSpecHelper
 
@@ -20,19 +20,19 @@ describe Invitation, "that does not exist", :shared => true do
   end
   
   it "should belong to an invitee" do
-  pending
+  	pending
   end
   
   it "should belong to an inviter" do
-  pending
+  	pending
   end
   
-  it "is invalid without an invitee" do
-  pending
+  it "should be invalid without an invitee" do
+  	pending
   end
   
-  it "is invalid without an inviter" do
-  pending
+  it "should be invalid without an inviter" do
+  	pending
   end
  
 end
@@ -52,7 +52,7 @@ describe Invitation, "that does exist", :shared => true do
   end  
        
   it "should not be accepted" do
-  pending
+  	pending
   end  
   
 end  
@@ -67,7 +67,7 @@ module NetworkInvitationSpecHelper
   
 end
 
-describe NetworkInvitation, "that does not exist" do
+describe NetworkInvitation do
    
   include NetworkInvitationSpecHelper
 
@@ -76,23 +76,23 @@ describe NetworkInvitation, "that does not exist" do
     @network_invitation.attributes = valid_network_invitation_attributes
   end
 
-  it_should_behave_like "Invitation that does not exist"  
+  it_should_behave_like "Invitation"  
 
-  it "belongs to a network" do
-  pending
+  it "should belong to a network" do
+  	pending
   end
    
-  it "inherits from invitation" do
-  #network_invite.class.superclass.name.should == "Invite"
-  pending
+  it "should inherit from invitation" do
+  	#network_invite.class.superclass.name.should == "Invite"
+  	pending
   end    
      
   it "should be invalid if a network is not specified" do
-  pending
+  	pending
   end  
    
   it "should be valid" do
-  pending
+  	pending
   end  
  
 end
@@ -125,7 +125,7 @@ module SurveyInvitationSpecHelper
   
 end
 
-describe SurveyInvitation, "that does not exist" do
+describe SurveyInvitation do
    
   include SurveyInvitationSpecHelper
 
@@ -134,23 +134,23 @@ describe SurveyInvitation, "that does not exist" do
     @survey_invitation.attributes = valid_survey_invitation_attributes
   end
 
-  it_should_behave_like "Invitation that does not exist"  
+  it_should_behave_like "Invitation"  
 
-  it "inherits from invitation" do
-  #survey_invite.class.superclass.name.should == "Invite"
-  pending
+  it "should inherit from invitation" do
+  	#survey_invite.class.superclass.name.should == "Invite"
+  	pending
   end    
  
   it "should belong to a survey" do
-  pending 
+  	pending 
   end
   
   it "should be invalid if a survey is not specified" do
-  pending
+  	pending
   end
        
   it "should be valid" do
-  pending
+  	pending
   end  
  
 end

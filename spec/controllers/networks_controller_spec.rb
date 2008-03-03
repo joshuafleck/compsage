@@ -2,14 +2,10 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe NetworksController, "when an illegal action has been attempted", :shared => true do
 
-	describe "when the request is XML" do
-	 	
-	 		it "should return an error" do
-	 			pending	 		
-	 		end
-	 	
-	 	end
-	 	
+		it "should return an error when the request is XML" do
+			pending	 		
+		end
+	
 	 	describe "when the request is HTML" do
 	 	
 		 	it "should redirect to the network index page" do
@@ -123,28 +119,20 @@ describe NetworksController, " handling GET /networks/1" do
     pending    
   end
  
-  describe " for a private network" do
-    	
-    describe "where the organization is not a member of the network" do
+  describe "for a private network where the organization is not a member of the network" do
     
-			it_should_behave_like "NetworksController when an illegal action has been attempted"
+		it_should_behave_like "NetworksController when an illegal action has been attempted"
 		
-    end
-
-	end
+  end
 
   it "should find the network requested" do
 	  pending    
   end  
   
-  describe "when the organization is a member of the network" do
-  
-	  it "should set the 'joined' flag" do
-		  pending    
-	  end  
-  
-  end
-  
+	it "should set the 'joined' flag when the organization is a member of the network" do
+	  pending    
+	end  
+
   it "should render the show template" do
     pending    
   end
@@ -190,12 +178,10 @@ describe NetworksController, " handling GET /networks/new" do
   it "should be successful" do
     pending    
   end
-  
-  describe " when the organization is in private mode" do
-    
-			it_should_behave_like "NetworksController when an illegal action has been attempted"
-		
-  end
+
+	it "should redirect to a page describing private status when the organization is private" do
+		pending
+	end
 
   it "should render new template" do
     pending    
@@ -245,14 +231,10 @@ describe NetworksController, " handling POST /networks" do
     pending    
   end
   
-  describe "when the request is XML" do
-  
-  	it "should return a response regarding the success of the action" do
-  		pending
-  	end
-  
+  it "should return a response regarding the success of the action when the request is XML" do
+  	pending
   end
-  
+ 
   describe "when the request is HTML" do
   
 	  it "should redirect to the show invitation view" do
@@ -282,15 +264,11 @@ describe NetworksController, " handling PUT /networks/1" do
   it "should update the selected network" do
     pending    
   end
-  
-  describe "when the request is XML" do
-  
-  	it "should return a response regarding the success of the action" do
-  		pending
-  	end
-  
-  end  
-  
+ 
+ 	it "should return a response regarding the success of the action when the request is XML" do
+ 		pending
+ 	end
+ 
   describe "when the request is HTML" do
 	 
 	  it "should redirect to the network show page" do
@@ -321,14 +299,10 @@ describe NetworksController, " handling PUT /networks/1/leave" do
   #If the owner leaves the network, the network will no longer show up in that owner's index page
   describe "when the organization is the owner of the network" do
   
-  	describe "when the request is XML" do
-  	
-  		it "should return an error" do
-  			pending
-  		end
-  	
+  	it "should return an error when the request is XML" do
+  		pending
   	end
-  	
+  
   	it "should redirect to the network edit page" do
   		pending
   	end
@@ -342,14 +316,10 @@ describe NetworksController, " handling PUT /networks/1/leave" do
   it "should allow the organization to leave the network" do
     pending    
   end
-  
-  describe "when the request is XML" do
-  
-  	it "should return a response regarding the success of the action" do
-  		pending
-  	end
-  
-  end
+
+ 	it "should return a response regarding the success of the action when the request is XML" do
+ 		pending
+ 	end
 
 	describe "when the request is HTML" do
 
@@ -367,10 +337,16 @@ end
 
 describe NetworksController, " handling PUT /networks/1/join" do
 
-	describe "when the organization is in private mode" do
-    
-		it_should_behave_like "NetworksController when an illegal action has been attempted"
+	describe "when the organization is private" do
+	
+		it "should redirect to a page describing private status when the request is HTML" do
+			pending
+		end
 		
+		it "should return an error when the request is XML" do
+			pending
+		end	
+	
 	end
 
 	describe "when the organization is already a member of the network" do
@@ -379,36 +355,24 @@ describe NetworksController, " handling PUT /networks/1/join" do
 		
 	end
 	
-	describe "when the network is private" do
+	describe "when the network is private when the organization is not invited to the network" do
 	
-		describe "when the organization is not invited to the network" do
-    
 			it_should_behave_like "NetworksController when an illegal action has been attempted"
-		
-		end
-	
+
 	end
 
 	it "should add the organization to the network"	do
 		pending
 	end
-	 
-	describe "when an invitation exists" do
-	
-		it "should update the status of the invitation to accepted" do
-			pending
-		end
-	
+
+	it "should update the status of the invitation to accepted when an invitation exists" do
+		pending
 	end
-	
-  describe "when the request is XML" do
-  
-  	it "should return a response regarding the success of the action" do
-  		pending
-  	end
-  
-  end
-  
+
+ 	it "should return a response regarding the success of the action when the request is XML" do
+ 		pending
+ 	end
+
   describe "when the request it HTML"	do
 
 	  it "should redirect to the network show page" do
@@ -438,15 +402,11 @@ describe NetworksController, " handling DELETE /networks/1" do
   it "should destroy the network" do
     pending    
   end
-  
-  describe "when the request is XML" do
-  
-  	it "should return a response regarding the success of the action" do
-  		pending
-  	end
-  
-  end
-  
+ 
+ 	it "should return a response regarding the success of the action when the request is XML" do
+ 		pending
+ 	end
+
   describe "when the request is HTML" do
 	 
 	  it "should redirect to the network index" do
@@ -467,46 +427,26 @@ describe NetworksController, "handling GET /networks/search" do
 		pending
 	end
 	
-	describe "when the search excludes joined networks"do
-	
-		it "should search unjoined networks" do
-			pending
-		end
-	
+	it "should search unjoined networks when the search excludes joined networks" do
+		pending
 	end
 
-	describe "when the search is by title" do
-	
-		it "should search for networks with titles containing the search text" do
-			pending
-		end
-	
+	it "should search for networks with titles containing the search text when the search is by title" do
+		pending
+	end
+
+	it "should search for networks with descriptions containing the search text when the search is by description" do
+		pending
 	end
 	
-	describe "when the search is by description"do
-	
-		it "should search for networks with descriptions containing the search text" do
-			pending
-		end
-	
+	it "should search for networks with descriptions or titles containing the search text when the search is by description and title" do
+		pending
 	end
-	
-	describe "when the search is by description and title"do
-	
-		it "should search for networks with descriptions or titles containing the search text" do
-			pending
-		end
-	
-	end	
-  
-  describe "when the organization is a member of a found network" do
-  
-	  it "should set the 'joined' flag" do
-		  pending    
-	  end  
-  
-  end
-  
+
+  it "should set the 'joined' flag when the organization is a member of a found network" do
+	  pending    
+  end  
+ 
 	it "should assign the found networks to the view" do
     pending    
   end
@@ -525,47 +465,4 @@ describe NetworksController, "handling GET /networks/search" do
 
 end
 
-describe NetworksController, "handling GET /networks/search.xml" do
-
-	it "should search for public networks" do
-		pending
-	end
-	
-	describe "when the search excludes joined networks"do
-	
-		it "should search unjoined networks" do
-			pending
-		end
-	
-	end
-
-	describe "when the search is by title" do
-	
-		it "should search for networks with titles containing the search text" do
-			pending
-		end
-	
-	end
-	
-	describe "when the search is by description"do
-	
-		it "should search for networks with descriptions containing the search text" do
-			pending
-		end
-	
-	end
-	
-	describe "when the search is by description and title" do
-	
-		it "should search for networks with descriptions or titles containing the search text" do
-			pending
-		end
-	
-	end	
-
-	it "should render the found networks as XML" do
-    pending    
-  end
-   
-end
 

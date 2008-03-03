@@ -2,25 +2,21 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe MessagesController, "when an illegal action has been attempted", :shared => true do
 
-	describe "when the request is XML" do
+	it "should return an error when the request is XML" do
+		pending	 		
+	end
+
+	describe "when the request is HTML" do
 	 	
-	 		it "should return an error" do
-	 			pending	 		
-	 		end
-	 	
-	 	end
-	 	
-	 	describe "when the request is HTML" do
-	 	
-		 	it "should redirect to the message index page" do
-		 		pending
-		 	end
+		it "should redirect to the message index page" do
+			pending
+		end
 		 	
-		 	it "should flash an error message" do
-		 		pending
-		 	end
-	 	
+	 	it "should flash an error message" do
+	 		pending
 	 	end
+	 	
+	end
 
 end
 
@@ -175,12 +171,10 @@ describe MessagesController, " handling GET /messages/new" do
   it "should be successful" do
   	pending
   end
-    
-  describe "when the organization is private" do
-  
-		it_should_behave_like "MessagesController when an illegal action has been attempted"
-  
-  end
+
+	it "should redirect to a page describing private status when the organization is private" do
+		pending
+	end
 
   it "should render new template" do
   	pending
@@ -200,14 +194,10 @@ describe MessagesController, " handling POST /messages" do
   	pending
   end
 
-  describe "when the request is XML" do
-  
-  	it "should return a response regarding the success of the action" do
-  		pending
-  	end
-  
+  it "should return a response regarding the success of the action when the request is XML" do
+  	pending
   end
-  
+
   describe "when the request is HTML" do
   
 	  it "should redirect to the show message view" do
@@ -237,15 +227,11 @@ describe MessagesController, " handling DELETE /messages/1" do
   it "should destroy the message" do
   	pending
   end
-
-  describe "when the request is XML" do
-  
-  	it "should return a response regarding the success of the action" do
-  		pending
-  	end
-  
-  end
-  
+ 
+ 	it "should return a response regarding the success of the action when the request is XML" do
+ 		pending
+ 	end
+ 
   describe "when the request is HTML" do
   
 	  it "should redirect to the message index" do

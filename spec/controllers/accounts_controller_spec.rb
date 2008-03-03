@@ -46,16 +46,12 @@ describe AccountsController, " handling GET /account/new" do
   	pending
   end
   
-  describe "for the purposes of replying to a survey" do
-  
-  	it "should render the private new template"
-  
-  end
-  
-  describe "when creating a full account" do
-  
-  	it "should render the new template"
-  
+ 	it "should render the private new template for the purposes of replying to a survey" do
+ 		pending
+ 	end
+
+  it "should render the new template" do
+  	pending
   end
 
 end
@@ -63,15 +59,11 @@ end
 describe AccountsController, " handling POST /account" do
 
 	it "should create a new organization"
-	
-  describe "when the request is XML" do
-  
-  	it "should return a response regarding the success of the action" do
-  		pending
-  	end
-  
+
+ 	it "should return a response regarding the success of the action when the request is XML" do
+ 		pending
   end
-  
+
   describe "when the requst is HTML" do
   
   	it "should redirect to the account show page" do
@@ -131,15 +123,11 @@ describe AccountsController, " handling PUT /account" do
   it "should update the selected account" do
   	pending
   end
-	
-  describe "when the request is XML" do
-  
-  	it "should return a response regarding the success of the action" do
-  		pending
-  	end
-  
+
+  it "should return a response regarding the success of the action when the request is XML" do
+  	pending
   end
-  
+
 	describe "when the request is HTML" do
 		
 	  it "should redirect to account show page" do

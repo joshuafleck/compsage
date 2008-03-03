@@ -7,6 +7,7 @@ class CreateInvitations < ActiveRecord::Migration
       t.column :inviter_id,  :integer,  :null => false
       t.column :created_at,  :datetime, :null => false
       t.column :type,        :string,   :null => false
+      t.column :status,      :boolean,  :null => false, :default => false
     end
     
     add_index :invitations, [:invitee_id, :type], :name => "index_invitations_on_invitee_id_and_type"

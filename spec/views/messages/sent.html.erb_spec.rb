@@ -33,27 +33,11 @@ describe "/messages/sent" do
   it "should display the recipient with a link to the recipient's page" do
   	pending
   end
-  
-  describe "when the organization is public" do
-  
-	  it "should have a link for creating a new message" do
-  		pending
-  	end
-  
+
+	it "should have a link for creating a new message" do
+  	pending
   end
-  
-  describe "when the organization is private" do
-  
-	  it "should have a disabled link for creating a new message" do
-  		pending
- 	 end
-  
-	  it "should have an explanation for why it cannot create a message" do
-  		pending
- 	 end
-  
-  end
-  
+
   it "should have a link to the messages index page" do
   	pending
   end

@@ -29,13 +29,9 @@ describe "/messages/new" do
   it "should have a submit button" do
   	pending
   end
-  
-  describe "when showing a response" do
-  
-	  it "should prepopulate the recipient and subject" do
-	  	pending
-	  end
-  
+ 
+  it "should prepopulate the recipient and subject when showing a response" do
+  	pending
   end
 
 end
