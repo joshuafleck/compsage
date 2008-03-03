@@ -16,19 +16,6 @@ describe "general invitation controller, handling GET all, XML", :shared => true
   it "should render the found invitations in XML"
 end
 
-describe "general invitation controller, handling GET one", :shared => true do
-  it "should be successful"
-  it "should render the show template"
-  it "should assigned the found invitation to the view"
-  it "should error if requesting organization is not inviter or invitee"  
-end
-
-describe "general invitation controller, handling GET one, XML", :shared => true do
-  it "should be successful"
-  it "should error if requesting organization is not inviter or invitee"
-  it "should render the found invitations as XML"
-end
-
 describe "general invitation controller, handling GET new", :shared => true do
   it "should be successful"
   it "should render new template"
@@ -62,10 +49,6 @@ describe SurveyInvitationsController, " #route for" do
       #route_for(:controller => "invitations", :action => "new", :survey_id => 1).should == "/surveys/1/invitations/new"
     end
 
-    it "should map { :controller => 'invitations', :action => 'show', :id => 1, :survey_id => 1 } to /surveys/1/invitations/1" do
-      #route_for(:controller => "invitations", :action => "show", :id => 1, :survey_id => 1).should == "/surveys/1/invitations/1"
-    end
-
     it "should map { :controller => 'invitations', :action => 'update', :id => 1, :survey_id => 1} to /surveys/1/invitations/1" do
       #route_for(:controller => "invitations", :action => "update", :id => 1, :survey_id => 1).should == "/surveys/1/invitations/1"
     end
@@ -85,17 +68,8 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations.xml"
   it "should find all survey_invitations"
 end
 
-describe SurveyInvitationsController, " handling GET /surveys/1/invitations/1" do
-  it_should_behave_like "general invitation controller, handling GET one"
-  it "should find the survey_invitation requested"
-end
 
-describe SurveyInvitationsController, " handling GET /surveys/1/invitations/1.xml" do
-  it_should_behave_like "general invitation controller, handling GET one, XML"
-  it "should find the survey_invitation requested"
-end
-
-describe SurveyInvitationsController, " handling GET /networks/1/invitations/new" do
+describe SurveyInvitationsController, " handling GET /surveys/1/invitations/new" do
   it_should_behave_like "general invitation controller, handling GET new"
   it "should error if requesting organization is not survey sponsor"  
 end
@@ -121,16 +95,8 @@ end
   
 #specs specific to NetworkInvitationsController  
 describe NetworkInvitationsController, " #route for" do
-    it "should map { :controller => 'invitations', :action => 'index', :network_id => 1 } to /networks/1/invitations" do
-      #route_for(:controller => "invitations", :action => "index", :network_id => 1).should == "/networks/1/invitations"
-    end
-
     it "should map { :controller => 'invitations', :action => 'new', :network_id => 1 } to /networks/1/invitations/new" do
       #route_for(:controller => "invitations", :action => "new", :network_id => 1).should == "/networks/1/invitations/new"
-    end
-
-    it "should map { :controller => 'invitations', :action => 'show', :id => 1, :network_id => 1 } to /networks/1/invitations/1" do
-      #route_for(:controller => "invitations", :action => "show", :id => 1, :network_id => 1).should == "/networks/1/invitations/1"
     end
 
     it "should map { :controller => 'invitations', :action => 'update', :id => 1, :network_id => 1} to /networks/1/invitations/1" do
@@ -140,26 +106,6 @@ describe NetworkInvitationsController, " #route for" do
     it "should map { :controller => 'invitations', :action => 'destroy', :id => 1, :network_id => 1} to /networks/1/invitations/1" do
       #route_for(:controller => "invitations", :action => "destroy", :id => 1, :network_id => 1).should == "/networks/1/invitations/1"
     end
-end
-
-describe NetworkInvitationsController, " handling GET /networks/1/invitations" do
-  it_should_behave_like "general invitation controller, handling GET all"
-  it "should assign the found network_invitations for the view"
-end
-
-describe NetworkInvitationsController, " handling GET /networks/1/invitations.xml" do
-  it_should_behave_like "general invitation controller, handling GET all, XML"
-  it "should find all network_invitations"
-end
-
-describe NetworkInvitationsController, " handling GET /networks/1/invitations/1" do
-  it_should_behave_like "general invitation controller, handling GET one"
-  it "should find the network_invitation requested"
-end
-
-describe NetworkInvitationsController, " handling GET /networks/1/invitations/1.xml" do
-  it_should_behave_like "general invitation controller, handling GET one, XML"
-  it "should find the network_invitation requested"
 end
 
 describe NetworkInvitationsController, " handling GET /networks/1/invitations/new" do
