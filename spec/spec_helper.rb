@@ -93,7 +93,8 @@ end
     {
       :email => 'brian.terlson@gmail.com',
       :password => 'test',
-      :password_confirmation => 'test'
+      :password_confirmation => 'test',
+      :name => 'Denarius'
     }
   end
 

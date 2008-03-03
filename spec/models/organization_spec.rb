@@ -7,7 +7,6 @@ describe Organization do
   
   it 'should be valid' do
     @organization.attributes = valid_organization_attributes
-    @organization.save
     @organization.should be_valid
   end
   
@@ -33,6 +32,10 @@ describe Organization do
   
   it 'should have many networks' do
     Organization.reflect_on_association(:networks).should_not be_nil
+  end
+  
+  it 'should have many owned networks' do
+    Organization.reflect_on_association(:owned_networks).should_not be_nil
   end
   
   it 'should have many surveys' do
@@ -72,10 +75,13 @@ describe Organization do
     Organization.authenticate('brian.terlson@gmail.com', 'test').should == @organization
   end
   
-  it "should be invalid when location is longer than 64 chars"
-  it "should be invalid when contact name is longer than 128 chars"
-  it "should be invalid when city is longer than 50 chars"
-  it "should be invalid when state is longer than 30 chars"
+  it "should be invalid when location is longer than 64 characters"
+  it "should be invalid when contact name is longer than 128 characters"
+  it "should be invalid when city is longer than 50 characters"
+  it "should be invalid when state is longer than 30 characters"
+  it "should be invalid when the organization name is longer than 100 characters"
+  it "should be invalid with an invalid email address"
+  it "should be invalid with a password shorter than 5 characters"
 end
 
 describe Organization, "that already exists" do

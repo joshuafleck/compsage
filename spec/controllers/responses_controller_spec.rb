@@ -30,12 +30,13 @@ end
 
 describe ResponsesController, "handling POST /responses from xml" do
   it "should create a new response"
-  it "should render an error without a question specified"
+  it "should return an error when the survey is closed"
+  it "should return an error if the current organization is not invited to the survey"
   it "should overwrite previous any responses"
 end
 
 describe ResponsesController, "handling PUT /responses/1.xml from xml" do 
-  it "should create a new response"
+  it "should update response's attributes"
   it "should return an error when the response doesn't belong to the current organization"
   it "should return an error when the survey is closed"
 end

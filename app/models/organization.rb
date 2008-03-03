@@ -1,8 +1,8 @@
 require 'digest/sha1'
 class Organization < ActiveRecord::Base
 
-  has_and_belongs_to_many :joined_networks, :join_table => "networks_organizations", :association_foreign_key => "organization_id", :foreign_key => "network_id", :class_name => "Network"
-  has_many :networks, :foreign_key => "owner_id"
+  has_and_belongs_to_many :networks, :join_table => "networks_organizations", :association_foreign_key => "organization_id", :foreign_key => "network_id", :class_name => "Network"
+  has_many :owned_networks, :foreign_key => "owner_id"
   has_and_belongs_to_many :joined_surveys, :join_table => "organizations_surveys", :association_foreign_key => "organization_id", :foreign_key => "survey_id", :class_name => "Survey"
   has_many :surveys, :foreign_key => "sponsor_id", :dependent => :destroy
   has_many :discussions, :dependent => :destroy
@@ -25,11 +25,12 @@ class Organization < ActiveRecord::Base
   validates_confirmation_of :password,                   :if => :password_required?
   validates_length_of       :email,    :within => 3..100
   validates_uniqueness_of   :email, :case_sensitive => false
+  validates_length_of       :name,     :within => 3..100
   before_save :encrypt_password
   
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
-  attr_accessible :email, :password, :password_confirmation
+  attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state
 
   # Authenticates a user by their email address and unencrypted password.  Returns the user or nil.
   def self.authenticate(email, password)

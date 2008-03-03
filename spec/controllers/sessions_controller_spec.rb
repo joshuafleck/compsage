@@ -76,4 +76,9 @@ describe SessionsController do
   def cookie_for(organization)
     auth_token organization.remember_token
   end
+  
+end
+
+describe SessionsController, "handling POST /sessions (logging in)" do
+  it "should update the organizations last logged in at time"
 end

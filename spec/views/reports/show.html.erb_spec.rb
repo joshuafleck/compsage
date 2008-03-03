@@ -8,4 +8,5 @@ describe "/surveys/1/reports/show" do
   it "should show each question title"
   it "should show a flash graph for each question with options"
   it "should not show questions that are not numberable (like text instructions)"
+  it "should show the number of responses for each question"
 end

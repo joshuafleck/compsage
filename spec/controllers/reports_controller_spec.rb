@@ -15,11 +15,15 @@ describe ReportsController, "handling GET /survey/1/report" do
   it_should_behave_like "ReportsController with access limits"
   
   it "should be successful"
+  it "should find all the survey's questions"
+  it "should find all the survey's questions' responses"
 end
 
 describe ReportsController, "handling GET /responses/1.xml" do
   it_should_behave_like "ReportsController with access limits"
   
   it "should be successful"
+  it "should find all the survey's questions"
+  it "should find all the survey's questions' responses"
   it "should render the aggregate report as xml"
 end

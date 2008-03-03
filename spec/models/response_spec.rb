@@ -8,6 +8,10 @@ describe Response do
   
   it 'should be valid'
   
+  it 'should belong to an organization'
+  
+  it 'should belong to a question'
+  
   it 'should be invalid without a question'
   
   it 'should be invalid without an organization'

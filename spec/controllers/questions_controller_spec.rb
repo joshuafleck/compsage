@@ -27,23 +27,26 @@ describe QuestionsController, "handling GET /questions/1.xml" do
   it "should be successful"
   it "should render the question as xml"
   it "should find the question requested"
+  it "should return an error if the current organization is not invited to the survey"
   it "should return xml"
 end
 
 describe QuestionsController, "handling POST /questions from xml" do
   it "should create a new question"
-  it "should render an error without a survey specified"
+  it "should return an error without a survey specified"
+  it "should return an error if the current organization is not the owner of the survey"
   it "should return an error if the survey is closed"
-  it "should return an error if current organizatin is not invited to survey"
 end
 
 describe QuestionsController, "handling PUT /questions/1.xml from xml" do 
-  it "should create a new question"
+  it "should update the specified question's attributes"
+  it "should return an error if the survey is closed"
   it "should return an error when the question belongs to a survey that doesn't belong to the current organization"
 end
 
 describe QuestionsController, "handling DELETE /questions/1.xml from xml" do
   it "should find the requested question"
   it "should destroy the specified question"
+  it "should return an error if the survey is closed"
   it "should return an error when the question belongs to a survey that doesn't belong to the current organization"
 end
