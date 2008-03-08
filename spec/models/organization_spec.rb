@@ -41,15 +41,7 @@ describe Organization do
   it 'should have many surveys' do
     Organization.reflect_on_association(:surveys).should_not be_nil
   end
-  
-  it 'should have many sent messages' do
-    Organization.reflect_on_association(:sent_messages).should_not be_nil
-  end
-  
-  it 'should have many received messages' do
-    Organization.reflect_on_association(:received_messages).should_not be_nil
-  end
-  
+
   it 'should have many responses' do
     Organization.reflect_on_association(:responses).should_not be_nil
   end

@@ -20,5 +20,4 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :invitations
   map.resource :account
   map.resource :dashboard
-  map.resources :messages
 end

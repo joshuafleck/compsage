@@ -26,8 +26,8 @@ class NetworkTest < ActiveSupport::TestCase
     @network_one.save
     assert @network_one.organizations.count == 2, "Two organizations"
     assert @network_one.owner == organizations(:one), "Parent organization"
-    assert @organization_one.networks[0] == @network_one, "Parent organization reverse"
-    assert @organization_one.joined_networks[0] == @network_one, "One network membership"
+    assert @organization_one.owned_networks[0] == @network_one, "Parent organization reverse"
+    assert @organization_one.networks[0] == @network_one, "One network membership"
   end
   
 end

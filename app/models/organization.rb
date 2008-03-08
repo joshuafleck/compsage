@@ -6,8 +6,6 @@ class Organization < ActiveRecord::Base
   has_and_belongs_to_many :joined_surveys, :join_table => "organizations_surveys", :association_foreign_key => "organization_id", :foreign_key => "survey_id", :class_name => "Survey"
   has_many :surveys, :foreign_key => "sponsor_id", :dependent => :destroy
   has_many :discussions, :dependent => :destroy
-  has_many :sent_messages, :class_name => "Message", :foreign_key => "sender_id", :dependent => :destroy
-  has_many :received_messages, :class_name => "Message", :foreign_key => "receiver_id",  :dependent => :destroy
   has_many :sent_network_invitations, :class_name => "NetworkInvitation", :foreign_key => "inviter_id", :dependent => :destroy
   has_many :sent_survey_invitations, :class_name => "SurveyInvitation", :foreign_key => "inviter_id", :dependent => :destroy
   has_many :network_invitations, :class_name => "NetworkInvitation", :foreign_key => "invitee_id", :dependent => :destroy
