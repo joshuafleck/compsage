@@ -4,6 +4,7 @@ describe DashboardsController, "#route_for" do
 
   it "should map { :controller => 'dashboards', :action => 'show' } to /dashboard" do
     #route_for(:controller => "dashboards", :action => "show").should == "/dashboard"
+    pending
   end
 
 end
@@ -20,11 +21,7 @@ describe DashboardsController, " handling GET /dashboard" do
   it "should render the show template" do
   	pending
   end
-  
-  it "should find X most recent received messages" do
-  	pending
-  end
-  
+
   it "should find X most recent survey invitations received" do
   	pending
   end

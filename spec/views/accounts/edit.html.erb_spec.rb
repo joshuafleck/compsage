@@ -34,6 +34,14 @@ describe "accounts/edit" do
   	pending
   end
   
+  it "should have a means for allowing the org to change its zip code" do
+  	pending
+  end
+  
+  it "should have a means for allowing the org to change its industry" do
+  	pending
+  end    
+  
   it "should have a means for allowing the org to change its state" do
   	pending
   end

@@ -34,9 +34,17 @@ describe "/accounts/new" do
   	pending
   end
   
-  it "should have a means for allowing the org to input its state" do
+  it "should have a means for allowing the org to input its zip code" do
+  	pending
+  end  
+  
+  it "should have a means for allowing the org to select its state" do
   	pending
   end
+  
+  it "should have a means for allowing the org to select its industry" do
+  	pending
+  end  
   
   it "should have a means for allowing the org to input its contact name" do
   	pending

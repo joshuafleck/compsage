@@ -13,11 +13,7 @@ describe "/dashboards/show" do
   it "should show links to network invitations" do
   	pending
   end
-  
-  it "should show links to messages" do
-  	pending
-  end
-  
+
   it "should show links to running surveys" do
   	pending
   end

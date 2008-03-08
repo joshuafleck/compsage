@@ -22,6 +22,14 @@ describe "/accounts/show" do
   	pending
   end
   
+  it "should display the industry" do
+  	pending
+  end
+  
+  it "should display the zip code" do
+  	pending
+  end    
+  
   it "should display the state" do
   	pending
   end

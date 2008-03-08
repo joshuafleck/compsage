@@ -4,18 +4,22 @@ describe AccountsController, "#route_for" do
 
   it "should map { :controller => 'accounts', :action => 'show' } to /account" do
     #route_for(:controller => "accounts", :action => "show").should == "/account"
+    pending
   end
   
   it "should map { :controller => 'accounts', :action => 'new' } to /account/new" do
     #route_for(:controller => "accounts", :action => "new").should == "/account/new"
+    pending
   end  
 
   it "should map { :controller => 'accounts', :action => 'edit'} to /account/edit" do
     #route_for(:controller => "accounts", :action => "edit").should == "/account/edit"
+    pending
   end
 
   it "should map { :controller => 'accounts', :action => 'update'} to /account" do
     #route_for(:controller => "accounts", :action => "update").should == "/account"
+    pending
   end
 
 end
