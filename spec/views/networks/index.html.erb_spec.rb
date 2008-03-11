@@ -31,13 +31,13 @@ describe "/networks/index" do
   	it "should have a link to delete the network" do 
   		pending
   	end
-  
+  	
+  	it "should have a link for inviting organizations to the network" do
+  		pending
+  	end
+  	
   end
 
-	it "should have a link for inviting organizations when displaying a public network" do
-  	pending
-	end
-	
   it "should have a link for creating a new network" do
   	pending
   end
@@ -45,29 +45,5 @@ describe "/networks/index" do
  	it "should have a link for leaving each network" do
   	pending
   end
-  
-  it "should show a search form" do
-  	pending
-  end
-  
-  it "should have a means for submitting search text" do
-  	pending
-  end
-  
-  it "should have a checkbox for allowing the organization to search by title" do
-  	pending
-  end
-  
-  it "should have a checkbox for allowing the organization to search by description" do
-  	pending
-  end
-  
-  it "should have a checkbox for excluding networks the organization is already a member of" do
-  	pending
-  end
-  
-  it "should have a submit button" do
-  	pending
-  end
-     
+   
 end

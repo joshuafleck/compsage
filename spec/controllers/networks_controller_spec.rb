@@ -61,12 +61,7 @@ describe NetworksController, "#route_for" do
     #route_for(:controller => "networks", :action => "join", :id => 1).should == "/networks/1/join"
     pending    
   end
-  
-  it "should map { :controller => 'networks', :action => 'search' } to /networks/search" do
-    #route_for(:controller => "networks", :action => "search").should == "/networks/search"
-    pending    
-  end
-  
+
 end
 
 describe NetworksController, " handling GET /networks" do
@@ -119,7 +114,7 @@ describe NetworksController, " handling GET /networks/1" do
     pending    
   end
  
-  describe "for a private network where the organization is not a member of the network" do
+  describe "when the organization is not a member of the network" do
     
 		it_should_behave_like "NetworksController when an illegal action has been attempted"
 		
@@ -149,14 +144,10 @@ describe NetworksController, " handling GET /networks/1.xml" do
     pending    
   end
 
-  describe " for a private network" do
-  
-  	describe "when the organization is not a member of the network" do
+ 	describe "when the organization is not a member of the network" do
     
-			it_should_behave_like "NetworksController when an illegal action has been attempted"
-		
-  	end
-  	
+		it_should_behave_like "NetworksController when an illegal action has been attempted"
+
   end
    
   it "should find the network requested" do
@@ -355,7 +346,7 @@ describe NetworksController, " handling PUT /networks/1/join" do
 		
 	end
 	
-	describe "when the network is private when the organization is not invited to the network" do
+	describe "when the organization is not invited to the network" do
 	
 			it_should_behave_like "NetworksController when an illegal action has been attempted"
 
@@ -419,50 +410,6 @@ describe NetworksController, " handling DELETE /networks/1" do
 	  
   end
   
-end
-
-describe NetworksController, "handling GET /networks/search" do
-
-	it "should search for public networks" do
-		pending
-	end
-	
-	it "should search unjoined networks when the search excludes joined networks" do
-		pending
-	end
-
-	it "should search for networks with titles containing the search text when the search is by title" do
-		pending
-	end
-
-	it "should search for networks with descriptions containing the search text when the search is by description" do
-		pending
-	end
-	
-	it "should search for networks with descriptions or titles containing the search text when the search is by description and title" do
-		pending
-	end
-
-  it "should set the 'joined' flag when the organization is a member of a found network" do
-	  pending    
-  end  
- 
-	it "should assign the found networks to the view" do
-    pending    
-  end
-  
-  it "should support sorting..." do
-  	pending
-  end
-    
-  it "should support pagination..." do
-  	pending
-  end
-  
-	it "should assign the search terms to the view" do
-    pending    
-  end
-
 end
 
 

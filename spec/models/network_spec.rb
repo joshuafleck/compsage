@@ -69,10 +69,6 @@ describe Network, "that does exist" do
   after(:each) do
     @network.destroy
   end  
-  
-  it "should be public" do
-  	pending
-  end  
-       
+     
 end
  

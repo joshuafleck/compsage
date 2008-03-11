@@ -14,10 +14,6 @@ describe "/networks/show" do
   	pending
   end
   
-  it "should display the public/private status" do
-  	pending
-  end
-  
   it "should list the members of the network" do
   	pending
   end
@@ -28,7 +24,7 @@ describe "/networks/show" do
   
   describe "when the organization is the owner of the network" do
   
-  	it "should have a link for inviting organizations when the network is private" do
+  	it "should have a link for inviting organizations" do
   		pending
   	end
   	
@@ -41,21 +37,9 @@ describe "/networks/show" do
   	end
   
   end
-    
-  describe "when the organization is a member of the network" do
-  
-		it "should have a link for inviting organizations to the network when the network is public" do
-			pending
-		end
-		 
-	  it "should have a button for leaving the network" do
-	  	pending
-	  end
-  
+
+  it "should have a button for leaving the network when the organization is a member of the network" do
+  	pending
   end
-  
-	it "should have a button for joining the network when the organization is not a member of the network when the network is public" do
-		pending
-	end
 
 end

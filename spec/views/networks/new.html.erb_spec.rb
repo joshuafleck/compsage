@@ -18,14 +18,6 @@ describe "/networks/new" do
   	pending
   end
   
-  it "should have a means for setting the public/private status" do
-  	pending
-  end
-  
-  it "should have a link for describing what public/private status means" do
-  	pending
-  end
-  
   it "should have a submit button" do
   	pending
   end
