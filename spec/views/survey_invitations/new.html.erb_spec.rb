@@ -10,6 +10,7 @@ describe "/survey_invitations/new" do
   it "should render the survey title"
   it "should have a means to add an organization"
   it "should have a means to remove an organization"
+  it "should have a means for adding external organizations"
   it "should have a submit button"
   it "should have a cancel button"
 
