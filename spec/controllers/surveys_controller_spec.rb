@@ -45,7 +45,6 @@ describe SurveysController, " handling GET /surveys/1" do
   it "should find the survey requested"
   it "should render the show template"
   it "should assign the found survey to the view"
-  it "should error if requesting organization is not invited or sponsor"
   it "should redirect to the report for the selected survey if the survey is closed"
 end
 
@@ -53,7 +52,6 @@ describe SurveysController, " handling GET /surveys/1.xml" do
   it "should be successful"
   it "should find the survey requested"
   it "should render the found survey as XML"
-  it "should error if requesting organization is not invited or sponsor"
 end
 
 describe SurveysController, " handling GET /surveys/new" do
@@ -67,7 +65,7 @@ describe SurveysController, " handling GET /surveys/1/edit" do
   it "should render the edit template"
   it "should find the survey requested"
   it "should assign the found survey to the view"
-  it "should error if requesting organization is not sponsor"
+  it "should error if requesting organization is not the sponsor"
 end
 
 describe SurveysController, " handling POST /surveys" do
@@ -83,7 +81,7 @@ describe SurveysController, " handling PUT /surveys/1" do
   it "should assign the found survey to the view"
   it "should redirect to the show view page for this survey upon success"
   it "should flash an error mesage upon failure"
-  it "should error if requesting organization is not sponsor"  
+  it "should error if requesting organization is not the sponsor"  
 end
 
 describe SurveysController, "handling GET /surveys/search" do

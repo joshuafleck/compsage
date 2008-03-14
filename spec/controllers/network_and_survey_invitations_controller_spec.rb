@@ -71,12 +71,13 @@ end
 
 describe SurveyInvitationsController, " handling GET /surveys/1/invitations/new" do
   it_should_behave_like "general invitation controller, handling GET new"
-  it "should error if requesting organization is not survey sponsor"  
+  it "should error if requesting organization is not survey sponsor"
+  it "should send an email notification to the invitee"
 end
 
 describe SurveyInvitationsController, " handling POST /surveys/1/invitations" do
   it_should_behave_like "general invitation controller, handling POST"
-  it "should create a new invitation by sponsor_id"
+  it "should create a new invitation"
   it "should error if requesting organization is not sponsor of the survey"
 end
 
@@ -110,12 +111,13 @@ end
 
 describe NetworkInvitationsController, " handling GET /networks/1/invitations/new" do
   it_should_behave_like "general invitation controller, handling GET new"
-  it "should error if requesting organization is not owner of the network"  
+  it "should error if requesting organization is not owner of the network"
+  it "should send an email notification to the invitee"
 end
 
 describe NetworkInvitationsController, " handling POST /networks/1/invitations" do
   it_should_behave_like "general invitation controller, handling POST"
-  it "should create a new invitation by owner_id"
+  it "should create a new invitation"
   it "should error if requesting organization is not owner of the network"
 end
 
