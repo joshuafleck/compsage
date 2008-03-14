@@ -9,6 +9,7 @@ class CreateDiscussions < ActiveRecord::Migration
       t.column :created_at,      :datetime, :null => false
       t.column :title,           :string,  :limit => 128
       t.column :body,            :text, :limit => 1024
+      t.column :times_reported   :int,  :default => 0
     end
     
     add_index :discussions, [:survey_id,:parent_id], :name => "index_discussions_on_survey_id_parent_id"

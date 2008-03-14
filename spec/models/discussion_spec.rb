@@ -7,4 +7,5 @@ describe Discussion do
   it "should be invalid without a survey"
   it "should not allow a title greater then 128 characters"
   it "should not all the body to be greater then 1024 characters"
+  it "should have a default value of zero for times reported"
 end
