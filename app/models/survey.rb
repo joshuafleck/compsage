@@ -3,6 +3,7 @@ class Survey < ActiveRecord::Base
   has_and_belongs_to_many :organizations, :join_table => "organizations_surveys"
   has_many :discussions, :dependent => :destroy
   has_many :survey_invitations, :dependent => :destroy
+  has_many :external_survey_invitations, :dependent => :destroy
   has_many :questions
   has_many :responses, :through => :questions
   

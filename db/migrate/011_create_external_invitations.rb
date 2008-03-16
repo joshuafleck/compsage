@@ -8,7 +8,7 @@ class CreateExternalInvitations < ActiveRecord::Migration
       t.column :type,        :string,   :null => false
       t.column :status,      :boolean,  :null => false, :default => false
       t.column :name,        :string,   :null => false, :limit => 100
-      t.column :email,       :string,   :null => false
+      t.column :email,       :string,   :null => false, :limit => 100
       t.column :key,         :string,   :null => false, :limit => 40
     end
     
