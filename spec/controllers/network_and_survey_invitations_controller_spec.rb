@@ -6,12 +6,14 @@ describe "general invitation controller, handling GET all", :shared => true do
   it "should be successful"
   it "should render index template"
   it "should find all invitations"
+  it "should find all external_invitations"
   it "should only be able to get if organization has been invited"
 end
 
 describe "general invitation controller, handling GET all, XML", :shared => true do
   it "should be successful"
   it "should find all invitations"
+  it "should find all external_invitations"
   it "should only be able to get if organization has been invited"
   it "should render the found invitations in XML"
 end
@@ -23,6 +25,7 @@ end
 
 describe "general invitation controller, handling POST", :shared => true do
   it "should redirect to the new invitation"
+  it "should notify the invitee of the new invitation via email"
 end
 
 describe "general invitation controller, handling PUT", :shared => true do
@@ -33,7 +36,7 @@ end
 
 describe "general invitation controller, handling DELETE", :shared => true do
   it "should find the invitation requested"
-  it "should destory the invitation requested"
+  it "should destroy the invitation requested"
   it "should redirect to the dashboard"
 end
 
@@ -72,12 +75,12 @@ end
 describe SurveyInvitationsController, " handling GET /surveys/1/invitations/new" do
   it_should_behave_like "general invitation controller, handling GET new"
   it "should error if requesting organization is not survey sponsor"
-  it "should send an email notification to the invitee"
 end
 
 describe SurveyInvitationsController, " handling POST /surveys/1/invitations" do
   it_should_behave_like "general invitation controller, handling POST"
-  it "should create a new invitation"
+  it "should create a new survey_invitation if the invitee exists"
+  it "should create a new external_survey_invitation if the invitee does not exist"
   it "should error if requesting organization is not sponsor of the survey"
 end
 
@@ -117,7 +120,8 @@ end
 
 describe NetworkInvitationsController, " handling POST /networks/1/invitations" do
   it_should_behave_like "general invitation controller, handling POST"
-  it "should create a new invitation"
+  it "should create a new network_invitation if the invitee exists"
+  it "should create a new external_network_invitation if the invitee does not exist"
   it "should error if requesting organization is not owner of the network"
 end
 

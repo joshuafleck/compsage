@@ -45,7 +45,7 @@ end
 describe InvitationsController, " handling PUT /invitations/1 (Network)" do
   it "should give an error is the organization requesting does not match the organization invited"
   it "should find the invitation requested"
-  it "should destory the selected invitation"
+  it "should destroy the selected invitation"
   it "should assign the organization to the network"
   it "should redirect to the show network view for associated network"
 end
@@ -53,7 +53,7 @@ end
 describe InvitationsController, " handling PUT /invitations/1 (Survey)" do
   it "should give an error is the organization requesting does not match the organization invited"
   it "should find the invitation requested"
-  it "should destory the selected invitation"
+  it "should destroy the selected invitation"
   it "should assign the organization to the survey"
   it "should redirect to the show survey view for associated survey"
 end

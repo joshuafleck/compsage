@@ -20,4 +20,5 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :invitations
   map.resource :account
   map.resource :dashboard
+  map.resource :pending_account
 end

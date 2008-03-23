@@ -1,0 +1,3 @@
+class PendingAccountsController < ApplicationController
+
+end
