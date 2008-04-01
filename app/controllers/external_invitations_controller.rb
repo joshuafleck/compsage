@@ -1,0 +1,3 @@
+class ExternalInvitationsController < ApplicationController
+
+end

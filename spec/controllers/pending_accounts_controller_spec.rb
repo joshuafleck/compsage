@@ -27,10 +27,6 @@ describe PendingAccountsController, " handling POST /pending_account" do
 		pending
 	end
 
- 	it "should return a response regarding the success of the action when the request is XML" do
- 		pending
-  end
-
   describe "when the requst is HTML" do
   
   	it "should redirect to the index page" do

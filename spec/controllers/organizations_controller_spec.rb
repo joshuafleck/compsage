@@ -29,14 +29,14 @@ describe OrganizationsController, "handling GET /organizations/1" do
   it "should render show template"
   it "should find the organization requested"
   it "should assign the organization requested for the view"
-  it "should return an error if the organization requested is private"
+  #it "should return an error if the organization requested is private"
 end
 
 describe OrganizationsController, "handling GET /organizations/1.xml" do
   it "should be successful"
   it "should render the organization as xml"
   it "should find the organization requested"
-  it "should return an error if the organization requested is private"
+  #it "should return an error if the organization requested is private"
 end
 
 describe OrganizationsController, "handling GET /organizations" do
@@ -47,6 +47,6 @@ describe OrganizationsController, "handling GET /organizations/search" do
   it "should be successful"
   it "should render the search template"
   it "should find the organizations that match the search terms"
-  it "shouldn't find private organizations"
+  #it "shouldn't find private organizations" -I don't believe we have private organizations anymore-JF
   it "should assign the found organizations for the view"
 end

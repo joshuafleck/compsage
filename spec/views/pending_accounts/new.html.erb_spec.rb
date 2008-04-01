@@ -20,15 +20,9 @@ describe "/pending_accounts/new" do
   it "should have a means for setting an email address" do
   	pending
   end
-  it "should have a means for setting an phone number area code" do
+  it "should have a means for setting an phone number" do
   	pending
-  end
-  it "should have a means for setting an phone number prefix" do
-  	pending
-  end
-  it "should have a means for setting an phone number postfix" do
-  	pending
-  end
+  end 
   it "should have a means for setting an phone number extension" do
   	pending
   end

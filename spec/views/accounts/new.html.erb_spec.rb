@@ -10,47 +10,43 @@ describe "/accounts/new" do
   	pending
   end
   
-  it "should have a means for allowing the org to input its email address" do
+  it "should have a means for allowing the organization to input its email address" do
   	pending
   end
   
-  it "should have a means for allowing the org to input its password"	 do
+  it "should have a means for allowing the organization to input its password"	 do
   	pending
   end
   
-  it "should have a means for allowing the org to input its password confirmation"	 do
+  it "should have a means for allowing the organization to input its password confirmation"	 do
   	pending
   end
   
-  it "should have a means for allowing the org to input public/private status"   do
+  it "should have a means for allowing the organization to input its location" do
   	pending
   end
   
-  it "should have a means for allowing the org to input its location" do
+  it "should have a means for allowing the organization to input its city" do
   	pending
   end
   
-  it "should have a means for allowing the org to input its city" do
-  	pending
-  end
-  
-  it "should have a means for allowing the org to input its zip code" do
+  it "should have a means for allowing the organization to input its zip code" do
   	pending
   end  
   
-  it "should have a means for allowing the org to select its state" do
+  it "should have a means for allowing the organization to select its state" do
   	pending
   end
   
-  it "should have a means for allowing the org to select its industry" do
+  it "should have a means for allowing the organization to select its industry" do
   	pending
   end  
   
-  it "should have a means for allowing the org to input its contact name" do
+  it "should have a means for allowing the organization to input its contact name" do
   	pending
   end
   
-  it "should have a means for allowing the org to input its image" do
+  it "should have a means for allowing the organization to input its image" do
   	pending
   end
   
@@ -62,8 +58,5 @@ describe "/accounts/new" do
   	pending
   end
   
-  it "should have a link for explaining private mode" do
-  	pending
-  end
-  
+ 
 end

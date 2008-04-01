@@ -33,6 +33,7 @@ describe ResponsesController, "handling POST /responses from xml" do
   it "should return an error when the survey is closed"
   it "should return an error if the current organization is not invited to the survey"
   it "should overwrite previous any responses"
+  it "should update the survey invitation to 'accepted' when all questions have been responded to"
 end
 
 describe ResponsesController, "handling PUT /responses/1.xml from xml" do 

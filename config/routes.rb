@@ -21,4 +21,5 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :account
   map.resource :dashboard
   map.resource :pending_account
+  map.resource :external_invitations
 end

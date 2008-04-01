@@ -50,10 +50,6 @@ describe AccountsController, " handling GET /account/new" do
   	pending
   end
   
- 	it "should render the private new template for the purposes of replying to a survey" do
- 		pending
- 	end
-
   it "should render the new template" do
   	pending
   end

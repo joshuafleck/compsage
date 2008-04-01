@@ -170,10 +170,6 @@ describe NetworksController, " handling GET /networks/new" do
     pending    
   end
 
-	it "should redirect to a page describing private status when the organization is private" do
-		pending
-	end
-
   it "should render new template" do
     pending    
   end
@@ -207,12 +203,6 @@ describe NetworksController, " handling GET /networks/1/edit" do
 end
 
 describe NetworksController, " handling POST /networks" do
-
- 	describe "when the organization is in private mode" do
-
-		it_should_behave_like "NetworksController when an illegal action has been attempted"
-		 		
- 	end
 
   it "should create a new network" do
     pending    
@@ -328,18 +318,6 @@ end
 
 describe NetworksController, " handling PUT /networks/1/join" do
 
-	describe "when the organization is private" do
-	
-		it "should redirect to a page describing private status when the request is HTML" do
-			pending
-		end
-		
-		it "should return an error when the request is XML" do
-			pending
-		end	
-	
-	end
-
 	describe "when the organization is already a member of the network" do
     
 		it_should_behave_like "NetworksController when an illegal action has been attempted"
@@ -356,7 +334,7 @@ describe NetworksController, " handling PUT /networks/1/join" do
 		pending
 	end
 
-	it "should update the status of the invitation to accepted when an invitation exists" do
+	it "should destroy the invitation when an invitation exists" do
 		pending
 	end
 
