@@ -34,15 +34,7 @@ describe PendingAccount do
   	pending
   end
    
-  it "should be invalid without a phone number area code" do
-  	pending
-  end
-   
-  it "should be invalid without a phone number prefix" do
-  	pending
-  end
-    
-  it "should be invalid without a phone number postfix" do
+  it "should be invalid without a phone number" do
   	pending
   end
   
@@ -82,25 +74,21 @@ describe PendingAccount do
   	pending
   end
  
-  it "should be invalid when the phone number area code is not 3 numbers" do
-  	pending
-  end
-   
-  it "should be invalid when the phone number prefix is not 3 numbers" do
+  it "should be invalid when the phone number is greater than 10 numbers" do
   	pending
   end
     
-  it "should be invalid when the phone number postfix is not 4 numbers" do
-  	pending
-  end
-     
   it "should be invalid when the phone number extension is greater than 4 numbers" do
   	pending
   end
   
   it "should be valid" do
   	pending
-  end  
+  end 
+  
+  it "should strip out punctuation from the phone number before saving" do
+  	pending
+  end
 
 end  
 

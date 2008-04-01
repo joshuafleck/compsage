@@ -30,6 +30,14 @@ describe Organization do
     Organization.reflect_on_association(:sent_survey_invitations).should_not be_nil
   end
   
+  it 'should have many sent external network invitations' do
+    pending
+  end
+  
+  it 'should have many sent external survey invitations' do
+    pending
+  end
+    
   it 'should have many networks' do
     Organization.reflect_on_association(:networks).should_not be_nil
   end

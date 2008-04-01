@@ -22,6 +22,10 @@ describe Network do
   	pending
   end
   
+  it "should have many external invitations" do
+  	pending
+  end
+  
   it "should have many member organizations" do
   	pending
   end
