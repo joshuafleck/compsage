@@ -13,7 +13,7 @@ class CreateDiscussions < ActiveRecord::Migration
       t.column :times_reported,  :int,  :default => 0
     end
     
-    add_index :discussions, [:survey_id,:parent_id], :name => "index_discussions_on_survey_id_parent_id"
+    add_index :discussions, [:survey_id,:parent_id]
   end
 
   def self.down

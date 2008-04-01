@@ -1,5 +1,5 @@
 require 'digest/sha1'
-class ExternalInvitation < ActiveRecord::Base
+class ExternalInvitation < Invitation
 
   belongs_to :inviter, :class_name => "Organization", :foreign_key => "inviter_id"
   

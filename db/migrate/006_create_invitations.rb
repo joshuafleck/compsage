@@ -8,10 +8,16 @@ class CreateInvitations < ActiveRecord::Migration
       t.column :created_at,  :datetime, :null => false
       t.column :type,        :string,   :null => false
       t.column :status,      :boolean,  :null => false, :default => false
+      t.column :name,        :string,   :limit => 100
+      t.column :email,       :string,   :limit => 100
+      t.column :key,         :string,   :limit => 40
     end
     
-    add_index :invitations, [:invitee_id, :type], :name => "index_invitations_on_invitee_id_and_type"
-    add_index :invitations, [:inviter_id, :type], :name => "index_invitations_on_inviter_id_and_type"
+    add_index :invitations, [:invitee_id, :type]
+    add_index :invitations, [:inviter_id, :type]
+    add_index :invitations, :survey_id
+    add_index :invitations, :network_id
+    add_index :invitations, :key
   end
 
   def self.down

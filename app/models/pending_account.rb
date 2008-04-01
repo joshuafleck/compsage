@@ -11,12 +11,8 @@ class PendingAccount < ActiveRecord::Base
   validates_presence_of :contact_last_name
   validates_length_of   :contact_last_name,  :within => 3..100
   validates_presence_of :phone_area
-  validates_length_of   :phone_area,  :is =>3
-  validates_presence_of :phone_pre
-  validates_length_of   :phone_pre,  :is =>3
-  validates_presence_of :phone_post
-  validates_length_of   :phone_post,  :is =>4
-  validates_length_of   :phone_ext,  :maximum =>4, :allow_nil => true
+  validates_length_of   :phone_area,  :is =>10
+  validates_length_of   :phone_extension,  :maximum =>4, :allow_nil => true
   
   attr_accessible :email, :name, :contact_first_name, :contact_last_name, :phone_area, :phone_pre, :phone_post, :phone_ext
   	
