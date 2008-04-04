@@ -92,6 +92,7 @@ end
   def valid_organization_attributes
     {
       :email => 'brian.terlson@gmail.com',
+      :zip_code => '55044',
       :password => 'test',
       :password_confirmation => 'test',
       :name => 'Denarius'

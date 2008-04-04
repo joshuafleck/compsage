@@ -6,7 +6,7 @@ describe Organization do
   end
   
   it 'should be valid' do
-    @organization.attributes = valid_organization_attributes
+    @organization.attributes = valid_organization_attributes 
     @organization.should be_valid
   end
   
@@ -31,11 +31,11 @@ describe Organization do
   end
   
   it 'should have many sent external network invitations' do
-    pending
+    Organization.reflect_on_association(:sent_external_network_invitations).should_not be_nil
   end
   
   it 'should have many sent external survey invitations' do
-    pending
+    Organization.reflect_on_association(:sent_external_survey_invitations).should_not be_nil
   end
     
   it 'should have many networks' do
@@ -66,7 +66,17 @@ describe Organization do
 
   it 'should require an email' do
     @organization.attributes = valid_organization_attributes.except(:email)
-    @organization.should have(2).errors_on(:email)
+    @organization.should have(3).errors_on(:email)
+  end
+  
+  it 'should require a zip code' do
+    @organization.attributes = valid_organization_attributes.except(:zip_code)
+    @organization.should have(2).errors_on(:zip_code)
+  end
+
+  it 'should require a name' do
+    @organization.attributes = valid_organization_attributes.except(:name)
+    @organization.should have(2).errors_on(:name)
   end
 
   it 'should authenticate an organization by email and password' do
@@ -75,13 +85,38 @@ describe Organization do
     Organization.authenticate('brian.terlson@gmail.com', 'test').should == @organization
   end
   
-  it "should be invalid when location is longer than 64 characters"
-  it "should be invalid when contact name is longer than 128 characters"
-  it "should be invalid when city is longer than 50 characters"
-  it "should be invalid when state is longer than 30 characters"
-  it "should be invalid when the organization name is longer than 100 characters"
-  it "should be invalid with an invalid email address"
-  it "should be invalid with a password shorter than 5 characters"
+  it "should be invalid when location is longer than 64 characters" do
+  	pending
+  end
+  
+  it "should be invalid when contact name is longer than 128 characters" do
+  	pending
+  end
+  
+  it "should be invalid when city is longer than 50 characters" do
+  	pending
+  end
+  
+  it "should be invalid when state is longer than 30 characters" do
+  	pending
+  end
+  
+  it "should be invalid when the organization name is longer than 100 characters" do
+  	pending
+  end
+  
+  it "should be invalid with an invalid email address" do
+  	pending
+  end
+  
+  it "should be invalid with a password shorter than 5 characters" do
+  	pending
+  end
+  
+  it "should be invalid with a zip_code not of length 5" do
+  	pending
+  end
+  
 end
 
 describe Organization, "that already exists" do
