@@ -110,8 +110,16 @@ end
 	
 	end
 	
-	#This string has 129 characters
-	def long_string
-		'012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678' 
-	end
+def valid_survey_attributes
+    {
+      :end_date => Date.new
+    }
+  end
 
+	def survey_mock 
+		mock_model(
+				Survey, 
+				valid_survey_attributes)
+	
+	end	
+	

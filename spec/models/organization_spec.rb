@@ -97,27 +97,27 @@ describe Organization do
   end
   
   it "should be invalid when location is longer than 60 characters" do
-  	@organization.attributes = valid_organization_attributes.with(:location => long_string)
+  	@organization.attributes = valid_organization_attributes.with(:location => "0"*61)
     @organization.should have(1).errors_on(:location)
   end
   
   it "should be invalid when contact name is longer than 100 characters" do
-  	@organization.attributes = valid_organization_attributes.with(:contact_name => long_string)
+  	@organization.attributes = valid_organization_attributes.with(:contact_name => "0"*101)
     @organization.should have(1).errors_on(:contact_name)
   end
   
   it "should be invalid when city is longer than 50 characters" do
-  	@organization.attributes = valid_organization_attributes.with(:city => long_string)
+  	@organization.attributes = valid_organization_attributes.with(:city => "0"*51)
     @organization.should have(1).errors_on(:city)
   end
   
   it "should be invalid when state is longer than 30 characters" do
-  	@organization.attributes = valid_organization_attributes.with(:state => long_string)
+  	@organization.attributes = valid_organization_attributes.with(:state => "0"*31)
     @organization.should have(1).errors_on(:state)
   end
   
   it "should be invalid when the name is longer than 100 characters" do
-  	@organization.attributes = valid_organization_attributes.with(:name => long_string)
+  	@organization.attributes = valid_organization_attributes.with(:name => "0"*101)
     @organization.should have(1).errors_on(:name)
   end
   
@@ -132,7 +132,7 @@ describe Organization do
   end
   
   it "should be invalid with a email longer than 100 characters" do
-  	@organization.attributes = valid_organization_attributes.with(:email => long_string)
+  	@organization.attributes = valid_organization_attributes.with(:email => "0"*101)
     @organization.should have(2).errors_on(:email)
   end
   
@@ -147,12 +147,12 @@ describe Organization do
   end
   
   it "should be invalid with a password longer than 40 characters" do
-  	@organization.attributes = valid_organization_attributes.with(:password => long_string, :password_confirmation => long_string)
+  	@organization.attributes = valid_organization_attributes.with(:password => "0"*41, :password_confirmation => "0"*41)
     @organization.should have(1).errors_on(:password)
   end
   
   it "should be invalid with a zip_code not of length 5" do
-  	@organization.attributes = valid_organization_attributes.with(:zip_code => long_string)
+  	@organization.attributes = valid_organization_attributes.with(:zip_code => '123456')
     @organization.should have(1).errors_on(:zip_code)
   	@organization.attributes = valid_organization_attributes.with(:zip_code => '1234')
     @organization.should have(1).errors_on(:zip_code)

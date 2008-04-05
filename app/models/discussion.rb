@@ -8,5 +8,10 @@ class Discussion < ActiveRecord::Base
   
   validates_length_of :title, :allow_nil => true, :maximum => 128
   validates_length_of :body, :allow_nil => true, :maximum => 1024
+  validates_presence_of :title, :if => Proc.new { |discussion| discussion.body.blank?}
+  validates_presence_of :body, :if => Proc.new { |discussion| discussion.title.blank?}
+  validates_presence_of :organization, :if => Proc.new { |discussion| discussion.external_survey_invitation.nil?}
+  validates_presence_of :external_survey_invitation, :if => Proc.new { |discussion| discussion.organization.nil? }
+  validates_presence_of :survey
   
 end
