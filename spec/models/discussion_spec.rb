@@ -62,14 +62,14 @@ describe Discussion do
   end
   
   it "should be invalid without an organization or external invitation specified" do  	
-  	@discussion.attributes = valid_discussion_attributes.except(:organization)
+  	@discussion.attributes = valid_discussion_attributes.except(:organization,:external_survey_invitation)
   	#@discussion.attributes.each_pair {|key, value| puts "#{key} is #{value}" }
     @discussion.should have(1).errors_on(:external_survey_invitation)
     @discussion.should have(1).errors_on(:organization)
   end
   
   it "should be invalid without a title or body specified" do  	
-  	@discussion.attributes = valid_discussion_attributes.except(:title)
+  	@discussion.attributes = valid_discussion_attributes.except(:title,:body)
     @discussion.should have(1).errors_on(:title)
     @discussion.should have(1).errors_on(:body)
   end

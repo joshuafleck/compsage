@@ -5,7 +5,7 @@ class CreateDiscussions < ActiveRecord::Migration
       t.column :lft,             :integer,  :null => false
       t.column :rgt,             :integer,  :null => false
       t.column :survey_id,       :integer,  :null => false
-      t.column :external_invitation_id,     :integer
+      t.column :external_survey_invitation_id,     :integer
       t.column :organization_id, :integer
       t.column :created_at,      :datetime, :null => false
       t.column :title,           :string,  :limit => 128
