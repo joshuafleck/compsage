@@ -93,9 +93,13 @@ end
     {
       :email => 'brian.terlson@gmail.com',
       :zip_code => '55044',
-      :password => 'test',
-      :password_confirmation => 'test',
-      :name => 'Denarius'
+      :password => 'test1',
+      :password_confirmation => 'test1',
+      :name => 'Denarius',
+      :contact_name => 'Andersen Cooper',
+      :city => 'New York',
+      :location => 'Eastern Division',
+      :state => 'New York'
     }
   end
 
@@ -104,5 +108,10 @@ end
 				Organization, 
 				valid_organization_attributes)
 	
+	end
+	
+	#This string has 129 characters
+	def long_string
+		'012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678' 
 	end
 

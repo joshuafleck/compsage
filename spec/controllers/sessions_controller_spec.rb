@@ -13,13 +13,13 @@ describe SessionsController do
   end
   
   it 'logins and redirects' do
-    post :create, :email => 'brian.terlson@gmail.com', :password => 'test'
+    post :create, :email => valid_organization_attributes[:email], :password => valid_organization_attributes[:password]
     session[:organization_id].should_not be_nil
     response.should be_redirect
   end
   
   it 'fails login and does not redirect' do
-    post :create, :email => 'brian.terlson@gmail.com', :password => 'bad password'
+    post :create, :email => valid_organization_attributes[:email], :password => 'bad password'
     session[:organization_id].should be_nil
     response.should render_template('new')
   end
@@ -32,12 +32,12 @@ describe SessionsController do
   end
 
   it 'remembers me' do
-    post :create, :email => 'brian.terlson@gmail.com', :password => 'test', :remember_me => "1"
+    post :create, :email => valid_organization_attributes[:email], :password => valid_organization_attributes[:password], :remember_me => "1"
     response.cookies["auth_token"].should_not be_nil
   end
   
   it 'does not remember me' do
-    post :create, :email => 'brian.terlson@gmail.com', :password => 'test', :remember_me => "0"
+    post :create, :email => valid_organization_attributes[:email], :password => valid_organization_attributes[:password], :remember_me => "0"
     response.cookies["auth_token"].should be_nil
   end
 

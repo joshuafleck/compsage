@@ -11,6 +11,7 @@ class Organization < ActiveRecord::Base
   has_many :sent_external_survey_invitations, :class_name => "ExternalSurveyInvitation", :foreign_key => "inviter_id", :dependent => :destroy
   has_many :network_invitations, :class_name => "NetworkInvitation", :foreign_key => "invitee_id", :dependent => :destroy
   has_many :survey_invitations, :class_name => "SurveyInvitation", :foreign_key => "invitee_id", :dependent => :destroy  
+  has_many :sent_global_invitations, :class_name => "ExternalInvitation", :foreign_key => "inviter_id", :dependent => :destroy
   has_many :responses, :dependent => :destroy
   
   
@@ -21,19 +22,25 @@ class Organization < ActiveRecord::Base
   validates_format_of       :email,  :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i, :message => "Invalid email"  
   validates_presence_of     :password,                   :if => :password_required?
   validates_presence_of     :password_confirmation,      :if => :password_required?
-  validates_length_of       :password, :within => 4..40, :if => :password_required?
+  validates_length_of       :password, :within => 5..40, :if => :password_required?
   validates_confirmation_of :password,                   :if => :password_required?
-  validates_length_of       :email,    :within => 3..100
+  validates_length_of       :email,    :within => 5..100
   validates_uniqueness_of   :email,    :case_sensitive => false
   validates_presence_of     :name
   validates_length_of       :name,     :within => 3..100
   validates_presence_of     :zip_code
   validates_length_of       :zip_code, :is => 5
+  validates_length_of       :location, :maximum => 60, :allow_nil => :true
+  validates_length_of       :contact_name, :maximum => 100, :allow_nil => :true
+  validates_length_of       :city, :maximum => 50, :allow_nil => :true
+  validates_length_of       :state, :maximum => 30, :allow_nil => :true
+  validates_length_of       :crypted_password, :maximum => 40, :allow_nil => :true
+  validates_length_of       :salt, :maximum => 40, :allow_nil => :true
   before_save :encrypt_password
   
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
-  attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code
+  attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name
 
   # Authenticates a user by their email address and unencrypted password.  Returns the user or nil.
   def self.authenticate(email, password)

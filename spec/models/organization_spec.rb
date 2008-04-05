@@ -37,6 +37,10 @@ describe Organization do
   it 'should have many sent external survey invitations' do
     Organization.reflect_on_association(:sent_external_survey_invitations).should_not be_nil
   end
+   
+  it 'should have many sent global invitations' do
+    Organization.reflect_on_association(:sent_global_invitations).should_not be_nil
+  end
     
   it 'should have many networks' do
     Organization.reflect_on_association(:networks).should_not be_nil
@@ -69,6 +73,13 @@ describe Organization do
     @organization.should have(3).errors_on(:email)
   end
   
+  it 'should require a unique email' do
+    @organization.attributes = valid_organization_attributes
+    @organization.save
+    @organization1 = Organization.new(valid_organization_attributes)
+    @organization1.should have(1).errors_on(:email)
+  end
+  
   it 'should require a zip code' do
     @organization.attributes = valid_organization_attributes.except(:zip_code)
     @organization.should have(2).errors_on(:zip_code)
@@ -82,39 +93,69 @@ describe Organization do
   it 'should authenticate an organization by email and password' do
     @organization.attributes = valid_organization_attributes
     @organization.save
-    Organization.authenticate('brian.terlson@gmail.com', 'test').should == @organization
+    Organization.authenticate(valid_organization_attributes[:email], valid_organization_attributes[:password]).should == @organization
   end
   
-  it "should be invalid when location is longer than 64 characters" do
-  	pending
+  it "should be invalid when location is longer than 60 characters" do
+  	@organization.attributes = valid_organization_attributes.with(:location => long_string)
+    @organization.should have(1).errors_on(:location)
   end
   
-  it "should be invalid when contact name is longer than 128 characters" do
-  	pending
+  it "should be invalid when contact name is longer than 100 characters" do
+  	@organization.attributes = valid_organization_attributes.with(:contact_name => long_string)
+    @organization.should have(1).errors_on(:contact_name)
   end
   
   it "should be invalid when city is longer than 50 characters" do
-  	pending
+  	@organization.attributes = valid_organization_attributes.with(:city => long_string)
+    @organization.should have(1).errors_on(:city)
   end
   
   it "should be invalid when state is longer than 30 characters" do
-  	pending
+  	@organization.attributes = valid_organization_attributes.with(:state => long_string)
+    @organization.should have(1).errors_on(:state)
   end
   
-  it "should be invalid when the organization name is longer than 100 characters" do
-  	pending
+  it "should be invalid when the name is longer than 100 characters" do
+  	@organization.attributes = valid_organization_attributes.with(:name => long_string)
+    @organization.should have(1).errors_on(:name)
+  end
+  
+  it "should be invalid when the name is shorter than 3 characters" do
+  	@organization.attributes = valid_organization_attributes.with(:name => '12')
+    @organization.should have(1).errors_on(:name)
+  end
+  
+  it "should be invalid with a email shorter than 5 characters" do
+  	@organization.attributes = valid_organization_attributes.with(:email => '1234')
+    @organization.should have(2).errors_on(:email)
+  end
+  
+  it "should be invalid with a email longer than 100 characters" do
+  	@organization.attributes = valid_organization_attributes.with(:email => long_string)
+    @organization.should have(2).errors_on(:email)
   end
   
   it "should be invalid with an invalid email address" do
-  	pending
+  	@organization.attributes = valid_organization_attributes.with(:email => '@johnson@.com')
+    @organization.should have(1).errors_on(:email)
   end
   
   it "should be invalid with a password shorter than 5 characters" do
-  	pending
+  	@organization.attributes = valid_organization_attributes.with(:password => '1234', :password_confirmation => '1234')
+    @organization.should have(1).errors_on(:password)
+  end
+  
+  it "should be invalid with a password longer than 40 characters" do
+  	@organization.attributes = valid_organization_attributes.with(:password => long_string, :password_confirmation => long_string)
+    @organization.should have(1).errors_on(:password)
   end
   
   it "should be invalid with a zip_code not of length 5" do
-  	pending
+  	@organization.attributes = valid_organization_attributes.with(:zip_code => long_string)
+    @organization.should have(1).errors_on(:zip_code)
+  	@organization.attributes = valid_organization_attributes.with(:zip_code => '1234')
+    @organization.should have(1).errors_on(:zip_code)
   end
   
 end
@@ -133,7 +174,7 @@ describe Organization, "that already exists" do
   it 'should not rehash password when updating other attributes' do
     @organization.save
     @organization.update_attributes(:email => 'brian.terlson@gmail2.com')
-    Organization.authenticate('brian.terlson@gmail2.com', 'test').should == @organization
+    Organization.authenticate('brian.terlson@gmail2.com', valid_organization_attributes[:password]).should == @organization
   end
 
   it 'should set remember token' do
