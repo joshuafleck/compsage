@@ -119,7 +119,9 @@ module SurveyInvitationSpecHelper
 
   def valid_survey_invitation_attributes
     {
-      
+      :inviter => organization_mock,
+      :invitee => organization_mock,  
+      :survey => survey_mock
     }
   end
   
@@ -131,30 +133,31 @@ describe SurveyInvitation do
 
   before(:each) do
     @survey_invitation = SurveyInvitation.new
-    @survey_invitation.attributes = valid_survey_invitation_attributes
   end
 
   it_should_behave_like "Invitation"  
 
   it "should inherit from invitation" do
-  	#survey_invite.class.superclass.name.should == "Invite"
-  	pending
+  	@survey_invitation.class.superclass.name.should == "Invitation"
   end    
  
   it "should belong to a survey" do
-  	pending 
+  	Discussion.reflect_on_association(:survey).should_not be_nil
   end
   
   it "should be invalid if a survey is not specified" do
-  	pending
+    @survey_invitation.attributes = valid_survey_invitation_attributes.except(:survey)
+    @survey_invitation.should have(1).errors_on(:survey)
   end
     
   it "should be invalid without an invitee" do
-  	pending
+    @survey_invitation.attributes = valid_survey_invitation_attributes.except(:invitee)
+    @survey_invitation.should have(1).errors_on(:invitee)
   end
      
-  it "should be valid" do
-  	pending
+  it "should be valid" do  	
+    @survey_invitation.attributes = valid_survey_invitation_attributes
+    @survey_invitation.should be_valid
   end  
  
 end
