@@ -20,6 +20,6 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :invitations
   map.resource :account
   map.resource :dashboard
-  map.resource :pending_account
+  map.connect 'signup', :controller => :pending_accounts, :action => 'new'
   map.resource :external_invitations
 end
