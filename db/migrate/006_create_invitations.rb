@@ -3,7 +3,7 @@ class CreateInvitations < ActiveRecord::Migration
     create_table :invitations do |t|
       t.column :network_id,  :integer
       t.column :survey_id,   :integer
-      t.column :invitee_id,  :integer,  :null => false
+      t.column :invitee_id,  :integer
       t.column :inviter_id,  :integer,  :null => false
       t.column :created_at,  :datetime, :null => false
       t.column :type,        :string,   :null => false

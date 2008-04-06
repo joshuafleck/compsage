@@ -8,4 +8,6 @@ class ExternalSurveyInvitation < ExternalInvitation
   validates_presence_of :survey
   validates_presence_of :name
   
+  attr_accessible :survey, :disccusions, :responses
+  
 end

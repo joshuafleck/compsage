@@ -4,4 +4,5 @@ class ExternalNetworkInvitation < ExternalInvitation
   
   validates_presence_of :network
   
+  attr_accessible :network
 end
