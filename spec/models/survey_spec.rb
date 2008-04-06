@@ -1,15 +1,78 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
+module SurveySpecHelper
+  def valid_survey_attributes
+    {
+      :job_title => 'That guy who yells "Scalpel, STAT!"',
+      :end_date => Time.now + 1.week,
+      :sponsor => mock_model(Organization)
+    }
+  end
+end
+
 describe Survey do
-  it "should be valid"
-  it "should belong to a sponsor"
-  #it "should have many and belong to many organizations" - I'm not sure this spec is valid since we are doing away with the many to many table here -JF
-  it "should have many discussions"
-  it "should have many invitations"
-  it "should have many external invitations"
-  it "should have many questions"
-  it "should have many responses"
-  it "should require an end date to be specified"
-  it "should not allow a title longer then 128 characters"
+  include SurveySpecHelper
   
+  before do
+    @survey = Survey.new
+  end
+  
+  it "should be valid" do
+    @survey.attributes = valid_survey_attributes
+    @survey.should be_valid
+  end
+  
+  it "should belong to a sponsor" do
+    Survey.reflect_on_association(:sponsor).should_not be_nil
+  end
+  
+  it "should have many discussions" do
+    Survey.reflect_on_association(:discussions).should_not be_nil
+  end
+  
+  it "should have many survey invitations" do
+    Survey.reflect_on_association(:survey_invitations).should_not be_nil
+  end
+  
+  it "should have many external survey invitations" do
+    Survey.reflect_on_association(:external_survey_invitations).should_not be_nil
+  end
+  
+  it "should have many questions" do
+    Survey.reflect_on_association(:questions).should_not be_nil
+  end
+  
+  it "should have many responses" do
+    Survey.reflect_on_association(:responses).should_not be_nil
+  end
+  
+  it "should be invalid without an end date to be specified" do
+    @survey.attributes = valid_survey_attributes.except(:end_date)
+    @survey.should have(1).error_on(:end_date)
+  end
+  
+  it "should be invalid with a job title longer then 128 characters" do
+    @survey.attributes = valid_survey_attributes.with(:job_title => 'a'*129)
+    @survey.should have(1).error_on(:job_title)
+  end
+  
+  it "should be invalid without a job title" do
+    @survey.attributes = valid_survey_attributes.except(:job_title)
+    @survey.should have(1).error_on(:job_title)
+  end
+  
+  it "should be invalid without a sponsor" do
+    @survey.attributes = valid_survey_attributes.except(:sponsor)
+    @survey.should have(1).error_on(:sponsor)
+  end
+  
+  it "should be closed if the current time is after the end date" do
+    @survey.end_date = Time.now - 1.week
+    @survey.should be_closed
+  end
+  
+  it "should be open if the current time is before the end date" do
+    @survey.end_date = Time.now + 1.week
+    @survey.should be_open
+  end
 end
