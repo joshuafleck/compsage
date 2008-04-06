@@ -23,6 +23,7 @@ class OrganizationsController < ApplicationController
 	end
 	
 	def search
+	  #TODO paginate results
 		@organizations = Organization.find_by_contents(params[:search_text])
 	end
 
