@@ -1,5 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
+
   map.resources :organizations
+
+	map.connect 'organizations/search' , :controller => 'organizations' , :action => 'search'
 
   map.resource :session
 
