@@ -7,7 +7,7 @@ class CreateInvitations < ActiveRecord::Migration
       t.column :inviter_id,  :integer,  :null => false
       t.column :created_at,  :datetime, :null => false
       t.column :type,        :string,   :null => false
-      t.column :status,      :boolean,  :null => false, :default => false
+      t.column :accepted,    :boolean,  :null => false, :default => false
       t.column :name,        :string,   :limit => 100
       t.column :email,       :string,   :limit => 100
       t.column :key,         :string,   :limit => 40
