@@ -33,7 +33,7 @@ describe Invitation, :shared => true do
  
 end
 
-describe Invitation, "that does exist", :shared => true do
+describe Invitation, "that exists", :shared => true do
    
   include InvitationSpecHelper
 
@@ -57,7 +57,9 @@ module NetworkInvitationSpecHelper
 
   def valid_network_invitation_attributes
     {
-      
+      :inviter => mock_model(Organization),
+      :invitee => mock_model(Organization),
+      :network => mock_model(Network)
     }
   end
   
@@ -69,35 +71,41 @@ describe NetworkInvitation do
 
   before(:each) do
     @network_invitation = NetworkInvitation.new
-    @network_invitation.attributes = valid_network_invitation_attributes
   end
 
-  it_should_behave_like "Invitation"  
+  it_should_behave_like "Invitation"
 
   it "should belong to a network" do
-  	pending
+  	NetworkInvitation.reflect_on_association(:network).should_not be_nil
   end
    
   it "should inherit from invitation" do
-  	#network_invite.class.superclass.name.should == "Invite"
-  	pending
+  	@network_invitation.class.superclass.name.should == "Invitation"
   end    
      
   it "should be invalid if a network is not specified" do
-  	pending
+  	@network_invitation.attributes = valid_network_invitation_attributes.except(:network)
+  	@network_invitation.should have(1).error_on(:network)
   end  
    
   it "should be invalid without an invitee" do
-  	pending
+  	@network_invitation.attributes = valid_network_invitation_attributes.except(:invitee)
+    @network_invitation.should have(1).error_on(:invitee)
+  end
+  
+  it "should be invalid without an inviter" do
+    @network_invitation.attributes = valid_network_invitation_attributes.except(:inviter)
+    @network_invitation.should have(1).error_on(:inviter)
   end
   
   it "should be valid" do
-  	pending
+  	@network_invitation.attributes = valid_network_invitation_attributes
+    @network_invitation.should be_valid
   end  
  
 end
 
-describe NetworkInvitation, "that does exist" do
+describe NetworkInvitation, "that exists" do
    
   include NetworkInvitationSpecHelper
 
@@ -111,7 +119,7 @@ describe NetworkInvitation, "that does exist" do
     @network_invitation.destroy
   end  
 
-  it_should_behave_like "Invitation that does exist" 
+  it_should_behave_like "Invitation that exists" 
 
  end 
  
@@ -162,7 +170,7 @@ describe SurveyInvitation do
  
 end
 
-describe SurveyInvitation, "that does exist" do
+describe SurveyInvitation, "that exists" do
    
   include SurveyInvitationSpecHelper
 
@@ -176,7 +184,7 @@ describe SurveyInvitation, "that does exist" do
     @survey_invitation.destroy
   end  
 
-  it_should_behave_like "Invitation that does exist" 
+  it_should_behave_like "Invitation that exists" 
 
 end 
 
@@ -232,7 +240,7 @@ describe ExternalInvitation, :shared => true do
  
 end
 
-describe ExternalInvitation, "that does exist", :shared => true do
+describe ExternalInvitation, "that exists", :shared => true do
    
   include ExternalInvitationSpecHelper
 
@@ -246,7 +254,7 @@ describe ExternalInvitation, "that does exist", :shared => true do
     @invitation.destroy
   end  
     
-  it_should_behave_like "Invitation that does exist" 
+  it_should_behave_like "Invitation that exists" 
      
   it "should have a key" do
   	pending
@@ -294,7 +302,7 @@ describe ExternalNetworkInvitation do
  
 end
 
-describe ExternalNetworkInvitation, "that does exist" do
+describe ExternalNetworkInvitation, "that exists" do
    
   include ExternalNetworkInvitationSpecHelper
 
@@ -308,7 +316,7 @@ describe ExternalNetworkInvitation, "that does exist" do
     @network_invitation.destroy
   end  
 
-  it_should_behave_like "ExternalInvitation that does exist" 
+  it_should_behave_like "ExternalInvitation that exists" 
 
  end 
  
@@ -364,7 +372,7 @@ describe ExternalSurveyInvitation do
  
 end
 
-describe ExternalSurveyInvitation, "that does exist" do
+describe ExternalSurveyInvitation, "that exists" do
    
   include ExternalSurveyInvitationSpecHelper
 
@@ -378,6 +386,6 @@ describe ExternalSurveyInvitation, "that does exist" do
     @survey_invitation.destroy
   end  
 
-  it_should_behave_like "ExternalInvitation that does exist" 
+  it_should_behave_like "ExternalInvitation that exists" 
 
 end 
