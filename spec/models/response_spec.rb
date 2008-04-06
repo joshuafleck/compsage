@@ -6,7 +6,8 @@ module ResponseSpecHelper
     {
       :question => mock_model(Question, {}),
       :organization => organization_mock,
-      :textual_response => 'The response'
+      :textual_response => 'The response',
+      :numerical_response => 1.0
     }
   end
   
@@ -59,7 +60,7 @@ describe Response do
 end
 
 
-describe Response, "to question with options" do
+describe Response, "to question with numerical response" do
 
   include ResponseSpecHelper
 
@@ -68,12 +69,13 @@ describe Response, "to question with options" do
   end
     
   it "should return a numerical response" do
-  	pending
+  	@response.attributes = valid_response_attributes.with(:question => mock_model(Question,:numerical_response? => :true))
+  	@response.get_response.should eql(valid_response_attributes[:numerical_response])
   end
   
 end
 
-describe Response, "to question with text based response" do
+describe Response, "to question with text-based response" do
 
   include ResponseSpecHelper
 
@@ -82,21 +84,9 @@ describe Response, "to question with text based response" do
   end
     
   it "should return a textual response" do
-  	pending
+  	@response.attributes = valid_response_attributes.with(:question => mock_model(Question,:numerical_response? => :false))
+  	@response.get_response.should eql(valid_response_attributes[:textual_response])
   end
   
 end
 
-describe Response, "to quesiton with fill-in numerical response" do
-
-  include ResponseSpecHelper
-
-  before(:each) do
-    @response = Response.new
-  end
-    
-  it "should return a numerical response" do
-  	pending
-  end
-
-end
