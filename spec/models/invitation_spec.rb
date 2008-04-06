@@ -4,7 +4,7 @@ module InvitationSpecHelper
 
   def valid_invitation_attributes
     {
-      
+      :inviter => mock_model(Organization)
     }
   end
   
@@ -16,43 +16,23 @@ describe Invitation, :shared => true do
 
   before(:each) do
     @invitation = Invitation.new
-    @invitation.attributes = valid_invitation_attributes
   end
   
   it "should belong to an invitee" do
-  	pending
+  	Invitation.reflect_on_association(:invitee).should_not be_nil
   end
   
   it "should belong to an inviter" do
-  	pending
+  	Invitation.reflect_on_association(:inviter).should_not be_nil
   end
   
   it "should be invalid without an inviter" do
-  	pending
+  	@invitation.attributes = valid_invitation_attributes.except(:inviter)
+  	@invitation.should have(1).errors_on(:inviter)
   end
  
 end
 
-describe Invitation, "that exists", :shared => true do
-   
-  include InvitationSpecHelper
-
-  before(:each) do
-    @invitation = Invitation.new
-    @invitation.attributes = valid_invitation_attributes
-    @invitation.save
-  end
-  
-  after(:each) do
-    @invitation.destroy
-  end  
-       
-  it "should not be accepted" do
-  	pending
-  end  
-  
-end  
- 
 module NetworkInvitationSpecHelper
 
   def valid_network_invitation_attributes
@@ -105,24 +85,6 @@ describe NetworkInvitation do
  
 end
 
-describe NetworkInvitation, "that exists" do
-   
-  include NetworkInvitationSpecHelper
-
-  before(:each) do
-    @network_invitation = NetworkInvitation.new
-    @network_invitation.attributes = valid_network_invitation_attributes
-    @network_invitation.save
-  end
-  
-  after(:each) do
-    @network_invitation.destroy
-  end  
-
-  it_should_behave_like "Invitation that exists" 
-
- end 
- 
 module SurveyInvitationSpecHelper
 
   def valid_survey_invitation_attributes
@@ -170,23 +132,6 @@ describe SurveyInvitation do
  
 end
 
-describe SurveyInvitation, "that exists" do
-   
-  include SurveyInvitationSpecHelper
-
-  before(:each) do
-    @survey_invitation = SurveyInvitation.new
-    @survey_invitation.attributes = valid_survey_invitation_attributes
-    @survey_invitation.save
-  end
-  
-  after(:each) do
-    @survey_invitation.destroy
-  end  
-
-  it_should_behave_like "Invitation that exists" 
-
-end 
 
 module ExternalInvitationSpecHelper
 
@@ -253,8 +198,6 @@ describe ExternalInvitation, "that exists", :shared => true do
   after(:each) do
     @invitation.destroy
   end  
-    
-  it_should_behave_like "Invitation that exists" 
      
   it "should have a key" do
   	pending
