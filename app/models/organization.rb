@@ -1,7 +1,7 @@
 require 'digest/sha1'
 class Organization < ActiveRecord::Base
 
-	acts_as_ferret :fields => [:name]
+	is_indexed :fields => [:name]
 
   has_and_belongs_to_many :networks, :join_table => "networks_organizations", :association_foreign_key => "organization_id", :foreign_key => "network_id", :class_name => "Network"
   has_many :owned_networks, :foreign_key => "owner_id"
