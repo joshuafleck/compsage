@@ -161,7 +161,7 @@ describe ExternalInvitation do
  
   it "should be invalid when the email is less than 3 characters in length" do
   	@external_invitation.attributes = valid_external_invitation_attributes.with(:email => "aa")
-  	@external_invitation.attributes.should have(1).errors_on(:email)
+  	@external_invitation.attributes.should have_at_least(1).errors_on(:email)
   end
  
   it "should be invalid when the email is greater than 100 characters in length" do
