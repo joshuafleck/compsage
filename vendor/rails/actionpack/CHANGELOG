@@ -1,5 +1,23 @@
 *SVN*
 
+* Add conditional options to caches_page method. [Paul Horsfall]
+
+* Move missing template logic to ActionView. [Pratik]
+
+* Introduce ActionView::InlineTemplate class. [Pratik]
+
+* Automatically parse posted JSON content for Mime::JSON requests.  [rick]
+
+  POST /posts
+  {"post": {"title": "Breaking News"}}
+
+  def create
+    @post = Post.create params[:post]
+    # ...
+  end
+
+* add json_escape ERB util to escape html entities in json strings that are output in HTML pages. [rick]
+
 * Provide a helper proxy to access helper methods from outside views. Closes #10839 [Josh Peek]
   e.g. ApplicationController.helpers.simple_format(text)
 
