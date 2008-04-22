@@ -4,13 +4,14 @@ class OrganizationsController < ApplicationController
 	def index
 	
     respond_to do |wants|
-      wants.html {
-				@organizations = Organization.paginate({:page => params[:page]})
-      }
-      wants.xml { 
+      wants.html do
+				#@organizations = Organization.paginate({:page => params[:page]})
+				@organizations = Organization.find(:all)
+      end
+      wants.xml do
 				@organizations = Organization.find(:all)
       	render :xml => @organizations.to_xml 
-      }
+      end
     end
 	end
 	
@@ -18,7 +19,9 @@ class OrganizationsController < ApplicationController
 	 @organization = Organization.find(params[:id])
     respond_to do |wants|
       wants.html # render template
-      wants.xml { render :xml => @organization.to_xml }
+      wants.xml do
+     		render :xml => @organization.to_xml
+      end
     end
 	end
 	

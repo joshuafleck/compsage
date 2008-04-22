@@ -22,7 +22,6 @@ describe Discussion do
   
   it "should be valid" do
   	@discussion.attributes = valid_discussion_attributes 
-  	@discussion.save
   	#@discussion.attributes.each_pair {|key, value| puts "#{key} is #{value}" }
   	#puts @discussion.errors.full_messages
     @discussion.should be_valid
@@ -61,14 +60,14 @@ describe Discussion do
   	@discussion.times_reported.should equal(0)
   end
   
-  it "should be invalid without an organization or external invitation specified" do  	
+  it "should be invalid without one of the following: organization, external_survey_invitation" do  	
   	@discussion.attributes = valid_discussion_attributes.except(:organization,:external_survey_invitation)
   	#@discussion.attributes.each_pair {|key, value| puts "#{key} is #{value}" }
     @discussion.should have(1).errors_on(:external_survey_invitation)
     @discussion.should have(1).errors_on(:organization)
   end
   
-  it "should be invalid without a title or body specified" do  	
+  it "should be invalid without one of the following: title, body" do  	
   	@discussion.attributes = valid_discussion_attributes.except(:title,:body)
     @discussion.should have(1).errors_on(:title)
     @discussion.should have(1).errors_on(:body)

@@ -36,6 +36,11 @@ describe OrganizationsController, "handling GET /organizations/1" do
     get :show, :id => "1"
   end
 
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_get
+  end
+  
   it "should be successful" do  	
     do_get
     response.should be_success
@@ -104,8 +109,9 @@ describe OrganizationsController, "handling GET /organizations" do
     @organization = mock_model(Organization, :id => 1, :to_xml => "XML")
     
     @params = {:page => "1"}
-    
-    Organization.stub!(:paginate).and_return([@organization])
+    #Commented out pagination for this round
+    #Organization.stub!(:paginate).and_return([@organization])
+    Organization.stub!(:find).and_return([@organization])
     
 	end
   
@@ -124,7 +130,8 @@ describe OrganizationsController, "handling GET /organizations" do
   end
   
   it "should find all organizations" do
-    Organization.should_receive(:paginate).with({:page => @params[:page]}).and_return([@organization])
+    #Organization.should_receive(:paginate).with({:page => @params[:page]}).and_return([@organization])
+    Organization.should_receive(:find).with(:all).and_return([@organization])
     do_get
   end
   

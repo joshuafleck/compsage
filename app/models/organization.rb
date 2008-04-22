@@ -6,16 +6,16 @@ class Organization < ActiveRecord::Base
   has_and_belongs_to_many :networks
   has_many :owned_networks, :foreign_key => "owner_id"
   
-  has_many :surveys, :foreign_key => "sponsor_id", :dependent => :destroy
+  has_many :surveys, :foreign_key => "sponsor_id"
   has_many :discussions, :dependent => :destroy
-  has_many :sent_network_invitations, :class_name => "NetworkInvitation", :foreign_key => "inviter_id", :dependent => :destroy
-  has_many :sent_external_network_invitations, :class_name => "ExternalNetworkInvitation", :foreign_key => "inviter_id", :dependent => :destroy
-  has_many :sent_survey_invitations, :class_name => "SurveyInvitation", :foreign_key => "inviter_id", :dependent => :destroy
-  has_many :sent_external_survey_invitations, :class_name => "ExternalSurveyInvitation", :foreign_key => "inviter_id", :dependent => :destroy
+  has_many :sent_network_invitations, :class_name => "NetworkInvitation", :foreign_key => "inviter_id"
+  has_many :sent_external_network_invitations, :class_name => "ExternalNetworkInvitation", :foreign_key => "inviter_id"
+  has_many :sent_survey_invitations, :class_name => "SurveyInvitation", :foreign_key => "inviter_id"
+  has_many :sent_external_survey_invitations, :class_name => "ExternalSurveyInvitation", :foreign_key => "inviter_id"
   has_many :network_invitations, :class_name => "NetworkInvitation", :foreign_key => "invitee_id", :dependent => :destroy
   has_many :survey_invitations, :class_name => "SurveyInvitation", :foreign_key => "invitee_id", :dependent => :destroy  
-  has_many :sent_global_invitations, :class_name => "ExternalInvitation", :foreign_key => "inviter_id", :dependent => :destroy
-  has_many :responses, :dependent => :destroy
+  has_many :sent_global_invitations, :class_name => "ExternalInvitation", :foreign_key => "inviter_id"
+  has_many :responses
   
   
   # Virtual attribute for the unencrypted password

@@ -45,13 +45,13 @@ describe Response do
     @response.should have(1).errors_on(:question)
   end
   
-  it 'should be invalid without an organization or external_survey_invitation' do 	
+  it 'should be invalid without one of the following: organization, external_survey_invitation' do 	
   	@response.attributes = valid_response_attributes.except(:organization,:external_survey_invitation)
     @response.should have(1).errors_on(:external_survey_invitation)
     @response.should have(1).errors_on(:organization)
   end
   
-  it 'should be invalid without some response'  do 	
+  it 'should be invalid without one of the following: textual_response, numerical_response'  do 	
   	@response.attributes = valid_response_attributes.except(:textual_response,:numerical_response)
     @response.should have(1).errors_on(:textual_response)
     @response.should have(1).errors_on(:numerical_response)
