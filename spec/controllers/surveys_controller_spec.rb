@@ -3,98 +3,461 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe SurveysController, "#route_for" do
 
   it "should map { :controller => 'surveys', :action => 'index' } to /surveys" do
-    #route_for(:controller => "surveys", :action => "index").should == "/surveys"
+    route_for(:controller => "surveys", :action => "index").should == "/surveys"
   end
   
   it "should map { :controller => 'surveys', :action => 'search' } to /search" do
-    #route_for(:controller => "surveys", :action => "index").should == "/surveys"
+    route_for(:controller => "surveys", :action => "index").should == "/surveys"
   end
 
   it "should map { :controller => 'surveys', :action => 'new' } to /surveys/new" do
-    #route_for(:controller => "surveys", :action => "new").should == "/surveys/new"
+    route_for(:controller => "surveys", :action => "new").should == "/surveys/new"
   end
 
   it "should map { :controller => 'surveys', :action => 'show', :id => 1 } to /surveys/1" do
-    #route_for(:controller => "surveys", :action => "show", :id => 1).should == "/surveys/1"
+    route_for(:controller => "surveys", :action => "show", :id => 1).should == "/surveys/1"
   end
 
   it "should map { :controller => 'surveys', :action => 'edit', :id => 1 } to /surveys/1/edit" do
-    #route_for(:controller => "surveys", :action => "edit", :id => 1).should == "/surveys/1/edit"
+    route_for(:controller => "surveys", :action => "edit", :id => 1).should == "/surveys/1/edit"
   end
 
   it "should map { :controller => 'surveys', :action => 'update', :id => 1} to /surveys/1" do
-    #route_for(:controller => "surveys", :action => "update", :id => 1).should == "/surveys/1"
+    route_for(:controller => "surveys", :action => "update", :id => 1).should == "/surveys/1"
   end
 end
 
 describe SurveysController, " handling GET /surveys" do
-  it "should be successful"
-  it "should render index template"
-  it "should find all surveys for which the user has participated, been invited, or sponsored"
-  it "should assign the found surveys for the view"
+  
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @survey_invitations_proxy = mock('survey invitations proxy')
+    @survey_invitations_proxy.stub!(:find).and_return([])
+    @current_organization.stub!(:survey_invitations).and_return(@survey_invitations_proxy)
+
+    @surveys_proxy = mock('surveys proxy')
+    @surveys_proxy.stub!(:find).and_return([])
+    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+  end
+  
+  def do_get
+    get :index
+  end
+  
+  it "should be successful" do
+    do_get
+    response.should be_success
+  end
+  it "should render index template" do
+    do_get
+    response.should render_template('index')
+  end
+  it "should find all surveys for which the user has participated, been invited, or sponsored" do
+    @current_organization.should_receive(:survey_invitations).and_return(@survey_invitations_proxy)
+    @survey_invitations_proxy.should_receive(:find).with(:all, :include => :surveys).and_return([])
+    @current_organization.should_receive(:surveys).at_least(:twice).and_return(@survey_proxy)
+    @survey_proxy.should_receive(:find).at_least(:twice)
+    do_get 
+  end
+  it "should assign the found surveys for the view" do
+    do_get
+    assigns[:running_surveys].should_not be_nil
+    assigns[:invited_surveys].should_not be_nil
+    assigns[:completed_surveys].should_not be_nil
+  end
 end
 
 describe SurveysController, " handling GET /surveys.xml" do
-  it "should be successful"
-  it "should find all surveys for which the user has participated, been invited, or sponsored"
-  it "should render the found surveys as XML"
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @surveys_proxy = mock('surveys proxy')
+    @surveys = []
+    @survey.stub!(:to_xml).and_return("XML")
+    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @surveys_proxy.stub!(:find).and_return(@surveys)    
+  end
+  
+  def do_get
+    @request.env["HTTP_ACCEPT"] = "application/xml"
+    get :index
+  end
+  
+  it "should be successful" do
+    do_get
+    response.should be_success
+  end
+  
+  it "should find all surveys for which the user has participated, been invited, or sponsored" do
+    @current_organization.should_receive(:surveys).and_return(@survey_proxy)
+    @survey_proxy.should_receive(:find).at_least(:once)
+    do_get
+  end
+  it "should render the found surveys as XML" do
+    @current_organization.should_receive(:surveys).and_return(@survey_proxy)
+    @survey_proxy.should_receive(:find).and_return(@surveys)
+    @surveys.should_receive(:to_xml).and_return("XML")
+    do_get
+    response.body.should == "XML"
+  end
 end
 
 describe SurveysController, " handling GET /surveys/1" do
-  it "should be successful"
-  it "should find the survey requested"
-  it "should render the show template"
-  it "should assign the found survey to the view"
-  it "should redirect to the report for the selected survey if the survey is closed"
+  
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @survey = mock_model(Survey, :id => 1)    
+    Survey.stub!(:find).and_return(@survey)
+    @survey.stub!(:closed?).and_return(:false)
+  end
+  
+  def do_get
+    get :show, :id => 1
+  end
+  it "should be successful" do
+    do_get
+    response.should be_success
+  end
+  it "should find the survey requested" do
+    Survey.should_receive(:find).and_return(@survey)
+    do_get
+  end
+  it "should render the show template" do
+    do_get
+    response.should render_template('surveys/show')
+  end
+  it "should assign the found survey to the view" do
+    do_get
+    assigns[:survey].should_not be_nil
+  end
+end
+
+describe SurveysController, " handling GET /surveys/1 when survey is closed" do
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @survey = mock_model(Survey, :id => 1)    
+    Survey.stub!(:find).and_return(@survey)
+    @survey.stub!(:closed?).and_return(:true)
+  end
+
+  it "should redirect to the report for the selected survey" do
+    get :show, :id => 1
+    response.should redirect_to(survey_report_path(@survey))
+  end
 end
 
 describe SurveysController, " handling GET /surveys/1.xml" do
-  it "should be successful"
-  it "should find the survey requested"
-  it "should render the found survey as XML"
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @survey = mock_model(Survey, :id => 1)    
+    Survey.stub!(:find).and_return(@survey)
+    @survey.stub!(:closed?).and_return(:false)
+    @survey.stub!(:to_xml).and_return("XML")
+  end
+  
+  def do_get
+    @request.env["HTTP_ACCEPT"] = "application/xml"
+    get :show, :id => 1
+  end
+  
+  it "should be successful" do
+    do_get
+    response.should be_success
+  end
+  it "should find the survey requested" do
+    Survey.should_receive(:find).and_return(@survey)
+    do_get
+  end
+  it "should render the found survey as XML" do
+    @survey.should_receive(:to_xml).and_return("XML")
+    do_get
+    response.body.should == "XML"
+  end
+end
+
+describe SurveysController, " handling GET /surveys/1.xml when survey is closed" do
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @survey = mock_model(Survey, :id => 1)    
+    Survey.stub!(:find).and_return(@survey)
+    @survey.stub!(:closed?).and_return(:true)
+    
+    @survey.stub!(:to_xml).and_return("XML")
+  end
+  
+  def do_get
+    @request.env["HTTP_ACCEPT"] = "application/xml"
+    get :show, :id => 1
+  end
+
+  it "should still show selected survey in XML" do
+    do_get
+    response.body.should == "XML"
+  end
 end
 
 describe SurveysController, " handling GET /surveys/new" do
-  it "should be successful"
-  it "should render new template"
-  it "should error if the organization is in private mode"
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+  end
+
+  def do_get
+    get :new
+  end
+  
+  it "should be successful" do
+    do_get
+    response.should be_success
+  end
+  it "should render new template" do
+    do_get
+    response.should render_template('surveys/new')
+  end
 end
 
 describe SurveysController, " handling GET /surveys/1/edit" do
-  it "should be successful"
-  it "should render the edit template"
-  it "should find the survey requested"
-  it "should assign the found survey to the view"
-  it "should error if requesting organization is not the sponsor"
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @survey = mock_model(Survey, :id => 1, :sponsor => @current_organization)
+    Survey.stub!(:find).and_return(@survey)
+  end
+
+  def do_get
+    get :edit, :id => 1
+  end
+  it "should be successful" do
+    do_get
+    response.should be_success
+  end
+  it "should render the edit template" do
+    do_get
+    response.should render_template('surveys/edit')
+  end
+  it "should find the survey requested" do
+    Survey.should_receive(:find).and_return(@survey)
+    do_get
+  end
+  it "should assign the found survey to the view" do
+    do_get
+    assigns[:survey].should_not be_nil
+  end
+end
+
+describe SurveysController, " handling GET /surveys/1/edit" do
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @survey = mock_model(Survey, :id => 1, :sponsor => mock_model(Organization))
+    Survey.stub!(:find).and_return(@survey)
+  end
+
+  def do_get
+    get :edit, :id => 1
+  end
+  it "should error if requesting organization is not the sponsor" do
+    lambda{ do_get }.should raise_error("You do not have the rights to access this page.")
+  end
 end
 
 describe SurveysController, " handling POST /surveys" do
-  it "should create a new survey"
-  it "should redirect to the invitation show page upon success"
-  it "should flash an error message upon failure"
-  it "should error if the organization is in private mode"
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    @params = {:job_title => 'That guy who yells "Scalpel, STAT!"' ,
+               :end_date => Time.now + 1.week ,
+               :sponsor => mock_model(Organization)}
+    @survey = mock_model(Survey, :id => 1, :save => true, :errors => [])
+    @survey.stub!(:new_record?).and_return(true)
+    Survey.stub!(:new).and_return(@survey)
+  end
+  
+  def do_post
+    post :create, :survey => @params
+  end
+
+  it "should create a new survey" do
+    Survey.should_receive(:new).and_return(@survey)
+    do_post
+  end
+  it "should redirect to the invitation show page upon success" do
+    do_post
+    response.should redirect_to(invitation_url(@survey))
+  end
+  
+end
+
+describe SurveysController, " handling POST /surveys, upon failure" do
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    @params = {:job_title => 'That guy who yells "Scalpel, STAT!"' ,
+               :end_date => Time.now + 1.week ,
+               :sponsor => mock_model(Organization)}
+    @survey = mock_model(Survey, :id => 1, :save => true, :errors => ["asdfadsfdsa"])
+    @survey.stub!(:new_record?).and_return(true)
+    Survey.stub!(:new).and_return(@survey)
+  end
+  
+  def do_post
+    post :create, :survey => @params
+  end
+  
+   it "should return to new page" do
+     do_post
+     response.should render_template('surveys/new')
+   end
 end
 
 describe SurveysController, " handling PUT /surveys/1" do
-  it "should find the survey requested"
-  it "should update the selected survey"
-  it "should assign the found survey to the view"
-  it "should redirect to the show view page for this survey upon success"
-  it "should flash an error mesage upon failure"
-  it "should error if requesting organization is not the sponsor"  
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @survey = mock_model(Survey, :id => "1", :update_attributes => true, :sponsor => @current_organization)
+    Survey.stub!(:find).and_return(@survey)
+    @survey.stub!(:update_attributes).and_return(true)
+  end
+  
+  def do_update
+    put :update, :id => "1"
+  end
+  it "should find the survey requested" do
+    Survey.should_receive(:find).and_return(@survey)
+    do_update
+  end
+  it "should update the selected survey" do
+    @survey.should_receive(:update_attributes)
+    do_update
+    assigns(:survey).should equal(@survey)
+  end
+  it "should assign the found survey to the view" do
+    do_update
+    assigns(:survey).should equal(@survey)
+  end
+  it "should redirect to the show view page for this survey upon success" do
+    do_update
+    response.should redirect_to(survey_path(@survey))
+  end
+end
+  
+  describe SurveysController, " handling PUT /surveys/1, with failure" do
+    before(:each) do
+      @current_organization = mock_model(Organization)
+      login_as(@current_organization)
+
+      @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization)
+      Survey.stub!(:find).and_return(@survey)
+      @survey.stub!(:update_attributes).and_return(false)
+    end
+
+    def do_update
+      put :update, :id => 1
+    end
+  it "should render edit template upon failure" do
+    do_update
+    response.should redirect_to(edit_survey_path(@survey))
+  end
+end
+
+describe SurveysController, " handling PUT /surveys/1, with failure" do
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+
+    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => mock_model(Organization))
+    Survey.stub!(:find).and_return(@survey)
+    @survey.stub!(:update_attributes).and_return(true)
+  end
+
+  def do_update
+    put :update, :id => 1
+  end
+  it "should error if requesting organization is not the sponsor"  do
+    lambda{ do_update }.should raise_error("You do not have the rights to access this page.")
+  end
 end
 
 describe SurveysController, "handling GET /surveys/search" do
-  it "should search the users surveys"
-  it "should find surveys by title"
-  it "should find surveys by description"
-  it "should assign found surveys to the view"
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @survey = mock_model(Survey, :id => 1, :title => "My Survey")
+    @params = {:search_text => "Web Developer"}
+    
+    Survey.stub!(:find_by_contents).and_return([@survey])
+  end
+  
+  def do_get
+    get :search, @params
+  end
+  
+  it "should be successful" do
+  	do_get
+  	response.should be_success
+  end
+  
+  it "should render the search template" do
+  	do_get
+  	response.should render_template('search')
+  end
+  
+  it "should search the users surveys" do
+    Survey.should_receive(:find_by_contents).and_return([@survey])
+    do_get
+  end
+  
+  it "should assign found surveys to the view" do
+    do_get
+    assigns[:surveys].should == [@survey]
+  end
 end
 
 describe SurveysController, "handling GET /surveys/search.xml" do
-  it "should search the users surveys"
-  it "should find surveys by title"
-  it "should find surveys by description"
-  it "should render the found surveys in XML"
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @survey = mock_model(Survey, :id => 1, :title => "My Survey")
+    @params = {:search_text => "Web Developer"}
+    @surveys = [@survey]
+    @surveys.stub!(:to_xml).and_return("XML")
+    
+    Survey.stub!(:find_by_contents).and_return(@surveys)
+  end
+  def do_get
+    @request.env["HTTP_ACCEPT"] = "application/xml"
+    get :search, @params
+  end
+  
+  it "should be successful" do
+  	do_get
+  	response.should be_success
+  end
+  
+  it "should search the users surveys" do
+    Survey.should_receive(:find_by_contents).and_return(@surveys)
+    do_get
+  end
+
+  it "should render the found surveys in XML" do
+    do_get
+    response.body.should == "XML"
+  end
 end
 
