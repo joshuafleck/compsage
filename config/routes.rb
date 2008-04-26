@@ -1,12 +1,10 @@
 ActionController::Routing::Routes.draw do |map|
 
-  map.resources :organizations
-
-	map.connect 'organizations/search' , :controller => 'organizations' , :action => 'search'
-
+  map.resources :organizations, :collection => {:search => :any}
+  
   map.resource :session
 
-  map.resources :surveys do |survey|
+  map.resources :surveys, :collection => {:search => :any} do |survey|
     survey.resources :questions do |question|
       question.resources :responses
     end
@@ -14,8 +12,6 @@ ActionController::Routing::Routes.draw do |map|
     survey.resources :invitations, :controller => :survey_invitations
     survey.resource :report
   end
-  
-  map.connect 'surveys/search', :controller => 'surveys', :action => 'search'
   
   map.resources :networks do |network|
     network.resources :organizations
