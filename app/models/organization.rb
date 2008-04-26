@@ -7,6 +7,8 @@ class Organization < ActiveRecord::Base
   has_many :owned_networks, :foreign_key => "owner_id"
   
   has_many :surveys, :foreign_key => "sponsor_id"
+  has_many :participated_surveys, :class_name => "Survey", :through => :survey_invitations, :source => :invitee
+  
   has_many :discussions, :dependent => :destroy
   has_many :sent_network_invitations, :class_name => "NetworkInvitation", :foreign_key => "inviter_id"
   has_many :sent_external_network_invitations, :class_name => "ExternalNetworkInvitation", :foreign_key => "inviter_id"
@@ -16,7 +18,6 @@ class Organization < ActiveRecord::Base
   has_many :survey_invitations, :class_name => "SurveyInvitation", :foreign_key => "invitee_id", :dependent => :destroy  
   has_many :sent_global_invitations, :class_name => "ExternalInvitation", :foreign_key => "inviter_id"
   has_many :responses
-  
   
   # Virtual attribute for the unencrypted password
   attr_accessor :password
@@ -44,24 +45,6 @@ class Organization < ActiveRecord::Base
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
   attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name
-
-  # Returns an array of recently completed surveys.
-  def recent_completed_surveys(count = 10)
-    Survey.find( :all,
-      :order => 'surveys.created_at DESC',
-      :limit => count,
-      :include => :survey_invitations,
-      :conditions => ['surveys.end_date < ? AND (surveys.sponsor_id = ? OR (invitations.invitee_id = ? AND invitations.accepted=true))', Time.now, self, self])
-  end
-  
-  # Returns an array of recent surveys the organization has been invited to.
-  def recent_running_surveys(count = 10)
-    Survey.find( :all,
-      :order => 'surveys.created_at DESC',
-      :limit => count,
-      :include => :survey_invitations,
-      :conditions => ['surveys.end_date >= ? AND (surveys.sponsor_id = ? OR (invitations.invitee_id = ? AND invitations.accepted=true))', Time.now, self, self])  
-  end
   
   # Authenticates a user by their email address and unencrypted password.  Returns the user or nil.
   def self.authenticate(email, password)

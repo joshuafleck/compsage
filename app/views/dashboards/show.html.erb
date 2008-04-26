@@ -1,0 +1,64 @@
+<p><br /><%=link_to "New Survey", new_survey_path(), :class => 'button' %></p>
+<h2>Recent Activity</h2>
+<h3>Survey Invitations</h3>
+<table id="survey_invitations">
+  <tr>
+    <th>Job Title</th>
+    <th>From</th>
+    <th>Deadline</th>
+    <th>&nbsp;</th>
+  </tr>
+  <% @recent_survey_invitations.each do |invite| %>
+    <tr id="survey_invitation_<%=invite.id%>">
+      <td><%=link_to invite.survey.job_title, survey_path(invite.survey)%></td>
+      <td><%=invite.inviter.name%></td>
+      <td><%=time_ago_in_words(invite.survey.end_date)%></td>
+      <td>&nbsp;</td>
+    </tr>
+  <% end %>
+</table>
+<h3>Network Invitations</h3>
+<table id="network_invitations">
+  <tr>
+    <th>Network</th>
+    <th>Invited By</th>
+    <th>&nbsp;</th>
+  </tr>
+  <% @recent_network_invitations.each do |invite| %>
+    <tr id="network_invitation_<%=invite.id%>">
+      <td><%=link_to invite.network.name, network_path(invite.network)%></td>
+      <td><%=invite.inviter.name%></td>
+      <td>&nbsp;</td>
+    </tr>
+  <% end %>
+</table>
+<h3>Running Surveys</h3>
+<table id="running_surveys">
+  <tr>
+    <th>Job Title</th>
+    <th>Deadline</th>
+    <th>&nbsp;</th>
+  </tr>
+  <% @recent_running_surveys.each do |survey| %>
+    <tr id="running_survey_<%=survey.id%>">
+      <td><%=survey.job_title%></td>
+      <td><%=time_ago_in_words(survey.end_date)%></td>
+      <td>&nbsp;</td>
+    </tr>
+  <% end %>
+</table>
+<h3>Completed Surveys</h3>
+<table id="completed_surveys">
+  <tr>
+    <th>Job Title</th>
+    <th>Sponsor</th>
+    <th>&nbsp;</th>
+  </tr>
+  <% @recent_completed_surveys.each do |survey| %>
+    <tr id="completed_survey_<%=survey.id%>">
+      <td><%=survey.job_title%></td>
+      <td><%=survey.sponsor.name%></td>
+      <td>&nbsp;</td>
+    </tr>
+  <% end %>
+</table>
