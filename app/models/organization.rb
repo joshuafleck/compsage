@@ -9,7 +9,6 @@ class Organization < ActiveRecord::Base
   has_many :surveys, :foreign_key => "sponsor_id"
   has_many :participated_surveys, :class_name => "Survey", :through => :survey_invitations, :source => :invitee
   
-  has_many :discussions, :dependent => :destroy
   has_many :sent_network_invitations, :class_name => "NetworkInvitation", :foreign_key => "inviter_id"
   has_many :sent_external_network_invitations, :class_name => "ExternalNetworkInvitation", :foreign_key => "inviter_id"
   has_many :sent_survey_invitations, :class_name => "SurveyInvitation", :foreign_key => "inviter_id"
@@ -17,7 +16,9 @@ class Organization < ActiveRecord::Base
   has_many :network_invitations, :class_name => "NetworkInvitation", :foreign_key => "invitee_id", :dependent => :destroy
   has_many :survey_invitations, :class_name => "SurveyInvitation", :foreign_key => "invitee_id", :dependent => :destroy  
   has_many :sent_global_invitations, :class_name => "ExternalInvitation", :foreign_key => "inviter_id"
-  has_many :responses
+  
+  has_many :discussions, :as => :responder
+  has_many :responses, :as => :responder
   
   # Virtual attribute for the unencrypted password
   attr_accessor :password

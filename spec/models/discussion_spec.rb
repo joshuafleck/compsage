@@ -5,7 +5,7 @@ module DiscussionSpecHelper
   def valid_discussion_attributes
     {
       :survey => survey_mock,
-      :organization => organization_mock,
+      :responder => organization_mock,
       :title => 'Discussion Title'
     }
   end
@@ -21,9 +21,7 @@ describe Discussion do
   end  
   
   it "should be valid" do
-  	@discussion.attributes = valid_discussion_attributes 
-  	#@discussion.attributes.each_pair {|key, value| puts "#{key} is #{value}" }
-  	#puts @discussion.errors.full_messages
+  	@discussion.attributes = valid_discussion_attributes
     @discussion.should be_valid
   end
   
@@ -31,12 +29,8 @@ describe Discussion do
   	Discussion.reflect_on_association(:survey).should_not be_nil
   end
   
-  it "should belong to an organization" do
-  	Discussion.reflect_on_association(:organization).should_not be_nil
-  end
-  
-  it "should belong to an external invitation" do
-  	Discussion.reflect_on_association(:external_survey_invitation).should_not be_nil
+  it "should belong to a responder" do
+  	Discussion.reflect_on_association(:responder).should_not be_nil
   end
   
   it "should be invalid without a survey" do
@@ -60,11 +54,9 @@ describe Discussion do
   	@discussion.times_reported.should equal(0)
   end
   
-  it "should be invalid without one of the following: organization, external_survey_invitation" do  	
-  	@discussion.attributes = valid_discussion_attributes.except(:organization,:external_survey_invitation)
-  	#@discussion.attributes.each_pair {|key, value| puts "#{key} is #{value}" }
-    @discussion.should have(1).errors_on(:external_survey_invitation)
-    @discussion.should have(1).errors_on(:organization)
+  it "should be invalid without a responder" do  	
+  	@discussion.attributes = valid_discussion_attributes.except(:responder)
+    @discussion.should have(1).errors_on(:responder)
   end
   
   it "should be invalid without one of the following: title, body" do  	

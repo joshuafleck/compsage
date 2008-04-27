@@ -5,7 +5,7 @@ module ResponseSpecHelper
   def valid_response_attributes
     {
       :question => mock_model(Question, {}),
-      :organization => organization_mock,
+      :responder => organization_mock,
       :textual_response => 'The response',
       :numerical_response => 1.0
     }
@@ -28,12 +28,8 @@ describe Response do
   	@response.should be_valid
   end
   
-  it 'should belong to an organization' do
-  	Response.reflect_on_association(:organization).should_not be_nil
-  end
-  
-  it 'should belong to an external_survey_invitation' do
-  	Response.reflect_on_association(:external_survey_invitation).should_not be_nil
+  it 'should belong to a responder' do
+  	Response.reflect_on_association(:responder).should_not be_nil
   end
   
   it 'should belong to a question' do
@@ -45,10 +41,9 @@ describe Response do
     @response.should have(1).errors_on(:question)
   end
   
-  it 'should be invalid without one of the following: organization, external_survey_invitation' do 	
-  	@response.attributes = valid_response_attributes.except(:organization,:external_survey_invitation)
-    @response.should have(1).errors_on(:external_survey_invitation)
-    @response.should have(1).errors_on(:organization)
+  it 'should be invalid without a responder' do
+    @response.attributes = valid_response_attributes.except(:responder)
+    @response.should have(1).errors_on(:responder)
   end
   
   it 'should be invalid without one of the following: textual_response, numerical_response'  do 	
