@@ -3,6 +3,12 @@
 
 class ApplicationController < ActionController::Base
   include AuthenticatedSystem
+  before_filter :make_breadcrumbs
   
   session :session_key => '_shawarma_session_id'
+  
+  def make_breadcrumbs
+    @breadcrumbs = Breadcrumbs.new(["Dashboard", url_for(dashboard_path)])
+  end
+  
 end

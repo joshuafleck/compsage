@@ -11,15 +11,15 @@
   </div>
   <div id="bar">
       <ul>
-          <li><%=link_to "Dashboard", dashboard_path%></li>
-          <li><a href="surveys.html">Surveys</a></li>
-          <li><a href="groups.html">Networks</a></li>
-          <li><a href="inbox.html">Members</a></li>
-          <li><a href="account.html">Account</a></li>
+          <li><%=link_to "Dashboard", dashboard_path %></li>
+          <li><%=link_to "Surveys", surveys_path %></li>
+          <li><%=link_to "Networks", networks_path %></li>
+          <li><%=link_to "Members", organizations_path %></li>
+          <li><%=link_to "Account", account_path%></li>
       </ul>
   </div>
   <div id="main">
-    <% if @breadcrumbs then %><div id="breadcrumbs"><%=@breadcrumbs.links%></div><% end %>
+    <% unless @breadcrumbs.nil? then %><div id="breadcrumbs"><%=@breadcrumbs.links(@page_title)%></div><% end %>
     <%=@content_for_layout%>
 	</div>
 </body>
