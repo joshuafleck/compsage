@@ -9,6 +9,7 @@ class SessionsController < ApplicationController
   def new
   end
 
+	#TODO: means for loggining in with an invitation. Possibly check params for presence of a key.
   def create
     self.current_organization = Organization.authenticate(params[:email], params[:password])
     if logged_in?

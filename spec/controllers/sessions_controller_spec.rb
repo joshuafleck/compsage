@@ -68,6 +68,10 @@ describe SessionsController do
     get :new
     controller.send(:logged_in?).should_not be_true
   end
+  
+  it 'Allows login via an invitation' do
+  	pending
+  end
 
   def auth_token(token)
     CGI::Cookie.new('name' => 'auth_token', 'value' => token)

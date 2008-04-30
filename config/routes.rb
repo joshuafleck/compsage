@@ -8,7 +8,7 @@ ActionController::Routing::Routes.draw do |map|
     survey.resources :questions do |question|
       question.resources :responses
     end
-    survey.resources :discussions
+    survey.resources :discussions, :member => {:report => :any}
     survey.resources :invitations, :controller => :survey_invitations
     survey.resource :report
   end
