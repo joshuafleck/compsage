@@ -7,23 +7,23 @@ describe "/networks/new" do
   end
   
   it "should show the new form" do
-  	pending
+    pending
   end
   
   it "should have a means for setting a title" do
-  	pending
+    pending
   end
   
   it "should have a means for setting a description" do
-  	pending
+    pending
   end
   
   it "should have a submit button" do
-  	pending
+    pending
   end
   
   it "should have a cancel link that links back to the index page" do
-  	pending
+    pending
   end
   
 

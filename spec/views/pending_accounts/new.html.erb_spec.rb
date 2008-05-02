@@ -6,34 +6,34 @@ describe "/pending_accounts/new" do
   end
   
   it "should show the new form" do
-  	pending
+    pending
   end
   it "should have a means for setting the organization name" do
-  	pending
+    pending
   end
   it "should have a means for setting a contact first name" do
-  	pending
+    pending
   end
   it "should have a means for setting a contact last name" do
-  	pending
+    pending
   end
   it "should have a means for setting an email address" do
-  	pending
+    pending
   end
   it "should have a means for setting an phone number" do
-  	pending
+    pending
   end 
   it "should have a means for setting an phone number extension" do
-  	pending
+    pending
   end
   it "should have a captcha" do
-  	pending
+    pending
   end
   it "should have a submit button" do
-  	pending
+    pending
   end
   it "should have a cancel link, which links to the main index" do
-  	pending
+    pending
   end
   
 end

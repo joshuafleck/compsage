@@ -29,8 +29,8 @@ describe DiscussionsController, "#route_for" do
 end
 
 describe DiscussionsController, " handling GET discussions" do
-	
-	before do
+  
+  before do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     @discussion = mock_model(Discussion, :id => 1, :to_xml => "XML")
@@ -38,7 +38,7 @@ describe DiscussionsController, " handling GET discussions" do
     @survey.stub!(:discussions).and_return([@discussion])
     Survey.stub!(:find).and_return(@survey)
     @params = {:survey_id => @survey.id}
-	end
+  end
   
   def do_get
     get :index, @params
@@ -50,25 +50,25 @@ describe DiscussionsController, " handling GET discussions" do
   end
   
   it "should be successful" do
-  	do_get
-  	response.should be_success
+    do_get
+    response.should be_success
   end
   
   it "should render index template" do
-  	do_get
-  	response.should render_template("index")
+    do_get
+    response.should render_template("index")
   end
   
   #TODO set threshhold in finder
   it "should find all discussions, under the number of times reported threshold" do
-  	pending
-  	@survey.should_receive(:discussions).and_return([@discussion])
-  	do_get
+    pending
+    @survey.should_receive(:discussions).and_return([@discussion])
+    do_get
   end
   
   it "should assign the found discussion for the view"do
-  	do_get
-  	assigns[:discussions].should eql([@discussion])
+    do_get
+    assigns[:discussions].should eql([@discussion])
   end
   
   #it "should only render if the user is invited to, or sponsors the related survey"
@@ -76,8 +76,8 @@ describe DiscussionsController, " handling GET discussions" do
 end
 
 describe DiscussionsController, " handling GET /discussions.xml" do
-	
-	before do
+  
+  before do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     @discussion = mock_model(Discussion, :id => 1, :to_xml => "XML")
@@ -85,10 +85,10 @@ describe DiscussionsController, " handling GET /discussions.xml" do
     @survey.stub!(:discussions).and_return([@discussion])
     Survey.stub!(:find).and_return(@survey)
     @params = {:survey_id => @survey.id}
-	end
+  end
   
   def do_get
-  	@request.env["HTTP_ACCEPT"] = "application/xml"
+    @request.env["HTTP_ACCEPT"] = "application/xml"
     get :index, @params
   end
   
@@ -98,13 +98,13 @@ describe DiscussionsController, " handling GET /discussions.xml" do
   end
   
   it "should be successful" do
-  	do_get
-  	response.should be_success
+    do_get
+    response.should be_success
   end
   
   it "should find all discussion, under the number of times reported thresholds" do
-  	@survey.should_receive(:discussions).and_return([@discussion])
-  	do_get
+    @survey.should_receive(:discussions).and_return([@discussion])
+    do_get
   end
   
   it "should render the found discussions as XML" do
@@ -120,26 +120,26 @@ end
 
 describe DiscussionsController, " handling GET /discussions/new" do
 
-	before do
+  before do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     @survey = mock_model(Survey, :id => 1)
     Survey.stub!(:find).and_return(@survey)
     @params = {:survey_id => @survey.id}
-	end
+  end
   
   def do_get
     get :new, @params
   end
   
   it "should be successful"do
-  	do_get
-  	response.should be_success
+    do_get
+    response.should be_success
   end
   
   it "should render new template" do
-  	do_get
-  	response.should render_template('new')
+    do_get
+    response.should render_template('new')
   end
   
   #it "should only render if the user is invited to, or sponsors the related survey"
@@ -148,7 +148,7 @@ end
 
 describe DiscussionsController, " handling GET /discussions/1/edit" do
 
-	before do
+  before do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     @discussion = mock_model(Discussion, :id => 1, :responder => @current_organization)
@@ -156,37 +156,37 @@ describe DiscussionsController, " handling GET /discussions/1/edit" do
     @survey = mock_model(Survey, :id => 1, :discussions => @survey_discussions_proxy)
     Survey.stub!(:find).and_return(@survey)
     @params = {:survey_id => @survey.id, :id => @discussion.id}
-	end
+  end
   
   def do_get
     get :edit, @params
   end
   
   it "should be successful" do
-  	do_get
-  	response.should be_success
+    do_get
+    response.should be_success
   end
   
   it "should render the edit template if the current organization owns the discussion" do
-  	do_get
-  	response.should render_template('edit')
+    do_get
+    response.should render_template('edit')
   end
   
   it "should find the discussion requested" do
-  	@survey_discussions_proxy.should_receive(:find).and_return(@discussion)
-  	do_get
+    @survey_discussions_proxy.should_receive(:find).and_return(@discussion)
+    do_get
   end
   
   it "should assign the found discussion to the view" do
-	  do_get
-  	assigns[:discussion].should eql(@discussion)
+    do_get
+    assigns[:discussion].should eql(@discussion)
   end
   
 end
 
 describe DiscussionsController, " handling GET /discussions/1/edit" do
 
-	before do
+  before do
     @current_organization = mock_model(Organization, :id => 1)
     login_as(@current_organization)
     @discussion_organization = mock_model(Organization, :id => 2)
@@ -195,25 +195,25 @@ describe DiscussionsController, " handling GET /discussions/1/edit" do
     @survey = mock_model(Survey, :id => 1, :discussions => @survey_discussions_proxy)
     Survey.stub!(:find).and_return(@survey)
     @params = {:survey_id => @survey.id, :id => @discussion.id}
-	end
+  end
   
   def do_get
     get :edit, @params
   end
   
   it "should raise an error if the current organization does not own the discussion" do
-  	lambda{ do_get }.should raise_error("You do not have the rights to access this page.")
+    lambda{ do_get }.should raise_error("You do not have the rights to access this page.")
   end
   
   it "should raise an error if the current invitation does not own the discussion" do
-		pending
+    pending
   end  
   
 end
 
 describe DiscussionsController, " handling POST /discussions" do
 
-	before(:each) do
+  before(:each) do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     @survey = mock_model(Survey, :id => 1)
@@ -239,20 +239,20 @@ describe DiscussionsController, " handling POST /discussions" do
   end
   
   it "should flash a message indicating succcess" do
-  	do_post
-  	flash[:notice].should eql("Discussion was created successfully!")
+    do_post
+    flash[:notice].should eql("Discussion was created successfully!")
   end
   
   it "should assign the parent discussion if this is a reply" do
-  	#Still thinking about how this should be implemented
-  	pending
+    #Still thinking about how this should be implemented
+    pending
   end
   
 end
 
 describe DiscussionsController, " handling POST /discussions" do
 
-	before(:each) do
+  before(:each) do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     @survey = mock_model(Survey, :id => 1)
@@ -268,15 +268,15 @@ describe DiscussionsController, " handling POST /discussions" do
   end
 
   it "should render the 'new' view upon failure" do
- 		do_post
- 		response.should render_template('discussions/new')
- 	end
- 	
+     do_post
+     response.should render_template('discussions/new')
+   end
+   
 end
 
 describe DiscussionsController, " handling PUT /discussions/1" do
 
-	before do
+  before do
     @current_organization = mock_model(Organization, :id => 1)
     login_as(@current_organization)
     @discussion = mock_model(Discussion, :id => 1, :errors => [], :responder => @current_organization, :times_reported => 1)
@@ -285,16 +285,16 @@ describe DiscussionsController, " handling PUT /discussions/1" do
     @survey = mock_model(Survey, :id => 1, :discussions => @survey_discussions_proxy)
     Survey.stub!(:find).and_return(@survey)
     @params = {:survey_id => @survey.id, :id => @discussion.id}
-	end
+  end
   
   def do_put
     put :update, @params
   end
 
   it "should find the discussion requested" do
-  	pending
-  #	@survey_discussions_proxy.should_receive(:find).and_return(@discusion)
-  #	do_put  	
+    pending
+  #  @survey_discussions_proxy.should_receive(:find).and_return(@discusion)
+  #  do_put    
   end
   
   it "should update the selected discussion" do
@@ -303,15 +303,15 @@ describe DiscussionsController, " handling PUT /discussions/1" do
   end
      
   it "should redirect to the discussion page for related survey upon success" do
-  	do_put
-  	response.should redirect_to(survey_discussions_path(@survey))
+    do_put
+    response.should redirect_to(survey_discussions_path(@survey))
   end
   
 end
 
 describe DiscussionsController, " handling PUT /discussions/1" do
 
-	before(:each) do
+  before(:each) do
     @current_organization = mock_model(Organization, :id => 1)
     login_as(@current_organization)
     @discussion = mock_model(Discussion, :id => 1, :update_attributes => true, :responder => mock(Organization, :id => 2))
@@ -320,24 +320,24 @@ describe DiscussionsController, " handling PUT /discussions/1" do
     @survey = mock_model(Survey, :id => 1, :discussions => @survey_discussions_proxy)
     Survey.stub!(:find).and_return(@survey)
     @params = {:survey_id => @survey.id, :id => @discussion.id}
-	end
+  end
   
   def do_put
     put :update, @params
   end
   
   it "should raise an error if the current organization does not own the discussion" do
-  	lambda{ do_put }.should raise_error("You do not have the rights to access this page.")
+    lambda{ do_put }.should raise_error("You do not have the rights to access this page.")
   end
      
   it "should raise an error if the current invitation does not own the discussion" do
-		pending
+    pending
   end 
 end
 
 describe DiscussionsController, " handling PUT /discussions/1" do
 
-	before(:each) do
+  before(:each) do
     @current_organization = mock_model(Organization, :id => 1)
     login_as(@current_organization)
     @discussion = mock_model(Discussion, :id => 1, :update_attributes => false, :responder => @current_organization)
@@ -346,22 +346,22 @@ describe DiscussionsController, " handling PUT /discussions/1" do
     @survey = mock_model(Survey, :id => 1, :discussions => @survey_discussions_proxy)
     Survey.stub!(:find).and_return(@survey)
     @params = {:survey_id => @survey.id, :id => @discussion.id}
-	end
+  end
   
   def do_put
     put :update, @params
   end
   
   it "should render the edit template upon failure" do
-  	do_put
-  	response.should render_template('discussions/edit')
+    do_put
+    response.should render_template('discussions/edit')
   end
   
 end
 
 describe DiscussionsController, " handling DELETE /discussions/1" do
-	
-	before do
+  
+  before do
     @current_organization = mock_model(Organization, :id => 1)
     login_as(@current_organization)
     @discussion = mock_model(Discussion, :id => 1, :errors => [], :responder => @current_organization, :times_reported => 1)
@@ -370,36 +370,36 @@ describe DiscussionsController, " handling DELETE /discussions/1" do
     @survey = mock_model(Survey, :id => 1, :discussions => @survey_discussions_proxy)
     Survey.stub!(:find).and_return(@survey)
     @params = {:survey_id => @survey.id, :id => @discussion.id}
-	end
+  end
   
   def do_delete
     delete :destroy, @params
   end
   
   it "should find the discussion requested" do
-  	@survey_discussions_proxy.should_receive(:find).and_return(@discussion)
-  	do_delete
+    @survey_discussions_proxy.should_receive(:find).and_return(@discussion)
+    do_delete
   end
   
   it "should destory the discussion requested" do
-  	@discussion.should_receive(:destroy).and_return(@discussion)
-  	do_delete
+    @discussion.should_receive(:destroy).and_return(@discussion)
+    do_delete
   end
   
   it "should destroy the children of the discussion" do
-  	pending
+    pending
   end
   
   it "should redirect discussions page for the related survey upon success" do
-  	do_delete
-  	response.should redirect_to(survey_discussions_path(@survey))
-   	flash[:notice].should eql('Discussion was successfully deleted.')  	
+    do_delete
+    response.should redirect_to(survey_discussions_path(@survey))
+     flash[:notice].should eql('Discussion was successfully deleted.')    
   end
  end
 
 describe DiscussionsController, " handling DELETE /discussions/1" do
-	
-	before do
+  
+  before do
     @current_organization = mock_model(Organization, :id => 1)
     login_as(@current_organization)
     @discussion = mock_model(Discussion, :id => 1, :errors => ['Error'], :responder => @current_organization, :times_reported => 1)
@@ -408,22 +408,22 @@ describe DiscussionsController, " handling DELETE /discussions/1" do
     @survey = mock_model(Survey, :id => 1, :discussions => @survey_discussions_proxy)
     Survey.stub!(:find).and_return(@survey)
     @params = {:survey_id => @survey.id, :id => @discussion.id}
-	end
+  end
   
   def do_delete
     delete :destroy, @params
   end
   
   it "should flash an error upon failure" do
-  	do_delete
-  	response.should redirect_to(survey_discussions_path(@survey))
-   	flash[:notice].should eql('Unable to delete discussion. Please try again later.')  	
+    do_delete
+    response.should redirect_to(survey_discussions_path(@survey))
+     flash[:notice].should eql('Unable to delete discussion. Please try again later.')    
   end
 end
 
 describe DiscussionsController, " handling DELETE /discussions/1" do
-	
-	before do
+  
+  before do
     @current_organization = mock_model(Organization, :id => 1)
     login_as(@current_organization)
     @discussion = mock_model(Discussion, :id => 1, :errors => [], :responder => mock(Organization,:id => 2), :times_reported => 1)
@@ -432,24 +432,24 @@ describe DiscussionsController, " handling DELETE /discussions/1" do
     @survey = mock_model(Survey, :id => 1, :discussions => @survey_discussions_proxy)
     Survey.stub!(:find).and_return(@survey)
     @params = {:survey_id => @survey.id, :id => @discussion.id}
-	end
+  end
   
   def do_delete
     delete :destroy, @params
   end
 
   it "should error when the current organization is not the owner of current discussion" do
-  	lambda{ do_delete }.should raise_error("You do not have the rights to access this page.")
+    lambda{ do_delete }.should raise_error("You do not have the rights to access this page.")
   end
   
   it "should raise an error if the current invitation does not own the discussion" do
-		pending
+    pending
   end
 end
 
 describe DiscussionsController, "handling PUT /discussions/1/report" do
-	
-	before do
+  
+  before do
     @current_organization = mock_model(Organization, :id => 1)
     login_as(@current_organization)
     @discussion_organization = mock_model(Organization, :id => 2)
@@ -459,56 +459,56 @@ describe DiscussionsController, "handling PUT /discussions/1/report" do
     @survey = mock_model(Survey, :id => 1, :discussions => @survey_discussions_proxy)
     Survey.stub!(:find).and_return(@survey)
     @params = {:survey_id => @survey.id, :id => @discussion.id}
-	end
+  end
   
   def do_put
     put :report, @params
   end
   
   it "should find the discussion requested" do
-  	@survey_discussions_proxy.should_receive(:find).and_return(@discussion)
-  	do_put
+    @survey_discussions_proxy.should_receive(:find).and_return(@discussion)
+    do_put
   end
   
   it "should increase the number of times reported" do
-  	@discussion.should_receive(:increment).with(:times_reported).and_return(@discussion)
+    @discussion.should_receive(:increment).with(:times_reported).and_return(@discussion)
     do_put
   end
   
   it "should send an email reporting the abuse when the number of times reported is greater then the threshold" do
-  	pending
+    pending
   end
   
   it "should redirect to the discussion page and flash a success message upon success" do
-  	do_put
-  	response.should redirect_to(survey_discussions_path(@survey))
-   	flash[:notice].should eql('Discussion was successfully reported.')  	
+    do_put
+    response.should redirect_to(survey_discussions_path(@survey))
+     flash[:notice].should eql('Discussion was successfully reported.')    
   end
     
 end
 
 describe DiscussionsController, "handling PUT /discussions/1/report" do
-	
-	before do
+  
+  before do
     @current_organization = mock_model(Organization, :id => 1)
     login_as(@current_organization)
     @discussion_organization = mock_model(Organization, :id => 2)
     @discussion = mock_model(Discussion, :id => 1, :save => true, :errors => ['Error'], :responder => @discussion_organization, :times_reported => 1)
-		@discussion.stub!(:increment).with(:times_reported).and_return(@discussion)
+    @discussion.stub!(:increment).with(:times_reported).and_return(@discussion)
     @survey_discussions_proxy = mock('survey discussions proxy', :find => @discussion)
     @survey = mock_model(Survey, :id => 1, :discussions => @survey_discussions_proxy)
     Survey.stub!(:find).and_return(@survey)
     @params = {:survey_id => @survey.id, :id => @discussion.id}
-	end
+  end
   
   def do_put
     put :report, @params
   end
   
   it "should redirect to the discussion page and flash an error message upon failure" do
-  	do_put
-  	response.should redirect_to(survey_discussions_path(@survey))
-   	flash[:notice].should eql('Unable to report discussion. Please try again later.')  	
+    do_put
+    response.should redirect_to(survey_discussions_path(@survey))
+     flash[:notice].should eql('Unable to report discussion. Please try again later.')    
   end
   
 end

@@ -22,19 +22,19 @@ end
 describe InvitationsController, " handling GET /invitations" do
 
   it "should be successful" do
-  	pending
+    pending
   end
   
   it "should render index template" do
-  	pending
+    pending
   end
   
   it "should find all non-accepted invitations" do
-  	pending
+    pending
   end
   
   it "should assign the found invitations to the view" do
-  	pending
+    pending
   end
   
 end
@@ -42,15 +42,15 @@ end
 describe InvitationsController, " handling GET /invitations.xml" do
 
   it "should be successful" do
-  	pending
+    pending
   end
   
   it "should find all non-accepted invitations" do
-  	pending
+    pending
   end
   
   it "should render the found invitations as XML" do
-  	pending
+    pending
   end
   
 end
@@ -58,19 +58,19 @@ end
 describe InvitationsController, " handling GET /invitations/1" do
 
   it "should be successful" do
-  	pending
+    pending
   end
   
   it "should find the invitation requested" do
-  	pending
+    pending
   end
   
   it "should render the show template" do
-  	pending
+    pending
   end
   
   it "should assigned the found invitation to the view" do
-  	pending
+    pending
   end
   
 end
@@ -78,15 +78,15 @@ end
 describe InvitationsController, " handling GET /invitations/1.xml" do
 
   it "should be successful" do
-  	pending
+    pending
   end
   
   it "should find the invitation requested" do
-  	pending
+    pending
   end
   
   it "should render the found invitation as XML" do
-  	pending
+    pending
   end
   
 end
@@ -94,34 +94,34 @@ end
 describe InvitationsController, " handling DELETE /invitations/1" do  
 
   it "should error if requesting organization is not the invitee"  do
-  	pending
+    pending
   end
    
   it "should error if the invitation was already accepted"  do
-  	pending
+    pending
   end
    
   it "should find the invitation" do
-  	pending
+    pending
   end
   
   it "should destroy the invitation" do
-  	pending
+    pending
   end
   
   it "should return a response regarding the success of the action when the request is XML" do
-  	pending
+    pending
   end
   
   describe "when the request is HTML" do
 
-	  it "should redirect to the network index" do
-	    pending    
-	  end
-	  
-	  it "should flash a message regarding the success of the action" do
-	    pending    
-	  end
+    it "should redirect to the network index" do
+      pending    
+    end
+    
+    it "should flash a message regarding the success of the action" do
+      pending    
+    end
   
   end
   

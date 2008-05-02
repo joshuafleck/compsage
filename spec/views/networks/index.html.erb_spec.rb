@@ -7,43 +7,43 @@ describe "/networks/index" do
   end
   
   it "should show the list of networks" do
-  	pending
+    pending
   end
   
   it "should display the title of each network" do
-  	pending
+    pending
   end
   
   it "should display the number of members for each network" do
-  	pending
+    pending
   end
   
   it "should have a link to show each network" do
-  	pending
+    pending
   end
   
   describe "when a network is owned by the organization" do
   
-  	it "should have a link to edit the network" do
-  		pending
-  	end
-  	
-  	it "should have a link to delete the network" do 
-  		pending
-  	end
-  	
-  	it "should have a link for inviting organizations to the network" do
-  		pending
-  	end
-  	
+    it "should have a link to edit the network" do
+      pending
+    end
+    
+    it "should have a link to delete the network" do 
+      pending
+    end
+    
+    it "should have a link for inviting organizations to the network" do
+      pending
+    end
+    
   end
 
   it "should have a link for creating a new network" do
-  	pending
+    pending
   end
   
- 	it "should have a link for leaving each network" do
-  	pending
+   it "should have a link for leaving each network" do
+    pending
   end
    
 end

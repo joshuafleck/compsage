@@ -1,34 +1,35 @@
 class OrganizationsController < ApplicationController
   before_filter :login_required
+  layout 'logged_in'
 
-	def index
-	
+  def index
+  
     respond_to do |wants|
       wants.html do
-				#@organizations = Organization.paginate({:page => params[:page]})
-				@organizations = Organization.find(:all)
+        #@organizations = Organization.paginate({:page => params[:page]})
+        @organizations = Organization.find(:all)
       end
       wants.xml do
-				@organizations = Organization.find(:all)
-      	render :xml => @organizations.to_xml 
+        @organizations = Organization.find(:all)
+        render :xml => @organizations.to_xml 
       end
     end
-	end
-	
-	def show
-	 @organization = Organization.find(params[:id])
+  end
+  
+  def show
+   @organization = Organization.find(params[:id])
     respond_to do |wants|
       wants.html # render template
       wants.xml do
-     		render :xml => @organization.to_xml
+         render :xml => @organization.to_xml
       end
     end
-	end
-	
-	def search
-	  #TODO paginate results
-		@organizations = Organization.find_by_contents(params[:search_text])
-	end
+  end
+  
+  def search
+    #TODO paginate results
+    @organizations = Organization.find_by_contents(params[:search_text])
+  end
 
   # render new.rhtml
   #def new
