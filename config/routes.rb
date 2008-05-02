@@ -23,5 +23,6 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :account
   map.resource :dashboard
   
-  map.connect 'signup', :controller => 'pending_accounts', :action => 'new'
+  map.signup 'signup', :controller => 'pending_accounts', :action => 'new'
+  map.login 'login', :controller => 'sessions', :action => 'new'
 end

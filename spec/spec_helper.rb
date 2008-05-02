@@ -8,37 +8,11 @@ require 'spec/rails'
 include AuthenticatedTestHelper
 
 Spec::Runner.configure do |config|
-  # If you're not using ActiveRecord you should remove these
-  # lines, delete config/database.yml and disable :active_record
-  # in your config/boot.rb
   config.use_transactional_fixtures = true
   config.use_instantiated_fixtures  = false
   config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
-
-  # == Fixtures
-  #
-  # You can declare fixtures for each example_group like this:
-  #   describe "...." do
-  #     fixtures :table_a, :table_b
-  #
-  # Alternatively, if you prefer to declare them only once, you can
-  # do so right here. Just uncomment the next line and replace the fixture
-  # names with your fixtures.
-  #
-  # config.global_fixtures = :table_a, :table_b
-  #
-  # If you declare global fixtures, be aware that they will be declared
-  # for all of your examples, even those that don't use them.
-  #
-  # == Mock Framework
-  #
-  # RSpec uses it's own mocking framework by default. If you prefer to
-  # use mocha, flexmock or RR, uncomment the appropriate line:
-  #
-  # config.mock_with :mocha
-  # config.mock_with :flexmock
-  # config.mock_with :rr
 end
+
 
 
 ##
@@ -83,43 +57,70 @@ class Hash
 end
 
 
-	##
-	# Section for our custom helpers
-	#
-	#
-	#
-	
-  def valid_organization_attributes
-    {
-      :email => 'brian.terlson@gmail.com',
-      :zip_code => '55044',
-      :password => 'test1',
-      :password_confirmation => 'test1',
-      :name => 'Denarius',
-      :contact_name => 'Andersen Cooper',
-      :city => 'New York',
-      :location => 'Eastern Division',
-      :state => 'New York'
-    }
-  end
+  ##
+  # Section for our custom helpers
+  #
+  #
+  #
+  
+def valid_organization_attributes
+  {
+    :email => 'brian.terlson@gmail.com',
+    :zip_code => '55044',
+    :password => 'test1',
+    :password_confirmation => 'test1',
+    :name => 'Denarius',
+    :contact_name => 'Andersen Cooper',
+    :city => 'New York',
+    :location => 'Eastern Division',
+    :state => 'New York'
+  }
+end
 
-	def organization_mock 
-		mock_model(
-				Organization, 
-				valid_organization_attributes)
-	
-	end
-	
+def organization_mock 
+  mock_model(
+      Organization, 
+      valid_organization_attributes)
+
+end
+  
 def valid_survey_attributes
-    {
-      :end_date => Date.new
-    }
+  {
+    :end_date => Date.new
+  }
+end
+
+def survey_mock 
+  mock_model(
+      Survey, 
+      valid_survey_attributes)
+
+end 
+  
+module AuthenticationRequiredSpecHelper
+
+  # Get all actions for specified controller
+  def get_all_actions(cont)
+    c = Module.const_get(cont.to_s.pluralize.capitalize + "Controller")
+    c.public_instance_methods(false).reject{ |action| ['rescue_action'].include?(action) }
   end
 
-	def survey_mock 
-		mock_model(
-				Survey, 
-				valid_survey_attributes)
-	
-	end	
-	
+  # test actions fail if not logged in
+  # opts[:exclude] contains an array of actions to skip
+  # opts[:include] contains an array of actions to add to the test in addition
+  # to any found by get_all_actions
+  # someone clever with their meta-programming-fu could probably make this method not take
+  # a controller, but it's good enough for now.
+  
+  def controller_actions_should_fail_if_not_logged_in(controller, opts={})
+    except= opts[:except] || []
+    actions_to_test= get_all_actions(controller).reject{ |a| except.include?(a) }
+    actions_to_test += opts[:include] if opts[:include]
+    actions_to_test.each do |a|
+      get a
+      response.should_not be_success
+      response.should redirect_to(login_path)
+    end
+  end
+  
+end

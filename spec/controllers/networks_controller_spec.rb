@@ -2,21 +2,21 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe NetworksController, "when an illegal action has been attempted", :shared => true do
 
-		it "should return an error when the request is XML" do
-			pending	 		
-		end
-	
-	 	describe "when the request is HTML" do
-	 	
-		 	it "should redirect to the network index page" do
-		 		pending
-		 	end
-		 	
-		 	it "should flash an error message" do
-		 		pending
-		 	end
-	 	
-	 	end
+    it "should return an error when the request is XML" do
+      pending     
+    end
+  
+    describe "when the request is HTML" do
+    
+      it "should redirect to the network index page" do
+        pending
+      end
+      
+      it "should flash an error message" do
+        pending
+      end
+    
+    end
 
 end
 
@@ -83,11 +83,11 @@ describe NetworksController, " handling GET /networks" do
   end
   
   it "should support sorting..." do
-  	pending
+    pending
   end
     
   it "should support pagination..." do
-  	pending
+    pending
   end
   
 end
@@ -116,17 +116,17 @@ describe NetworksController, " handling GET /networks/1" do
  
   describe "when the organization is not a member of the network" do
     
-		it_should_behave_like "NetworksController when an illegal action has been attempted"
-		
+    it_should_behave_like "NetworksController when an illegal action has been attempted"
+    
   end
 
   it "should find the network requested" do
-	  pending    
+    pending    
   end  
   
-	it "should set the 'joined' flag when the organization is a member of the network" do
-	  pending    
-	end  
+  it "should set the 'joined' flag when the organization is a member of the network" do
+    pending    
+  end  
 
   it "should render the show template" do
     pending    
@@ -144,9 +144,9 @@ describe NetworksController, " handling GET /networks/1.xml" do
     pending    
   end
 
- 	describe "when the organization is not a member of the network" do
+  describe "when the organization is not a member of the network" do
     
-		it_should_behave_like "NetworksController when an illegal action has been attempted"
+    it_should_behave_like "NetworksController when an illegal action has been attempted"
 
   end
    
@@ -188,8 +188,8 @@ describe NetworksController, " handling GET /networks/1/edit" do
   
   describe "when the organization is not the owner of the network" do
     
-			it_should_behave_like "NetworksController when an illegal action has been attempted"
-		
+      it_should_behave_like "NetworksController when an illegal action has been attempted"
+    
   end
   
   it "should render the edit template" do
@@ -213,19 +213,19 @@ describe NetworksController, " handling POST /networks" do
   end
   
   it "should return a response regarding the success of the action when the request is XML" do
-  	pending
+    pending
   end
  
   describe "when the request is HTML" do
   
-	  it "should redirect to the show invitation view" do
-	    pending    
-	  end
-	  
-	  it "should flash a message regarding the success of the creation" do
-	    pending    
-	  end
-	  
+    it "should redirect to the show invitation view" do
+      pending    
+    end
+    
+    it "should flash a message regarding the success of the creation" do
+      pending    
+    end
+    
   end
   
 end
@@ -238,39 +238,39 @@ describe NetworksController, " handling PUT /networks/1" do
   
   describe "when the organization is not the owner of the network" do
     
-		it_should_behave_like "NetworksController when an illegal action has been attempted"
-		
+    it_should_behave_like "NetworksController when an illegal action has been attempted"
+    
   end
   
   it "should update the selected network" do
     pending    
   end
  
- 	it "should return a response regarding the success of the action when the request is XML" do
- 		pending
- 	end
+  it "should return a response regarding the success of the action when the request is XML" do
+    pending
+  end
  
   describe "when the request is HTML" do
-	 
-	  it "should redirect to the network show page" do
-	    pending    
-	  end
-	  
-	  it "should flash a message regarding the success of the edit" do
-	    pending    
-	  end
-	  
+   
+    it "should redirect to the network show page" do
+      pending    
+    end
+    
+    it "should flash a message regarding the success of the edit" do
+      pending    
+    end
+    
   end
   
 end
 
 describe NetworksController, " handling PUT /networks/1/leave" do
 
-	describe "when the organization is not a member of the network" do
+  describe "when the organization is not a member of the network" do
     
-		it_should_behave_like "NetworksController when an illegal action has been attempted"
-		
-	end
+    it_should_behave_like "NetworksController when an illegal action has been attempted"
+    
+  end
 
   it "should find the network requested" do
     pending    
@@ -280,17 +280,17 @@ describe NetworksController, " handling PUT /networks/1/leave" do
   #If the owner leaves the network, the network will no longer show up in that owner's index page
   describe "when the organization is the owner of the network" do
   
-  	it "should return an error when the request is XML" do
-  		pending
-  	end
+    it "should return an error when the request is XML" do
+      pending
+    end
   
-  	it "should redirect to the network edit page" do
-  		pending
-  	end
-  	
-  	it "should flash a message instructing the organization to change the owner of the network" do
-  		pending
-  	end
+    it "should redirect to the network edit page" do
+      pending
+    end
+    
+    it "should flash a message instructing the organization to change the owner of the network" do
+      pending
+    end
   
   end
   
@@ -298,19 +298,19 @@ describe NetworksController, " handling PUT /networks/1/leave" do
     pending    
   end
 
- 	it "should return a response regarding the success of the action when the request is XML" do
- 		pending
- 	end
+  it "should return a response regarding the success of the action when the request is XML" do
+    pending
+  end
 
-	describe "when the request is HTML" do
+  describe "when the request is HTML" do
 
-	  it "should redirect to the network index" do
-	    pending    
-	  end
-	  
-	  it "should flash a message regarding the success of the action" do
-	    pending    
-	  end
+    it "should redirect to the network index" do
+      pending    
+    end
+    
+    it "should flash a message regarding the success of the action" do
+      pending    
+    end
   
   end
   
@@ -318,39 +318,39 @@ end
 
 describe NetworksController, " handling PUT /networks/1/join" do
 
-	describe "when the organization is already a member of the network" do
+  describe "when the organization is already a member of the network" do
     
-		it_should_behave_like "NetworksController when an illegal action has been attempted"
-		
-	end
-	
-	describe "when the organization is not invited to the network" do
-	
-			it_should_behave_like "NetworksController when an illegal action has been attempted"
+    it_should_behave_like "NetworksController when an illegal action has been attempted"
+    
+  end
+  
+  describe "when the organization is not invited to the network" do
+  
+      it_should_behave_like "NetworksController when an illegal action has been attempted"
 
-	end
+  end
 
-	it "should add the organization to the network"	do
-		pending
-	end
+  it "should add the organization to the network" do
+    pending
+  end
 
-	it "should destroy the invitation when an invitation exists" do
-		pending
-	end
+  it "should destroy the invitation when an invitation exists" do
+    pending
+  end
 
- 	it "should return a response regarding the success of the action when the request is XML" do
- 		pending
- 	end
+  it "should return a response regarding the success of the action when the request is XML" do
+    pending
+  end
 
-  describe "when the request it HTML"	do
+  describe "when the request it HTML" do
 
-	  it "should redirect to the network show page" do
-	    pending    
-	  end
+    it "should redirect to the network show page" do
+      pending    
+    end
 
-	  it "should flash a message regarding the success of the action" do
-	    pending    
-	  end
+    it "should flash a message regarding the success of the action" do
+      pending    
+    end
   
   end
   
@@ -364,30 +364,36 @@ describe NetworksController, " handling DELETE /networks/1" do
   
   describe "when the organization is not the owner of the network" do
     
-		it_should_behave_like "NetworksController when an illegal action has been attempted"
-		
+    it_should_behave_like "NetworksController when an illegal action has been attempted"
+    
   end
   
   it "should destroy the network" do
     pending    
   end
  
- 	it "should return a response regarding the success of the action when the request is XML" do
- 		pending
- 	end
+  it "should return a response regarding the success of the action when the request is XML" do
+    pending
+  end
 
   describe "when the request is HTML" do
-	 
-	  it "should redirect to the network index" do
-	    pending    
-	  end
-	  
-	  it "should flash a message regarding the success of the delete" do
-	  	pending
-	  end
-	  
+   
+    it "should redirect to the network index" do
+      pending    
+    end
+    
+    it "should flash a message regarding the success of the delete" do
+      pending
+    end
   end
   
 end
 
+describe NetworksController, " handling Authentication" do
+  include AuthenticationRequiredSpecHelper
+  
+  it "should restrict all actions" do
+    controller_actions_should_fail_if_not_logged_in 'Networks'
+  end
+end
 
