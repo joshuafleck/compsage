@@ -1,19 +1,17 @@
 class DiscussionsController < ApplicationController
-  before_filter :login_required, :setup
-  layout 'logged_in'
-  
-  def setup
-    @survey = Survey.find(params[:survey_id])
-  end
-  
-  def index
-    respond_to do |wants|
-      wants.html do
-        @discussions = @survey.discussions
-      end
+	before_filter :login_required, :setup
+	
+	def setup
+		@survey = Survey.find(params[:survey_id])
+	end
+	
+	def index
+	  @discussions = @survey.discussions
+	  
+		respond_to do |wants|
+      wants.html
       wants.xml do
-        @discussions = @survey.discussions
-        render :xml => @discussions.to_xml 
+      	render :xml => @discussions.to_xml 
       end
     end
   end

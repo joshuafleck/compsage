@@ -13,7 +13,7 @@ ActionController::Routing::Routes.draw do |map|
     survey.resource :report
   end
   
-  map.resources :networks do |network|
+  map.resources :networks, :member => {:join => :put, :leave => :put} do |network|
     network.resources :organizations
     network.resources :invitations, :controller => :network_invitations
   end

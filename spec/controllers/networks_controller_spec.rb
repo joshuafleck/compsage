@@ -26,32 +26,50 @@ describe NetworksController, "#route_for" do
   end
   
   it "should map { :controller => 'networks', :action => 'leave', :id => 1} to /networks/1/leave" do
-    #route_for(:controller => "networks", :action => "leave", :id => 1).should == "/networks/1/leave"  
-    pending
+    route_for(:controller => "networks", :action => "leave", :id => 1).should == "/networks/1/leave"  
   end
 
   it "should map { :controller => 'networks', :action => 'join', :id => 1} to /networks/1/join" do
-    #route_for(:controller => "networks", :action => "join", :id => 1).should == "/networks/1/join"
-    pending
+    route_for(:controller => "networks", :action => "join", :id => 1).should == "/networks/1/join"
   end
 end
 
 describe NetworksController, " handling GET /networks" do
-
-  it "should be successful" do
-    pending    
+  before do
+    @organization = mock_model(Organization)
+    login_as(@organization)
+    
+    @network = mock_model(Network)
+    @organization.stub!(:networks).and_return([@network])
   end
   
-  it "should render index template" do
-    pending    
+  def do_get
+    get :index
+  end
+  
+  it "should be successful" do
+    do_get
+    response.should be_success 
+  end
+  
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_get
+  end
+  
+  it "should show the index template" do
+    do_get
+    response.should render_template('index')
   end
   
   it "should find all networks the organization belongs to" do
-    pending    
+    @organization.should_receive(:networks).and_return([@network])
+    do_get
   end
   
   it "should assign the found networks for the view" do
-    pending    
+    do_get
+    assigns[:networks].should == [@network]
   end
   
   it "should support sorting..." do
@@ -65,158 +83,257 @@ describe NetworksController, " handling GET /networks" do
 end
 
 describe NetworksController, " handling GET /networks.xml" do
-
+  before do
+    @organization = mock_model(Organization)
+    login_as(@organization)
+    
+    @network = mock_model(Network, :to_xml => "XML")
+    @networks = [@network]
+    @organization.stub!(:networks).and_return(@networks)
+  end
+  
+  def do_get
+    @request.env["HTTP_ACCEPT"] = "application/xml"
+    get :index
+  end
+  
   it "should be successful" do
-    pending    
+    do_get
+    response.should be_success
   end
   
   it "should find all networks the organization belongs to" do
-    pending    
+    @organization.should_receive(:networks).and_return([@network])
+    do_get
   end
   
   it "should render the found networks as XML" do
-    pending    
+    @networks.should_receive(:to_xml).and_return("XML")
+    do_get
+    response.body.should == "XML"
   end
-  
 end
 
 describe NetworksController, " handling GET /networks/1" do
-
+  before do
+    @organization = mock_model(Organization)
+    login_as(@organization)
+    
+    @network = mock_model(Network, :to_xml => "XML")
+    
+    @network_proxy = mock('Network Proxy', :find => @network)
+    @organization.stub!(:networks).and_return(@network_proxy)
+    
+    @params = {:id => "1"}
+  end
+  
+  def do_get
+    get :show, @params
+  end
+  
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_get
+  end
+  
   it "should be successful" do
-    pending    
+    do_get
+    response.should be_success
   end
 
   it "should find the network requested" do
-    pending    
-  end  
-  
-  it "should set the 'joined' flag when the organization is a member of the network" do
-    pending    
+    @network_proxy.should_receive(:find).and_return(@network)
+    do_get    
   end  
 
   it "should render the show template" do
-    pending    
+    do_get
+    response.should render_template("show")    
   end
   
   it "should assign the found network to the view" do
-    pending    
-  end
-  
-end
-
-describe NetworksController, " handling GET /networks/1 when the current organization is not a member" do
-  it "should not be successful" do
-    
-  end
+    do_get
+    assigns[:network].should == @network    
+  end  
 end
 
 describe NetworksController, " handling GET /networks/1.xml" do
-
+  before do
+    @organization = mock_model(Organization)
+    login_as(@organization)
+    
+    @network = mock_model(Network, :to_xml => "XML")
+    
+    @network_proxy = mock('Network Proxy', :find => @network)
+    @organization.stub!(:networks).and_return(@network_proxy)
+    
+    @params = {:id => "1"}
+  end
+  
+  def do_get
+    @request.env["HTTP_ACCEPT"] = "application/xml"
+    get :show, @params
+  end
+  
   it "should be successful" do
-    pending    
+    do_get
+    response.should be_success    
   end
    
   it "should find the network requested" do
-    pending    
-  end
-
-  it "should find all members of the network" do
-    pending    
+    @network_proxy.should_receive(:find).and_return(@network)
+    do_get
   end
   
   it "should render the found network and network members as XML" do
-    pending    
+    @network.should_receive(:to_xml, :with => {:include => :organizations}).and_return("XML")
+    do_get
+    response.body.should == "XML"
   end
-  
 end
 
 describe NetworksController, " handling GET /networks/new" do
-
+  before do
+    @organization = mock_model(Organization)
+    login_as(@organization)
+  end
+  
+  def do_get
+    get :new
+  end
+  
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_get
+  end
+  
   it "should be successful" do
-    pending    
+    do_get
+    response.should be_success
   end
 
   it "should render new template" do
-    pending    
+    do_get
+    response.should render_template('new')
   end
-  
 end
 
 describe NetworksController, " handling GET /networks/1/edit" do
-
+  
+  before do
+    @organization = mock_model(Organization)
+    login_as(@organization)
+    
+    @network = mock_model(Network, :to_xml => "XML")
+    
+    @network_proxy = mock('Network Proxy', :find => @network)
+    @organization.stub!(:owned_networks).and_return(@network_proxy)
+    
+    @params = {:id => "1"}
+  end
+  
+  def do_get
+    get :edit, @params
+  end
+  
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_get
+  end
+  
   it "should be successful" do
-    pending    
+    do_get
+    response.should be_success
   end
   
   it "should find the network requested" do
-    pending    
+    @network_proxy.should_receive(:find).and_return(@network)
+    do_get
   end
   
   it "should render the edit template" do
-    pending    
+    do_get
+    response.should render_template('edit')    
   end
   
   it "should assign the found network to the view" do
-    pending    
+    do_get
+    assigns[:network].should == @network    
   end
 
-end
-
-describe NetworksController, " handling GET /networks/1/edit when the current organziation isn't the owner" do
-  it "should not be successful"
 end
 
 describe NetworksController, " handling POST /networks" do
-
+  before do
+    @organization = mock_model(Organization)
+    login_as(@organization)
+    
+    @network = mock_model(Network, :save! => true)
+    
+    @owned_networks_proxy = mock('owned networks proxy', :new => @network)
+    @networks_proxy = mock('networks proxy', :<< => true)
+    @organization.stub!(:networks).and_return(@networks_proxy)
+    @organization.stub!(:owned_networks).and_return(@owned_networks_proxy)
+  end
+  
+  def do_post
+    post :create
+  end
+  
   it "should create a new network" do
-    pending    
+    @owned_networks_proxy.should_receive(:new).and_return(@network)
+    do_post
   end
   
   it "should make the owner a member of the network" do
-    pending    
-  end
-  
-  it "should return a response regarding the success of the action when the request is XML" do
-    pending
+    @networks_proxy.should_receive(:<<)
+    do_post
   end
   
   it "should redirect to the show invitation view" do
-    pending    
+    do_post
+    response.should redirect_to(network_invitations_path(@network.id))
   end
-    
-  it "should flash a message regarding the success of the creation" do
-    pending    
-  end
-  
 end
 
 describe NetworksController, " handling PUT /networks/1" do
-
+  before do
+    @organization = mock_model(Organization)
+    login_as(@organization)
+    
+    @network = mock_model(Network, :update_attributes! => true)
+    
+    @owned_networks_proxy = mock('owned networks proxy', :find => @network)
+    
+    @organization.stub!(:owned_networks).and_return(@owned_networks_proxy)
+    
+    @params = {:id => @network.id}
+  end
+  
+  def do_put
+    put :update, @params
+  end
+  
   it "should find the network requested" do
-    pending    
+    @owned_networks_proxy.should_receive(:find).and_return(@network)
+    do_put
   end
   
   it "should update the selected network" do
-    pending    
+    @network.should_receive(:update_attributes!)
+    do_put
   end
- 
-  it "should return a response regarding the success of the action when the request is XML" do
-    pending
-  end
- 
-   
+
   it "should redirect to the network show page" do
-    pending    
+    do_put
+    response.should redirect_to(network_path(@network))
   end
   
   it "should flash a message regarding the success of the edit" do
-    pending    
+    do_put
+    flash[:notice].should == "Your network was updated successfully."
   end
 
-end
-
-describe NetworksController, " handling PUT /networks/1 when the current organization is not the owner" do
-  it "should not be successful"
 end
 
 describe NetworksController, " handling PUT /networks/1/leave" do
@@ -309,12 +426,3 @@ describe NetworksController, " handling DELETE /networks/1" do
   end
 
 end
-
-describe NetworksController, " handling Authentication" do
-  include AuthenticationRequiredSpecHelper
-  
-  it "should require login for all actions" do
-    controller_actions_should_fail_if_not_logged_in 'Networks'
-  end
-end
-
