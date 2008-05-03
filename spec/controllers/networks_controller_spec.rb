@@ -280,6 +280,11 @@ describe NetworksController, " handling POST /networks" do
     post :create
   end
   
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_post
+  end
+  
   it "should create a new network" do
     @owned_networks_proxy.should_receive(:new).and_return(@network)
     do_post
@@ -314,6 +319,11 @@ describe NetworksController, " handling PUT /networks/1" do
     put :update, @params
   end
   
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_put
+  end
+  
   it "should find the network requested" do
     @owned_networks_proxy.should_receive(:find).and_return(@network)
     do_put
@@ -337,25 +347,46 @@ describe NetworksController, " handling PUT /networks/1" do
 end
 
 describe NetworksController, " handling PUT /networks/1/leave" do
-
+  before do
+    @organization = mock_model(Organization)
+    login_as(@organization)
+    
+    @network = mock_model(Network, :update_attributes! => true, :owner => mock_model(Organization))
+    
+    @networks_proxy = mock('networks proxy', :find => @network, :delete => true)
+    
+    @organization.stub!(:networks).and_return(@networks_proxy)
+    
+    @params = {:id => @network.id}
+  end
+  
+  def do_put
+    put :leave, @params
+  end
+  
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_put
+  end
+  
   it "should find the network requested" do
-    pending    
+    @networks_proxy.should_receive(:find).and_return(@network)
+    do_put
   end
   
   it "should allow the organization to leave the network" do
-    pending    
-  end
-
-  it "should return a response regarding the success of the action when the request is XML" do
-    pending
+    @networks_proxy.should_receive(:delete).with(@network)
+    do_put
   end
 
   it "should redirect to the network index" do
-    pending    
+    do_put
+    response.should redirect_to(networks_path)
   end
   
   it "should flash a message regarding the success of the action" do
-    pending    
+    do_put
+    flash[:notice].should == "You have successfully left the network."
   end
 
 end
@@ -363,66 +394,100 @@ end
 #We cannot allow the owner to leave the network without changing the owner
 #If the owner leaves the network, the network will no longer show up in that owner's index page
 describe NetworksController, "handling PUT /networks/1/leave when the organization is the owner of the network" do
-
-  it "should return an error when the request is XML" do
-    pending
+  before do
+    @organization = mock_model(Organization)
+    login_as(@organization)
+    
+    @network = mock_model(Network, :update_attributes! => true, :owner => @organization)
+    
+    @networks_proxy = mock('networks proxy', :find => @network, :delete => true)
+    
+    @organization.stub!(:networks).and_return(@networks_proxy)
+    
+    @params = {:id => @network.id}
   end
-
+  
+  def do_put
+    put :leave, @params
+  end
+  
   it "should redirect to the network edit page" do
-    pending
+    do_put
+    response.should redirect_to(edit_network_path(@network))
   end
   
   it "should flash a message instructing the organization to change the owner of the network" do
-    pending
+    do_put
+    flash[:error].should == "You must first designate a new network owner."
   end
 
 end
 
 describe NetworksController, " handling PUT /networks/1/join" do
+  before do
+    @organization = mock_model(Organization)
+    login_as(@organization)
+    
+    @network = mock_model(Network, :owner => @organization)
+    @invite = mock_model(NetworkInvitation, :network => @network, :invitee => @organization, :destroy => true)
+    
+    @invites_proxy = mock('invites proxy', :find_by_network_id => @invite)
+    @networks_proxy = mock('networks proxy', :<< => true)
+    
+    @organization.stub!(:network_invitations).and_return(@invites_proxy)
+    @organization.stub!(:networks).and_return(@networks_proxy)
+    
+    @params = {:id => @network.id}
+  end
   
-  it "should require an invitation"
+  def do_put
+    put :join, @params
+  end
   
   it "should add the organization to the network" do
-    pending
+    @networks_proxy.should_receive(:<<).with(@network)
+    do_put
   end
 
-  it "should destroy the invitation when an invitation exists" do
-    pending
-  end
-
-  it "should return a response regarding the success of the action when the request is XML" do
-    pending
+  it "should destroy the invitation" do
+    @invite.should_receive(:destroy)
+    do_put
   end
   
   it "should redirect to the network show page" do
-    pending    
+    do_put
+    response.should redirect_to(network_path(@network))
   end
 
   it "should flash a message regarding the success of the action" do
-    pending    
-  end  
+    do_put
+    flash[:notice].should == "You have joined the network!"
+  end
 end
 
-describe NetworksController, " handling DELETE /networks/1" do
-
-  it "should find the network requested" do
-    pending    
+describe NetworksController, "handling PUT /networks/1/join with no invitation" do
+  before do
+    @organization = mock_model(Organization)
+    login_as(@organization)
+    
+    @invites_proxy = mock('invites proxy', :find_by_network_id => nil)
+    
+    @organization.stub!(:network_invitations).and_return(@invites_proxy)
+    
+    @params = {:id => 1}
   end
   
-  it "should destroy the network" do
-    pending    
-  end
- 
-  it "should return a response regarding the success of the action when the request is XML" do
-    pending
-  end
-   
-  it "should redirect to the network index" do
-    pending    
+  def do_put
+    put :join, @params
   end
   
-  it "should flash a message regarding the success of the delete" do
-    pending
+  it "should redirect to networks index" do
+    do_put
+    response.should redirect_to(networks_path)
   end
-
+  
+  it "should flash an error message" do
+    do_put
+    flash[:error].should == "You get an invite before joining that network."
+  end
 end

@@ -4,7 +4,7 @@ class Organization < ActiveRecord::Base
 	is_indexed :fields => [:name]
 
   has_and_belongs_to_many :networks
-  has_many :owned_networks, :foreign_key => "owner_id"
+  has_many :owned_networks, :class_name => "Network", :foreign_key => "owner_id"
   
   has_many :surveys, :foreign_key => "sponsor_id"
   has_many :participated_surveys, :class_name => "Survey", :through => :survey_invitations, :source => :invitee

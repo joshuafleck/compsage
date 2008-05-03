@@ -83,6 +83,37 @@ describe NetworkInvitation do
  
 end
 
+describe NetworkInvitation, ".accept!" do
+  include NetworkInvitationSpecHelper
+  
+  before(:each) do
+    @invitee = mock_model(Organization)
+    @networks = []
+    @network = mock_model(Network)
+    @invitee.stub!(:networks).and_return(@networks)
+    
+    @network_invitation = NetworkInvitation.create(
+      :invitee => @invitee,
+      :network => @network,
+      :inviter => mock_model(Organization)
+    )
+  end
+  
+  it "should add the network to the invitees networks" do
+    @networks.should_receive(:<<).with(@network)
+    @network_invitation.accept!
+  end
+  
+  it "should destroy the invitation" do
+    @network_invitation.accept!
+    @network_invitation.should be_frozen # indicates it was deleted.
+  end
+  
+  after(:each) do
+    @network_invitation.destroy
+  end
+end
+
 module SurveyInvitationSpecHelper
 
   def valid_survey_invitation_attributes
