@@ -63,11 +63,11 @@ describe Question, "with options", :shared => true do
   end
   
   it "should save a numerical response" do
-    @question.numerical_response?.should be_true
+    @question.should be_numerical_response
   end
   
   it "should be answerable" do
-    @question.answerable?.should be_true
+    @question.should be_answerable
   end
 end
 
@@ -79,11 +79,11 @@ describe Question, "without options with a textual response", :shared => true do
     @question.attributes = valid_question_attributes.with(:question_type => 'text_area')
   end  
   it "should save a textual response" do
-    @question.numerical_response?.should be_false
+    @question.should_not be_numerical_response
   end
   
   it "should be answerable" do
-    @question.answerable?.should be_true
+    @question.should be_answerable
   end
 
 end
@@ -96,13 +96,13 @@ describe Question, "without options with a numerical response", :shared => true 
     @question.attributes = valid_question_attributes.with(:question_type => 'numerical_field')
   end
   it "should save a numerical response" do
-    @question.numerical_response?.should be_true
+    @question.should be_numerical_response
   end
 
   it "should be invalid if it's not a number" #should this be handled by response model?
   
   it "should be answerable" do
-    @question.answerable?.should be_true
+    @question.should be_answerable
   end
   
 end
@@ -157,7 +157,7 @@ describe Question, "that is just plain old text (like instructions)" do
     @question.attributes = valid_question_attributes.with(:question_type => 'text')
   end
   it "should not be answerable" do
-    @question.answerable?.should be_false
+    @question.should_not be_answerable
   end
   
 end

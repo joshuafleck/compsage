@@ -205,8 +205,8 @@ describe ExternalInvitation do
   	@external_invitation.attributes.should have_at_least(1).errors_on(:email)
   end
   
-  it "should be invalid when the name is less than 3 characters in length" do
-  	@external_invitation.attributes = valid_external_invitation_attributes.with(:name => "aa")
+  it "should be invalid when the name is less than 2 characters in length" do
+  	@external_invitation.attributes = valid_external_invitation_attributes.with(:name => "a")
   	@external_invitation.valid?
   	@external_invitation.attributes.should have_at_least(1).errors_on(:name)
   end

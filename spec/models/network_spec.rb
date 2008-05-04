@@ -65,20 +65,3 @@ describe Network do
   end  
 
 end  
-
-describe Network, "that does exist" do
-
-  include NetworkSpecHelper
-
-  before(:each) do
-    @network = Network.new
-    @network.attributes = valid_network_attributes
-    @network.save
-  end  
-  
-  after(:each) do
-    @network.destroy
-  end  
-     
-end
- 
