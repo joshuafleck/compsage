@@ -47,9 +47,7 @@ class NetworksController < ApplicationController
   
   # create a new network
   def create
-    @network = current_organization.owned_networks.new(params[:network])
-    @network.save!
-    current_organization.networks << @network
+    @network = current_organization.owned_networks.create!(params[:network])
     
     respond_to do |wants|
       wants.html { redirect_to network_invitations_path(@network) }

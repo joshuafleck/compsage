@@ -3,8 +3,8 @@ class Organization < ActiveRecord::Base
 
 	is_indexed :fields => [:name]
 
-  has_and_belongs_to_many :networks
-  has_many :owned_networks, :class_name => "Network", :foreign_key => "owner_id"
+  has_and_belongs_to_many :networks, :after_remove => :delete_empty_network
+  has_many :owned_networks, :class_name => "Network", :foreign_key => "owner_id", :after_add => :join_created_network
   
   has_many :surveys, :foreign_key => "sponsor_id"
   has_many :participated_surveys, :class_name => "Survey", :through => :survey_invitations, :source => :invitee
@@ -105,4 +105,13 @@ class Organization < ActiveRecord::Base
       crypted_password.blank? || !password.blank?
     end
     
+    # Destroy the network if it has zero members.
+    def delete_empty_network(network)
+      network.destroy if network.organizations.empty?
+    end
+    
+    # Joins the network just created by this organization.
+    def join_created_network(network)
+      networks << network
+    end
 end

@@ -287,10 +287,10 @@ describe NetworksController, " handling POST /networks" do
     @organization = mock_model(Organization)
     login_as(@organization)
     
-    @network = mock_model(Network, :save! => true)
+    @network = mock_model(Network)
     
-    @owned_networks_proxy = mock('owned networks proxy', :new => @network)
-    @networks_proxy = mock('networks proxy', :<< => true)
+    @owned_networks_proxy = mock('owned networks proxy', :create! => @network)
+    @networks_proxy = mock('networks proxy')
     @organization.stub!(:networks).and_return(@networks_proxy)
     @organization.stub!(:owned_networks).and_return(@owned_networks_proxy)
   end
@@ -305,12 +305,7 @@ describe NetworksController, " handling POST /networks" do
   end
   
   it "should create a new network" do
-    @owned_networks_proxy.should_receive(:new).and_return(@network)
-    do_post
-  end
-  
-  it "should make the owner a member of the network" do
-    @networks_proxy.should_receive(:<<)
+    @owned_networks_proxy.should_receive(:create!).and_return(@network)
     do_post
   end
   

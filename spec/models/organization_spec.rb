@@ -224,4 +224,17 @@ describe Organization, "that already exists" do
     @organization.remember_token_expires_at.should_not be_nil
     @organization.remember_token_expires_at.between?(before, after).should be_true
   end
+  
+  it 'should join networks that are created by the organization' do
+    @organization.save
+    network = @organization.owned_networks.create(:name => 'test')
+    @organization.networks.should include(network)
+  end
+  
+  it 'should delete empty networks when the organization leaves the network' do
+    @organization.save
+    @network = @organization.owned_networks.create(:name => "test")
+    @organization.networks.destroy(@organization.networks.first)
+    lambda { Network.find(@network.id) }.should raise_error(ActiveRecord::RecordNotFound)
+  end
 end
