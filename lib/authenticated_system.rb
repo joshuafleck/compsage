@@ -6,18 +6,36 @@ module AuthenticatedSystem
       current_organization != :false
     end
 
+    # returns true if the user is logged in with an external invitation.
+    def invited?
+      current_invitation != :false
+    end
+    
     # Accesses the current organization from the session.  Set it to :false if login fails
     # so that future calls do not hit the database.
     def current_organization
       @current_organization ||= (login_from_session || login_from_basic_auth || login_from_cookie || :false)
     end
 
+    def current_invitation
+      @current_invitation ||= (login_from_invitation || :false)
+    end
+    
+    def current_organization_or_invitation
+      @current_organization || @current_invitation
+    end
+    
     # Store the given organization id in the session.
     def current_organization=(new_organization)
       session[:organization_id] = (new_organization.nil? || new_organization.is_a?(Symbol)) ? nil : new_organization.id
       @current_organization = new_organization || :false
     end
 
+    def current_invitation=(new_invitation)
+      session[:external_survey_invitation] = (new_invitation.nil? || new_invitation.is_a?(Symbol)) ? nil : new_invitation.id
+      @current_invitation = new_invitation || :false
+    end
+    
     # Check if the organization is authorized
     #
     # Override this method in your controllers if you want to restrict access
@@ -52,6 +70,10 @@ module AuthenticatedSystem
       authorized? || access_denied
     end
 
+    def login_or_invite_required
+      authorized? || invited? || access_denied
+    end
+    
     # Redirect as appropriate when an access request fails.
     #
     # The default action is to redirect to the login screen.
@@ -112,5 +134,9 @@ module AuthenticatedSystem
         cookies[:auth_token] = { :value => organization.remember_token, :expires => organization.remember_token_expires_at }
         self.current_organization = organization
       end
+    end
+    
+    def login_from_invitation
+      self.current_organization = ExternalSurveyInvitation.find(session[:external_survey_invitation_id]) if session[:external_survey_invitation_id]
     end
 end
