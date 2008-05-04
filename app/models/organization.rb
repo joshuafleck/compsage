@@ -36,6 +36,7 @@ class Organization < ActiveRecord::Base
   validates_presence_of     :zip_code
   validates_length_of       :zip_code, :is => 5
   validates_length_of       :location, :maximum => 60, :allow_nil => :true
+  validates_length_of       :industry, :maximum => 100, :allow_nil => :true
   validates_length_of       :contact_name, :maximum => 100, :allow_nil => :true
   validates_length_of       :city, :maximum => 50, :allow_nil => :true
   validates_length_of       :state, :maximum => 30, :allow_nil => :true
@@ -45,7 +46,7 @@ class Organization < ActiveRecord::Base
   
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
-  attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name
+  attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name, :industry
   
   # Authenticates a user by their email address and unencrypted password.  Returns the user or nil.
   def self.authenticate(email, password)

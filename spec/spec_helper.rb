@@ -73,7 +73,8 @@ def valid_organization_attributes
     :contact_name => 'Andersen Cooper',
     :city => 'New York',
     :location => 'Eastern Division',
-    :state => 'New York'
+    :state => 'New York',
+    :industry => 'Software'
   }
 end
 

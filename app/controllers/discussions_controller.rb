@@ -6,8 +6,9 @@ class DiscussionsController < ApplicationController
 	end
 	
 	def index
-	  @discussions = @survey.discussions
-	  
+	  @page_title = "Discussions"
+    @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))]    
+	  @discussions = @survey.discussions	  
 		respond_to do |wants|
       wants.html
       wants.xml do
@@ -17,77 +18,99 @@ class DiscussionsController < ApplicationController
   end
   
   def new
+    @page_title = "New Discussion"
+    @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
+    @discussion = Discussion.new
   end
 
   def create
-    params[:organization_id => current_organization.id]
-    #TODO: populate for an invitation discussion-owner
-    @discussion = Discussion.new(params)
-    @discussion.save
+    @discussion = current_organization.discussions.new(params[:discussion])
+    @survey.discussions << @discussion
+    @discussion.save!
     respond_to do |wants|
-      if @discussion.errors.empty?
-        flash[:notice] = "Discussion was created successfully!"
-        wants.html { redirect_to survey_discussions_path(@survey) }
-      else
-        wants.html { render :action => "new" }
+      wants.html {         
+        flash[:notice] = "Your discussion was created successfully."
+        redirect_to survey_discussions_path(@survey) }      
+      wants.xml do
+        render :status => :created
+      end
+    end
+  rescue ActiveRecord::RecordInvalid
+    respond_to do |wants|
+      wants.html do
+        render :action => 'new'
+      end
+      wants.xml do
+        render :xml => @discussion.errors.to_xml, :status => 422
       end
     end
   end
   
   def edit
-    @discussion = @survey.discussions.find(params[:id])
+    @discussion = current_organization.discussions.find(params[:id])
+    @page_title = "Editing #{@discussion.topic}"
+    @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
     #TODO: look for an invitation discussion-owner
-    raise "You do not have the rights to access this page." unless @discussion.responder == current_organization
   end
   
   def update
-    @discussion = @survey.discussions.find(params[:id])  
+    @discussion = current_organization.discussions.find(params[:id])  
+    @discussion.update_attributes!(params[:discussion])
     #TODO: look for an invitation discussion-owner
-    raise "You do not have the rights to access this page." unless @discussion.responder == current_organization
     respond_to do |wants|
-      if @discussion.update_attributes(params)
-        flash[:notice] = 'Discussion was successfully updated.'
-        wants.html{
-          redirect_to survey_discussions_path(@survey) 
-        }
-      else
-        wants.html{ 
-          render :action => "edit"
-        }
-       end
+      wants.html do
+        flash[:notice] = "Your discussion was updated successfully."
+        redirect_to survey_discussions_path(@survey)
+      end
+      wants.xml do
+        render :status => :ok
+      end
+    end
+  rescue ActiveRecord::RecordInvalid
+    respond_to do |wants|
+      wants.html do
+        render :action => 'edit'
+      end
+      wants.xml do
+        render :xml => @discussion.errors.to_xml, :status => 422
+      end
     end
   end
   
   def report
     @discussion = @survey.discussions.find(params[:id])
-    #@discussion.times_reported += 1
-    @discussion.increment(:times_reported)
+    @discussion.increment!(:times_reported)
     respond_to do |wants|
-      if @discussion.errors.empty?
-        flash[:notice] = 'Discussion was successfully reported.'        
-      else
-        flash[:notice] = 'Unable to report discussion. Please try again later.'
+      wants.html {         
+        flash[:notice] = "The discussion was reported successfully."
+        redirect_to survey_discussions_path(@survey) }      
+      wants.xml do
+        render :status => :created
       end
-      wants.html{
-          redirect_to survey_discussions_path(@survey) 
-        }
+    end
+  rescue ActiveRecord::RecordInvalid
+    respond_to do |wants|
+      wants.html do
+        flash[:notice] = "Unable to report discussion at this time. Please try again later."
+        redirect_to survey_discussions_path(@survey)
+      end
+      wants.xml do
+        render :xml => @discussion.errors.to_xml, :status => 422
+      end
     end
   end
   
   def destroy
-    @discussion = @survey.discussions.find(params[:id])
+    @discussion = current_organization.discussions.find(params[:id])
     #TODO: look for an invitation discussion-owner
-    raise "You do not have the rights to access this page." unless @discussion.responder == current_organization
-    @discussion.destroy
+   @discussion.destroy
     respond_to do |wants|
-      if @discussion.errors.empty?
-        flash[:notice] = 'Discussion was successfully deleted.'        
-      else
-        flash[:notice] = 'Unable to delete discussion. Please try again later.'
+      wants.html {         
+        flash[:notice] = "The discussion was deleted successfully."
+        redirect_to survey_discussions_path(@survey) }      
+      wants.xml do
+        render :status => :ok
       end
-      wants.html{
-          redirect_to survey_discussions_path(@survey) 
-        }
     end
   end
   

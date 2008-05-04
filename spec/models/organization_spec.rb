@@ -105,6 +105,11 @@ describe Organization do
     @organization.should have(1).errors_on(:location)
   end
   
+  it "should be invalid when industry is longer than 100 characters" do
+  	@organization.attributes = valid_organization_attributes.with(:industry => "0"*101)
+    @organization.should have(1).errors_on(:industry)
+  end
+  
   it "should be invalid when contact name is longer than 100 characters" do
   	@organization.attributes = valid_organization_attributes.with(:contact_name => "0"*101)
     @organization.should have(1).errors_on(:contact_name)
