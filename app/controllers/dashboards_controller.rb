@@ -3,6 +3,8 @@ class DashboardsController < ApplicationController
   layout 'logged_in'
   
   def show
+    @page_title = "Dashboard"
+    
     @recent_survey_invitations = current_organization.survey_invitations.recent
     @recent_network_invitations = current_organization.network_invitations.recent
     @recent_running_surveys = current_organization.surveys.recently_created

@@ -79,9 +79,10 @@ div.tab_container {
   margin-left: 10%;
   margin-right: 10%;
   background-color: #fff;
-  padding: 10px;
+  padding: 1px 10px 1px 10px;
   border: 1px solid #999;
   border-top: none;
+  clear: both;
 }
 
 #breadcrumbs{
@@ -327,4 +328,45 @@ div.button_list div {
 div.button_list div.blurred {
   color: #fff;
   font-weight: bold;
+}
+
+#errorExplanation {
+  width: 400px;
+  border: 2px solid red;
+  padding: 5px;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+  margin-top: 5px;
+}
+
+#errorExplanation h2 {
+  size: 1.2em;
+  text-align: left;
+  font-weight: bold;
+  padding: 5px 5px 5px 15px;
+  font-size: 1em;
+  margin: -7px;
+  background-color: #c00;
+  color: #fff;
+}
+
+#errorExplanation p {
+  color: #333;
+  margin-bottom: 0;
+  padding: 5px;
+}
+
+#errorExplanation ul li {
+  font-size: 1em;
+  list-style: square;
+}
+
+div.fieldWithErrors {
+  display: inline;
+  padding-right: 2px;
+}
+
+div.fieldWithErrors input, input.fieldWithErrors {
+  background-color: #fcc;
 }

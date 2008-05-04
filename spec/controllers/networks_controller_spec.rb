@@ -119,7 +119,7 @@ describe NetworksController, " handling GET /networks/1" do
     @organization = mock_model(Organization)
     login_as(@organization)
     
-    @network = mock_model(Network, :to_xml => "XML")
+    @network = mock_model(Network, :name => "Network!")
     
     @network_proxy = mock('Network Proxy', :find => @network)
     @organization.stub!(:networks).and_return(@network_proxy)
@@ -162,7 +162,7 @@ describe NetworksController, " handling GET /networks/1.xml" do
     @organization = mock_model(Organization)
     login_as(@organization)
     
-    @network = mock_model(Network, :to_xml => "XML")
+    @network = mock_model(Network, :name => "Network!", :to_xml => "XML")
     
     @network_proxy = mock('Network Proxy', :find => @network)
     @organization.stub!(:networks).and_return(@network_proxy)
@@ -196,6 +196,9 @@ describe NetworksController, " handling GET /networks/new" do
   before do
     @organization = mock_model(Organization)
     login_as(@organization)
+    
+    @network = mock_model(Network)
+    Network.stub!(:new).and_return(@network)
   end
   
   def do_get
@@ -216,6 +219,22 @@ describe NetworksController, " handling GET /networks/new" do
     do_get
     response.should render_template('new')
   end
+  
+  it "should create a new network" do
+    Network.should_receive(:new).and_return(@network)
+    do_get
+  end
+  
+  it "should assign a new network to the view" do
+    do_get
+    assigns[:network].should == @network
+  end
+  
+  it "should not save the network" do
+    @network.should_not_receive(:save)
+    do_get
+  end
+  
 end
 
 describe NetworksController, " handling GET /networks/1/edit" do
@@ -224,7 +243,7 @@ describe NetworksController, " handling GET /networks/1/edit" do
     @organization = mock_model(Organization)
     login_as(@organization)
     
-    @network = mock_model(Network, :to_xml => "XML")
+    @network = mock_model(Network, :to_xml => "XML", :name => "Network")
     
     @network_proxy = mock('Network Proxy', :find => @network)
     @organization.stub!(:owned_networks).and_return(@network_proxy)
@@ -398,7 +417,8 @@ describe NetworksController, "handling PUT /networks/1/leave when the organizati
     @organization = mock_model(Organization)
     login_as(@organization)
     
-    @network = mock_model(Network, :update_attributes! => true, :owner => @organization)
+    @network_organizations = mock('network organizations', :count => 0)
+    @network = mock_model(Network, :update_attributes! => true, :owner => @organization, :organizations => @network_organizations)
     
     @networks_proxy = mock('networks proxy', :find => @network, :delete => true)
     
@@ -411,16 +431,43 @@ describe NetworksController, "handling PUT /networks/1/leave when the organizati
     put :leave, @params
   end
   
-  it "should redirect to the network edit page" do
+  it "should check the number of members in the network" do
+    @network_organizations.should_receive(:count).and_return(1)
     do_put
-    response.should redirect_to(edit_network_path(@network))
   end
   
-  it "should flash a message instructing the organization to change the owner of the network" do
-    do_put
-    flash[:error].should == "You must first designate a new network owner."
+  describe "when the network has more than one member" do
+    before do
+      @network_organizations.stub!(:count).and_return(2)
+    end
+    
+    it "should redirect to the network edit page" do
+      do_put
+      response.should redirect_to(edit_network_path(@network))
+    end
+  
+    it "should flash a message instructing the organization to change the owner of the network" do
+      do_put
+      flash[:error].should == "You must first designate a new network owner."
+    end
   end
+  
+  describe "when the network has only one member" do
+    before do
+      @network_organizations.stub!(:count).and_return(1)
+    end
+    
+    it "should allow the organization to leave the network" do
+      @networks_proxy.should_receive(:delete).with(@network)
+      do_put
+    end
 
+    it "should redirect to the network index" do
+      do_put
+      response.should redirect_to(networks_path)
+    end
+  end
+  
 end
 
 describe NetworksController, " handling PUT /networks/1/join" do

@@ -4,7 +4,7 @@ module NetworkSpecHelper
 
   def valid_network_attributes
     {
-      :title => "My Network",
+      :name => "My Network",
       :description => "This is my network, for networking.",
       :owner => organization_mock
     }
@@ -37,13 +37,13 @@ describe Network do
   end
   
   it "should be invalid without a title" do
-    @network.attributes = valid_network_attributes.except(:title)
-    @network.should have(1).error_on(:title)
+    @network.attributes = valid_network_attributes.except(:name)
+    @network.should have(1).error_on(:name)
   end
   
   it "should be invalid with a title longer than 128 characters" do
-    @network.attributes = valid_network_attributes.with(:title => "a"*129)
-    @network.should have(1).error_on(:title)
+    @network.attributes = valid_network_attributes.with(:name => "a"*129)
+    @network.should have(1).error_on(:name)
   end  
   
   it "should be invalid with a description longer than 1024 characters" do
