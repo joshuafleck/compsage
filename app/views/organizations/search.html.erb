@@ -1,0 +1,17 @@
+<h2>Members</h2>
+<h3>Search Members</h3>
+<%= render :partial => "search_form" %>
+<h3>Search Results</h3>
+<!--TODO: Sorting an pagination-->
+<table id="search_organizations">
+  <tr>
+    <th>Name</th>
+    <th>City, State</th>
+    <th>Industry</th>
+    <th>Actions</th>
+    <th>&nbsp;</th>
+  </tr>
+  <% for organization in @organizations %>
+  <%= render :partial => "organization", :locals => { :organization => organization } %>
+<% end %>
+</table>
