@@ -4,7 +4,9 @@ class OrganizationsController < ApplicationController
 
   def index
 	  @page_title = "Members"
-    @organizations = Organization.find(:all)  
+	  
+    @organizations = Organization.find(:all)
+      
     respond_to do |wants|
       wants.html do
         #@organizations = Organization.paginate({:page => params[:page]})
@@ -18,8 +20,10 @@ class OrganizationsController < ApplicationController
   
   def show
     @organization = Organization.find(params[:id])   
+    
     @page_title = @organization.name
     @breadcrumbs << ["Members", url_for(organizations_path)]    
+    
     respond_to do |wants|
       wants.html # render template
       wants.xml do
@@ -28,9 +32,9 @@ class OrganizationsController < ApplicationController
     end
   end
   
-  def search
-    #TODO paginate results
+  def search    
     @page_title = "Search Members"
+    
     @organizations = Organization.find_by_contents(params[:search_text])
   end
 

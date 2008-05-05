@@ -31,12 +31,15 @@ end
 describe DiscussionsController, " handling GET discussions" do
   
   before do
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
+    @current_organization_or_invitation = mock_model(Organization)
+    login_as(@current_organization_or_invitation)
+    
     @discussion = mock_model(Discussion)
     @survey = mock_model(Survey, :id => 1, :job_title => 'Software Engineer')
     @survey.stub!(:discussions).and_return([@discussion])
+    
     Survey.stub!(:find).and_return(@survey)
+    
     @params = {:survey_id => @survey.id}
   end
   
@@ -45,7 +48,7 @@ describe DiscussionsController, " handling GET discussions" do
   end
   
   it "should require being logged in" do
-    controller.should_receive(:login_required)
+    controller.should_receive(:login_or_invite_required)
     do_get
   end
   
@@ -84,13 +87,16 @@ end
 describe DiscussionsController, " handling GET /discussions.xml" do
   
   before do
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
+    @current_organization_or_invitation = mock_model(Organization)
+    login_as(@current_organization_or_invitation)
+    
     @discussion = mock_model(Discussion, :to_xml => "XML")
     @discussions = [@discussion]
     @survey = mock_model(Survey, :id => 1, :job_title => 'Software Engineer')
     @survey.stub!(:discussions).and_return(@discussions)
+    
     Survey.stub!(:find).and_return(@survey)
+    
     @params = {:survey_id => @survey.id}
   end
   
@@ -100,7 +106,7 @@ describe DiscussionsController, " handling GET /discussions.xml" do
   end
   
   it "should require being logged in" do
-    controller.should_receive(:login_required)
+    controller.should_receive(:login_or_invite_required)
     do_get
   end
   
@@ -125,12 +131,15 @@ end
 describe DiscussionsController, " handling GET /discussions/new" do
 
   before do
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
+    @current_organization_or_invitation = mock_model(Organization)
+    login_as(@current_organization_or_invitation)
+    
     @discussion = mock_model(Discussion)
-    Discussion.stub!(:new).and_return(@discussion)
     @survey = mock_model(Survey, :id => 1, :job_title => 'Software Engineer')
+    
     Survey.stub!(:find).and_return(@survey)
+    Discussion.stub!(:new).and_return(@discussion)
+    
     @params = {:survey_id => @survey.id}
   end
   
@@ -139,7 +148,7 @@ describe DiscussionsController, " handling GET /discussions/new" do
   end
    
   it "should require being logged in" do
-    controller.should_receive(:login_required)
+    controller.should_receive(:login_or_invite_required)
     do_get
   end
    
@@ -157,18 +166,26 @@ describe DiscussionsController, " handling GET /discussions/new" do
     Discussion.should_receive(:new).and_return(@discussion)
     do_get
   end
+  
+  it "should fail if the external survey invitation does not correspond to this survey" do
+    pending
+  end
 end
 
 describe DiscussionsController, " handling GET /discussions/1/edit" do
 
   before do
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
+    @current_organization_or_invitation = mock_model(Organization)
+    login_as(@current_organization_or_invitation)
+    
     @discussion = mock_model(Discussion, :id => 1, :topic => "Discussion topic")
-    @organization_discussions_proxy = mock('organization discussions proxy', :find => @discussion)
-    @current_organization.stub!(:discussions).and_return(@organization_discussions_proxy)
     @survey = mock_model(Survey, :id => 1, :job_title => "Software Engineer")
+    
+    @organization_discussions_proxy = mock('organization discussions proxy', :find => @discussion)
+    @current_organization_or_invitation.stub!(:discussions).and_return(@organization_discussions_proxy)
+    
     Survey.stub!(:find).and_return(@survey)
+    
     @params = {:survey_id => @survey.id, :id => @discussion.id}
   end
   
@@ -177,7 +194,7 @@ describe DiscussionsController, " handling GET /discussions/1/edit" do
   end
     
   it "should require being logged in" do
-    controller.should_receive(:login_required)
+    controller.should_receive(:login_or_invite_required)
     do_get
   end
   
@@ -206,17 +223,21 @@ end
 describe DiscussionsController, " handling POST /discussions" do
 
   before(:each) do
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
+    @current_organization_or_invitation = mock_model(Organization)
+    login_as(@current_organization_or_invitation)
+    
     @survey = mock_model(Survey, :id => 1)
     @discussion = mock_model(Discussion, :id => 1, :save! => true)  
     @discussions = [@discussion] 
+    
     @survey_discussions_proxy = mock('survey discussions proxy', :discussions => @discussions)
     @survey_discussions_proxy.stub!(:<<, true)
     @organization_discussions_proxy = mock('organization discussions proxy', :new => @discussion)
-    @current_organization.stub!(:discussions).and_return(@organization_discussions_proxy)
+    @current_organization_or_invitation.stub!(:discussions).and_return(@organization_discussions_proxy)
     @survey.stub!(:discussions).and_return(@survey_discussions_proxy)
+    
     Survey.stub!(:find).and_return(@survey)
+    
     @params = {:survey_id => @survey.id}
   end
   
@@ -225,7 +246,7 @@ describe DiscussionsController, " handling POST /discussions" do
   end
   
   it "should require being logged in" do
-    controller.should_receive(:login_required)
+    controller.should_receive(:login_or_invite_required)
     do_post
   end
   
@@ -254,18 +275,25 @@ describe DiscussionsController, " handling POST /discussions" do
     pending
   end
   
+  it "should fail if the external survey invitation does not correspond to this survey" do
+    pending
+  end
 end
 
 describe DiscussionsController, " handling PUT /discussions/1" do
 
   before do
-    @current_organization = mock_model(Organization, :id => 1)
-    login_as(@current_organization)
+    @current_organization_or_invitation = mock_model(Organization, :id => 1)
+    login_as(@current_organization_or_invitation)
+    
     @discussion = mock_model(Discussion, :id => 1, :update_attributes! => true)
-    @organization_discussions_proxy = mock('organization discussions proxy', :find => @discussion)
-    @current_organization.stub!(:discussions).and_return(@organization_discussions_proxy)
     @survey = mock_model(Survey, :id => 1)
+    
+    @organization_discussions_proxy = mock('organization discussions proxy', :find => @discussion)
+    @current_organization_or_invitation.stub!(:discussions).and_return(@organization_discussions_proxy)
+    
     Survey.stub!(:find).and_return(@survey)
+    
     @params = {:survey_id => @survey.id, :id => @discussion.id}
   end
   
@@ -274,13 +302,12 @@ describe DiscussionsController, " handling PUT /discussions/1" do
   end
   
   it "should require being logged in" do
-    controller.should_receive(:login_required)
+    controller.should_receive(:login_or_invite_required)
     do_put
   end
   
   it "should find the discussion requested" do
-    pending
-    @organization_discussions_proxy.should_receive(:find).and_return(@discusion)
+    @organization_discussions_proxy.should_receive(:find).and_return(@discussion)
     do_put    
   end
   
@@ -304,14 +331,18 @@ end
 describe DiscussionsController, " handling DELETE /discussions/1" do
   
   before do
-    @current_organization = mock_model(Organization, :id => 1)
-    login_as(@current_organization)
+    @current_organization_or_invitation = mock_model(Organization, :id => 1)
+    login_as(@current_organization_or_invitation)
+    
     @discussion = mock_model(Discussion, :id => 1)
     @discussion.stub!(:destroy)
-    @organization_discussions_proxy = mock('organization discussions proxy', :find => @discussion)
-    @current_organization.stub!(:discussions).and_return(@organization_discussions_proxy)
     @survey = mock_model(Survey, :id => 1)
+    
+    @organization_discussions_proxy = mock('organization discussions proxy', :find => @discussion)
+    @current_organization_or_invitation.stub!(:discussions).and_return(@organization_discussions_proxy)
+    
     Survey.stub!(:find).and_return(@survey)
+    
     @params = {:survey_id => @survey.id, :id => @discussion.id}
   end
   
@@ -320,7 +351,7 @@ describe DiscussionsController, " handling DELETE /discussions/1" do
   end
     
   it "should require being logged in" do
-    controller.should_receive(:login_required)
+    controller.should_receive(:login_or_invite_required)
     do_delete
   end
   
@@ -352,13 +383,17 @@ describe DiscussionsController, " handling DELETE /discussions/1" do
 describe DiscussionsController, "handling PUT /discussions/1/report" do
   
   before do
-    @current_organization = mock_model(Organization, :id => 1)
-    login_as(@current_organization)
-    @discussion = mock_model(Discussion, :id => 1, :save => true, :times_reported => 0)
+    @current_organization_or_invitation = mock_model(Organization, :id => 1)
+    login_as(@current_organization_or_invitation)
+    
+    @discussion = mock_model(Discussion, :id => 1, :times_reported => 0)
     @discussion.stub!(:increment!).with(:times_reported)
+
     @survey_discussions_proxy = mock('survey discussions proxy', :find => @discussion)
     @survey = mock_model(Survey, :id => 1, :discussions => @survey_discussions_proxy)
+    
     Survey.stub!(:find).and_return(@survey)
+    
     @params = {:survey_id => @survey.id, :id => @discussion.id}
   end
   
@@ -367,7 +402,7 @@ describe DiscussionsController, "handling PUT /discussions/1/report" do
   end
    
   it "should require being logged in" do
-    controller.should_receive(:login_required)
+    controller.should_receive(:login_or_invite_required)
     do_put
   end
   

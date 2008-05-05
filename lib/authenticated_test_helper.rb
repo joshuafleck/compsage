@@ -4,6 +4,7 @@ module AuthenticatedTestHelper
     @request.session[:organization_id] = organization ? organization.id : nil
     controller.stub!(:requires_login).and_return(true)
     controller.stub!(:current_organization).and_return(organization)
+    controller.stub!(:current_organization_or_invitation).and_return(organization)
   end
 
   def authorize_as(user)

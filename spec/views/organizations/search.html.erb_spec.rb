@@ -11,7 +11,9 @@ describe "/organizations/search" do
     organization.stub!(:location).and_return("Headquarters")
     organization.stub!(:contact_name).and_return("Josh Fleck")
     organization.stub!(:industry).and_return("Software")
+    
     assigns[:organizations] = [organization]
+    
     render 'organizations/search'
   end
   
@@ -26,8 +28,19 @@ describe "/organizations/search" do
     end
   end
   
-  it "should show a list or organizations" do
-    response.should have_tag('tr#organization_1')
+  it "should show the list of organizations" do
+    response.should have_tag("#organizations")
   end
   
+  it "should display the name of each organization" do
+    response.should have_tag("div", "Huminsight")
+  end
+  
+  it "should have links for inviting organizations to a network" do
+    pending
+  end
+  
+  it "should have links for inviting organizations to a survey" do
+    pending
+  end
 end

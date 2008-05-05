@@ -9,6 +9,8 @@ describe "/organizations/show" do
     organization.stub!(:state).and_return("Minnesota")
     organization.stub!(:location).and_return("Headquarters")
     organization.stub!(:contact_name).and_return("Josh Fleck")
+    organization.stub!(:industry).and_return("Software")
+    
     assigns[:organization] = organization
     
     render 'organizations/show'
@@ -31,7 +33,12 @@ describe "/organizations/show" do
   end
   
   it "should show the contacts at that organization" do
+    #puts response.body
     response.should have_tag('p',"Contact Name: Josh Fleck")
+  end
+  
+  it "should show the organization's industry" do
+    response.should have_tag('p',"Industry: Software")
   end
   
   it "should show the organization's logo if one exists" do
@@ -50,6 +57,4 @@ describe "/organizations/show" do
     pending
   end
   
-  #it "should list the organization's joined networks"
-  #JF- Networks are no longer public
 end

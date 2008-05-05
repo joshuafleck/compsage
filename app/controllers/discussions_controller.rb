@@ -1,5 +1,5 @@
 class DiscussionsController < ApplicationController
-	before_filter :login_required, :setup
+	before_filter :login_or_invite_required, :setup
 	
 	def setup
 		@survey = Survey.find(params[:survey_id])
@@ -7,8 +7,10 @@ class DiscussionsController < ApplicationController
 	
 	def index
 	  @page_title = "Discussions"
-    @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))]    
-	  @discussions = @survey.discussions	  
+    @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
+       
+	  @discussions = @survey.discussions
+	  
 		respond_to do |wants|
       wants.html
       wants.xml do
@@ -20,13 +22,15 @@ class DiscussionsController < ApplicationController
   def new
     @page_title = "New Discussion"
     @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
+    
     @discussion = Discussion.new
   end
 
   def create
-    @discussion = current_organization.discussions.new(params[:discussion])
+    @discussion = current_organization_or_invitation.discussions.new(params[:discussion])
     @survey.discussions << @discussion
     @discussion.save!
+    
     respond_to do |wants|
       wants.html {         
         flash[:notice] = "Your discussion was created successfully."
@@ -47,16 +51,17 @@ class DiscussionsController < ApplicationController
   end
   
   def edit
-    @discussion = current_organization.discussions.find(params[:id])
+    @discussion = current_organization_or_invitation.discussions.find(params[:id])
+    
     @page_title = "Editing #{@discussion.topic}"
     @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
-    #TODO: look for an invitation discussion-owner
   end
   
   def update
-    @discussion = current_organization.discussions.find(params[:id])  
+    @discussion = current_organization_or_invitation.discussions.find(params[:id])  
+    
     @discussion.update_attributes!(params[:discussion])
-    #TODO: look for an invitation discussion-owner
+    
     respond_to do |wants|
       wants.html do
         flash[:notice] = "Your discussion was updated successfully."
@@ -79,13 +84,15 @@ class DiscussionsController < ApplicationController
   
   def report
     @discussion = @survey.discussions.find(params[:id])
+    
     @discussion.increment!(:times_reported)
+    
     respond_to do |wants|
       wants.html {         
         flash[:notice] = "The discussion was reported successfully."
         redirect_to survey_discussions_path(@survey) }      
       wants.xml do
-        render :status => :created
+        render :status => :ok
       end
     end
   rescue ActiveRecord::RecordInvalid
@@ -101,9 +108,10 @@ class DiscussionsController < ApplicationController
   end
   
   def destroy
-    @discussion = current_organization.discussions.find(params[:id])
-    #TODO: look for an invitation discussion-owner
-   @discussion.destroy
+    @discussion = current_organization_or_invitation.discussions.find(params[:id])
+
+    @discussion.destroy
+    
     respond_to do |wants|
       wants.html {         
         flash[:notice] = "The discussion was deleted successfully."
