@@ -8,7 +8,7 @@ module AuthenticatedSystem
 
     # returns true if the user is logged in with an external invitation.
     def invited?
-      current_invitation != :false && current_invitation.survey.id == (params[:survey_id] || params[:id])
+      current_invitation != :false && current_invitation.survey.id == (params[:survey_id] || params[:id]).to_i
     end
     
     # Accesses the current organization from the session.  Set it to :false if login fails
@@ -137,6 +137,6 @@ module AuthenticatedSystem
     end
     
     def login_from_invitation
-      self.current_organization = ExternalSurveyInvitation.find(session[:external_survey_invitation_id]) if session[:external_survey_invitation_id]
+      self.current_invitation = ExternalSurveyInvitation.find(session[:external_survey_invitation_id]) if session[:external_survey_invitation_id]
     end
 end
