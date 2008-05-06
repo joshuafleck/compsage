@@ -1,0 +1,9 @@
+<!--TODO: Sorting an pagination-->
+<ul id="organizations">
+  <% for organization in @organizations %>
+    <li>
+    <%= render :partial => "organization", :locals => { :organization => organization } %>
+    </li>
+  <% end %>
+</ul>
+
