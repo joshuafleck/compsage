@@ -1,6 +1,6 @@
 class SurveysController < ApplicationController
   
-before_filter :login_required
+  before_filter :login_required
   
   def index    
     respond_to do |wants|
