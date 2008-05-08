@@ -1,0 +1,10 @@
+<h2>Editing <%=@discussion.title%></h2>
+<%=error_messages_for :discussion%>
+<%=flash_messages%>
+<% form_for :discussion, @discussion, :url => survey_discussion_path(@survey,@discussion), :html => {:method => :put} do |f|%>
+  <p><label>Discussion Title:</label><br />
+    <%=f.text_field :title %></p>
+  <p><label>Body:</label> <br />
+    <%=f.text_area :body, :rows => 4, :cols => 30 %></p>
+  <p><input type="submit" value="Edit" /> <%=link_to "Cancel", survey_discussions_path(@survey) %></p>
+<% end %>

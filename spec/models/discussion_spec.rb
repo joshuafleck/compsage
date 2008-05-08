@@ -64,4 +64,9 @@ describe Discussion do
     @discussion.should have(1).errors_on(:title)
     @discussion.should have(1).errors_on(:body)
   end
+    
+  it "should assign discussion to the parent if this is a reply" do
+    pending
+  end
+  
 end

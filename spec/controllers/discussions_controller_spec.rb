@@ -35,8 +35,11 @@ describe DiscussionsController, " handling GET discussions" do
     login_as(@current_organization_or_invitation)
     
     @discussion = mock_model(Discussion)
+    @discussions = [@discussion]
+    @discussions.stub!(:roots).and_return(@discussions)
+    
     @survey = mock_model(Survey, :id => 1, :job_title => 'Software Engineer')
-    @survey.stub!(:discussions).and_return([@discussion])
+    @survey.stub!(:discussions).and_return(@discussions)
     
     Survey.stub!(:find).and_return(@survey)
     
@@ -65,13 +68,13 @@ describe DiscussionsController, " handling GET discussions" do
   #TODO set threshhold in finder
   it "should find all discussions, under the number of times reported threshold" do
     pending
-    @survey.should_receive(:discussions).and_return([@discussion])
+    @survey.should_receive(:discussions).and_return(@discussions)
     do_get
   end
   
   it "should assign the found discussion for the view"do
     do_get
-    assigns[:discussions].should eql([@discussion])
+    assigns[:discussions].should eql(@discussions)
   end
   
   it "should support sorting..." do
@@ -90,8 +93,11 @@ describe DiscussionsController, " handling GET /discussions.xml" do
     @current_organization_or_invitation = mock_model(Organization)
     login_as(@current_organization_or_invitation)
     
-    @discussion = mock_model(Discussion, :to_xml => "XML")
+    @discussion = mock_model(Discussion)
+    @discussion.stub!(:to_xml).and_return("XML")
     @discussions = [@discussion]
+    @discussions.stub!(:roots).and_return(@discussion)
+    
     @survey = mock_model(Survey, :id => 1, :job_title => 'Software Engineer')
     @survey.stub!(:discussions).and_return(@discussions)
     
@@ -121,7 +127,7 @@ describe DiscussionsController, " handling GET /discussions.xml" do
   end
   
   it "should render the found discussions as XML" do
-    @discussions.should_receive(:to_xml).and_return("XML")
+    @discussion.should_receive(:to_xml).and_return("XML")
     do_get
     response.body.should == "XML"
   end
@@ -167,9 +173,14 @@ describe DiscussionsController, " handling GET /discussions/new" do
     do_get
   end
   
-  it "should fail if the external survey invitation does not correspond to this survey" do
+  it "should find the parent discussion if one exists" do
     pending
   end
+  
+  it "should assign the parent discussion to the view if one exists" do
+    pending
+  end
+  
 end
 
 describe DiscussionsController, " handling GET /discussions/1/edit" do
@@ -270,14 +281,6 @@ describe DiscussionsController, " handling POST /discussions" do
     flash[:notice].should eql("Your discussion was created successfully.")
   end
   
-  it "should assign the parent discussion if this is a reply" do
-    #Still thinking about how this should be implemented
-    pending
-  end
-  
-  it "should fail if the external survey invitation does not correspond to this survey" do
-    pending
-  end
 end
 
 describe DiscussionsController, " handling PUT /discussions/1" do

@@ -1,0 +1,29 @@
+<h2>Discussing <%=@survey.job_title%></h2>
+<p>
+  This is a forum for questions and clarifications regarding a survey. 
+  Please remember to preserve your anonymity and the anonymity of the other participants.
+  The posting of compensation information is strictly forbidden.
+  If you encounter abuse of the discussion board, please report it immediately.
+</p>
+<%=flash_messages%>
+<p>
+  <%=link_to "Create new discussion topic", new_survey_discussion_path(@survey) %>
+</p>
+<ul id=discussions>
+  <% @discussions.sort.each do |discussion_topic| %>
+    <li>
+      <div class="discussion_topic">
+        <%= render :partial => "discussion", :locals => { :@discussion => discussion_topic, :@survey => @survey } %>
+      </div>
+      <div class="discussion_replies">
+        <ul id="discussion_<%=@discussion.id%>_replies">
+          <% discussion_topic.children.sort.each do |discussion_reply| %>
+            <li>
+              <%= render :partial => "discussion", :locals => { :@discussion => discussion_reply, :@survey => @survey } %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </li>
+  <% end %>
+</ul>

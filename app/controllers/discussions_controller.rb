@@ -9,7 +9,7 @@ class DiscussionsController < ApplicationController
 	  @page_title = "Discussions"
     @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
        
-	  @discussions = @survey.discussions
+	  @discussions = @survey.discussions.roots
 	  
 		respond_to do |wants|
       wants.html
@@ -24,10 +24,16 @@ class DiscussionsController < ApplicationController
     @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
     
     @discussion = Discussion.new
+    
+    if !params[:parent_discussion_id].blank? then
+      @parent_discussion = @survey.discussions.find(params[:parent_discussion_id])
+    end
+    
   end
 
   def create
     @discussion = current_organization_or_invitation.discussions.new(params[:discussion])
+    
     @survey.discussions << @discussion
     @discussion.save!
     
