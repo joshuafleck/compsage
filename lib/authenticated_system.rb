@@ -111,7 +111,7 @@ module AuthenticatedSystem
     # Inclusion hook to make #current_organization and #logged_in?
     # available as ActionView helper methods.
     def self.included(base)
-      base.send :helper_method, :current_organization, :logged_in?
+      base.send :helper_method, :current_organization, :current_organization_or_invitation, :logged_in?
     end
 
     # Called from #current_organization.  First attempt to login by the organization id stored in the session.
