@@ -8,6 +8,7 @@
   <%=link_to "Reply", :controller => 'discussions', :action => 'new', :survey_id => @survey.id, :parent_discusion_id => @discussion.id %>
   <% if current_organization_or_invitation.eql?(@discussion.responder) then %>
     <%=link_to "Edit", edit_survey_discussion_path(@survey,@discussion) %>
+    <%=link_to "Delete", survey_discussion_path(@survey,@discussion), :method => :delete %>
   <% end %>
   <%=link_to "Report Abuse", report_survey_discussion_path(@survey,@discussion) %>  
 </div>

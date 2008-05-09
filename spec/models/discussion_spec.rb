@@ -66,7 +66,16 @@ describe Discussion do
   end
     
   it "should assign discussion to the parent if this is a reply" do
-    pending
+    @discussion_parent = Discussion.create!(valid_discussion_attributes)
+    @discussion = Discussion.create!(valid_discussion_attributes.with(:parent_discussion_id => @discussion_parent.id, :survey => @discussion_parent.survey ))
+    @discussion_parent.children_count.should equal(1)
+  end
+  
+  it "should sort discussions by created date" do
+    @discussion_old = Discussion.create!(valid_discussion_attributes)
+    @discussion_new = Discussion.create!(valid_discussion_attributes)
+    @discussion_collection = [@discussion_new, @discussion_old]
+    @discussion_collection.sort[0].should eql(@discussion_old)
   end
   
 end

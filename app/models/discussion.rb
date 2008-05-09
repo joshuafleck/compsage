@@ -15,17 +15,19 @@ class Discussion < ActiveRecord::Base
   
   after_create :set_parent
   
+  #This virtual method allows us to set the parent discusion id in the case of a reply
+  attr_accessor :parent_discussion_id
+  
   #This will sort the posts by creation date
   def <=>(o)
     return self.created_at <=> o.created_at
   end
   
-  attr_accessor :parent_discussion_id
-  
+  #After the creation of a discussion, this will assign the discussion to its parent in the case of a reply
   def set_parent
-    if new_record? && !parent_discussion_id.blank? then
+    if !parent_discussion_id.blank? then
       parent_discussion = Discussion.find(parent_discussion_id)
-      self.move_to_child_of(parent_discussion)
+      self.move_to_child_of parent_discussion
     end    
   end
 end

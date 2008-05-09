@@ -65,10 +65,9 @@ describe DiscussionsController, " handling GET discussions" do
     response.should render_template("index")
   end
   
-  #TODO set threshhold in finder
-  it "should find all discussions, under the number of times reported threshold" do
-    pending
+  it "should find all root discussions" do
     @survey.should_receive(:discussions).and_return(@discussions)
+    @discussions.should_receive(:roots).and_return(@discussion)
     do_get
   end
   
@@ -141,12 +140,17 @@ describe DiscussionsController, " handling GET /discussions/new" do
     login_as(@current_organization_or_invitation)
     
     @discussion = mock_model(Discussion)
+    @parent_discussion = mock_model(Discussion)
     @survey = mock_model(Survey, :id => 1, :job_title => 'Software Engineer')
+    
+    @survey_discussions_proxy = mock('survey discussions proxy')
+    @survey_discussions_proxy.stub!(:find).and_return(@parent_discussion)    
+    @survey.stub!(:discussions).and_return(@survey_discussions_proxy)
     
     Survey.stub!(:find).and_return(@survey)
     Discussion.stub!(:new).and_return(@discussion)
     
-    @params = {:survey_id => @survey.id}
+    @params = {:survey_id => @survey.id, :parent_discussion_id => @parent_discussion.id}
   end
   
   def do_get
@@ -174,11 +178,13 @@ describe DiscussionsController, " handling GET /discussions/new" do
   end
   
   it "should find the parent discussion if one exists" do
-    pending
+    @survey_discussions_proxy.should_receive(:find).and_return(@parent_discussion)
+    do_get
   end
   
   it "should assign the parent discussion to the view if one exists" do
-    pending
+    do_get
+    assigns[:parent_discussion].should eql(@parent_discussion)
   end
   
 end
@@ -366,10 +372,6 @@ describe DiscussionsController, " handling DELETE /discussions/1" do
   it "should destory the discussion requested" do
     @discussion.should_receive(:destroy)
     do_delete
-  end
-  
-  it "should destroy the children of the discussion" do
-    pending
   end
   
   it "should redirect discussions page for the related survey upon success" do

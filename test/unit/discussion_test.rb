@@ -16,14 +16,14 @@ class DiscussionTest < ActiveSupport::TestCase
   end
   
   def test_create_success
-    discussion = Discussion.create(:title => 'test discussion', :organization_id => organizations(:one), :survey_id => surveys(:one))
+    discussion = Discussion.create(:title => 'test discussion', :responder_id => organizations(:one), :survey_id => surveys(:one))
     assert_valid discussion
   end
   
   def test_add_many_discussions
-    discussion_one = Discussion.create(:title => 'test discussion 1', :organization_id => organizations(:one), :survey_id => surveys(:one))
-    discussion_one_one = Discussion.create(:title => 'test discussion 1-1', :organization_id => organizations(:one), :survey_id => surveys(:one))
-    discussion_one_two = Discussion.create(:title => 'test discussion 1-2', :organization_id => organizations(:one), :survey_id => surveys(:one))
+    discussion_one = Discussion.create(:title => 'test discussion 1', :responder_id => organizations(:one), :survey_id => surveys(:one))
+    discussion_one_one = Discussion.create(:title => 'test discussion 1-1', :responder_id => organizations(:one), :survey_id => surveys(:one))
+    discussion_one_two = Discussion.create(:title => 'test discussion 1-2', :responder_id => organizations(:one), :survey_id => surveys(:one))
     discussion_one.save
     discussion_one_one.save
     discussion_one_two.save  
