@@ -32,10 +32,7 @@ class DiscussionsController < ApplicationController
   end
 
   def create
-    @discussion = current_organization_or_invitation.discussions.new(params[:discussion])
-    
-    @survey.discussions << @discussion
-    @discussion.save!
+    @discussion = current_organization_or_invitation.discussions.create!(params[:discussion])
     
     respond_to do |wants|
       wants.html {         
