@@ -25,7 +25,6 @@ describe "discussions/index" do
   end
   
   it "should render a list of discussions" do
-    puts response.body
     response.should have_tag("#discussions")
   end
   
