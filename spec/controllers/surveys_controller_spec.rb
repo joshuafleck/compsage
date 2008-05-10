@@ -38,8 +38,13 @@ describe SurveysController, " handling GET /surveys" do
     @current_organization.stub!(:survey_invitations).and_return(@survey_invitations_proxy)
 
     @surveys_proxy = mock('surveys proxy')
-    @surveys_proxy.stub!(:find).and_return([])
+    @closed_surveys = []
+    @open_surveys = []
+    @surveys_proxy.stub!(:open).and_return(@open_surveys)
+    @surveys_proxy.stub!(:closed).and_return(@closed_surveys)
     @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @open_surveys.stub!(:find).and_return([])
+    @closed_surveys.stub!(:find).and_return([])
   end
   
   def do_get
@@ -58,7 +63,10 @@ describe SurveysController, " handling GET /surveys" do
     @current_organization.should_receive(:survey_invitations).and_return(@survey_invitations_proxy)
     @survey_invitations_proxy.should_receive(:find).with(:all, :include => :surveys).and_return([])
     @current_organization.should_receive(:surveys).at_least(:twice).and_return(@survey_proxy)
-    @survey_proxy.should_receive(:find).at_least(:twice)
+    @survey_proxy.should_receive(:closed).and_return(@closed_surveys)
+    @closed_surveys.should_receive(:find)
+    @survey_proxy.should_receive(:open).and_return(@open_surveys)
+    @open_surveys.should_receive(:find)
     do_get 
   end
   it "should assign the found surveys for the view" do
@@ -233,7 +241,12 @@ describe SurveysController, " handling GET /surveys/1/edit" do
     login_as(@current_organization)
     
     @survey = mock_model(Survey, :id => 1, :sponsor => @current_organization)
-    Survey.stub!(:find).and_return(@survey)
+    @surveys_proxy = mock('surveys proxy')
+    @open_surveys = []
+
+    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @surveys_proxy.stub!(:open).and_return(@open_surveys)
+    @open_surveys.stub!(:find).and_return(@survey)
   end
 
   def do_get
@@ -248,7 +261,9 @@ describe SurveysController, " handling GET /surveys/1/edit" do
     response.should render_template('surveys/edit')
   end
   it "should find the survey requested" do
-    Survey.should_receive(:find).and_return(@survey)
+    @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
+    @surveys_proxy.should_receive(:open).and_return(@open_surveys)
+    @open_surveys.should_receive(:find).and_return(@survey)
     do_get
   end
   it "should assign the found survey to the view" do
@@ -257,20 +272,25 @@ describe SurveysController, " handling GET /surveys/1/edit" do
   end
 end
 
-describe SurveysController, " handling GET /surveys/1/edit" do
+describe SurveysController, " handling GET /surveys/1/edit, without access" do
   before(:each) do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
     @survey = mock_model(Survey, :id => 1, :sponsor => mock_model(Organization))
-    Survey.stub!(:find).and_return(@survey)
+    @surveys_proxy = mock('surveys proxy')
+    @open_surveys = []
+
+    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @surveys_proxy.stub!(:open).and_return(@open_surveys)
+    @open_surveys.stub!(:find).and_raise(ActiveRecord::RecordNotFound)
   end
 
   def do_get
     get :edit, :id => 1
   end
   it "should error if requesting organization is not the sponsor" do
-    lambda{ do_get }.should raise_error("You do not have the rights to access this page.")
+    lambda{ do_get }.should raise_error(ActiveRecord::RecordNotFound)
   end
 end
 
@@ -283,7 +303,7 @@ describe SurveysController, " handling POST /surveys" do
                :sponsor => mock_model(Organization)}
     @survey = mock_model(Survey, :id => 1, :save => true, :errors => [])
     @survey.stub!(:new_record?).and_return(true)
-    Survey.stub!(:new).and_return(@survey)
+    Survey.stub!(:create!).and_return(@survey)
   end
   
   def do_post
@@ -291,7 +311,7 @@ describe SurveysController, " handling POST /surveys" do
   end
 
   it "should create a new survey" do
-    Survey.should_receive(:new).and_return(@survey)
+    Survey.should_receive(:create!).and_return(@survey)
     do_post
   end
   it "should redirect to the invitation show page upon success" do
@@ -310,7 +330,7 @@ describe SurveysController, " handling POST /surveys, upon failure" do
                :sponsor => mock_model(Organization)}
     @survey = mock_model(Survey, :id => 1, :save => true, :errors => ["asdfadsfdsa"])
     @survey.stub!(:new_record?).and_return(true)
-    Survey.stub!(:new).and_return(@survey)
+   Survey.stub!(:create!).and_return(@survey)
   end
   
   def do_post
@@ -329,19 +349,25 @@ describe SurveysController, " handling PUT /surveys/1" do
     login_as(@current_organization)
     
     @survey = mock_model(Survey, :id => "1", :update_attributes => true, :sponsor => @current_organization)
-    Survey.stub!(:find).and_return(@survey)
-    @survey.stub!(:update_attributes).and_return(true)
+    @surveys_proxy = mock('surveys proxy')
+    @open_surveys = []
+    
+    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @surveys_proxy.stub!(:open).and_return(@open_surveys)
+    @open_surveys.stub!(:find).and_return(@survey)
   end
   
   def do_update
     put :update, :id => "1"
   end
   it "should find the survey requested" do
-    Survey.should_receive(:find).and_return(@survey)
+    @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
+    @surveys_proxy.should_receive(:open).and_return(@open_surveys)
+    @open_surveys.should_receive(:find).and_return(@survey)
     do_update
   end
   it "should update the selected survey" do
-    @survey.should_receive(:update_attributes)
+    @survey.should_receive(:update_attributes).and_return(true)
     do_update
     assigns(:survey).should equal(@survey)
   end
@@ -361,12 +387,15 @@ end
       login_as(@current_organization)
 
       @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization)
-      Survey.stub!(:find).and_return(@survey)
-      @survey.stub!(:update_attributes).and_return(false)
+      @surveys_proxy = mock('surveys proxy')
+      @open_surveys = []
+      @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+      @surveys_proxy.stub!(:open).and_return(@open_surveys)
+      @open_surveys.stub!(:find).and_return(@survey)
     end
 
     def do_update
-      put :update, :id => 1
+      put :update, :id => @survey
     end
   it "should render edit template upon failure" do
     do_update
@@ -380,15 +409,19 @@ describe SurveysController, " handling PUT /surveys/1, with failure" do
     login_as(@current_organization)
 
     @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => mock_model(Organization))
-    Survey.stub!(:find).and_return(@survey)
-    @survey.stub!(:update_attributes).and_return(true)
+    @surveys_proxy = mock('surveys proxy')
+    @open_surveys = []
+    
+    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @surveys_proxy.stub!(:open).and_return(@open_surveys)
+    @open_surveys.stub!(:find).and_raise(ActiveRecord::RecordNotFound)
   end
 
   def do_update
     put :update, :id => 1
   end
   it "should error if requesting organization is not the sponsor"  do
-    lambda{ do_update }.should raise_error("You do not have the rights to access this page.")
+    lambda{ do_update }.should raise_error(ActiveRecord::RecordNotFound)
   end
 end
 

@@ -5,9 +5,9 @@ class SurveysController < ApplicationController
   def index    
     respond_to do |wants|
       wants.html {
-        @running_surveys = current_organization.surveys.find(:all, :order => 'created_at DESC', :condition => ['end_date >= ?', Time.now])
+        @running_surveys = current_organization.surveys.open.find(:all, :order => 'created_at DESC')
         @invited_surveys = current_organization.survey_invitations.find(:all, :include => :surveys)
-        @completed_surveys = current_organization.surveys.find(:all, :order => 'created_at DESC', :condition => ['end_date < ?', Time.now])
+        @completed_surveys = current_organization.surveys.closed.find(:all, :order => 'created_at DESC')
       }
       wants.xml {
         @surveys = current_organization.surveys.find(:all)
@@ -31,14 +31,11 @@ class SurveysController < ApplicationController
   end
 
   def edit
-    @survey = Survey.find(params[:id])
-    raise "You do not have the rights to access this page." unless @survey.sponsor == current_organization
+    @survey = current_organization.surveys.open.find(params[:id])
   end
   
   def update
-    @survey = Survey.find(params[:id])
-    #check to see if user is sponsor
-    raise "You do not have the rights to access this page." unless @survey.sponsor == current_organization
+    @survey = current_organization.surveys.open.find(params[:id])
     respond_to do |wants|
        if @survey.update_attributes(params[:survey])
          flash[:notice] = 'Survey was successfully updated.'
@@ -58,8 +55,7 @@ end
   end
   
   def create
-    @survey = Survey.new(params[:survey])
-    @survey.save
+    @survey = Survey.create!(params[:survey])
     respond_to do |wants|
       if @survey.errors.empty?
         flash[:notice] = "Survey was created successfully!"
@@ -77,6 +73,14 @@ end
       wants.html {}
       wants.xml {render :xml => @surveys.to_xml}
     end
+  end
+  
+  def respond
+    
+  end
+  
+  def questions
+    
   end
   
 end
