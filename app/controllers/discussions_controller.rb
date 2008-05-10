@@ -6,7 +6,7 @@ class DiscussionsController < ApplicationController
 	end
 	
 	def index
-	  @page_subject = "Discussions"
+	  @page_title = "Discussions"
     @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
        
 	  @discussions = @survey.discussions.roots
@@ -20,7 +20,7 @@ class DiscussionsController < ApplicationController
   end
   
   def new
-    @page_subject = "New Discussion"
+    @page_title = "New Discussion"
     @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
     
     @discussion = Discussion.new
@@ -57,7 +57,7 @@ class DiscussionsController < ApplicationController
   def edit
     @discussion = current_organization_or_invitation.discussions.find(params[:id])
     
-    @page_subject = "Editing #{@discussion.topic}"
+    @page_title = "Editing #{@discussion.topic}"
     @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
   end
   
