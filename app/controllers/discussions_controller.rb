@@ -6,7 +6,7 @@ class DiscussionsController < ApplicationController
 	end
 	
 	def index
-	  @page_title = "Discussions"
+	  @page_subject = "Discussions"
     @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
        
 	  @discussions = @survey.discussions.roots
@@ -20,7 +20,7 @@ class DiscussionsController < ApplicationController
   end
   
   def new
-    @page_title = "New Discussion"
+    @page_subject = "New Discussion"
     @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
     
     @discussion = Discussion.new
@@ -32,6 +32,7 @@ class DiscussionsController < ApplicationController
   end
 
   def create
+    #Note that create must be called rather then new-> save to ensure the parent/child relationships are created
     @discussion = current_organization_or_invitation.discussions.create!(params[:discussion])
     
     respond_to do |wants|
@@ -56,7 +57,7 @@ class DiscussionsController < ApplicationController
   def edit
     @discussion = current_organization_or_invitation.discussions.find(params[:id])
     
-    @page_title = "Editing #{@discussion.topic}"
+    @page_subject = "Editing #{@discussion.topic}"
     @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
   end
   

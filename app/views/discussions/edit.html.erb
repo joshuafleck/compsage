@@ -1,10 +1,10 @@
-<h2>Editing <%=@discussion.title%></h2>
+<h2>Editing <%=@discussion.subject%></h2>
 <%=error_messages_for :discussion%>
 <%=flash_messages%>
 <% form_for :discussion, @discussion, :url => survey_discussion_path(@survey,@discussion), :html => {:method => :put} do |f|%>
   <% if @discussion.root? then %>
-    <p><label>Discussion Title:</label><br />
-      <%=f.text_field :title %></p>
+    <p><label>Discussion Subject:</label><br />
+      <%=f.text_field :subject %></p>
   <% end %>
   <p><label>Body:</label> <br />
     <%=f.text_area :body, :rows => 4, :cols => 30 %></p>

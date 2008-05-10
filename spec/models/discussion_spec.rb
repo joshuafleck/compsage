@@ -6,7 +6,7 @@ module DiscussionSpecHelper
     {
       :survey => survey_mock,
       :responder => organization_mock,
-      :title => 'Discussion Title'
+      :subject => 'Discussion Title'
     }
   end
   
@@ -38,9 +38,9 @@ describe Discussion do
     @discussion.should have(1).errors_on(:survey)
   end
   
-  it "should not allow a title greater then 128 characters" do
-  	@discussion.attributes = valid_discussion_attributes.with(:title => "0"*129)
-    @discussion.should have(1).errors_on(:title)
+  it "should not allow a subject greater then 128 characters" do
+  	@discussion.attributes = valid_discussion_attributes.with(:subject => "0"*129)
+    @discussion.should have(1).errors_on(:subject)
   end
   
   it "should not all the body to be greater then 1024 characters" do
@@ -59,9 +59,9 @@ describe Discussion do
     @discussion.should have(1).errors_on(:responder)
   end
   
-  it "should be invalid without one of the following: title, body" do  	
-  	@discussion.attributes = valid_discussion_attributes.except(:title,:body)
-    @discussion.should have(1).errors_on(:title)
+  it "should be invalid without one of the following: subject, body" do  	
+  	@discussion.attributes = valid_discussion_attributes.except(:subject,:body)
+    @discussion.should have(1).errors_on(:subject)
     @discussion.should have(1).errors_on(:body)
   end
     

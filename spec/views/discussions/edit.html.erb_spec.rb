@@ -5,7 +5,7 @@ describe "discussions/edit" do
   before(:each) do
     
     @discussion = mock_model(Discussion,
-      :title => "Discussion title",
+      :subject => "Discussion subject",
       :body => "Discussion Body",
       :root? => true)
       
@@ -28,8 +28,8 @@ describe "discussions/edit" do
     response.should have_tag("a[href=#{survey_discussions_path(@survey)}]", "Cancel")
   end
   
-  it "should allow the edit of a topic if the discussion is a root" do
-    response.should have_tag("input[id=discussion_title]")
+  it "should allow the edit of a subject if the discussion is a root" do
+    response.should have_tag("input[id=discussion_subject]")
   end
 end
 
@@ -38,7 +38,7 @@ describe "discussions/edit" do
   before(:each) do
     
     @discussion = mock_model(Discussion,
-      :title => "Discussion title",
+      :subject => "Discussion subject",
       :body => "Discussion Body",
       :root? => false)
       
@@ -49,7 +49,7 @@ describe "discussions/edit" do
     render 'discussions/edit'
   end
   
-  it "should not allow the edit of a topic if the discussion is not a root" do
-    response.should_not have_tag("input[id=discussion_title]")
+  it "should not allow the edit of a subject if the discussion is not a root" do
+    response.should_not have_tag("input[id=discussion_subject]")
   end
 end

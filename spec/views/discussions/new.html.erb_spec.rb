@@ -5,11 +5,11 @@ describe "discussions/new" do
   before(:each) do
     
     @parent_discussion = mock_model(Discussion,
-      :title => "Discussion title",
+      :subject => "Discussion subject",
       :body => "Discussion Body",
       :root? => true)      
     @discussion = mock_model(Discussion,
-      :title => "Child title",
+      :subject => "Child subject",
       :body => "Child body")
     @survey = mock_model(Survey, :id => "1")
     
@@ -39,7 +39,7 @@ describe "discussions/new" do
   end
   
   it "should not allow the input of a topic if the parent exists" do
-    response.should_not have_tag("input[id=discussion_title]")
+    response.should_not have_tag("input[id=discussion_subject]")
   end
 end
 
@@ -48,7 +48,7 @@ describe "discussions/new" do
   before(:each) do
          
     @discussion = mock_model(Discussion,
-      :title => "Child title",
+      :subject => "Child subject",
       :body => "Child body")
     @survey = mock_model(Survey, :id => "1")
     
@@ -63,6 +63,6 @@ describe "discussions/new" do
   end
   
   it "should allow the input of a topic if the parent does not exist" do
-    response.should have_tag("input[id=discussion_title]")
+    response.should have_tag("input[id=discussion_subject]")
   end
 end
