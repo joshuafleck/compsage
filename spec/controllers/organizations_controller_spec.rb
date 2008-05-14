@@ -209,11 +209,13 @@ describe OrganizationsController, "handling GET /organizations/search" do
     login_as(@current_organization)
       
     @organization = mock_model(Organization, :id => 1, :name => "Denarius", :to_xml => "XML")
-    
+    @organizations = [@organization]
+    @search = mock_model(Ultrasphinx::Search, :run => nil)
+    @search.stub!(:results).and_return(@organizations)
+        
     @params = {:search_text => "josh"}
     
-    Organization.stub!(:find_by_contents).and_return([@organization])
-    
+    Ultrasphinx::Search.stub!(:new).and_return(@search)
 	end
   
   def do_get
@@ -236,7 +238,9 @@ describe OrganizationsController, "handling GET /organizations/search" do
   end
   
   it "should find the organizations that match the search terms" do
-  	Organization.should_receive(:find_by_contents).with(@params[:search_text]).and_return([@organization])
+  	Ultrasphinx::Search.should_receive(:new).and_return(@search)
+  	@search.should_receive(:run)  	
+  	@search.should_receive(:results).and_return(@organizations)
   	do_get
   end
   

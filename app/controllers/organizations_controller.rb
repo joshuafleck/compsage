@@ -34,8 +34,9 @@ class OrganizationsController < ApplicationController
   
   def search    
     @page_title = "Search Members"
-    
-    @organizations = Organization.find_by_contents(params[:search_text])
+    @search = Ultrasphinx::Search.new(:query => params[:search_text])
+    @search.run
+    @organizations = @search.results
   end
 
 end
