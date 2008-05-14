@@ -74,7 +74,8 @@ def valid_organization_attributes
     :city => 'New York',
     :location => 'Eastern Division',
     :state => 'New York',
-    :industry => 'Software'
+    :industry => 'Software', 
+    :quoted_id => "1"
   }
 end
 

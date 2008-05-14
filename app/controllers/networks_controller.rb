@@ -108,6 +108,7 @@ class NetworksController < ApplicationController
       end
     else
       current_organization.networks.delete(@network)
+      @network.destroy_when_empty
       
       respond_to do |wants|
         wants.html do

@@ -365,7 +365,7 @@ describe NetworksController, " handling PUT /networks/1/leave" do
     @organization = mock_model(Organization)
     login_as(@organization)
     
-    @network = mock_model(Network, :update_attributes! => true, :owner => mock_model(Organization))
+    @network = mock_model(Network, :update_attributes! => true, :owner => mock_model(Organization), :destroy_when_empty => nil)
     
     @networks_proxy = mock('networks proxy', :find => @network, :delete => true)
     
@@ -413,7 +413,7 @@ describe NetworksController, "handling PUT /networks/1/leave when the organizati
     login_as(@organization)
     
     @network_organizations = mock('network organizations', :count => 0)
-    @network = mock_model(Network, :update_attributes! => true, :owner => @organization, :organizations => @network_organizations)
+    @network = mock_model(Network, :update_attributes! => true, :owner => @organization, :organizations => @network_organizations, :destroy_when_empty => nil)
     
     @networks_proxy = mock('networks proxy', :find => @network, :delete => true)
     
@@ -450,6 +450,7 @@ describe NetworksController, "handling PUT /networks/1/leave when the organizati
   describe "when the network has only one member" do
     before do
       @network_organizations.stub!(:count).and_return(1)
+      @network.stub!(:destroy_when_empty)
     end
     
     it "should allow the organization to leave the network" do
@@ -461,6 +462,12 @@ describe NetworksController, "handling PUT /networks/1/leave when the organizati
       do_put
       response.should redirect_to(networks_path)
     end
+      
+    it "should have the network destroy itself when devoid of memebers" do
+      @network.should_receive(:destroy_when_empty)
+      do_put
+    end
+
   end
   
 end

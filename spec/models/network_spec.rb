@@ -63,5 +63,23 @@ describe Network do
     @network.attributes = valid_network_attributes
     @network.should be_valid
   end  
+  
+  it "should add the network owner as a member on create" do
+    @network = Network.create!(valid_network_attributes)
+    @network.organizations.size.should equal(1)
+  end
+  
+  it "shoud destroy the network when there are no members" do
+    @network = Network.create!(valid_network_attributes)
+    @network.organizations.clear
+    @network.destroy_when_empty
+    Network.exists?(@network).should equal(false)
+  end
+  
+  it "should not destroy the network when there are members" do
+    @network = Network.create!(valid_network_attributes)
+    @network.destroy_when_empty
+    Network.exists?(@network).should equal(true)
+  end
 
 end  
