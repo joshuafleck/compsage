@@ -17,7 +17,9 @@ class SurveysController < ApplicationController
   end
 
   def show
-    @survey = Survey.find(params[:id])
+    @survey = Survey.find(params[:id])   
+	  @discussions = @survey.discussions.roots
+	  
     respond_to do |wants|
       wants.html {        
         if @survey.closed? == :true

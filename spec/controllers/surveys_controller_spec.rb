@@ -122,6 +122,12 @@ describe SurveysController, " handling GET /surveys/1" do
     @survey = mock_model(Survey, :id => 1)    
     Survey.stub!(:find).and_return(@survey)
     @survey.stub!(:closed?).and_return(:false)
+        
+    @discussion = mock_model(Discussion)
+    @discussions = [@discussion]
+    @discussions.stub!(:roots).and_return(@discussions)
+    @survey.stub!(:discussions).and_return(@discussions)
+    
   end
   
   def do_get
@@ -143,6 +149,18 @@ describe SurveysController, " handling GET /surveys/1" do
     do_get
     assigns[:survey].should_not be_nil
   end
+  
+  it "should find all root discussions" do
+    @survey.should_receive(:discussions).and_return(@discussions)
+    @discussions.should_receive(:roots).and_return(@discussion)
+    do_get
+  end
+  
+  it "should assign the found discussion for the view"do
+    do_get
+    assigns[:discussions].should eql(@discussions)
+  end
+  
 end
 
 describe SurveysController, " handling GET /surveys/1 when survey is closed" do
@@ -150,9 +168,15 @@ describe SurveysController, " handling GET /surveys/1 when survey is closed" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => 1)    
+    @survey = mock_model(Survey, :id => 1, :discussions => nil)    
     Survey.stub!(:find).and_return(@survey)
     @survey.stub!(:closed?).and_return(:true)
+        
+    @discussion = mock_model(Discussion)
+    @discussions = [@discussion]
+    @discussions.stub!(:roots).and_return(@discussions)
+    @survey.stub!(:discussions).and_return(@discussions)
+    
   end
 
   it "should redirect to the report for the selected survey" do
@@ -170,6 +194,12 @@ describe SurveysController, " handling GET /surveys/1.xml" do
     Survey.stub!(:find).and_return(@survey)
     @survey.stub!(:closed?).and_return(:false)
     @survey.stub!(:to_xml).and_return("XML")
+        
+    @discussion = mock_model(Discussion)
+    @discussions = [@discussion]
+    @discussions.stub!(:roots).and_return(@discussions)
+    @survey.stub!(:discussions).and_return(@discussions)
+    
   end
   
   def do_get
@@ -202,6 +232,12 @@ describe SurveysController, " handling GET /surveys/1.xml when survey is closed"
     @survey.stub!(:closed?).and_return(:true)
     
     @survey.stub!(:to_xml).and_return("XML")
+        
+    @discussion = mock_model(Discussion)
+    @discussions = [@discussion]
+    @discussions.stub!(:roots).and_return(@discussions)
+    @survey.stub!(:discussions).and_return(@discussions)
+    
   end
   
   def do_get
