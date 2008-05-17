@@ -288,6 +288,10 @@ describe DiscussionsController, " handling POST /discussions" do
     flash[:notice].should eql("Your discussion was created successfully.")
   end
   
+  it "should have a means for handing invalid input from the user" do
+    pending
+  end
+  
 end
 
 describe DiscussionsController, " handling PUT /discussions/1" do
@@ -334,6 +338,10 @@ describe DiscussionsController, " handling PUT /discussions/1" do
   it "should flash a message regarding the success of the edit" do
     do_put
     flash[:notice].should == "Your discussion was updated successfully."
+  end
+  
+  it "should have a means for handing invalid input from the user" do
+    pending
   end
   
 end
