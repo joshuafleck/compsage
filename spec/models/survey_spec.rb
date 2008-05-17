@@ -58,7 +58,7 @@ describe Survey do
   
   it "should be invalid without a job title" do
     @survey.attributes = valid_survey_attributes.except(:job_title)
-    @survey.should have(1).error_on(:job_title)
+    @survey.should have_at_least(1).error_on(:job_title)
   end
   
   it "should be invalid without a sponsor" do

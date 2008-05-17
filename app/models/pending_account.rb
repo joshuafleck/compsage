@@ -25,6 +25,6 @@ class PendingAccount < ActiveRecord::Base
   # Strip the extra characters out of the phone number.
   
   def strip_phone
-    phone.gsub!(/\D/, '')
+    phone.gsub!(/\D/, '') unless phone.blank?
   end
 end
