@@ -2,68 +2,79 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 describe "accounts/edit" do
 
+  before(:each) do
+    assigns[:organization] = mock_model(Organization, 
+      :name => nil, 
+      :contact_name => nil, 
+      :email => nil, 
+      :location => nil, 
+      :city => nil, 
+      :state => nil, 
+      :zip_code => nil, 
+      :industry => nil, 
+      :password => nil, 
+      :password_confirmation => nil,
+      :logo => nil)
+    render 'accounts/edit'
+  end
+
   it "should show the edit form" do
-  	pending
+  	response.should have_tag("form")
   end
   
-  it "should prepopulate all editable fields with their current values" do
-  	pending
+  it "should have a means for allowing the organization to input its email address" do
+    #puts response.body
+  	response.should have_tag("input[id=organization_email]")
   end
   
-  it "should have a means for allowing the org to change its email address" do
-  	pending
+  it "should have a means for allowing the organization to input its password"	 do
+  	response.should have_tag("input[id=organization_password]")
   end
   
-  it "should have a means for allowing the org to change its password"	 do
-  	pending
+  it "should have a means for allowing the organization to input its password confirmation"	 do
+  	response.should have_tag("input[id=organization_password_confirmation]")
   end
   
-  it "should have a means for allowing the org to input its password confirmation"	 do
-  	pending
+  it "should have a means for allowing the organization to input its location" do
+  	response.should have_tag("input[id=organization_location]")
   end
   
-  it "should have a means for allowing the org to change public/private status"   do
-  	pending
+  it "should have a means for allowing the organization to input its city" do
+  	response.should have_tag("input[id=organization_city]")
   end
   
-  it "should have a means for allowing the org to change its location" do
-  	pending
+  it "should have a means for allowing the organization to input its zip code" do
+  	response.should have_tag("input[id=organization_zip_code]")
+  end  
+  
+  it "should have a means for allowing the organization to select its state" do
+    pending
+    #Shoud have dropdown list of available states
+  	response.should have_tag("input[id=organization_state]")
   end
   
-  it "should have a means for allowing the org to change its city" do
+  it "should have a means for allowing the organization to select its industry" do
   	pending
+  	#Should have dropdown list of available industries
+  	response.should have_tag("input[id=organization_industry]")
+  end  
+  
+  it "should have a means for allowing the organization to input its contact name" do
+  	response.should have_tag("input[id=organization_contact_name]")
   end
   
-  it "should have a means for allowing the org to change its zip code" do
-  	pending
-  end
-  
-  it "should have a means for allowing the org to change its industry" do
-  	pending
-  end    
-  
-  it "should have a means for allowing the org to change its state" do
-  	pending
-  end
-  
-  it "should have a means for allowing the org to change its contact name" do
-  	pending
-  end
-  
-  it "should have a means for allowing the org to change its image" do
-  	pending
+  it "should have a means for allowing the organization to input its image" do
+    pending
+    #Requires upload ability
+  	response.should have_tag("input[id=organization_logo]")
   end
   
   it "should have a submit button" do
-  	pending
+  	response.should have_tag("input[type=submit]")
   end
   
-  it "should have a cancel link that links back to the show page" do
-  	pending
-  end
-  
-  it "should have a link for explaining private mode" do
-  	pending
+  it "should have a cancel link that links back to the account page" do
+  	response.should have_tag("a[href=#{account_path}]")
   end
   
 end

@@ -3,5 +3,8 @@
 <h3>Search Members</h3>
 <%= render :partial => "search_form" %>
 <h3>Browse Members</h3>
-<%= render :partial => "organization_list", :collection => @organizations %>
+<!--TODO: Sorting an pagination-->
+<ul id="organizations">
+<%= render :partial => "organization", :collection => @organizations %>
+</ul>
 

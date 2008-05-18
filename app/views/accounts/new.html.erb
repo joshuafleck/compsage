@@ -1,0 +1,54 @@
+<h2>New Account</h2>
+<%=error_messages_for :organization%>
+<%=flash_messages%>
+<%=error_messages_for :organization%>
+<% form_for :organization, @organization, :url => account_path do |f| %>
+  <%= hidden_field_tag 'key', @external_invitation.key %>
+  <p>
+    <label>Name of Your Organization:</label><br />
+    <%=f.text_field :name %>
+  </p>
+  <p>
+    <label>Your Name:</label> <br />
+    <%=f.text_field :contact_name %>
+  </p>
+  <p>
+    <label>Your Email Address:</label> <br />
+    <%=f.text_field :email %>
+  </p>
+  <p>
+    <label>Your Location:</label> <br />
+    <%=f.text_field :location %>
+  </p>
+  <p>
+    <label>City:</label> <br />
+    <%=f.text_field :city %>
+  </p>
+  <!--TODO add dropdown with list of states -->
+  <p>
+    <label>State:</label> <br />
+    <%=f.text_field :state %>
+  </p>
+  <p>
+    <label>Zip Code:</label> <br />
+    <%=f.text_field :zip_code %>
+  </p>
+  <!--TODO add dropdown with list of industries -->
+  <p>
+    <label>Industry:</label> <br />
+    <%=f.text_field :industry %>
+  </p>
+  <!--TODO add image upload capability -->
+  <p>
+    <label>Password:</label> <br />
+    <%=f.password_field :password %>
+  </p>
+  <p>
+    <label>Confirm Password:</label> <br />
+    <%=f.password_field :password_confirmation %>
+  </p>
+  <p>
+    <input type="submit" value="Create" /> 
+    <%=link_to "Cancel", new_session_path %>
+  </p>
+<% end %>

@@ -5,5 +5,8 @@
 <% if @organizations.size == 0 then %>
   <p>Your search returned zero results</p>
 <% else %>
-  <%= render :partial => "organization_list", :locals => { :organizations => @organizations } %>
+  <!--TODO: Sorting an pagination-->
+  <ul id="organizations">
+    <%= render :partial => "organization", :collection => @organizations %>
+  </ul>
 <% end %>

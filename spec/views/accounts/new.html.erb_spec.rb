@@ -3,59 +3,79 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 describe "/accounts/new" do
 
   before(:each) do
+    assigns[:organization] = mock_model(Organization, 
+      :name => nil, 
+      :contact_name => nil, 
+      :email => nil, 
+      :location => nil, 
+      :city => nil, 
+      :state => nil, 
+      :zip_code => nil, 
+      :industry => nil, 
+      :password => nil, 
+      :password_confirmation => nil,
+      :logo => nil)
+    assigns[:external_invitation] = mock_model(ExternalInvitation, :key => "1234")
     render 'accounts/new'
   end
   
   it "should show the new form" do
-  	pending
+  	response.should have_tag("form")
   end
   
   it "should have a means for allowing the organization to input its email address" do
-  	pending
+    #puts response.body
+  	response.should have_tag("input[id=organization_email]")
   end
   
   it "should have a means for allowing the organization to input its password"	 do
-  	pending
+  	response.should have_tag("input[id=organization_password]")
   end
   
   it "should have a means for allowing the organization to input its password confirmation"	 do
-  	pending
+  	response.should have_tag("input[id=organization_password_confirmation]")
   end
   
   it "should have a means for allowing the organization to input its location" do
-  	pending
+  	response.should have_tag("input[id=organization_location]")
   end
   
   it "should have a means for allowing the organization to input its city" do
-  	pending
+  	response.should have_tag("input[id=organization_city]")
   end
   
   it "should have a means for allowing the organization to input its zip code" do
-  	pending
+  	response.should have_tag("input[id=organization_zip_code]")
   end  
   
   it "should have a means for allowing the organization to select its state" do
-  	pending
+    pending
+    #Shoud have dropdown list of available states
+  	response.should have_tag("input[id=organization_state]")
   end
   
   it "should have a means for allowing the organization to select its industry" do
   	pending
+  	#Should have dropdown list of available industries
+  	response.should have_tag("input[id=organization_industry]")
   end  
   
   it "should have a means for allowing the organization to input its contact name" do
-  	pending
+  	response.should have_tag("input[id=organization_contact_name]")
   end
   
   it "should have a means for allowing the organization to input its image" do
-  	pending
+    pending
+    #Requires upload ability
+  	response.should have_tag("input[id=organization_logo]")
   end
   
   it "should have a submit button" do
-  	pending
+  	response.should have_tag("input[type=submit]")
   end
   
   it "should have a cancel link that links back to the start page" do
-  	pending
+  	response.should have_tag("a[href=#{new_session_path}]")
   end
   
  
