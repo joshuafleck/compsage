@@ -56,7 +56,8 @@ class NetworksController < ApplicationController
         render :status => :created
       end
     end
-  rescue ActiveRecord::RecordInvalid
+  rescue ActiveRecord::RecordInvalid => invalid
+    @network = invalid.record
     respond_to do |wants|
       wants.html do
         render :action => 'new'
