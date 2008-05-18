@@ -7,8 +7,18 @@ module AuthenticatedSystem
     end
 
     # returns true if the user is logged in with an external invitation.
+    def survey_invited?
+      current_invitation != :false && current_invitation.is_a?(ExternalSurveyInvitation) && current_invitation.survey.id == (params[:survey_id] || params[:id]).to_i
+    end
+    
+    # returns true if the user is logged in with an external invitation.
+    def network_invited?
+      current_invitation != :false && current_invitation.is_a?(ExternalNetworkInvitation) && current_invitation.network.id == (params[:network_id] || params[:id]).to_i
+    end
+    
+    # returns true if the user is logged in with an external invitation.
     def invited?
-      current_invitation != :false && current_invitation.survey.id == (params[:survey_id] || params[:id]).to_i
+      current_invitation != :false
     end
     
     # Accesses the current organization from the session.  Set it to :false if login fails
@@ -32,7 +42,7 @@ module AuthenticatedSystem
     end
 
     def current_invitation=(new_invitation)
-      session[:external_survey_invitation] = (new_invitation.nil? || new_invitation.is_a?(Symbol)) ? nil : new_invitation.id
+      session[:external_invitation] = (new_invitation.nil? || new_invitation.is_a?(Symbol)) ? nil : new_invitation.id
       @current_invitation = new_invitation || :false
     end
     
@@ -72,6 +82,14 @@ module AuthenticatedSystem
 
     def login_or_invite_required
       authorized? || invited? || access_denied
+    end
+    
+    def login_or_network_invite_required
+      authorized? || network_invited? || access_denied
+    end
+    
+    def login_or_survey_invite_required
+      authorized? || survey_invited? || access_denied
     end
     
     # Redirect as appropriate when an access request fails.
@@ -137,6 +155,6 @@ module AuthenticatedSystem
     end
     
     def login_from_invitation
-      self.current_invitation = ExternalSurveyInvitation.find(session[:external_survey_invitation_id]) if session[:external_survey_invitation_id]
+      self.current_invitation = ExternalInvitation.find(session[:external_invitation_id]) if session[:external_invitation_id]
     end
 end

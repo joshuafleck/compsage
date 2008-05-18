@@ -1,6 +1,7 @@
 class DiscussionsController < ApplicationController
 	before_filter :login_or_invite_required, :setup
-	
+	layout 'logged_in'
+  
 	def setup
 		@survey = Survey.find(params[:survey_id])
 	end

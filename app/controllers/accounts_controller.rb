@@ -1,2 +1,81 @@
 class AccountsController < ApplicationController
+  before_filter :login_or_invite_required
+	layout 'logged_in'
+	
+	def show
+	  @page_title = "My Account"
+	
+	  @organization = current_organization
+	  
+	  respond_to do |wants|
+      wants.html
+      wants.xml do
+      	render :xml => @organization.to_xml 
+      end
+    end
+	end
+	
+	def new
+	  @page_title = "New Account"
+	
+	  @organization = Organization.new
+	end
+	
+	def edit
+	  @page_title = "Edit My Account"
+	  
+  	@organization = current_organization
+	end
+	
+	def create
+	  @page_title = "New Account"
+	
+	  @organization = Organization.create!(params[:organization])
+    
+    respond_to do |wants|
+      wants.html {         
+        flash[:notice] = "Your account was created successfully."
+        redirect_to new_session_path() }      
+      wants.xml do
+        render :status => :created
+      end
+    end
+  rescue ActiveRecord::RecordInvalid
+    respond_to do |wants|
+      wants.html do
+        render :action => 'new'
+      end
+      wants.xml do
+        render :xml => @organization.errors.to_xml, :status => 422
+      end
+    end
+	end
+	
+	def update
+	  @page_title = "Edit My Account"
+	
+	  @organization = current_organization  
+    
+    @organization.update_attributes!(params[:organization])
+    
+    respond_to do |wants|
+      wants.html do
+        flash[:notice] = "Your account was updated successfully."
+        redirect_to account_path
+      end
+      wants.xml do
+        render :status => :ok
+      end
+    end
+  rescue ActiveRecord::RecordInvalid
+    respond_to do |wants|
+      wants.html do
+        render :action => 'edit'
+      end
+      wants.xml do
+        render :xml => @organization.errors.to_xml, :status => 422
+      end
+    end
+	end
+  
 end
