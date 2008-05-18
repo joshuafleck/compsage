@@ -7,18 +7,8 @@ module AuthenticatedSystem
     end
 
     # returns true if the user is logged in with an external invitation.
-    def survey_invited?
-      current_invitation != :false && current_invitation.is_a?(ExternalSurveyInvitation) && current_invitation.survey.id == (params[:survey_id] || params[:id]).to_i
-    end
-    
-    # returns true if the user is logged in with an external invitation.
-    def network_invited?
-      current_invitation != :false && current_invitation.is_a?(ExternalNetworkInvitation) && current_invitation.network.id == (params[:network_id] || params[:id]).to_i
-    end
-    
-    # returns true if the user is logged in with an external invitation.
-    def invited?
-      current_invitation != :false
+    def invited_to_survey?
+      current_survey_invitation != :false && current_survey_invitation.survey.id == (params[:survey_id] || params[:id]).to_i
     end
     
     # Accesses the current organization from the session.  Set it to :false if login fails
@@ -27,12 +17,12 @@ module AuthenticatedSystem
       @current_organization ||= (login_from_session || login_from_basic_auth || login_from_cookie || :false)
     end
 
-    def current_invitation
-      @current_invitation ||= (login_from_invitation || :false)
+    def current_survey_invitation
+      @current_survey_invitation ||= (login_from_survey_invitation || :false)
     end
     
-    def current_organization_or_invitation
-      @current_organization || @current_invitation
+    def current_organization_or_survey_invitation
+      @current_organization || @current_survey_invitation
     end
     
     # Store the given organization id in the session.
@@ -41,9 +31,9 @@ module AuthenticatedSystem
       @current_organization = new_organization || :false
     end
 
-    def current_invitation=(new_invitation)
-      session[:external_invitation] = (new_invitation.nil? || new_invitation.is_a?(Symbol)) ? nil : new_invitation.id
-      @current_invitation = new_invitation || :false
+    def current_survey_invitation=(new_invitation)
+      session[:external_survey_invitation] = (new_invitation.nil? || new_invitation.is_a?(Symbol)) ? nil : new_invitation.id
+      @current_survey_invitation = new_invitation || :false
     end
     
     # Check if the organization is authorized
@@ -80,16 +70,8 @@ module AuthenticatedSystem
       authorized? || access_denied
     end
 
-    def login_or_invite_required
-      authorized? || invited? || access_denied
-    end
-    
-    def login_or_network_invite_required
-      authorized? || network_invited? || access_denied
-    end
-    
-    def login_or_survey_invite_required
-      authorized? || survey_invited? || access_denied
+    def login_or_survey_invitation_required
+      authorized? || invited_to_survey? || access_denied
     end
     
     # Redirect as appropriate when an access request fails.
@@ -129,7 +111,7 @@ module AuthenticatedSystem
     # Inclusion hook to make #current_organization and #logged_in?
     # available as ActionView helper methods.
     def self.included(base)
-      base.send :helper_method, :current_organization, :current_organization_or_invitation, :logged_in?
+      base.send :helper_method, :current_organization, :current_organization_or_survey_invitation, :logged_in?
     end
 
     # Called from #current_organization.  First attempt to login by the organization id stored in the session.
@@ -154,7 +136,7 @@ module AuthenticatedSystem
       end
     end
     
-    def login_from_invitation
-      self.current_invitation = ExternalInvitation.find(session[:external_invitation_id]) if session[:external_invitation_id]
+    def login_from_survey_invitation
+      self.current_survey_invitation = ExternalSurveyInvitation.find(session[:external_survey_invitation_id]) if session[:external_survey_invitation_id]
     end
 end

@@ -23,8 +23,8 @@ end
 describe AccountsController, " handling GET /account" do
 
   before(:each) do
-    @current_organization_or_invitation = mock_model(Organization)
-    login_as(@current_organization_or_invitation)
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
       
   end
   
@@ -33,7 +33,7 @@ describe AccountsController, " handling GET /account" do
   end
 
   it "should require being logged in" do
-    controller.should_receive(:login_or_invite_required)
+    controller.should_receive(:login_required)
     do_get
   end
   
@@ -44,7 +44,7 @@ describe AccountsController, " handling GET /account" do
   
   it "should assign the organization to the view" do
     do_get
-    assigns[:organization].should eql(@current_organization_or_invitation)
+    assigns[:organization].should eql(@current_organization)
   end
   
   it "should render show template" do
@@ -57,8 +57,8 @@ end
 describe AccountsController, " handling GET /account.xml" do
 
   before(:each) do
-    @current_organization_or_invitation = mock_model(Organization, :to_xml => "XML")
-    login_as(@current_organization_or_invitation)
+    @current_organization = mock_model(Organization, :to_xml => "XML")
+    login_as(@current_organization)
       
   end
   
@@ -68,7 +68,7 @@ describe AccountsController, " handling GET /account.xml" do
   end
 
   it "should require being logged in" do
-    controller.should_receive(:login_or_invite_required)
+    controller.should_receive(:login_required)
     do_get
   end
   
@@ -78,7 +78,7 @@ describe AccountsController, " handling GET /account.xml" do
   end
   
   it "should render the found account as XML" do
-  	@current_organization_or_invitation.should_receive(:to_xml).and_return("XML")
+  	@current_organization.should_receive(:to_xml).and_return("XML")
   	do_get
   end
   
@@ -87,20 +87,24 @@ end
 describe AccountsController, " handling GET /account/new" do
 
   before(:each) do
-    @current_organization_or_invitation = mock_model(ExternalInvitation)
-    login_as(@current_organization_or_invitation)
+  
+    @key = "1234"
   
     @organization = mock_model(Organization)
+    @external_invitation = mock_model(ExternalInvitation)
     
     Organization.stub!(:new).and_return(@organization)    
+    ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
+    
+    @params = {:key => @key}
   end
   
   def do_get
-    get :new
+    get :new, @params
   end
 
-  it "should require being logged in" do
-    controller.should_receive(:login_or_invite_required)
+  it "should require a valid external invitation key" do
+    ExternalInvitation.should_receive(:find_by_key).with(@key).and_return(@external_invitation)
     do_get
   end
   
@@ -129,20 +133,25 @@ end
 describe AccountsController, " handling POST /account" do
 
   before(:each) do
-    @current_organization_or_invitation = mock_model(ExternalInvitation)
-    login_as(@current_organization_or_invitation)
+  
+    @key = "1234"
   
     @organization = mock_model(Organization)
+    @external_invitation = mock_model(ExternalInvitation)
     
+    ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:create!)
+    
+    @params = {:key => @key}
+    
   end
   
   def do_post
-    get :create
+    get :create, @params
   end
 
-  it "should require being logged in" do
-    controller.should_receive(:login_or_invite_required)
+  it "should require a valid external invitation key" do
+    ExternalInvitation.should_receive(:find_by_key).with(@key).and_return(@external_invitation)
     do_post
   end
   
@@ -174,8 +183,8 @@ end
 describe AccountsController, " handling GET /account/edit" do
 
   before(:each) do
-    @current_organization_or_invitation = mock_model(Organization)
-    login_as(@current_organization_or_invitation)
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
     
   end
   
@@ -184,7 +193,7 @@ describe AccountsController, " handling GET /account/edit" do
   end
 
   it "should require being logged in" do
-    controller.should_receive(:login_or_invite_required)
+    controller.should_receive(:login_required)
     do_get
   end
   
@@ -200,7 +209,7 @@ describe AccountsController, " handling GET /account/edit" do
   
   it "should assign the organization to the view" do
     do_get
-    assigns[:organization].should eql(@current_organization_or_invitation)
+    assigns[:organization].should eql(@current_organization)
   end
   
 end
@@ -208,8 +217,8 @@ end
 describe AccountsController, " handling PUT /account" do
   
   before(:each) do
-    @current_organization_or_invitation = mock_model(Organization, :update_attributes! => true)
-    login_as(@current_organization_or_invitation)
+    @current_organization = mock_model(Organization, :update_attributes! => true)
+    login_as(@current_organization)
     
   end
   
@@ -218,12 +227,12 @@ describe AccountsController, " handling PUT /account" do
   end
   
   it "should require being logged in" do
-    controller.should_receive(:login_or_invite_required)
+    controller.should_receive(:login_required)
     do_put
   end
   
   it "should update the selected account" do
-  	@current_organization_or_invitation.should_receive(:update_attributes!)
+  	@current_organization.should_receive(:update_attributes!)
   	do_put
   end
 

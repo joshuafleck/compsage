@@ -1,5 +1,5 @@
 class DiscussionsController < ApplicationController
-	before_filter :login_or_invite_required, :setup
+	before_filter :login_or_survey_invitation_required, :setup
 	layout 'logged_in'
   
 	def setup
@@ -34,7 +34,7 @@ class DiscussionsController < ApplicationController
 
   def create
     #Note that create must be called rather then new-> save to ensure the parent/child relationships are created
-    @discussion = current_organization_or_invitation.discussions.create!(params[:discussion])
+    @discussion = current_organization_or_survey_invitation.discussions.create!(params[:discussion])
     
     respond_to do |wants|
       wants.html {         
@@ -56,14 +56,14 @@ class DiscussionsController < ApplicationController
   end
   
   def edit
-    @discussion = current_organization_or_invitation.discussions.find(params[:id])
+    @discussion = current_organization_or_survey_invitation.discussions.find(params[:id])
     
     @page_title = "Editing #{@discussion.topic}"
     @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
   end
   
   def update
-    @discussion = current_organization_or_invitation.discussions.find(params[:id])  
+    @discussion = current_organization_or_survey_invitation.discussions.find(params[:id])  
     
     @discussion.update_attributes!(params[:discussion])
     
@@ -113,7 +113,7 @@ class DiscussionsController < ApplicationController
   end
   
   def destroy
-    @discussion = current_organization_or_invitation.discussions.find(params[:id])
+    @discussion = current_organization_or_survey_invitation.discussions.find(params[:id])
 
     @discussion.destroy
     

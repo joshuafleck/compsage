@@ -3,5 +3,5 @@
 <h3>Search Members</h3>
 <%= render :partial => "search_form" %>
 <h3>Browse Members</h3>
-<%= render :partial => "organization_list", :locals => { :organizations => @organizations } %>
+<%= render :partial => "organization_list", :collection => @organizations %>
 

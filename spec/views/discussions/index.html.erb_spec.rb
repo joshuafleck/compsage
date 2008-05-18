@@ -5,13 +5,13 @@ describe "discussions/index" do
   before(:each) do
     
     @owner = mock_model(ExternalSurveyInvitation)
-    @current_organization_or_invitation = mock_model(Organization)
-    template.stub!(:current_organization_or_invitation).and_return(@current_organization_or_invitation)
+    @current_organization_or_survey_invitation = mock_model(Organization)
+    template.stub!(:current_organization_or_survey_invitation).and_return(@current_organization_or_survey_invitation)
     
     @survey = mock_model(Survey, :job_title => "Software Engineer", :id => "1")
     @discussion_reply = mock_model(Discussion, :responder => @owner, :subject => "Reply Topic", :body => "Reply Body", :id => "2")
     @discussion_children = [@discussion_reply]
-    @discussion_topic = mock_model(Discussion, :children => @discussion_children, :responder => @current_organization_or_invitation, :subject => "Root Topic", :body => "Root Body", :id => "1", :survey_id => @survey.id)
+    @discussion_topic = mock_model(Discussion, :children => @discussion_children, :responder => @current_organization_or_survey_invitation, :subject => "Root Topic", :body => "Root Body", :id => "1", :survey_id => @survey.id)
     @discussions = [@discussion_topic]
     
     @discussions.stub!(:sort).and_return(@discussions)
@@ -19,7 +19,7 @@ describe "discussions/index" do
     
     assigns[:discussions] = @discussions
     assigns[:survey] = @survey
-    assigns[:current_organization_or_invitation] = @current_organization_or_invitation
+    assigns[:current_organization_or_survey_invitation] = @current_organization_or_survey_invitation
                 
     render 'discussions/index'
   end

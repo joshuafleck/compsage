@@ -1,5 +1,5 @@
 class AccountsController < ApplicationController
-  before_filter :login_or_invite_required
+  before_filter :login_required, :except => [ :new , :create ]
 	layout 'logged_in'
 	
 	def show
@@ -17,8 +17,11 @@ class AccountsController < ApplicationController
 	
 	def new
 	  @page_title = "New Account"
-	
+	  
+	  @external_invitation = ExternalInvitation.find_by_key(params[:key])
+	   
 	  @organization = Organization.new
+	  
 	end
 	
 	def edit
@@ -30,6 +33,8 @@ class AccountsController < ApplicationController
 	def create
 	  @page_title = "New Account"
 	
+	  @external_invitation = ExternalInvitation.find_by_key(params[:key])
+	  
 	  @organization = Organization.create!(params[:organization])
     
     respond_to do |wants|
