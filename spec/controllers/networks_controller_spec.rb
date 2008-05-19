@@ -287,9 +287,9 @@ describe NetworksController, " handling POST /networks" do
     @organization = mock_model(Organization)
     login_as(@organization)
     
-    @network = mock_model(Network)
+    @network = mock_model(Network, :save => true)
     
-    @owned_networks_proxy = mock('owned networks proxy', :create! => @network)
+    @owned_networks_proxy = mock('owned networks proxy', :new => @network)
     @networks_proxy = mock('networks proxy')
     @organization.stub!(:networks).and_return(@networks_proxy)
     @organization.stub!(:owned_networks).and_return(@owned_networks_proxy)
@@ -305,7 +305,8 @@ describe NetworksController, " handling POST /networks" do
   end
   
   it "should create a new network" do
-    @owned_networks_proxy.should_receive(:create!).and_return(@network)
+    @owned_networks_proxy.should_receive(:new).and_return(@network)
+    @network.should_receive(:save)
     do_post
   end
   
@@ -320,7 +321,7 @@ describe NetworksController, " handling PUT /networks/1" do
     @organization = mock_model(Organization)
     login_as(@organization)
     
-    @network = mock_model(Network, :update_attributes! => true)
+    @network = mock_model(Network, :attributes= => true, :save => true)
     
     @owned_networks_proxy = mock('owned networks proxy', :find => @network)
     
@@ -344,7 +345,7 @@ describe NetworksController, " handling PUT /networks/1" do
   end
   
   it "should update the selected network" do
-    @network.should_receive(:update_attributes!)
+    @network.should_receive(:attributes=)
     do_put
   end
 

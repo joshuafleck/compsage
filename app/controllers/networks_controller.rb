@@ -47,23 +47,24 @@ class NetworksController < ApplicationController
   
   # create a new network
   def create
-    @network = current_organization.owned_networks.create!(params[:network])
+    @network = current_organization.owned_networks.new(params[:network])
     
-    respond_to do |wants|
-      wants.html { redirect_to network_invitations_path(@network) }
+    if @network.save then
+      respond_to do |wants|
+        wants.html { redirect_to network_invitations_path(@network) }
       
-      wants.xml do
-        render :status => :created
+        wants.xml do
+          render :status => :created
+        end
       end
-    end
-  rescue ActiveRecord::RecordInvalid => invalid
-    @network = invalid.record
-    respond_to do |wants|
-      wants.html do
-        render :action => 'new'
-      end
-      wants.xml do
-        render :xml => @network.errors.to_xml, :status => 422
+    else
+      respond_to do |wants|
+        wants.html do
+          render :action => 'new'
+        end
+        wants.xml do
+          render :xml => @network.errors.to_xml, :status => 422
+        end
       end
     end
   end
@@ -71,24 +72,26 @@ class NetworksController < ApplicationController
   # update a network that the current organization owns.
   def update
     @network = current_organization.owned_networks.find(params[:id])
-    @network.update_attributes!(params[:network])
+    @network.attributes = params[:network]
     
-    respond_to do |wants|
-      wants.html do
-        flash[:notice] = "Your network was updated successfully."
-        redirect_to network_path(@network)
+    if @network.save then
+      respond_to do |wants|
+        wants.html do
+          flash[:notice] = "Your network was updated successfully."
+          redirect_to network_path(@network)
+        end
+        wants.xml do
+          render :status => :ok
+        end
       end
-      wants.xml do
-        render :status => :ok
-      end
-    end
-  rescue ActiveRecord::RecordInvalid
-    respond_to do |wants|
-      wants.html do
-        render :action => 'edit'
-      end
-      wants.xml do
-        render :xml => @network.errors.to_xml, :status => 422
+    else
+      respond_to do |wants|
+        wants.html do
+          render :action => 'edit'
+        end
+        wants.xml do
+          render :xml => @network.errors.to_xml, :status => 422
+        end
       end
     end
   end
