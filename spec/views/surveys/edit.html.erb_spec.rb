@@ -7,6 +7,7 @@ describe "/surveys/edit" do
   end
   
   it "should render the surveys attributes"
+  it "should render the surveys questions"
   it "should have a submit button"
   it "should have a cancel button"
 

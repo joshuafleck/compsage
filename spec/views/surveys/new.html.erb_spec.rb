@@ -7,6 +7,7 @@ describe "/surveys/new" do
   end
   
   it "should render the new surveys form"
+  it "should render the survey questions form"
   it "should have a submit button"
   it "should have a cancel button"
 

@@ -5,12 +5,14 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :session
 
   map.resources :surveys, :collection => {:search => :any} do |survey|
-    survey.resources :questions do |question|
-      question.resources :responses
-    end
+    #survey.resources :questions do |question|
+     # question.resources :responses
+    #end
     survey.resources :discussions, :member => {:report => :any}
     survey.resources :invitations, :controller => :survey_invitations
     survey.resource :report
+    survey.resource :questions
+    survey.resource :respond
   end
   
   map.resources :networks, :member => {:join => :put, :leave => :put} do |network|

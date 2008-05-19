@@ -25,6 +25,14 @@ describe SurveysController, "#route_for" do
   it "should map { :controller => 'surveys', :action => 'update', :id => 1} to /surveys/1" do
     route_for(:controller => "surveys", :action => "update", :id => 1).should == "/surveys/1"
   end
+  
+  it "should map { :controller => 'surveys', :action => 'questions', :id => 1} to /surveys/1/questions" do
+    route_for(:controller => "surveys", :action => "questions", :id => 1).should == "/surveys/1/questions"
+  end
+  
+  it "should map { :controller => 'surveys', :action => 'respond', :id => 1} to /surveys/1/respond" do
+    #route_for(:controller => "surveys", :action => "respond", :survey_id => 1).should == "/surveys/1/respond"
+  end
 end
 
 describe SurveysController, " handling GET /surveys" do
@@ -339,7 +347,7 @@ describe SurveysController, " handling POST /surveys" do
                :sponsor => mock_model(Organization)}
     @survey = mock_model(Survey, :id => 1, :save => true, :errors => [])
     @survey.stub!(:new_record?).and_return(true)
-    Survey.stub!(:create!).and_return(@survey)
+    Survey.stub!(:create).and_return(@survey)
   end
   
   def do_post
@@ -347,7 +355,7 @@ describe SurveysController, " handling POST /surveys" do
   end
 
   it "should create a new survey" do
-    Survey.should_receive(:create!).and_return(@survey)
+    Survey.should_receive(:create).and_return(@survey)
     do_post
   end
   it "should redirect to the invitation show page upon success" do
@@ -529,4 +537,39 @@ describe SurveysController, "handling GET /surveys/search.xml" do
     response.body.should == "XML"
   end
 end
+
+describe SurveysController, "handling GET /surveys/1/questions" do
+  it "should be successful"
+  it "should find questions for the survey"
+  it "should assign the found questions to the view"
+  it "should render the questions view template"
+end
+
+describe SurveysController, "handling GET /surveys/1/questions.xml" do
+  it "should be successful"
+  it "should find questions for the survey"
+  it "should render the found questions as XML"
+end
+
+describe SurveysController, "handling GET /surveys/1/questions, when survey is closed" do
+  it "should redirect to the report for the survey"
+end
+
+describe SurveysController, "handling POST /surveys/1/respond, as invite based user" do
+  it "should be successful"
+  it "should redirect to the success/sign-up page "
+end
+
+describe SurveysController, "handling POST /surveys/1/respond, as organization based user" do
+  it "should be successful"
+  it "should redirect to the survey show page"
+  it "should flash a success message"
+end
+
+describe SurveysController, "handling POST /surveys/1/respond, with invalid respones" do
+  it "should flash error messages"
+  it "should redirect to the surveys/id/questions page "
+end
+
+
 
