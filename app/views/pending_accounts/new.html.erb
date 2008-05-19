@@ -1,0 +1,39 @@
+<h2>Signup</h2>
+<p>
+In order to ensure the intregrity of our product, we must verify the identity of all applicants.
+After signing up, you will be contacted within three business days. When your identity is verfied,
+you will be provided with a key that may be used to create an account
+</p>
+<%=error_messages_for :pending_account%>
+<%=flash_messages%>
+<%=error_messages_for :pending_account%>
+<% form_for :pending_account, @pending_account, :url => signup_path do |f| %>
+  <p>
+    <label>Name of Your Organization:</label><br />
+    <%=f.text_field :organization_name %>
+  </p>
+  <p>
+    <label>Your First Name:</label> <br />
+    <%=f.text_field :contact_first_name %>
+  </p>
+  <p>
+    <label>Your Last Name:</label> <br />
+    <%=f.text_field :contact_last_name %>
+  </p>
+  <p>
+    <label>Your Email Address:</label> <br />
+    <%=f.text_field :email %>
+  </p>
+  <p>
+    <label>Your Phone Number:</label> <br />
+    <%=f.text_field :phone %>
+  </p>
+  <p>
+    <label>Your Phone Extension:</label> <br />
+    <%=f.text_field :phone_extension %>
+  </p>
+  <p>
+    <input type="submit" value="Signup" /> 
+    <%=link_to "Cancel", '/' %>
+  </p>
+<% end %>
