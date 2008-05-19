@@ -19,7 +19,7 @@ describe "/pending_accounts/new" do
   end
   
   it "should have a means for setting the organization name" do
-    puts response.body
+    #puts response.body
   	response.should have_tag("input[id=pending_account_organization_name]")
   end
   
