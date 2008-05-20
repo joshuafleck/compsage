@@ -4,7 +4,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resource :session
 
-  map.resources :surveys, :collection => {:search => :any} do |survey|
+  map.resources :surveys, :collection => {:search => :any}, :member => {:respond => :post} do |survey|
     survey.resources :questions
     survey.resources :discussions, :member => {:report => :any}
     survey.resources :invitations, :controller => :survey_invitations

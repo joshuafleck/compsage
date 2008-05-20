@@ -26,6 +26,9 @@ describe SurveysController, "#route_for" do
     route_for(:controller => "surveys", :action => "update", :id => 1).should == "/surveys/1"
   end
   
+  it "should map { :controller => 'surveys', :action => 'respond', :id => 1} to /surveys/1/respond" do
+    route_for(:controller => "surveys", :action => "respond", :id => 1).should == "/surveys/1/respond"
+  end
 end
 
 describe SurveysController, " handling GET /surveys" do
@@ -540,6 +543,7 @@ describe SurveysController, "handling GET /surveys/search.xml" do
 end
 
 describe SurveysController, "handling GET /surveys/1/questions" do
+  it "should render the questions index for the survey"
   it "should be successful"
   it "should find questions for the survey"
   it "should assign the found questions to the view"
