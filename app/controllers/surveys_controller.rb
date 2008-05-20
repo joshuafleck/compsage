@@ -1,6 +1,7 @@
 class SurveysController < ApplicationController
-  
-  before_filter :login_required
+  #we require a valid login if you are creating or editing a survey.
+  before_filter :login_required, :only => [ :edit, :update, :create, :new, :index ]
+  before_filter :login_or_survey_invitation_required, :except => [ :edit, :update, :create, :new, :index ]
   
   def index    
     respond_to do |wants|
@@ -57,7 +58,7 @@ end
   end
   
   def create
-    @survey = Survey.create!(params[:survey])
+    @survey = Survey.create(params[:survey])
     respond_to do |wants|
       if @survey.errors.empty?
         flash[:notice] = "Survey was created successfully!"
@@ -82,7 +83,14 @@ end
   end
   
   def questions
+    @questions = current_organization_or_invitation.surveys.open.find(params[:id]).questions
     
+    respond_to do |wants|
+      wants.html {}
+      wants.xml {
+         render :xml => @questions.to_xml
+      }
+    end
   end
   
 end

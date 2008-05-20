@@ -26,13 +26,6 @@ describe SurveysController, "#route_for" do
     route_for(:controller => "surveys", :action => "update", :id => 1).should == "/surveys/1"
   end
   
-  it "should map { :controller => 'surveys', :action => 'questions', :id => 1} to /surveys/1/questions" do
-    route_for(:controller => "surveys", :action => "questions", :id => 1).should == "/surveys/1/questions"
-  end
-  
-  it "should map { :controller => 'surveys', :action => 'respond', :id => 1} to /surveys/1/respond" do
-    #route_for(:controller => "surveys", :action => "respond", :survey_id => 1).should == "/surveys/1/respond"
-  end
 end
 
 describe SurveysController, " handling GET /surveys" do
@@ -67,16 +60,24 @@ describe SurveysController, " handling GET /surveys" do
     do_get
     response.should render_template('index')
   end
-  it "should find all surveys for which the user has participated, been invited, or sponsored" do
-    @current_organization.should_receive(:survey_invitations).and_return(@survey_invitations_proxy)
+  
+  it "should find all surveys for which the user has been invited or participated" do
     @survey_invitations_proxy.should_receive(:find).with(:all, :include => :surveys).and_return([])
+    
+    do_get 
+  end
+  
+  it "should fina all surveys for which the user has been the sponsor" do
+    @current_organization.should_receive(:survey_invitations).and_return(@survey_invitations_proxy)
     @current_organization.should_receive(:surveys).at_least(:twice).and_return(@survey_proxy)
     @survey_proxy.should_receive(:closed).and_return(@closed_surveys)
     @closed_surveys.should_receive(:find)
     @survey_proxy.should_receive(:open).and_return(@open_surveys)
     @open_surveys.should_receive(:find)
+    
     do_get 
   end
+  
   it "should assign the found surveys for the view" do
     do_get
     assigns[:running_surveys].should_not be_nil
@@ -374,7 +375,7 @@ describe SurveysController, " handling POST /surveys, upon failure" do
                :sponsor => mock_model(Organization)}
     @survey = mock_model(Survey, :id => 1, :save => true, :errors => ["asdfadsfdsa"])
     @survey.stub!(:new_record?).and_return(true)
-   Survey.stub!(:create!).and_return(@survey)
+   Survey.stub!(:create).and_return(@survey)
   end
   
   def do_post
@@ -553,6 +554,7 @@ end
 
 describe SurveysController, "handling GET /surveys/1/questions, when survey is closed" do
   it "should redirect to the report for the survey"
+  it "should flash a message clarifying that the survey is closed"
 end
 
 describe SurveysController, "handling POST /surveys/1/respond, as invite based user" do
