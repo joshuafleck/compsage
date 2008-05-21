@@ -42,7 +42,11 @@ describe QuestionsController, "handling GET /questions, when survey is closed" d
   it "should flash a message clarifying that the survey is closed"
 end
 
-# no rhtml specs, as they're probably not needed
+
+
+# These specs will not be developed until phase two
+# required for more advanced question creation, instead
+# of simple form we will use for phase one.
 
 describe QuestionsController, "handling GET /questions/1.xml" do
   it "should be successful"

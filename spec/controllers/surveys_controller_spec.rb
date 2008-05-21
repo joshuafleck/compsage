@@ -564,6 +564,7 @@ end
 describe SurveysController, "handling POST /surveys/1/respond, with invalid respones" do
   it "should flash error messages"
   it "should redirect to the surveys/id/questions page "
+  it "should assign the invalid responses to the view "
 end
 
 
