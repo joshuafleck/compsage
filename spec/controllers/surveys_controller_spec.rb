@@ -419,10 +419,14 @@ describe SurveysController, " handling PUT /surveys/1" do
     do_update
     assigns(:survey).should equal(@survey)
   end
+  
   it "should assign the found survey to the view" do
     do_update
     assigns(:survey).should equal(@survey)
   end
+  
+  it "should update the questions for the survey"
+  it "should assign the found questions to the view"
   it "should redirect to the show view page for this survey upon success" do
     do_update
     response.should redirect_to(survey_path(@survey))
@@ -471,6 +475,10 @@ describe SurveysController, " handling PUT /surveys/1, with failure" do
   it "should error if requesting organization is not the sponsor"  do
     lambda{ do_update }.should raise_error(ActiveRecord::RecordNotFound)
   end
+end
+
+describe SurveysController, " handling PUT /surveys/1, with invalid responses" do
+  it "should assign invalid responses to the responses hash for the view"
 end
 
 describe SurveysController, "handling GET /surveys/search" do
@@ -542,26 +550,7 @@ describe SurveysController, "handling GET /surveys/search.xml" do
   end
 end
 
-describe SurveysController, "handling GET /surveys/1/questions" do
-  it "should render the questions index for the survey"
-  it "should be successful"
-  it "should find questions for the survey"
-  it "should assign the found questions to the view"
-  it "should render the questions view template"
-end
-
-describe SurveysController, "handling GET /surveys/1/questions.xml" do
-  it "should be successful"
-  it "should find questions for the survey"
-  it "should render the found questions as XML"
-end
-
-describe SurveysController, "handling GET /surveys/1/questions, when survey is closed" do
-  it "should redirect to the report for the survey"
-  it "should flash a message clarifying that the survey is closed"
-end
-
-describe SurveysController, "handling POST /surveys/1/respond, as invite based user" do
+describe SurveysController, "handling POST /surveys/1/respond, as invitee is not a shawarma user" do
   it "should be successful"
   it "should redirect to the success/sign-up page "
 end

@@ -21,6 +21,27 @@ describe QuestionsController, "#route_for" do
   
 end
 
+#Questions index will be used to view the questions
+describe QuestionsController, "handling GET /questions" do
+  it "should render the questions index for the associated survey"
+  it "should be successful"
+  it "should find questions for the survey"
+  it "should assign the found questions to the view"
+  it "should render the questions view template"
+end
+
+describe QuestionsController, "handling GET /questions.xml" do
+  it "should be successful"
+  it "should find questions for the survey"
+  it "should render the found questions as XML"
+end
+
+
+describe QuestionsController, "handling GET /questions, when survey is closed" do
+  it "should redirect to the report for the survey"
+  it "should flash a message clarifying that the survey is closed"
+end
+
 # no rhtml specs, as they're probably not needed
 
 describe QuestionsController, "handling GET /questions/1.xml" do
