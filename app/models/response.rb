@@ -16,5 +16,4 @@ class Response < ActiveRecord::Base
   		self.textual_response
   	end
   end
-  
 end

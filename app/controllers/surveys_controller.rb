@@ -79,7 +79,22 @@ end
   end
   
   def respond
-    
+    @responses = []
+    @survey = params[:survey]
+    #validate all responses required for the survey  
+    @survey.questions.each do |question|
+      @response = current_organization_or_invitation.responses.find_or_create_by_question_id(question.id)
+      @response.update_attributes(params[:question][question.id][:response])
+      #if it is invalid, add to responses hash
+      @responses[question.id] = @response unless @response.save
+    end
+    #if there were no invalid responses, redirect to the survey show page
+    if @responses.empty?
+      redirect_to survey_path(@survey) 
+    #else send back to the questions index
+    else
+      redirect_to survey_questions_path(@survey, @responses)
+    end
   end
   
 end

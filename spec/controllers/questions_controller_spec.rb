@@ -23,23 +23,118 @@ end
 
 #Questions index will be used to view the questions
 describe QuestionsController, "handling GET /questions" do
-  it "should render the questions index for the associated survey"
-  it "should be successful"
-  it "should find questions for the survey"
-  it "should assign the found questions to the view"
-  it "should render the questions view template"
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @surveys_proxy = mock('surveys proxy')
+    @open_surveys_proxy = []
+    @open_surveys = []
+    @questions = []
+    
+    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @surveys_proxy.stub!(:open).and_return(@open_surveys_proxy)
+    @open_surveys_proxy.stub!(:find).and_return(@open_surveys)
+    @open_surveys.stub!(:questions).and_return(@questions)
+  end
+  
+  def do_get
+    get :index, :survey_id => 1
+  end
+  
+  it "should be successful" do
+    do_get
+    response.should be_success
+  end
+  
+  it "should find questions for the survey" do
+    @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
+    @surveys_proxy.should_receive(:open).and_return(@open_surveys_proxy)
+    @open_surveys_proxy.should_receive(:find).and_return(@open_surveys)
+    @open_surveys.should_receive(:questions).and_return(@questions)
+    
+    do_get
+  end
+  
+  it "should assign the found questions to the view" do
+    do_get
+    assigns[:questions].should_not be_nil
+  end
+  
+  it "should render the questions view template" do
+    do_get
+    response.should render_template('index')
+  end
 end
 
 describe QuestionsController, "handling GET /questions.xml" do
-  it "should be successful"
-  it "should find questions for the survey"
-  it "should render the found questions as XML"
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @surveys_proxy = mock('surveys proxy')
+    @open_surveys_proxy = []
+    @open_surveys = []
+    @questions = []
+    
+    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @surveys_proxy.stub!(:open).and_return(@open_surveys_proxy)
+    @open_surveys_proxy.stub!(:find).and_return(@open_surveys)
+    @open_surveys.stub!(:questions).and_return(@questions)
+    @questions.stub!(:to_xml).and_return("XML") 
+  end
+  
+  def do_get
+    @request.env["HTTP_ACCEPT"] = "application/xml"
+    get :index, :survey_id => 1
+  end
+  
+  it "should be successful" do
+    do_get
+    response.should be_success
+  end
+  
+  it "should find questions for the survey" do
+    @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
+    @surveys_proxy.should_receive(:open).and_return(@open_surveys_proxy)
+    @open_surveys_proxy.should_receive(:find).and_return(@open_surveys)
+    @open_surveys.should_receive(:questions).and_return(@questions)
+    
+    do_get
+  end
+  
+  it "should render the found questions as XML" do
+    do_get
+    response.body.should == "XML"
+  end
 end
 
 
 describe QuestionsController, "handling GET /questions, when survey is closed" do
-  it "should redirect to the report for the survey"
-  it "should flash a message clarifying that the survey is closed"
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @surveys_proxy = mock('surveys proxy')
+    @open_surveys_proxy = []
+    
+    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @surveys_proxy.stub!(:open).and_return(@open_surveys_proxy)
+    @open_surveys_proxy.stub!(:find).and_raise(ActiveRecord::RecordNotFound)
+  end
+  
+  def do_get
+    get :index, :survey_id => 1
+  end
+  
+  it "should redirect to the report for the survey" do
+    do_get
+    response.should redirect_to(survey_report_path("1"))
+  end
+  it "should flash a message clarifying that the survey is closed" do
+    do_get
+    flash[:notice].should eql("The report you are trying to access is closed.")
+  end
 end
 
 
@@ -47,7 +142,6 @@ end
 # These specs will not be developed until phase two
 # required for more advanced question creation, instead
 # of simple form we will use for phase one.
-
 describe QuestionsController, "handling GET /questions/1.xml" do
   it "should be successful"
   it "should render the question as xml"
