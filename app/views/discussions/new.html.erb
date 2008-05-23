@@ -5,6 +5,7 @@
     Replying to <%=@parent_discussion.subject%>
   <% end %>
 </h2>
+<%=flash_messages%>
 <%=error_messages_for :discussion%>
 <% form_for :discussion, @discussion, :url => survey_discussions_path(@survey) do |f| %>
   <% if @parent_discussion.nil? then %>

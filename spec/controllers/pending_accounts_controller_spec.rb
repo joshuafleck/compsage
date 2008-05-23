@@ -48,7 +48,9 @@ describe PendingAccountsController, " handling POST /pending_account" do
 
   before(:each) do
     
-    PendingAccount.stub!(:create!)
+    @pending_account = mock_model(PendingAccount, :save => true)
+    
+    PendingAccount.stub!(:new).and_return(@pending_account)
     
   end
   
@@ -57,7 +59,8 @@ describe PendingAccountsController, " handling POST /pending_account" do
   end
 
   it "should create a new pending account" do
-    PendingAccount.should_receive(:create!)
+    PendingAccount.should_receive(:new).and_return(@pending_account)
+    @pending_account.should_receive(:save).and_return(true)
     do_post
   end
 
@@ -74,5 +77,25 @@ describe PendingAccountsController, " handling POST /pending_account" do
     end
   
   end
+end
 
+describe PendingAccountsController, " handling POST /pending_account with validation errors" do
+
+  before(:each) do
+    
+    @pending_account = mock_model(PendingAccount, :save => false)
+    
+    PendingAccount.stub!(:new).and_return(@pending_account)
+    
+  end
+  
+  def do_post
+    post :create
+  end
+
+  it "should render the new form" do
+    do_post
+    response.should render_template('new')
+  end
+  
 end

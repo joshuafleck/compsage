@@ -136,11 +136,11 @@ describe AccountsController, " handling POST /account" do
   
     @key = "1234"
   
-    @organization = mock_model(Organization)
+    @organization = mock_model(Organization, :save => true)
     @external_invitation = mock_model(ExternalInvitation)
     
     ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
-    Organization.stub!(:create!)
+    Organization.stub!(:new).and_return(@organization)
     
     @params = {:key => @key}
     
@@ -156,13 +156,10 @@ describe AccountsController, " handling POST /account" do
   end
   
 	it "should create a new organization" do
-	  Organization.should_receive(:create!)
+	  Organization.should_receive(:new).and_return(@organization)
+	  @organization.should_receive(:save).and_return(true)
 	  do_post
 	end
-
- 	it "should return a response regarding the success of the action when the request is XML" do
- 		pending
-  end
 
   describe "when the requst is HTML" do
   
@@ -180,12 +177,39 @@ describe AccountsController, " handling POST /account" do
 
 end
 
+describe AccountsController, " handling POST /account with validation error" do
+
+  before(:each) do
+  
+    @key = "1234"
+  
+    @organization = mock_model(Organization, :save => false)
+    @external_invitation = mock_model(ExternalInvitation)
+    
+    ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
+    Organization.stub!(:new).and_return(@organization)
+    
+    @params = {:key => @key}
+    
+  end
+  
+  def do_post
+    get :create, @params
+  end
+
+  it "should render the new form" do
+    do_post
+    response.should render_template('new')
+  end
+
+end
+
 describe AccountsController, " handling GET /account/edit" do
 
   before(:each) do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
-    
+        
   end
   
   def do_get
@@ -217,9 +241,10 @@ end
 describe AccountsController, " handling PUT /account" do
   
   before(:each) do
-    @current_organization = mock_model(Organization, :update_attributes! => true)
+    @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
+    @current_organization.stub!(:update_attributes).and_return(true)
   end
   
   def do_put
@@ -232,12 +257,8 @@ describe AccountsController, " handling PUT /account" do
   end
   
   it "should update the selected account" do
-  	@current_organization.should_receive(:update_attributes!)
+  	@current_organization.should_receive(:update_attributes).and_return(true)
   	do_put
-  end
-
-  it "should return a response regarding the success of the action when the request is XML" do
-  	pending
   end
 
 	describe "when the request is HTML" do
@@ -252,6 +273,25 @@ describe AccountsController, " handling PUT /account" do
       flash[:notice].should eql("Your account was updated successfully.")
 	  end
 	  
+  end
+  
+end
+describe AccountsController, " handling PUT /account with validation error" do
+  
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @current_organization.stub!(:update_attributes).and_return(false)
+  end
+  
+  def do_put
+    put :update
+  end
+  
+  it "should render the edit form" do
+    do_put
+    response.should render_template('edit')
   end
   
 end

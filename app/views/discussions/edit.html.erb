@@ -1,6 +1,6 @@
 <h2>Editing <%=@discussion.subject%></h2>
-<%=error_messages_for :discussion%>
 <%=flash_messages%>
+<%=error_messages_for :discussion%>
 <% form_for :discussion, @discussion, :url => survey_discussion_path(@survey,@discussion), :html => {:method => :put} do |f|%>
   <% if @discussion.root? then %>
     <p><label>Discussion Subject:</label><br />

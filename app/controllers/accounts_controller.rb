@@ -35,23 +35,25 @@ class AccountsController < ApplicationController
 	
 	  @external_invitation = ExternalInvitation.find_by_key(params[:key])
 	  
-	  @organization = Organization.create!(params[:organization])
+	  @organization = Organization.new(params[:organization])
     
-    respond_to do |wants|
-      wants.html {         
-        flash[:notice] = "Your account was created successfully."
-        redirect_to new_session_path() }      
-      wants.xml do
-        render :status => :created
+    if @organization.save then
+      respond_to do |wants|
+        wants.html {         
+          flash[:notice] = "Your account was created successfully."
+          redirect_to new_session_path() }      
+        wants.xml do
+          render :status => :created
+        end
       end
-    end
-  rescue ActiveRecord::RecordInvalid
-    respond_to do |wants|
-      wants.html do
-        render :action => 'new'
-      end
-      wants.xml do
-        render :xml => @organization.errors.to_xml, :status => 422
+    else
+      respond_to do |wants|
+        wants.html do
+          render :action => 'new'
+        end
+        wants.xml do
+          render :xml => @organization.errors.to_xml, :status => 422
+        end
       end
     end
 	end
@@ -61,24 +63,24 @@ class AccountsController < ApplicationController
 	
 	  @organization = current_organization  
     
-    @organization.update_attributes!(params[:organization])
-    
-    respond_to do |wants|
-      wants.html do
-        flash[:notice] = "Your account was updated successfully."
-        redirect_to account_path
+    if @organization.update_attributes(params[:organization]) then
+      respond_to do |wants|
+        wants.html do
+          flash[:notice] = "Your account was updated successfully."
+          redirect_to account_path
+        end
+        wants.xml do
+          render :status => :ok
+        end
       end
-      wants.xml do
-        render :status => :ok
-      end
-    end
-  rescue ActiveRecord::RecordInvalid
-    respond_to do |wants|
-      wants.html do
-        render :action => 'edit'
-      end
-      wants.xml do
-        render :xml => @organization.errors.to_xml, :status => 422
+    else
+      respond_to do |wants|
+        wants.html do
+          render :action => 'edit'
+        end
+        wants.xml do
+          render :xml => @organization.errors.to_xml, :status => 422
+        end
       end
     end
 	end

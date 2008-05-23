@@ -48,15 +48,11 @@ describe "accounts/edit" do
   end  
   
   it "should have a means for allowing the organization to select its state" do
-    pending
-    #Shoud have dropdown list of available states
-  	response.should have_tag("input[id=organization_state]")
+  	response.should have_tag("select[id=organization_state]")
   end
   
   it "should have a means for allowing the organization to select its industry" do
-  	pending
-  	#Should have dropdown list of available industries
-  	response.should have_tag("input[id=organization_industry]")
+  	response.should have_tag("select[id=organization_industry]")
   end  
   
   it "should have a means for allowing the organization to input its contact name" do

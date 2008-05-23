@@ -7,17 +7,18 @@ class PendingAccountsController < ApplicationController
   end
   
   def create
-    @pending_account = PendingAccount.create!(params)
+    @pending_account = PendingAccount.new(params)
   
-    respond_to do |wants|
-      wants.html {         
-        flash[:notice] = "Your signup request was received."
-        redirect_to '/' }      
-      wants.xml do
-        render :status => :created
+    if @pending_account.save then
+      respond_to do |wants|
+        wants.html {         
+          flash[:notice] = "Your signup request was received."
+          redirect_to '/' }      
+        wants.xml do
+          render :status => :created
+        end
       end
-    end
-    rescue ActiveRecord::RecordInvalid
+    else
       respond_to do |wants|
         wants.html do
           render :action => 'new'
@@ -26,6 +27,6 @@ class PendingAccountsController < ApplicationController
           render :xml => @pending_account.errors.to_xml, :status => 422
         end
       end
-	 end
-
+	  end
+  end
 end

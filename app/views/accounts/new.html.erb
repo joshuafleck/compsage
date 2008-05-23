@@ -1,5 +1,4 @@
 <h2>New Account</h2>
-<%=error_messages_for :organization%>
 <%=flash_messages%>
 <%=error_messages_for :organization%>
 <% form_for :organization, @organization, :url => account_path do |f| %>
@@ -24,19 +23,123 @@
     <label>City:</label> <br />
     <%=f.text_field :city %>
   </p>
-  <!--TODO add dropdown with list of states -->
   <p>
     <label>State:</label> <br />
-    <%=f.text_field :state %>
+    <%= f.select :state, ['AK',
+			'AL',
+			'AR',
+			'AZ',
+			'CA',
+			'CO',
+			'CT',
+			'DC',
+			'DE',
+			'FL',
+			'GA',
+			'HI',
+			'IA',
+			'ID',
+			'IL',
+			'IN',
+			'KS',
+			'KY',
+			'LA',
+			'MA',
+			'MD',
+			'ME',
+			'MI',
+			'MN',
+			'MO',
+			'MS',
+			'MT',
+			'NC',
+			'ND',
+			'NE',
+			'NH',
+			'NJ',
+			'NM',
+			'NV',
+			'NY',
+			'OH',
+			'OK',
+			'OR',
+			'PA',
+			'RI',
+			'SC',
+			'SD',
+			'TN',
+			'TX',
+			'UT',
+			'VA',
+			'VT',
+			'WA',
+			'WI',
+			'WV',
+			'WY'], 
+			:include_blank => true %>
   </p>
   <p>
     <label>Zip Code:</label> <br />
     <%=f.text_field :zip_code %>
   </p>
-  <!--TODO add dropdown with list of industries -->
   <p>
     <label>Industry:</label> <br />
-    <%=f.text_field :industry %>
+    <%=f.select :industry, ['Advertising',
+      'Aerospace & Defense',
+      'Agribusiness',
+      'Airlines',
+      'Alcoholic Beverages & Tobacco',
+      'Apparel & Footwear',
+      'Autos & Auto Parts',
+      'Banking',
+      'Biotechnology',
+      'Broadcasting & Cable',
+      'Cable TV',
+      'Chemicals: Basic',
+      'Chemicals: Specialty',
+      'Coal Mining',
+      'Computers: Hardware',
+      'Computers: Networking',
+      'Computers: Software',
+      'Educationial Services',
+      'Environmental & Waste Management',
+      'Financial Services: Diversified',
+      'Foods & Nonalcoholic Beverages',
+      'Healthcare: Facilities',
+      'Healthcare: Managed Care',
+      'Healthcare: Pharmaceuticals',
+      'Healthcare: Products & Supplies',
+      'Homebuilding',
+      'Household Durables',
+      'Household Nondurables',
+      'Industrial and Analytical Instruments',
+      'Insurance',
+      'Investment Services',
+      'Lodging & Gaming',
+      'Machinery',
+      'Metals: Industrial',
+      'Movies & Home Entertainment',
+      'Natural Gas Distribution',
+      'Packaging & Containers',
+      'Paper & Forest Products',
+      'Publishing',
+      'Recreation',
+      'Restaurants',
+      'Retailing: General',
+      'Retailing: Specialty',
+      'Savings & Loans',
+      'Securities, Mutual Funds, and Commodity Futures Trading',
+      'Semiconductors',
+      'Shipbuilding & Repair',
+      'Supermarkets & Drugstores',
+      'Telecommunications: Wireless',
+      'Telecommunications: Wireline',
+      'Textile',
+      'Transportation: Commercial',
+      'Travel & Tourism',
+      'Wholesaling',
+      'Wood Products'], 
+			:include_blank => true %>
   </p>
   <!--TODO add image upload capability -->
   <p>

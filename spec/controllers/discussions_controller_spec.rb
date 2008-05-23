@@ -31,14 +31,15 @@ end
 describe DiscussionsController, " handling GET discussions" do
   
   before do
-    @current_organization_or_survey_invitation = mock_model(Organization)
+    @survey = mock_model(Survey, :id => 1, :job_title => 'Software Engineer')
+    
+    @current_organization_or_survey_invitation = mock_model(ExternalSurveyInvitation, :survey => @survey)
     login_as(@current_organization_or_survey_invitation)
     
     @discussion = mock_model(Discussion)
     @discussions = [@discussion]
     @discussions.stub!(:roots).and_return(@discussions)
     
-    @survey = mock_model(Survey, :id => 1, :job_title => 'Software Engineer')
     @survey.stub!(:discussions).and_return(@discussions)
     
     Survey.stub!(:find).and_return(@survey)
@@ -244,13 +245,13 @@ describe DiscussionsController, " handling POST /discussions" do
     login_as(@current_organization_or_survey_invitation)
     
     @survey = mock_model(Survey, :id => 1)
-    @discussion = mock_model(Discussion, :id => 1, :save! => true)  
+    @discussion = mock_model(Discussion, :id => 1, :save => true)  
     @discussions = [@discussion] 
     
     @survey_discussions_proxy = mock('survey discussions proxy', :discussions => @discussions)
-    #@survey_discussions_proxy.stub!(:<<, true)
+    
     @organization_discussions_proxy = mock('organization discussions proxy')
-    @organization_discussions_proxy.stub!(:create!)
+    @organization_discussions_proxy.stub!(:new).and_return(@discussion)
     @current_organization_or_survey_invitation.stub!(:discussions).and_return(@organization_discussions_proxy)
     @survey.stub!(:discussions).and_return(@survey_discussions_proxy)
     
@@ -269,14 +270,10 @@ describe DiscussionsController, " handling POST /discussions" do
   end
   
   it "should create a new discussion" do
-    @organization_discussions_proxy.should_receive(:create!)
+    @organization_discussions_proxy.should_receive(:new).and_return(@discussion)
+    @discussion.should_receive(:save).and_return(true)
     do_post
   end
-  
-  #it "should add the discussion to the survey" do
-  #  @survey_discussions_proxy.should_receive(:<<)
-  #  do_post
-  #end
   
   it "should redirect to the discussion index page upon success" do
     do_post
@@ -288,8 +285,37 @@ describe DiscussionsController, " handling POST /discussions" do
     flash[:notice].should eql("Your discussion was created successfully.")
   end
   
-  it "should have a means for handing invalid input from the user" do
-    pending
+end
+
+describe DiscussionsController, " handling POST /discussions with validation error" do
+
+  before(:each) do
+    @current_organization_or_survey_invitation = mock_model(Organization)
+    login_as(@current_organization_or_survey_invitation)
+    
+    @survey = mock_model(Survey, :id => 1)
+    @discussion = mock_model(Discussion, :id => 1, :save => false)  
+    @discussions = [@discussion] 
+    
+    @survey_discussions_proxy = mock('survey discussions proxy', :discussions => @discussions)
+    
+    @organization_discussions_proxy = mock('organization discussions proxy')
+    @organization_discussions_proxy.stub!(:new).and_return(@discussion)
+    @current_organization_or_survey_invitation.stub!(:discussions).and_return(@organization_discussions_proxy)
+    @survey.stub!(:discussions).and_return(@survey_discussions_proxy)
+    
+    Survey.stub!(:find).and_return(@survey)
+    
+    @params = {:survey_id => @survey.id}
+  end
+  
+  def do_post
+    post :create, @params
+  end
+  
+  it "should render the new form" do
+    do_post
+    response.should render_template('new')
   end
   
 end
@@ -300,7 +326,7 @@ describe DiscussionsController, " handling PUT /discussions/1" do
     @current_organization_or_survey_invitation = mock_model(Organization, :id => 1)
     login_as(@current_organization_or_survey_invitation)
     
-    @discussion = mock_model(Discussion, :id => 1, :update_attributes! => true)
+    @discussion = mock_model(Discussion, :id => 1, :update_attributes => true)
     @survey = mock_model(Survey, :id => 1)
     
     @organization_discussions_proxy = mock('organization discussions proxy', :find => @discussion)
@@ -326,7 +352,7 @@ describe DiscussionsController, " handling PUT /discussions/1" do
   end
   
   it "should update the selected discussion" do
-    @discussion.should_receive(:update_attributes!)
+    @discussion.should_receive(:update_attributes).and_return(true)
     do_put
   end
      
@@ -340,8 +366,32 @@ describe DiscussionsController, " handling PUT /discussions/1" do
     flash[:notice].should == "Your discussion was updated successfully."
   end
   
-  it "should have a means for handing invalid input from the user" do
-    pending
+end
+
+describe DiscussionsController, " handling PUT /discussions/1 with validation error" do
+
+  before do
+    @current_organization_or_survey_invitation = mock_model(Organization, :id => 1)
+    login_as(@current_organization_or_survey_invitation)
+    
+    @discussion = mock_model(Discussion, :id => 1, :update_attributes => false)
+    @survey = mock_model(Survey, :id => 1)
+    
+    @organization_discussions_proxy = mock('organization discussions proxy', :find => @discussion)
+    @current_organization_or_survey_invitation.stub!(:discussions).and_return(@organization_discussions_proxy)
+    
+    Survey.stub!(:find).and_return(@survey)
+    
+    @params = {:survey_id => @survey.id, :id => @discussion.id}
+  end
+  
+  def do_put
+    put :update, @params
+  end
+  
+  it "should render the edit form" do
+    do_put
+    response.should render_template('edit')
   end
   
 end

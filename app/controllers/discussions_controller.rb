@@ -33,24 +33,25 @@ class DiscussionsController < ApplicationController
   end
 
   def create
-    #Note that create must be called rather then new-> save to ensure the parent/child relationships are created
-    @discussion = current_organization_or_survey_invitation.discussions.create!(params[:discussion])
+    @discussion = current_organization_or_survey_invitation.discussions.new(params[:discussion])
     
-    respond_to do |wants|
-      wants.html {         
-        flash[:notice] = "Your discussion was created successfully."
-        redirect_to survey_discussions_path(@survey) }      
-      wants.xml do
-        render :status => :created
+    if @discussion.save then
+      respond_to do |wants|
+        wants.html {         
+          flash[:notice] = "Your discussion was created successfully."
+          redirect_to survey_discussions_path(@survey) }      
+        wants.xml do
+          render :status => :created
+        end
       end
-    end
-  rescue ActiveRecord::RecordInvalid
-    respond_to do |wants|
-      wants.html do
-        render :action => 'new'
-      end
-      wants.xml do
-        render :xml => @discussion.errors.to_xml, :status => 422
+    else
+      respond_to do |wants|
+        wants.html do
+          render :action => 'new'
+        end
+        wants.xml do
+          render :xml => @discussion.errors.to_xml, :status => 422
+        end
       end
     end
   end
@@ -65,24 +66,24 @@ class DiscussionsController < ApplicationController
   def update
     @discussion = current_organization_or_survey_invitation.discussions.find(params[:id])  
     
-    @discussion.update_attributes!(params[:discussion])
-    
-    respond_to do |wants|
-      wants.html do
-        flash[:notice] = "Your discussion was updated successfully."
-        redirect_to survey_discussions_path(@survey)
+    if @discussion.update_attributes(params[:discussion]) then    
+      respond_to do |wants|
+        wants.html do
+          flash[:notice] = "Your discussion was updated successfully."
+          redirect_to survey_discussions_path(@survey)
+        end
+        wants.xml do
+          render :status => :ok
+        end
       end
-      wants.xml do
-        render :status => :ok
-      end
-    end
-  rescue ActiveRecord::RecordInvalid
-    respond_to do |wants|
-      wants.html do
-        render :action => 'edit'
-      end
-      wants.xml do
-        render :xml => @discussion.errors.to_xml, :status => 422
+    else
+      respond_to do |wants|
+        wants.html do
+          render :action => 'edit'
+        end
+        wants.xml do
+          render :xml => @discussion.errors.to_xml, :status => 422
+        end
       end
     end
   end
