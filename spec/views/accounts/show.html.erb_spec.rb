@@ -13,7 +13,6 @@ describe "/accounts/show" do
     organization.stub!(:industry).and_return("Software")
     organization.stub!(:email).and_return("flec025@umn.edu")
     organization.stub!(:zip_code).and_return("55044")
-    organization.stub!(:image_thumbnail).and_return("image.jpg")
     
     assigns[:organization] = organization
     
@@ -54,7 +53,7 @@ describe "/accounts/show" do
   end
   
   it "should display the image" do
-  	response.should have_tag('img[src=image.jpg]')
+  	pending
   end
   
   it "should have an edit account link" do

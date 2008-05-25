@@ -1,9 +1,5 @@
 require 'digest/sha1'
-include OrganizationsHelper
-
 class Organization < ActiveRecord::Base
-
-  file_column :image
 
 	is_indexed :fields => [:name]
 
@@ -46,18 +42,11 @@ class Organization < ActiveRecord::Base
   validates_length_of       :state, :maximum => 30, :allow_nil => :true
   validates_length_of       :crypted_password, :maximum => 40, :allow_nil => :true
   validates_length_of       :salt, :maximum => 40, :allow_nil => :true
-  validates_filesize_of     :image, :in => 0..10.megabytes
-  validates_file_format_of  :image, :in => ["gif", "png", "jpg", "jpeg"]
   before_save :encrypt_password
   
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
-  attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name, :industry, :image, :image_temp
-  
-  #This will return the URL to the organization's logo, if available, otherwise, returns a default image
-  def image_thumbnail
-    retrieve_image(self.image,100,100)    
-  end
+  attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name, :industry
   
   # Authenticates a user by their email address and unencrypted password.  Returns the user or nil.
   def self.authenticate(email, password)

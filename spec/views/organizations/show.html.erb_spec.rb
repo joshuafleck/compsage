@@ -10,7 +10,6 @@ describe "/organizations/show" do
     organization.stub!(:location).and_return("Headquarters")
     organization.stub!(:contact_name).and_return("Josh Fleck")
     organization.stub!(:industry).and_return("Software")
-    organization.stub!(:image_thumbnail).and_return("image.jpg")
     
     assigns[:organization] = organization
     
@@ -42,8 +41,12 @@ describe "/organizations/show" do
     response.should have_tag('p',"Industry: Software")
   end
   
-  it "should show the organization's logo" do
-  	response.should have_tag('img[src=image.jpg]')
+  it "should show the organization's logo if one exists" do
+    pending
+  end
+  
+  it "should show a generic logo if one doesn't exist" do
+    pending
   end
   
   it "should show a link to invite this organization to a network" do

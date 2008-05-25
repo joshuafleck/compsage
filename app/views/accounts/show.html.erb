@@ -1,7 +1,7 @@
 <h2>My Account</h2>
 <%=flash_messages%>
 <p><%=link_to "Edit My Account", edit_account_path %></p>
-<p><img src="<%=@organization.image_thumbnail%>" alt="Your logo"/></p>
+<!-- TODO Display image for organization-->
 <p><span class="label">Name of Organization: </span><%=@organization.name%></p>
 <p><span class="label">Contact Name: </span><%=@organization.contact_name%></p>
 <p><span class="label">Email Address: </span><%=@organization.email%></p>
