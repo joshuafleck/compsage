@@ -14,7 +14,8 @@ describe "/accounts/new" do
       :industry => nil, 
       :password => nil, 
       :password_confirmation => nil,
-      :logo => nil)
+      :logo => nil,
+      :image_temp => nil)
     assigns[:external_invitation] = mock_model(ExternalInvitation, :key => "1234")
     render 'accounts/new'
   end

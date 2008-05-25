@@ -14,7 +14,8 @@ describe "accounts/edit" do
       :industry => nil, 
       :password => nil, 
       :password_confirmation => nil,
-      :logo => nil)
+      :logo => nil,
+      :image_temp => nil)
     render 'accounts/edit'
   end
 

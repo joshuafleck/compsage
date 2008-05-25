@@ -237,4 +237,18 @@ describe Organization, "that already exists" do
     @organization.networks.destroy(@organization.networks.first)
     lambda { Network.find(@network.id) }.should raise_error(ActiveRecord::RecordNotFound)
   end
+    
+  it "should be invalid with an image not of type [jpg,jpeg,png,gif]" do
+    pending
+    @file = mock(File, :size => 1, :original_filename => "test.bad")
+  	@organization.attributes = valid_organization_attributes.with(:image => @file)
+    @organization.should have(1).errors_on(:image)
+  end
+  
+  it "should be invalid with a size larger than 10MB" do
+    pending
+    @file = mock(File, :size => 1000000000, :original_filename => "test.png")
+  	@organization.attributes = valid_organization_attributes.with(:image => @file)
+    @organization.should have(1).errors_on(:image)
+  end
 end

@@ -1,7 +1,7 @@
 <h2>New Account</h2>
 <%=flash_messages%>
 <%=error_messages_for :organization%>
-<% form_for :organization, @organization, :url => account_path do |f| %>
+<% form_for :organization, @organization, :html => {:multipart => true}, :url => account_path do |f| %>
   <%= hidden_field_tag 'key', @external_invitation.key %>
   <%= render :partial => "accounts/account_form", 
                    :locals => { :f => f } %>

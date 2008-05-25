@@ -136,7 +136,10 @@
       'Wood Products'], 
 			:include_blank => true %>
   </p>
-  <!--TODO add image upload capability -->
+  <p>
+    <label>Your Organization's Logo:</label> <br />
+     <%= file_column_field "organization", "image" %>
+  </p>
   <p>
     <label>Password:</label> <br />
     <%=f.password_field :password %>
