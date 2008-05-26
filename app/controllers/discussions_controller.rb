@@ -25,9 +25,10 @@ class DiscussionsController < ApplicationController
     @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
     
     @discussion = Discussion.new
+    @discussion.survey = @survey
     
     if !params[:parent_discussion_id].blank? then
-      @parent_discussion = @survey.discussions.find(params[:parent_discussion_id])
+      @discussion.parent_discussion = @survey.discussions.find(params[:parent_discussion_id])
     end
     
   end

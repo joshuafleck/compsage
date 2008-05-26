@@ -136,7 +136,13 @@
       'Wood Products'], 
 			:include_blank => true %>
   </p>
-  <!--TODO add image upload capability -->
+  <p>
+    <% if !@organization.logo.nil? then %>
+      <p><%=image_tag @organization.logo.public_filename(:thumb) %></p>
+    <% end %>
+   <label>Your Logo:</label><br/>
+    <%= file_field 'logo','uploaded_data' %>
+  </p>
   <p>
     <label>Password:</label> <br />
     <%=f.password_field :password %>

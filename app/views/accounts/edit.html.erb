@@ -1,7 +1,7 @@
 <h2>Edit Your Account</h2>
 <%=error_messages_for :organization%>
 <%=flash_messages%>
-<% form_for :organization, @organization, :url => account_path, :html => {:method => :put} do |f|%>
+<% form_for :organization, @organization, :url => account_path, :html => {:method => :put, :multipart => true} do |f|%>
   <%= render :partial => "accounts/account_form", 
                    :locals => { :f => f } %>
   <p>

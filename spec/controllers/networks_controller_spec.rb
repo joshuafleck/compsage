@@ -366,7 +366,7 @@ describe NetworksController, " handling PUT /networks/1/leave" do
     @organization = mock_model(Organization)
     login_as(@organization)
     
-    @network = mock_model(Network, :update_attributes! => true, :owner => mock_model(Organization), :destroy_when_empty => nil)
+    @network = mock_model(Network, :update_attributes! => true, :owner => mock_model(Organization))
     
     @networks_proxy = mock('networks proxy', :find => @network, :delete => true)
     
@@ -414,7 +414,7 @@ describe NetworksController, "handling PUT /networks/1/leave when the organizati
     login_as(@organization)
     
     @network_organizations = mock('network organizations', :count => 0)
-    @network = mock_model(Network, :update_attributes! => true, :owner => @organization, :organizations => @network_organizations, :destroy_when_empty => nil)
+    @network = mock_model(Network, :update_attributes! => true, :owner => @organization, :organizations => @network_organizations)
     
     @networks_proxy = mock('networks proxy', :find => @network, :delete => true)
     
@@ -463,12 +463,7 @@ describe NetworksController, "handling PUT /networks/1/leave when the organizati
       do_put
       response.should redirect_to(networks_path)
     end
-      
-    it "should have the network destroy itself when devoid of memebers" do
-      @network.should_receive(:destroy_when_empty)
-      do_put
-    end
-
+     
   end
   
 end
@@ -482,7 +477,6 @@ describe NetworksController, " handling PUT /networks/1/join" do
     @invite = mock_model(NetworkInvitation, :network => @network, :invitee => @organization, :destroy => true)
     
     @invites_proxy = mock('invites proxy', :find_by_network_id => @invite)
-    @networks_proxy = mock('networks proxy', :<< => true)
     
     @organization.stub!(:network_invitations).and_return(@invites_proxy)
     @organization.stub!(:networks).and_return(@networks_proxy)
@@ -494,11 +488,6 @@ describe NetworksController, " handling PUT /networks/1/join" do
     put :join, @params
   end
   
-  it "should add the organization to the network" do
-    @networks_proxy.should_receive(:<<).with(@network)
-    do_put
-  end
-
   it "should destroy the invitation" do
     @invite.should_receive(:destroy)
     do_put

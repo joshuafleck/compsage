@@ -112,7 +112,6 @@ class NetworksController < ApplicationController
       end
     else
       current_organization.networks.delete(@network)
-      @network.destroy_when_empty
       
       respond_to do |wants|
         wants.html do
@@ -140,7 +139,6 @@ class NetworksController < ApplicationController
         end
       end
     else
-      current_organization.networks << network_invite.network
       network_invite.destroy
       
       respond_to do |wants|

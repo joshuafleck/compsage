@@ -13,6 +13,7 @@ describe "/accounts/show" do
     organization.stub!(:industry).and_return("Software")
     organization.stub!(:email).and_return("flec025@umn.edu")
     organization.stub!(:zip_code).and_return("55044")
+    organization.stub!(:logo).and_return(mock_model(Logo, :public_filename => "test"))
     
     assigns[:organization] = organization
     
@@ -52,8 +53,12 @@ describe "/accounts/show" do
   	response.should have_tag('p',"Zip Code: 55044")
   end
   
-  it "should display the image" do
-  	pending
+  it "should display the logo" do
+  	response.should have_tag('img[src=/images/test]')
+  end
+  
+  it "should show a generic logo if one doesn't exist" do
+    pending
   end
   
   it "should have an edit account link" do

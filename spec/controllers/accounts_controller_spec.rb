@@ -141,6 +141,7 @@ describe AccountsController, " handling POST /account" do
     
     ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:new).and_return(@organization)
+    @organization.stub!(:set_logo)
     
     @params = {:key => @key}
     
@@ -158,6 +159,11 @@ describe AccountsController, " handling POST /account" do
 	it "should create a new organization" do
 	  Organization.should_receive(:new).and_return(@organization)
 	  @organization.should_receive(:save).and_return(true)
+	  do_post
+	end
+	
+	it "should save the organization's logo" do
+	  @organization.should_receive(:set_logo)
 	  do_post
 	end
 
@@ -188,6 +194,7 @@ describe AccountsController, " handling POST /account with validation error" do
     
     ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:new).and_return(@organization)
+    @organization.stub!(:set_logo)
     
     @params = {:key => @key}
     
@@ -245,6 +252,8 @@ describe AccountsController, " handling PUT /account" do
     login_as(@current_organization)
     
     @current_organization.stub!(:update_attributes).and_return(true)
+    @current_organization.stub!(:set_logo)
+    
   end
   
   def do_put
@@ -260,6 +269,11 @@ describe AccountsController, " handling PUT /account" do
   	@current_organization.should_receive(:update_attributes).and_return(true)
   	do_put
   end
+
+	it "should save the organization's logo" do
+	  @current_organization.should_receive(:set_logo)
+	  do_put
+	end
 
 	describe "when the request is HTML" do
 		
@@ -283,6 +297,7 @@ end
     login_as(@current_organization)
     
     @current_organization.stub!(:update_attributes).and_return(false)
+    @current_organization.stub!(:set_logo)
   end
   
   def do_put

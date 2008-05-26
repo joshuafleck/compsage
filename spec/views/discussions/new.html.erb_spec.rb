@@ -10,12 +10,11 @@ describe "discussions/new" do
       :root? => true)      
     @discussion = mock_model(Discussion,
       :subject => "Child subject",
-      :body => "Child body")
-    @survey = mock_model(Survey, :id => "1")
+      :body => "Child body",
+      :survey => mock_model(Survey, :id => "1"),
+      :parent_discussion => @parent_discussion)
     
-    assigns[:parent_discussion] = @parent_discussion
-    assigns[:discussion] = @discussion        
-    assigns[:survey] = @survey
+    assigns[:discussion] = @discussion
     
     #template.stub!(:survey).and_return(mock_model(Survey))
         
@@ -35,10 +34,11 @@ describe "discussions/new" do
   end
   
   it "should have a paramter for the parent discussion id if the parent exists" do
-    response.should have_tag("input[id=parent_discussion_id]")
+    response.should have_tag("input[id=discussion_parent_discussion]")
   end
   
   it "should not allow the input of a topic if the parent exists" do
+    #puts response.body
     response.should_not have_tag("input[id=discussion_subject]")
   end
 end
@@ -49,8 +49,9 @@ describe "discussions/new" do
          
     @discussion = mock_model(Discussion,
       :subject => "Child subject",
-      :body => "Child body")
-    @survey = mock_model(Survey, :id => "1")
+      :body => "Child body",
+      :survey => mock_model(Survey, :id => "1"),
+      :parent_discussion => nil)
     
     assigns[:discussion] = @discussion        
     assigns[:survey] = @survey
@@ -59,7 +60,7 @@ describe "discussions/new" do
   end
   
   it "should not have a parameter for the parent discussion id if the parent does not exist" do
-    response.should_not have_tag("input[id=parent_discussion_id]")
+    response.should have_tag("input[id=discussion_parent_discussion]",nil)
   end
   
   it "should allow the input of a topic if the parent does not exist" do

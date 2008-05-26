@@ -60,9 +60,7 @@ describe "accounts/edit" do
   end
   
   it "should have a means for allowing the organization to input its image" do
-    pending
-    #Requires upload ability
-  	response.should have_tag("input[id=organization_logo]")
+  	response.should have_tag("input[id=logo_uploaded_data]")
   end
   
   it "should have a submit button" do

@@ -1,7 +1,9 @@
 <h2><%=@organization.name%></h2>
 <%=flash_messages%>
 <!-- TODO links for inviting organization to network/survey-->
-<!-- TODO Display image for organization-->
+<% if !@organization.logo.nil? then %>
+  <p><%=image_tag @organization.logo.public_filename(:thumb) %></p>
+<% end %>
 <p><span class="label">Location: </span><%=@organization.location%></p>
 <p><span class="label">City: </span><%=@organization.city%></p>
 <p><span class="label">State: </span><%=@organization.state%></p>

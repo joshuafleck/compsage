@@ -36,8 +36,11 @@ class AccountsController < ApplicationController
 	  @external_invitation = ExternalInvitation.find_by_key(params[:key])
 	  
 	  @organization = Organization.new(params[:organization])
-    
+	  	  
+	  @organization.set_logo(params[:logo])
+	    
     if @organization.save then
+        
       respond_to do |wants|
         wants.html {         
           flash[:notice] = "Your account was created successfully."
@@ -62,7 +65,9 @@ class AccountsController < ApplicationController
 	  @page_title = "Edit My Account"
 	
 	  @organization = current_organization  
-    
+     
+	  @organization.set_logo(params[:logo])
+	    
     if @organization.update_attributes(params[:organization]) then
       respond_to do |wants|
         wants.html do

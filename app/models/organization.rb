@@ -20,6 +20,8 @@ class Organization < ActiveRecord::Base
   has_many :discussions, :as => :responder
   has_many :responses, :as => :responder
   
+  has_one :logo
+  
   # Virtual attribute for the unencrypted password
   attr_accessor :password
 
@@ -42,11 +44,27 @@ class Organization < ActiveRecord::Base
   validates_length_of       :state, :maximum => 30, :allow_nil => :true
   validates_length_of       :crypted_password, :maximum => 40, :allow_nil => :true
   validates_length_of       :salt, :maximum => 40, :allow_nil => :true
+  
   before_save :encrypt_password
   
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
   attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name, :industry
+  
+  #Sets the organizations logo, replaces any existing logo
+  def set_logo(logo_params)
+  
+    if !logo_params[:uploaded_data].blank? then
+    
+      if self.logo then
+        self.logo.destroy
+      end
+      
+      self.logo = Logo.new(logo_params)
+      self.logo.organization = self
+      self.logo.save!
+    end
+  end
   
   # Authenticates a user by their email address and unencrypted password.  Returns the user or nil.
   def self.authenticate(email, password)

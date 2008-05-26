@@ -18,6 +18,10 @@ describe Organization do
     Organization.reflect_on_association(:network_invitations).should_not be_nil
   end
   
+  it 'should have one logo' do
+    Organization.reflect_on_association(:logo).should_not be_nil
+  end
+  
   it 'should have many survey invitations' do
     Organization.reflect_on_association(:survey_invitations).should_not be_nil
   end
@@ -167,6 +171,29 @@ describe Organization do
     @organization.should have(1).errors_on(:zip_code)
   end
   
+  it 'should set the logo if a logo is available' do
+    @logo = mock_model(Logo, :[]= => true, :organization => @organization)
+    @logo.stub!(:destroy)    
+    @organization.logo = @logo  
+      
+    @logo_new = mock_model(Logo)
+    @logo_new.stub!(:organization=)
+    @logo_new.stub!(:save!)
+    Logo.stub!(:new).and_return(@logo_new)
+    
+    @organization.set_logo({:uploaded_data => "test"})
+    
+    @organization.logo.should eql(@logo_new)
+  end
+  
+  it 'should not set the logo if a logo is not available' do
+    @logo = mock_model(Logo, :[]= => true, :organization => @organization)
+    @organization.logo = @logo  
+     
+    @organization.set_logo({})
+    
+    @organization.logo.should eql(@logo)
+  end
 end
 
 describe Organization, "that already exists" do
@@ -237,4 +264,5 @@ describe Organization, "that already exists" do
     @organization.networks.destroy(@organization.networks.first)
     lambda { Network.find(@network.id) }.should raise_error(ActiveRecord::RecordNotFound)
   end
+  
 end

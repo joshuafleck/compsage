@@ -1,19 +1,19 @@
 <h2>
-  <% if @parent_discussion.nil? then %>
+  <% if @discussion.parent_discussion.nil? then %>
     New Discussion Topic
   <% else %>
-    Replying to <%=@parent_discussion.subject%>
+    Replying to <%=@discussion.parent_discussion.subject%>
   <% end %>
 </h2>
 <%=flash_messages%>
 <%=error_messages_for :discussion%>
 <% form_for :discussion, @discussion, :url => survey_discussions_path(@survey) do |f| %>
-  <% if @parent_discussion.nil? then %>
+  <% if @discussion.parent_discussion.nil? then %>
     <p><label>Discussion Subject:</label><br />
       <%=f.text_field :subject %></p>
-  <% else %>
-    <%= hidden_field_tag 'parent_discussion_id', @parent_discussion.id %>
   <% end %>
+  <%= f.hidden_field :parent_discussion %>
+  <%= f.hidden_field :survey %>
   <p><label>Body:</label> <br />
     <%=f.text_area :body, :rows => 4, :cols => 30 %></p>
   <p><input type="submit" value="Post" /> <%=link_to "Cancel", survey_discussions_path(@survey) %></p>

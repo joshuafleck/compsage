@@ -10,6 +10,7 @@ describe "/organizations/show" do
     organization.stub!(:location).and_return("Headquarters")
     organization.stub!(:contact_name).and_return("Josh Fleck")
     organization.stub!(:industry).and_return("Software")
+    organization.stub!(:logo).and_return(mock_model(Logo, :public_filename => "test"))
     
     assigns[:organization] = organization
     
@@ -42,7 +43,7 @@ describe "/organizations/show" do
   end
   
   it "should show the organization's logo if one exists" do
-    pending
+  	response.should have_tag('img[src=/images/test]')
   end
   
   it "should show a generic logo if one doesn't exist" do

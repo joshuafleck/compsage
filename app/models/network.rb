@@ -17,9 +17,4 @@ class Network < ActiveRecord::Base
     self.organizations = [self.owner]
   end
   
-  #If there are no members, destroy the network
-  def destroy_when_empty
-    self.destroy unless self.organizations.size > 0
-  end
-  
 end
