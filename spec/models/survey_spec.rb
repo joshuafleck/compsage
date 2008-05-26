@@ -31,11 +31,11 @@ describe Survey do
   end
   
   it "should have many survey invitations" do
-    Survey.reflect_on_association(:survey_invitations).should_not be_nil
+    Survey.reflect_on_association(:invitations).should_not be_nil
   end
   
   it "should have many external survey invitations" do
-    Survey.reflect_on_association(:external_survey_invitations).should_not be_nil
+    Survey.reflect_on_association(:external_invitations).should_not be_nil
   end
   
   it "should have many questions" do

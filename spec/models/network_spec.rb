@@ -21,11 +21,11 @@ describe Network do
   end  
   
   it "should have many invitations" do
-    Network.reflect_on_association(:network_invitations).should_not be_nil
+    Network.reflect_on_association(:invitations).should_not be_nil
   end
   
   it "should have many external invitations" do
-    Network.reflect_on_association(:external_network_invitations).should_not be_nil
+    Network.reflect_on_association(:external_invitations).should_not be_nil
   end
   
   it "should have many member organizations" do
