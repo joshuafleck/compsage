@@ -54,7 +54,7 @@ class NetworksController < ApplicationController
         wants.html { redirect_to network_invitations_path(@network) }
       
         wants.xml do
-          render :status => :created
+          head :status => :created
         end
       end
     else
