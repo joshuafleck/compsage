@@ -13,9 +13,9 @@ class ExternalInvitation < Invitation
   before_create :create_key
   
   protected
-    # before filter 
+   
     def create_key
-      	self[:key] = [Digest::SHA1.digest(Time.now.to_f.to_s + Array.new(){rand(256)}.pack('c*'))].pack("m")[0..19]
+      self[:key] = [Digest::SHA1.digest(Time.now.to_f.to_s + Array.new(){rand(256)}.pack('c*'))].pack("m")[0..19]
     end
   
 end
