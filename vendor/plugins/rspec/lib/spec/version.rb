@@ -3,10 +3,10 @@ module Spec
     unless defined? MAJOR
       MAJOR  = 1
       MINOR  = 1
-      TINY   = 3
+      TINY   = 4
       RELEASE_CANDIDATE = nil
 
-      BUILD_TIME_UTC = 20080309210001
+      BUILD_TIME_UTC = 20080527061058
 
       STRING = [MAJOR, MINOR, TINY].join('.')
       TAG = "REL_#{[MAJOR, MINOR, TINY, RELEASE_CANDIDATE].compact.join('_')}".upcase.gsub(/\.|-/, '_')
