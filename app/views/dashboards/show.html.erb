@@ -28,9 +28,11 @@
   </tr>
   <% @recent_network_invitations.each do |invite| %>
     <tr id="network_invitation_<%=invite.id%>">
-      <td><%=link_to invite.network.name, network_path(invite.network)%></td>
+      <td><%=invite.network.name%></td>
       <td><%=invite.inviter.name%></td>
-      <td>&nbsp;</td>
+      <td>
+        <%=link_to "Join Network", join_network_path(invite.network), :method => :put%>
+      </td>
     </tr>
   <% end %>
 </table>

@@ -474,7 +474,7 @@ describe NetworksController, " handling PUT /networks/1/join" do
     login_as(@organization)
     
     @network = mock_model(Network, :owner => @organization)
-    @invite = mock_model(NetworkInvitation, :network => @network, :invitee => @organization, :destroy => true)
+    @invite = mock_model(NetworkInvitation, :network => @network, :invitee => @organization, :accept! => true)
     
     @invites_proxy = mock('invites proxy', :find_by_network_id => @invite)
     
@@ -488,8 +488,8 @@ describe NetworksController, " handling PUT /networks/1/join" do
     put :join, @params
   end
   
-  it "should destroy the invitation" do
-    @invite.should_receive(:destroy)
+  it "should accept the invitation" do
+    @invite.should_receive(:accept!)
     do_put
   end
   

@@ -127,7 +127,7 @@ class NetworksController < ApplicationController
   
   # joins a network, assuming the current organization has an invite.
   def join
-    network_invite = current_organization.network_invitations.find_by_network_id(params[:id])
+    network_invite = current_organization.network_invitations.find_by_network_id(params[:id], :include => :network)
     if network_invite.nil? then
       respond_to do |wants|
         wants.html do
@@ -139,7 +139,7 @@ class NetworksController < ApplicationController
         end
       end
     else
-      network_invite.destroy
+      network_invite.accept!
       
       respond_to do |wants|
         wants.html do

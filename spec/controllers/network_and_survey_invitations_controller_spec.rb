@@ -90,8 +90,10 @@ describe NetworkInvitationsController, " handling GET /networks/1/invitations" d
     login_as(@organization)
     
     @invitation = mock_model(Invitation)
+    @invitations = [@invitation]
+    @invitations_proxy = mock('Invitations Proxy', :find => @invitations)
     
-    @network = mock_model(Network, :invitations => [@invitation])
+    @network = mock_model(Network, :invitations => @invitations_proxy, :name => 'network')
     @network_proxy = mock('Network Proxy', :find => @network)
     
     @organization.stub!(:owned_networks).and_return(@network_proxy)
@@ -119,7 +121,7 @@ describe NetworkInvitationsController, " handling GET /networks/1/invitations" d
   end
   
   it "should find all the network's invitations" do
-  	@network.should_receive(:invitations).and_return([@invitation])
+  	@network.should_receive(:invitations).and_return(@invitations_proxy)
   	do_get
   end
   
@@ -148,9 +150,10 @@ describe NetworkInvitationsController, " handling GET /networks/1/invitations.xm
     
     @invitation = mock_model(Invitation)
     @invitations = [@invitation]
-    @invitations.stub!(:to_xml).and_return("XML")
+    @invitations.stub!(:to_xml).and_return('XML')
+    @invitations_proxy = mock('Invitations Proxy', :find => @invitations)
     
-    @network = mock_model(Network, :invitations => @invitations)
+    @network = mock_model(Network, :invitations => @invitations_proxy, :name => 'network')
     @network_proxy = mock('Network Proxy', :find => @network)
     
     @organization.stub!(:owned_networks).and_return(@network_proxy)
@@ -203,10 +206,10 @@ end
 describe NetworkInvitationsController, " handling POST /networks/1/invitations" do
   
   before do
-    @organization = mock_model(Organization)
+    @organization = mock_model(Organization, :name => 'Inviting Org')
     login_as(@organization)
     
-    @invited_organization = mock_model(Organization)
+    @invited_organization = mock_model(Organization, :name => 'Invited Org')
     
     @invitation = mock_model(Invitation, :save => true)
     

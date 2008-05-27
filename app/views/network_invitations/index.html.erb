@@ -1,0 +1,17 @@
+<h2>Invitations to <%=@network.name%></h2>
+<%=flash_messages%>
+<% form_tag network_invitations_path(@network) do %>
+  <%=error_messages_for :invitation%>
+  <p>Know someone you want in your network?  Enter their email address below.</p>
+  <p><label for="email">Email Address:</label> <%=text_field_tag "email", {}, :size => 20%> <input type="submit" value="Invite!"></p>
+<% end %>
+
+<% if @invitations.size > 0 then %>
+  <ul id="invitations">
+    <% @invitations.each do |invitation| %>
+    <li><%=invitation.invitee.name%>
+      <div class="network_actions"><%=link_to "Delete", network_invitation_path(@network, invitation), :method => :delete %></div>
+    </li>
+    <% end %>
+  </ul>
+<% end %>

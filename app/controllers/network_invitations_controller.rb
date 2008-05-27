@@ -4,9 +4,10 @@ class NetworkInvitationsController < ApplicationController
   
   def index
     @network = current_organization.owned_networks.find(params[:network_id])
+    @invitations = @network.invitations.find(:all, :include => :invitee)
     
-    @invitations = @network.invitations
-    
+    @page_title = "Invitations"
+    @breadcrumbs << ["Your Networks", url_for(networks_path)] << [@network.name, url_for(network_path(@network))]
     respond_to do |wants|
       wants.html {} # render the template
       wants.xml { render :xml => @invitations.to_xml }
@@ -21,26 +22,38 @@ class NetworkInvitationsController < ApplicationController
   # email), it will send an external invitation out.
   
   def create
-    network = current_organization.owned_networks.find(params[:network_id])
+    @network = current_organization.owned_networks.find(params[:network_id])
+    
     invited_organization = Organization.find_by_email(params[:email])
     
     if invited_organization.nil? then
       # send the external invitation
-      network_invitation = network.external_invitations.new(:inviter => invited_organization, :email => params[:email])
+      @invitation = @network.external_invitations.new(:inviter => current_organization, :email => params[:email])
     else
       # send the internal invitation.
-      network_invitation = network.invitations.new(:invitee => invited_organization, :inviter => current_organization)
+      @invitation = @network.invitations.new(:invitee => invited_organization, :inviter => current_organization)
     end
     
-    if network_invitation.save then
-      flash[:message] = "Invitation sent!"
+    if @invitation.save then
+      if invited_organization.nil? then
+        flash[:message] = "Invitation sent to external email address #{params[:email]}."
+      else
+        flash[:message] = "Invitation sent to #{invited_organization.name}."
+      end
       respond_to do |wants|
         wants.html { redirect_to network_invitations_path(params[:network_id]) }
         wants.xml { head :status => :created }
       end
     else
       respond_to do |wants|
-        wants.html { redirect_to network_invitations_path(params[:network_id]) }
+        wants.html do
+          # get ready to render the index template again.
+          @page_title = "Invitations"
+          @breadcrumbs << ["Your Networks", url_for(networks_path)] << [@network.name, url_for(network_path(@network))]
+
+          @invitations = @network.invitations.find(:all, :include => :invitee)
+          render :action => 'index'
+        end
         wants.xml { render :xml => @network.errors.to_xml, :status => 422 }
       end
     end
