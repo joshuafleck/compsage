@@ -11,7 +11,7 @@ describe "discussions/index" do
     @survey = mock_model(Survey, :job_title => "Software Engineer", :id => "1")
     @discussion_reply = mock_model(Discussion, :responder => @owner, :subject => "Reply Topic", :body => "Reply Body", :id => "2")
     @discussion_children = [@discussion_reply]
-    @discussion_topic = mock_model(Discussion, :children => @discussion_children, :responder => @current_organization_or_survey_invitation, :subject => "Root Topic", :body => "Root Body", :id => "1", :survey_id => @survey.id)
+    @discussion_topic = mock_model(Discussion, :all_children => @discussion_children, :responder => @current_organization_or_survey_invitation, :subject => "Root Topic", :body => "Root Body", :id => "1", :survey_id => @survey.id)
     @discussions = [@discussion_topic]
     
     @discussions.stub!(:sort).and_return(@discussions)
@@ -45,15 +45,12 @@ describe "discussions/index" do
   end
   
   it "should render one or more reply buttons" do
-    response.should have_tag("a[href=/surveys/1/discussions/new?parent_discusion_id=1]")
+    response.should have_tag("a[href=/surveys/1/discussions/new?parent_discussion_id=#{@discussion_reply.id}]")
   end
   
   it "should render one or more report abuse buttons" do
     response.should have_tag("a[href=#{report_survey_discussion_path(@survey,@discussion_topic)}]")
   end
   
-  #JF- Thinking these specs should not be here if we decide to put discussions on the surveys page
-  #it "should list attributes about the discussed survey"
-  #it "should have a link to the discussed survey"
 end
 

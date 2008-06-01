@@ -19,7 +19,7 @@
       </div>
       <div class="discussion_replies">
         <ul id="discussion_<%=@discussion.id%>_replies">
-          <% discussion_topic.children.sort.each do |discussion_reply| %>
+          <% discussion_topic.all_children.sort.each do |discussion_reply| %>
             <li>
               <%= render :partial => "discussions/discussion", 
                          :locals => { :@discussion => discussion_reply, :@survey => @survey }               

@@ -16,7 +16,7 @@ ActionController::Routing::Routes.draw do |map|
     network.resources :invitations, :controller => :network_invitations
   end
   
-  map.resource :external_invitations
+  map.resources :external_invitations
   map.resources :invitations
   map.resource :account
   map.resource :dashboard

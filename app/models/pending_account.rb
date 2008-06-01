@@ -2,7 +2,6 @@ require 'digest/sha1'
 class PendingAccount < ActiveRecord::Base
   
   before_validation :strip_phone
-  before_save :generate_key
   
   validates_presence_of :email
   validates_length_of   :email,  :within => 3..100

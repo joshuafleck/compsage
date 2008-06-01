@@ -3,11 +3,15 @@ class PendingAccountsController < ApplicationController
   layout 'front'
 
   def new
+	  @page_title = "Signup"
+	  
     @pending_account = PendingAccount.new
   end
   
   def create
-    @pending_account = PendingAccount.new(params)
+	  @page_title = "Signup"
+	  
+    @pending_account = PendingAccount.new(params[:pending_account])
   
     if @pending_account.save then
       respond_to do |wants|

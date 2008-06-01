@@ -1,0 +1,17 @@
+<h2>Sent Invitations</h2>
+<p>
+The invitations listed below have been sent, but not yet accepted by the invitee.
+</p>
+<%=flash_messages%>
+<p>
+  <%=link_to "Send an invitation", new_external_invitation_path %>
+</p>
+<ul id=invitations>
+  <% @external_invitations.each do |invitation| %>
+    <li>
+      <p><span>Invitee Name: </span><%=invitation.name%></p>
+      <p><span>Invitee email: </span><%=invitation.email%></p>
+      <p><span>Sent: </span><%=time_ago_in_words(invitation.created_at)%> ago</p>
+    </li>
+  <% end %>
+</ul>

@@ -181,6 +181,14 @@ describe AccountsController, " handling POST /account" do
   
   end
 
+  it "should replace all survey relationships to external survey invitation with new organization" do
+    pending
+  end
+
+  it "should destroy the external invitation" do
+    pending
+  end
+
 end
 
 describe AccountsController, " handling POST /account with validation error" do

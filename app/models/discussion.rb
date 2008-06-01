@@ -13,7 +13,7 @@ class Discussion < ActiveRecord::Base
   validates_presence_of :responder
   validates_presence_of :survey
   
-  after_create :set_parent
+  after_save :set_parent
   
   #This virtual method allows us to set the parent discusion id in the case of a reply
   attr_accessor :parent_discussion_id

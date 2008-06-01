@@ -10,6 +10,8 @@ class ExternalInvitation < Invitation
   
   attr_accessible :email, :name, :inviter, :key
   
+  attr_accessor :message
+  
   before_create :create_key
   
   protected

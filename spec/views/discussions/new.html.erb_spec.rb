@@ -4,20 +4,14 @@ describe "discussions/new" do
 
   before(:each) do
     
-    @parent_discussion = mock_model(Discussion,
-      :subject => "Discussion subject",
-      :body => "Discussion Body",
-      :root? => true)      
-    @discussion = mock_model(Discussion,
-      :subject => "Child subject",
-      :body => "Child body",
-      :survey => mock_model(Survey, :id => "1"),
-      :parent_discussion => @parent_discussion)
+    @parent_discussion = stub_model(Discussion)      
+    @discussion = stub_model(Discussion)
+    @survey = stub_model(Survey)
     
+    assigns[:survey] = @survey
     assigns[:discussion] = @discussion
+    assigns[:parent_discussion] = @parent_discussion
     
-    #template.stub!(:survey).and_return(mock_model(Survey))
-        
     render 'discussions/new'
   end
   
@@ -33,25 +27,20 @@ describe "discussions/new" do
     response.should have_tag("a[href=#{survey_discussions_path(@survey)}]", "Cancel")
   end
   
-  it "should have a paramter for the parent discussion id if the parent exists" do
-    response.should have_tag("input[id=discussion_parent_discussion]")
+  it "should have a parameter for the parent discussion id if the parent exists" do
+    response.should have_tag("input[id=discussion_parent_discussion_id]")
   end
   
-  it "should not allow the input of a topic if the parent exists" do
-    #puts response.body
-    response.should_not have_tag("input[id=discussion_subject]")
+  it "should allow the input of a topic" do
+    response.should have_tag("input[id=discussion_subject]")
   end
 end
 
-describe "discussions/new" do
+describe "discussions/new with new discussion topic" do
 
   before(:each) do
          
-    @discussion = mock_model(Discussion,
-      :subject => "Child subject",
-      :body => "Child body",
-      :survey => mock_model(Survey, :id => "1"),
-      :parent_discussion => nil)
+    @discussion = stub_model(Discussion)
     
     assigns[:discussion] = @discussion        
     assigns[:survey] = @survey
@@ -60,10 +49,7 @@ describe "discussions/new" do
   end
   
   it "should not have a parameter for the parent discussion id if the parent does not exist" do
-    response.should have_tag("input[id=discussion_parent_discussion]",nil)
+    response.should_not have_tag("input[id=discussion_parent_discussion_id]")
   end
   
-  it "should allow the input of a topic if the parent does not exist" do
-    response.should have_tag("input[id=discussion_subject]")
-  end
 end

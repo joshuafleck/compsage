@@ -140,9 +140,9 @@ describe DiscussionsController, " handling GET /discussions/new" do
     @current_organization_or_survey_invitation = mock_model(Organization)
     login_as(@current_organization_or_survey_invitation)
     
-    @parent_discussion = mock_model(Discussion)
+    @parent_discussion = mock_model(Discussion, :subject => 'subject')
     @survey = mock_model(Survey, :id => 1, :job_title => 'Software Engineer')
-    @discussion = mock_model(Discussion, :survey= => @survey, :parent_discussion= => @parent_discussion)
+    @discussion = mock_model(Discussion, :survey= => @survey, :parent_discussion= => @parent_discussion, :parent_discussion_id= => 1, :subject= => 'subject')
     
     @survey_discussions_proxy = mock('survey discussions proxy')
     @survey_discussions_proxy.stub!(:find).and_return(@parent_discussion)    
@@ -184,12 +184,27 @@ describe DiscussionsController, " handling GET /discussions/new" do
   end
   
   it "should assign the parent discussion to the new discussion" do
-    @discussion.should_receive(:parent_discussion=).with(@parent_discussion)
+    @discussion.should_receive(:parent_discussion_id=).with(@parent_discussion.id)
     do_get
   end
   
   it "should assign the survey to the new discussion" do
     @discussion.should_receive(:survey=).with(@survey)
+    do_get
+  end
+  
+  it "should assign the new discussion to the view" do    
+  	do_get
+  	assigns[:discussion].should eql(@discussion)
+  end
+  
+  it "should assign the parent discussion to the view" do
+    do_get
+  	assigns[:parent_discussion].should eql(@parent_discussion)
+  end
+  
+  it "should prepopulate the subject of the discussion" do
+    @discussion.should_receive(:subject=).with("RE: " + @parent_discussion.subject)
     do_get
   end
 end
@@ -200,7 +215,7 @@ describe DiscussionsController, " handling GET /discussions/1/edit" do
     @current_organization_or_survey_invitation = mock_model(Organization)
     login_as(@current_organization_or_survey_invitation)
     
-    @discussion = mock_model(Discussion, :id => 1, :topic => "Discussion topic")
+    @discussion = mock_model(Discussion, :id => 1, :topic => "Discussion topic", :subject => 'subject')
     @survey = mock_model(Survey, :id => 1, :job_title => "Software Engineer")
     
     @organization_discussions_proxy = mock('organization discussions proxy', :find => @discussion)

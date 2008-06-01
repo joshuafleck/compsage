@@ -28,7 +28,9 @@ class DiscussionsController < ApplicationController
     @discussion.survey = @survey
     
     if !params[:parent_discussion_id].blank? then
-      @discussion.parent_discussion = @survey.discussions.find(params[:parent_discussion_id])
+      @parent_discussion = @survey.discussions.find(params[:parent_discussion_id])
+      @discussion.parent_discussion_id = @parent_discussion.id
+      @discussion.subject = "RE: " + @parent_discussion.subject
     end
     
   end
@@ -60,7 +62,7 @@ class DiscussionsController < ApplicationController
   def edit
     @discussion = current_organization_or_survey_invitation.discussions.find(params[:id])
     
-    @page_title = "Editing #{@discussion.topic}"
+    @page_title = "Editing #{@discussion.subject}"
     @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
   end
   
