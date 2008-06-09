@@ -13,5 +13,14 @@ config.action_controller.consider_all_requests_local = true
 config.action_view.debug_rjs                         = true
 config.action_controller.perform_caching             = false
 
-# Don't care if the mailer can't send
-config.action_mailer.raise_delivery_errors = false
+# Testing actionmailer using mailtrap. Find install and config info here:
+#http://matt.blogs.it/entries/00002655.html
+ActionMailer::Base.perform_deliveries = true
+ActionMailer::Base.raise_delivery_errors = true
+ActionMailer::Base.delivery_method = :smtp
+ActionMailer::Base.smtp_settings = {
+  :domain => "mydomain.net",
+  :address => "localhost",
+  :port => 2525,
+}
+

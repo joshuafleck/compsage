@@ -1,0 +1,32 @@
+<html>
+<body>
+<p>
+Dear <%=@invitation.name%>,
+<br />
+<br />
+Your organization been invited by <%=@invitation.inviter.contact_name%> of <%=@invitation.inviter.name%> to
+become part of an expanding network of organizations that utilize <product name here>.
+<br />
+<br />
+<% if !@invitation.message.blank? then %>
+  Here is a personalized message from <%=@invitation.inviter.contact_name%>:
+  <span>
+    <%=@invitation.message%>
+  </span>
+  <br />
+  <br />  
+<% end %>
+<product name here> is a website for HR professionals that want compensation information at the touch
+of their fingertips. <product name here> allows HR professionals to send quick compensory surveys to 
+organizations of their choosing. <product name here> is a reliable and legal means to gauge competitor's
+compensation practices.
+<br />
+<br />
+To become a member of <product name here>, please click here: <%=@signup_link%>.
+<br />
+<br />
+Best regards,
+The <product name here> team
+</p>
+</body>
+</html>

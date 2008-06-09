@@ -8,7 +8,7 @@ class ExternalInvitation < Invitation
   validates_format_of   :email,  :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
   validates_length_of   :name,   :within => 2..100, :allow_nil => true
   
-  attr_accessible :email, :name, :inviter, :key
+  attr_accessible :email, :name, :inviter, :message
   
   attr_accessor :message
   
