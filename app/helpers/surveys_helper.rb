@@ -1,18 +1,19 @@
-DEFAULT_HTML_ATTRIBUTES =  {  'text_field' => {:size => 30},
-                            'numerical_field' => {:size => 6}, 
-                            'text_area' => { :rows => 3,
-                                            :cols => 40},
-                            'radio' => {},
-                            'check' => {},
-                            'text' => {}}
-DEFAULT_QUESTION_ATTRIBUTES = { 'text_field' => {:style => 'veritcal'},
-                              'numerical_field' => {:style => 'veritcal'}, 
-                              'text_area' => {:style => 'vertical'},
-                              'radio' => {:style => 'veritcal'},
-                              'check' => {:style => 'veritcal'},
-                              'text' => {:style => 'veritcal'}}
-
 module SurveysHelper
+  
+  DEFAULT_HTML_ATTRIBUTES =  {  'text_field' => {:size => 30},
+                              'numerical_field' => {:size => 6}, 
+                              'text_area' => { :rows => 3,
+                                              :cols => 40},
+                              'radio' => {},
+                              'check' => {},
+                              'text' => {}}
+  DEFAULT_QUESTION_ATTRIBUTES = { 'text_field' => {:style => 'veritcal'},
+                                'numerical_field' => {:style => 'veritcal'}, 
+                                'text_area' => {:style => 'vertical'},
+                                'radio' => {:style => 'veritcal'},
+                                'check' => {:style => 'veritcal'},
+                                'text' => {:style => 'veritcal'}}
+                                
   def print_question(question, options = {})
 
     # insert the default html attributes to the current_html_parameters hash
