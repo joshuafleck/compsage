@@ -15,15 +15,15 @@ class Question < ActiveRecord::Base
                       ["Numerical Input", 'numerical_field'],
                       ["Multi-line Text Box", 'text_area'],
                       ["Multiple Choice - 1 Answer", 'radio'],
-                      ["Multiple Choice - Any Answer", 'check'],
+                      ["Multiple Choice - Any Answer", 'checkbox'],
                       ["Textual Comments or Instructions", 'text']
                     ]
-  TYPES_WITH_OPTIONS = ['radio', 'check']
+  TYPES_WITH_OPTIONS = ['radio', 'checkbox']
   NUMERICAL_RESPONSES = { 'text_field' => false,
                                 'text_area' => false,
                                 'numerical_field' => true,
                                 'radio' => true,
-                                'check' => true,
+                                'checkbox' => true,
                                 'text' => false
                         }
   DEFAULT_HTML_ATTRIBUTES = { 'text_field' => {:size => 30},
@@ -31,14 +31,14 @@ class Question < ActiveRecord::Base
                               'text_area' => {  :rows => 3,
                                                 :cols => 40},
                               'radio' => {},
-                              'check' => {},
+                              'checkbox' => {},
                               'text' => {}
                             }
   DEFAULT_QUESTION_ATTRIBUTES = { 'text_field' => {},
                                   'numerical_field' => {},
-                                  'text_area' => {:style => 'vertical'},
-                                  'radio' => {},
-                                  'check' => {},
+                                  'text_area' => {},
+                                  'radio' => {:style => "vertical"},
+                                  'checkbox' => {:style => "vertical"},
                                   'text' => {}
                                 }
   DEFAULT_OPTIONS = {
