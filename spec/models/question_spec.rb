@@ -54,7 +54,7 @@ describe Question, "with options", :shared => true do
   
   before(:each) do
     @question = Question.new
-    @question.attributes = valid_question_attributes.with(:question_type => 'check')
+    @question.attributes = valid_question_attributes.with(:question_type => 'checkbox')
   end
   
   it "should be invalid without some options" do

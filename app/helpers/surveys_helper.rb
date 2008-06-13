@@ -42,7 +42,7 @@ module SurveysHelper
         
         content_tag(:label, text) + tag(:input, html_parameters)
       when 'text_area'
-        content_tag(:label, text) + content_tag(:text_area, default_values.first, html_parameters)
+        content_tag(:label, text) + content_tag(:textarea, default_values.first, html_parameters)
       when 'radio', 'checkbox'
         html_parameters[:type] = question.question_type
         
