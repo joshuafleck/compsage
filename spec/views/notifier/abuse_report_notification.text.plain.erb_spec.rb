@@ -12,7 +12,7 @@ describe "report abuse email" do
   
   it "should contain a discussion id" do
     render_view
-    puts response.body
+    #puts response.body
   end
   it "should name the organization responsible"
   it "should contain the discussion attributes"
