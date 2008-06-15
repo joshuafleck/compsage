@@ -44,8 +44,10 @@ describe SurveysController, " handling GET /surveys" do
     @surveys_proxy = mock('surveys proxy')
     @closed_surveys = []
     @open_surveys = []
+    
     @surveys_proxy.stub!(:open).and_return(@open_surveys)
     @surveys_proxy.stub!(:closed).and_return(@closed_surveys)
+    
     @current_organization.stub!(:surveys).and_return(@surveys_proxy)
     @open_surveys.stub!(:find).and_return([])
     @closed_surveys.stub!(:find).and_return([])
@@ -65,17 +67,17 @@ describe SurveysController, " handling GET /surveys" do
   end
   
   it "should find all surveys for which the user has been invited or participated" do
-    @survey_invitations_proxy.should_receive(:find).with(:all, :include => :surveys).and_return([])
+    @survey_invitations_proxy.should_receive(:find).with(:all, :include => :survey).and_return([])
     
     do_get 
   end
   
-  it "should fina all surveys for which the user has been the sponsor" do
+  it "should find all surveys for which the user has been the sponsor" do
     @current_organization.should_receive(:survey_invitations).and_return(@survey_invitations_proxy)
-    @current_organization.should_receive(:surveys).at_least(:twice).and_return(@survey_proxy)
-    @survey_proxy.should_receive(:closed).and_return(@closed_surveys)
+    @current_organization.should_receive(:surveys).at_least(:twice).and_return(@surveys_proxy)
+    @surveys_proxy.should_receive(:closed).and_return(@closed_surveys)
     @closed_surveys.should_receive(:find)
-    @survey_proxy.should_receive(:open).and_return(@open_surveys)
+    @surveys_proxy.should_receive(:open).and_return(@open_surveys)
     @open_surveys.should_receive(:find)
     
     do_get 
