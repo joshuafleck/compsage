@@ -2,6 +2,11 @@
   <div class="organization_thumbnail">
     <!--TODO-->
   </div>
+  <div class="organization_logo">
+    <% if !organization.logo.nil? then %>
+      <p><%=image_tag organization.logo.public_filename(:thumb) %></p>
+    <% end %>
+  </div>
   <div class="organization_name">
     <%=link_to organization.name, organization_path(organization.id)%>
   </div>
