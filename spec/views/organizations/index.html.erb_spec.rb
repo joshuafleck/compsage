@@ -35,7 +35,7 @@ describe "/organizations/index" do
     response.should have_tag("div", "Huminsight")
   end
   
-  it "should display the image of each organization" do
+  it "should display the logo of each organization" do
     response.should have_tag("div[class=organization_logo]")
   end
   

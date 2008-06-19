@@ -8,13 +8,14 @@ describe "/surveys/show" do
     template.stub!(:current_organization_or_invitation).and_return(@current_organization_or_invitation)
     
     @survey = mock_model(Survey, :job_title => "Software Engineer", :id => "1")
-    @discussion_reply = mock_model(Discussion, :responder => @owner, :subject => "Reply Topic", :body => "Reply Body", :id => "2")
+    @discussion_reply = mock_model(Discussion, :responder => @owner, :subject => "Reply Topic", :body => "Reply Body", :id => "2", :is_not_abuse => true)
     @discussion_children = [@discussion_reply]
     @discussion_topic = mock_model(Discussion, :all_children => @discussion_children, :responder => @current_organization_or_invitation, :subject => "Root Topic", :body => "Root Body", :id => "1", :survey_id => @survey.id)
     @discussions = [@discussion_topic]
     
     @discussions.stub!(:sort).and_return(@discussions)
     @discussion_children.stub!(:sort).and_return(@discussion_children)
+    @discussion_children.stub!(:within_abuse_threshold).and_return(@discussion_children)
     
     assigns[:discussions] = @discussions
     assigns[:survey] = @survey

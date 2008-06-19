@@ -4,6 +4,8 @@ describe "/organizations/search" do
   before(:each) do
     # create organizations
     organization = mock_model(Organization)
+    logo = mock_model(Logo, :public_filename => "blah")
+    
     organization.stub!(:id).and_return("1")
     organization.stub!(:name).and_return("Huminsight")
     organization.stub!(:city).and_return("Minneapolis")
@@ -11,6 +13,7 @@ describe "/organizations/search" do
     organization.stub!(:location).and_return("Headquarters")
     organization.stub!(:contact_name).and_return("Josh Fleck")
     organization.stub!(:industry).and_return("Software")
+    organization.stub!(:logo).and_return(logo)
     
     assigns[:organizations] = [organization]
     
@@ -34,6 +37,10 @@ describe "/organizations/search" do
   
   it "should display the name of each organization" do
     response.should have_tag("div", "Huminsight")
+  end
+  
+  it "should display the logo of each organization" do
+    response.should have_tag("div[class=organization_logo]")
   end
   
   it "should have links for inviting organizations to a network" do

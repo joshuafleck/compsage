@@ -38,6 +38,7 @@ describe DiscussionsController, " handling GET discussions" do
     
     @discussion = mock_model(Discussion)
     @discussions = [@discussion]
+    @discussions.stub!(:within_abuse_threshold).and_return(@discussions)
     @discussions.stub!(:roots).and_return(@discussions)
     
     @survey.stub!(:discussions).and_return(@discussions)
@@ -68,7 +69,12 @@ describe DiscussionsController, " handling GET discussions" do
   
   it "should find all root discussions" do
     @survey.should_receive(:discussions).and_return(@discussions)
-    @discussions.should_receive(:roots).and_return(@discussion)
+    @discussions.should_receive(:roots).and_return(@discussions)
+    do_get
+  end
+  
+  it "should only retrieve discussions within the abuse threshold" do
+    @discussions.should_receive(:within_abuse_threshold).and_return(@discussions)
     do_get
   end
   
@@ -94,9 +100,11 @@ describe DiscussionsController, " handling GET /discussions.xml" do
     login_as(@current_organization_or_survey_invitation)
     
     @discussion = mock_model(Discussion)
-    @discussion.stub!(:to_xml).and_return("XML")
+    
     @discussions = [@discussion]
-    @discussions.stub!(:roots).and_return(@discussion)
+    @discussions.stub!(:to_xml).and_return("XML")
+    @discussions.stub!(:within_abuse_threshold).and_return(@discussions)
+    @discussions.stub!(:roots).and_return(@discussions)
     
     @survey = mock_model(Survey, :id => 1, :job_title => 'Software Engineer')
     @survey.stub!(:discussions).and_return(@discussions)
@@ -121,13 +129,19 @@ describe DiscussionsController, " handling GET /discussions.xml" do
     response.should be_success
   end
   
-  it "should find all discussion, under the number of times reported thresholds" do
+  it "should find all root discussions" do
     @survey.should_receive(:discussions).and_return(@discussions)
+    @discussions.should_receive(:roots).and_return(@discussions)
+    do_get
+  end
+  
+  it "should only retrieve discussions within the abuse threshold" do
+    @discussions.should_receive(:within_abuse_threshold).and_return(@discussions)
     do_get
   end
   
   it "should render the found discussions as XML" do
-    @discussion.should_receive(:to_xml).and_return("XML")
+    @discussions.should_receive(:to_xml).and_return("XML")
     do_get
     response.body.should == "XML"
   end
@@ -470,7 +484,7 @@ describe DiscussionsController, "handling PUT /discussions/1/report" do
     login_as(@current_organization_or_survey_invitation)
     
     @discussion = mock_model(Discussion, :id => 1, :times_reported => 0)
-    @discussion.stub!(:increment!).with(:times_reported)
+    @discussion.stub!(:increment!).with(:times_reported).and_return(true)
 
     @survey_discussions_proxy = mock('survey discussions proxy', :find => @discussion)
     @survey = mock_model(Survey, :id => 1, :discussions => @survey_discussions_proxy)
@@ -497,10 +511,6 @@ describe DiscussionsController, "handling PUT /discussions/1/report" do
   it "should increase the number of times reported" do
     @discussion.should_receive(:increment!).with(:times_reported)
     do_put
-  end
-  
-  it "should send an email reporting the abuse when the number of times reported is greater then the threshold" do
-    pending
   end
   
   it "should redirect to the discussion page" do

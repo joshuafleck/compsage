@@ -296,7 +296,7 @@ module ExternalSurveyInvitationSpecHelper
     {
       :name => 'David E. Peteron',
       :email => 'pete2786@umn.edu',
-      :inviter => mock_model(Organization),
+      :inviter => organization_mock,
       :survey => mock_model(Survey),
       :discussion => [],
       :responses => []

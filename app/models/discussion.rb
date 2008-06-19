@@ -15,6 +15,13 @@ class Discussion < ActiveRecord::Base
   
   after_create :set_parent
   
+  named_scope :within_abuse_threshold, lambda { {:conditions => ['times_reported < 3']} }
+  
+  #This returns true if the discussion is under the abuse threshold
+  def is_not_abuse
+    times_reported < 3
+  end
+  
   #This virtual method allows us to set the parent discusion id in the case of a reply
   attr_accessor :parent_discussion_id
   

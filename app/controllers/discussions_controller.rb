@@ -10,7 +10,7 @@ class DiscussionsController < ApplicationController
 	  @page_title = "Discussions"
     @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
        
-	  @discussions = @survey.discussions.roots
+	  @discussions = @survey.discussions.within_abuse_threshold.roots
 	  
 		respond_to do |wants|
       wants.html
@@ -24,9 +24,13 @@ class DiscussionsController < ApplicationController
     @page_title = "New Discussion"
     @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
     
+    #Create a new disussion and set its survey
     @discussion = Discussion.new
     @discussion.survey = @survey
     
+    #If this is a reply, there will be a parent discussion. 
+    #This will set the parent discussion id in the new discussion,
+    #and also prepopulate the subject field.
     if !params[:parent_discussion_id].blank? then
       @parent_discussion = @survey.discussions.find(params[:parent_discussion_id])
       @discussion.parent_discussion_id = @parent_discussion.id
@@ -94,24 +98,23 @@ class DiscussionsController < ApplicationController
   def report
     @discussion = @survey.discussions.find(params[:id])
     
-    @discussion.increment!(:times_reported)
-    
-    respond_to do |wants|
-      wants.html {         
-        flash[:notice] = "The discussion was reported successfully."
-        redirect_to survey_discussions_path(@survey) }      
-      wants.xml do
-        render :status => :ok
+    if @discussion.increment!(:times_reported) then    
+      respond_to do |wants|
+        wants.html {         
+          flash[:notice] = "The discussion was reported successfully."
+          redirect_to survey_discussions_path(@survey) }      
+        wants.xml do
+          render :status => :ok
+        end
       end
-    end
-  rescue ActiveRecord::RecordInvalid
-    respond_to do |wants|
-      wants.html do
-        flash[:notice] = "Unable to report discussion at this time. Please try again later."
-        redirect_to survey_discussions_path(@survey)
-      end
-      wants.xml do
-        render :xml => @discussion.errors.to_xml, :status => 422
+    else
+      respond_to do |wants|
+        wants.html do
+          render :action => 'index'
+        end
+        wants.xml do
+          render :xml => @discussion.errors.to_xml, :status => 422
+        end
       end
     end
   end
