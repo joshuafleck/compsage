@@ -20,6 +20,8 @@ class NetworkInvitationsController < ApplicationController
   
   # Creates the new network invitation.  If the organization is not found in the database (by
   # email), it will send an external invitation out.
+  # 
+  # Raises AlreadyInvited if the user is already invited to the network.
   
   def create
     @network = current_organization.owned_networks.find(params[:network_id])
@@ -27,10 +29,13 @@ class NetworkInvitationsController < ApplicationController
     invited_organization = Organization.find_by_email(params[:email])
     
     if invited_organization.nil? then
-      # send the external invitation
+      # create an external invitation
       @invitation = @network.external_invitations.new(:inviter => current_organization, :email => params[:email])
     else
-      # send the internal invitation.
+      # Check for duplicate invite.
+      raise AlreadyInvited if invited_organization.network_invitations.collect(&:network_id).include?(@network.id)
+      
+      # create an internal invitation.
       @invitation = @network.invitations.new(:invitee => invited_organization, :inviter => current_organization)
     end
     
@@ -54,8 +59,15 @@ class NetworkInvitationsController < ApplicationController
           @invitations = @network.invitations.find(:all, :include => :invitee)
           render :action => 'index'
         end
-        wants.xml { render :xml => @network.errors.to_xml, :status => 422 }
+        wants.xml { render :xml => @invitation.errors.to_xml, :status => 422 }
       end
+    end
+    
+  rescue AlreadyInvited
+    flash[:notice] = "#{invited_organization.name} has already been invited."
+    respond_to do |wants|
+      wants.html { redirect_to network_invitations_path(params[:network_id]) }
+      wants.xml { head :status => 422 }
     end
   end
   

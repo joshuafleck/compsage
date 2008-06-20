@@ -3,6 +3,7 @@
 
 class ApplicationController < ActionController::Base
   include AuthenticatedSystem
+  include Exceptions
   before_filter :make_breadcrumbs
   
   session :session_key => '_shawarma_session_id'
