@@ -22,12 +22,20 @@ describe DashboardsController, " handling GET /dashboard" do
     @network_invitations_proxy.stub!(:recent).and_return([])
     @current_organization.stub!(:network_invitations).and_return(@network_invitations_proxy)
     
+    @open_surveys = mock('open surveys')
+    @open_surveys.stub!(:recent).and_return([])
+    
     @surveys_proxy = mock('surveys proxy')
-    @surveys_proxy.stub!(:recently_created).and_return([])
+    @surveys_proxy.stub!(:open).and_return(@open_surveys)
+    
     @current_organization.stub!(:surveys).and_return(@surveys_proxy)
     
+    @closed_surves = mock('closed surveys')
+    @closed_surveys.stub!(:recent).and_return([])
+    
     @participated_surveys_proxy = mock('participated surveys proxy')
-    @participated_surveys_proxy.stub!(:recently_ended).and_return([])
+    @participated_surveys_proxy.stub!(:closed).and_return(@closed_surveys)
+    
     @current_organization.stub!(:participated_surveys).and_return(@participated_surveys_proxy)
   end
   
@@ -57,13 +65,15 @@ describe DashboardsController, " handling GET /dashboard" do
   end
   
   it "should find 10 most recent running surveys the organization sponsored or participated in" do
-    @surveys_proxy.should_receive(:recently_created).and_return([])
+    @open_surveys.should_receive(:recent).and_return([])
+    @surveys_proxy.should_receive(:open).and_return(@open_surveys)
     @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
     get :show
   end
   
   it "should find 10 most recent completed surveys the organization sponsored or participated in" do
-    @participated_surveys_proxy.should_receive(:recently_ended).and_return([])
+    @closed_surveys.should_receive(:recent).and_return([])
+    @participated_surveys_proxy.should_receive(:closed).and_return(@closed_surveys)
     @current_organization.should_receive(:participated_surveys).and_return(@participated_surveys_proxy)
   	get :show
   end

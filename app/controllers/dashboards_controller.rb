@@ -7,7 +7,7 @@ class DashboardsController < ApplicationController
     
     @recent_survey_invitations = current_organization.survey_invitations.recent
     @recent_network_invitations = current_organization.network_invitations.recent
-    @recent_running_surveys = current_organization.surveys.recently_created
-    @recent_completed_surveys = current_organization.participated_surveys.recently_ended
+    @recent_running_surveys = current_organization.surveys.open.recent
+    @recent_completed_surveys = current_organization.participated_surveys.closed.recent
   end
 end
