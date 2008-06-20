@@ -209,9 +209,8 @@ describe NetworkInvitationsController, " handling POST /networks/1/invitations" 
     @organization = mock_model(Organization, :name => 'Inviting Org')
     login_as(@organization)
     
-    @invited_organization = mock_model(Organization, :name => 'Invited Org')
-    
-    @invitation = mock_model(Invitation, :save => true)
+    @invited_organization = mock_model(Organization, :name => 'Invited Org', :network_invitations => [])
+    Organization.stub!(:find_by_email).and_return(@invited_organization)
     
     @invitations_proxy = mock('invitations proxy', :new => @invitation)
     @external_invitations_proxy = mock('external_invitations_proxy', :new => @invitation)
@@ -219,8 +218,10 @@ describe NetworkInvitationsController, " handling POST /networks/1/invitations" 
     @network = mock_model(Network, :invitations => @invitations_proxy, :external_invitations => @external_invitations_proxy)
     @network_proxy = mock('Network Proxy', :find => @network)
     
-    @organization.stub!(:owned_networks).and_return(@network_proxy)
+    @invitation = mock_model(Invitation, :save => true, :network_id => @network.id)
     
+    @organization.stub!(:owned_networks).and_return(@network_proxy)
+
     @params = {:network_id => 1}
   end
   
@@ -229,7 +230,6 @@ describe NetworkInvitationsController, " handling POST /networks/1/invitations" 
   end
   
   it "should create a new network invitation if the invitee exists" do
-  	Organization.should_receive(:find_by_email).and_return(@organization)
   	@invitations_proxy.should_receive(:new).and_return(@invitation)
   	@external_invitations_proxy.should_not_receive(:new)
   	
@@ -242,6 +242,13 @@ describe NetworkInvitationsController, " handling POST /networks/1/invitations" 
   	@external_invitations_proxy.should_receive(:new).and_return(@invitation)
   	
   	do_post
+  end
+  
+  it "should not create a new network invitation if the invitee exists and already is invited" do
+    @invited_organization.should_receive(:network_invitations).and_return([@invitation])
+    @invitations_proxy.should_not_receive(:new)
+    
+    do_post
   end
   
 end
