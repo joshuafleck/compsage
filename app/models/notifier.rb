@@ -16,18 +16,7 @@ class Notifier < ActionMailer::Base
      from       "system@huminsight.com"
      subject    "You have been invited to <product name here>"
      
-     part :content_type => "text/html",
-        :body => render_message("external_invitation_notification.text.html.erb", 
-          :invitation => invitation, 
-          :signup_link => url_for( :host => "localhost:3000", :controller => 'accounts', :action => 'new', :key => invitation.key))
-
-      part "text/plain" do |p|
-        p.body = render_message("external_invitation_notification.text.plain.erb", 
-          :invitation => invitation, 
-          :signup_link => url_for( :host => "localhost:3000", :controller => 'accounts', :action => 'new', :key => invitation.key))
-        p.transfer_encoding = "base64"
-      end
-      
+     body :invitation => invitation    
   end
   
 end

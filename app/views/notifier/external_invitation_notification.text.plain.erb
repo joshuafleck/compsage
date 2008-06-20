@@ -13,7 +13,8 @@ of their fingertips. [product name here] allows HR professionals to send quick c
  organizations of their choosing. <product name here> is a reliable and legal means to gauge competitor's
 compensation practices.
 
-To become a member of [product name here], please click here: <%=@signup_link%>.
+To become a member of [product name here], please click the link below:
+<%=url_for(:host => "localhost:3000", :controller => 'accounts', :action => 'new', :key => @invitation.key)%>.
 
 Best regards,
 The [product name here] team
