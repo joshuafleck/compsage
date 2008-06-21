@@ -15,6 +15,7 @@ class Organization < ActiveRecord::Base
   has_many :sent_external_survey_invitations, :class_name => "ExternalSurveyInvitation", :foreign_key => "inviter_id"
   has_many :network_invitations, :class_name => "NetworkInvitation", :foreign_key => "invitee_id", :dependent => :destroy
   has_many :survey_invitations, :class_name => "SurveyInvitation", :foreign_key => "invitee_id", :dependent => :destroy  
+  has_many :invitations, :class_name => "Invitation", :foreign_key => "invitee_id", :dependent => :destroy
   has_many :sent_global_invitations, :class_name => "ExternalInvitation", :foreign_key => "inviter_id"
   
   has_many :discussions, :as => :responder

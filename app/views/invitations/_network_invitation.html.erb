@@ -1,0 +1,15 @@
+<li>
+  <div class="invitation_description">
+  <p><span class="label">Network: </span><%=network_invitation.network.name%></p>
+  <div class="network_invitation_inviter_logo">
+    <% if !network_invitation.inviter.logo.nil? then %>
+      <p><%=image_tag network_invitation.inviter.logo.public_filename(:thumb) %></p>
+    <% end %>
+  </div>
+  <p><span class="label">Inviter: </span><%=network_invitation.inviter.name%></p>
+  </div>
+  <div class="invitation_actions">    
+    <%=link_to "Accept", join_network_path(network_invitation.network), :method => :put%>
+    <%=link_to "Decline", invitation_path(network_invitation), :method => :delete %>
+  </div>
+</li>

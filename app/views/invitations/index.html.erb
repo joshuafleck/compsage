@@ -1,0 +1,26 @@
+<h2>Your Invitations</h2>
+<p>
+  These are your invitations. You receive an invitation when a member
+  would like you to join their network or survey.  
+    <ul>
+    <li>Accepting a network invitation makes you a member of the network</li>
+    <li>Accepting a survey invitation will take you to the survey response page</li>
+  </ul>
+</p>
+<%=flash_messages%>
+<h3>Survey Invitations</h3>
+<ul id="survey_invitations">
+<% if @survey_invitations.empty? then %>
+  You do not have any survey invitations
+<% else %>
+  <%= render :partial => "survey_invitation", :collection => @survey_invitations %>
+<% end %>
+</ul>
+<h3>Network Invitations</h3>
+<ul id="network_invitations">
+<% if @network_invitations.empty? then %>
+  You do not have any network invitations
+<% else %>
+  <%= render :partial => "network_invitation", :collection => @network_invitations %>
+<% end %>
+</ul>

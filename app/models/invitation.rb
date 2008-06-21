@@ -6,4 +6,7 @@ class Invitation < ActiveRecord::Base
   validates_presence_of :inviter
   
   named_scope :recent, :order => 'created_at DESC', :limit => 10
+  
+  named_scope :not_accepted, lambda { {:conditions => ['accepted = 0']} }
+  
 end

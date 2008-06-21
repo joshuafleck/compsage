@@ -3,143 +3,163 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe InvitationsController, "#route_for" do
 
   it "should map { :controller => 'invitations', :action => 'index' } to /invitations" do
-    #route_for(:controller => "invitations", :action => "index").should == "/invitations"
-    pending
-  end
-  
-  it "should map { :controller => 'invitations', :action => 'show', :id => 1 } to /invitations/1" do
-    #route_for(:controller => "invitations", :action => "show", :id => 1).should == "/invitations/1"
-    pending
+    route_for(:controller => "invitations", :action => "index").should == "/invitations"
   end
 
   it "should map { :controller => 'invitations', :action => 'destroy', :id => 1} to /invitations/1" do
-    #route_for(:controller => "invitations", :action => "destroy", :id => 1).should == "/invitations/1"
-    pending
+    route_for(:controller => "invitations", :action => "destroy", :id => 1).should == "/invitations/1"    
   end
 
 end
 
 describe InvitationsController, " handling GET /invitations" do
 
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @survey_invitations = [mock_model(SurveyInvitation)]
+    @network_invitations = [mock_model(NetworkInvitation)]
+    
+    @current_organization.stub!(:survey_invitations).and_return(@survey_invitations)
+    @current_organization.stub!(:network_invitations).and_return(@network_invitations)
+    
+    @survey_invitations.stub!(:not_accepted).and_return(@survey_invitations)
+    @network_invitations.stub!(:not_accepted).and_return(@network_invitations)
+    
+  end
+  
+  def do_get
+    get :index
+  end
+    
   it "should be successful" do
-    pending
+    do_get
+    response.should be_success
+  end
+  
+  it "should require login" do
+    controller.should_receive(:login_required)
+    do_get
   end
   
   it "should render index template" do
-    pending
+    do_get
+    response.should render_template('index')
   end
   
   it "should find all non-accepted invitations" do
-    pending
+    @current_organization.should_receive(:survey_invitations).and_return(@survey_invitations)
+    @survey_invitations.should_receive(:not_accepted).and_return(@survey_invitations)
+    @current_organization.should_receive(:network_invitations).and_return(@network_invitations)
+    @network_invitations.should_receive(:not_accepted).and_return(@network_invitations)
+    do_get
   end
   
   it "should assign the found invitations to the view" do
-    pending
+    do_get
+    assigns[:survey_invitations].should_not be_nil
+    assigns[:network_invitations].should_not be_nil
   end
   
 end
 
 describe InvitationsController, " handling GET /invitations.xml" do
-
+  
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @invitations = [mock_model(Invitation)]
+    
+    @current_organization.stub!(:invitations).and_return(@invitations)
+    
+    @invitations.stub!(:not_accepted).and_return(@invitations)
+    
+    @invitations.stub!(:to_xml).and_return("XML")
+    
+  end
+  
+  def do_get
+    @request.env["HTTP_ACCEPT"] = "application/xml"
+    get :index
+  end
+    
   it "should be successful" do
-    pending
+    do_get
+    response.should be_success
+  end
+  
+  it "should require login" do
+    controller.should_receive(:login_required)
+    do_get
   end
   
   it "should find all non-accepted invitations" do
-    pending
+    @current_organization.should_receive(:invitations).and_return(@invitations)
+    @invitations.should_receive(:not_accepted).and_return(@invitations)
+    do_get
   end
   
   it "should render the found invitations as XML" do
-    pending
-  end
-  
-end
-
-describe InvitationsController, " handling GET /invitations/1" do
-
-  it "should be successful" do
-    pending
-  end
-  
-  it "should find the invitation requested" do
-    pending
-  end
-  
-  it "should render the show template" do
-    pending
-  end
-  
-  it "should assigned the found invitation to the view" do
-    pending
-  end
-  
-end
-
-describe InvitationsController, " handling GET /invitations/1.xml" do
-
-  it "should be successful" do
-    pending
-  end
-  
-  it "should find the invitation requested" do
-    pending
-  end
-  
-  it "should render the found invitation as XML" do
-    pending
+    @invitations.should_receive(:to_xml).and_return("XML")
+    do_get
   end
   
 end
 
 describe InvitationsController, " handling DELETE /invitations/1" do  
-
-  it "should error if requesting organization is not the invitee"  do
-    pending
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @invitation = mock_model(Invitation)
+    @invitations = [@invitation]
+    
+    @current_organization.stub!(:invitations).and_return(@invitations)
+    
+    @invitations.stub!(:not_accepted).and_return(@invitations)    
+    @invitations.stub!(:find).and_return(@invitation)    
+    
+    @invitation.stub!(:destroy).and_return(true)
+    
+    @params = {"id" => "1"}
+    
   end
-   
-  it "should error if the invitation was already accepted"  do
-    pending
+  
+  def do_delete
+    delete :destroy, @params
   end
-   
+  
+  it "should require login" do
+    controller.should_receive(:login_required)
+    do_delete
+  end
+  
   it "should find the invitation" do
-    pending
+    @invitations.should_receive(:find).and_return(@invitation)
+    do_delete
   end
   
   it "should destroy the invitation" do
-    pending
-  end
-  
-  it "should return a response regarding the success of the action when the request is XML" do
-    pending
+    @invitation.should_receive(:destroy)
+    do_delete
   end
   
   describe "when the request is HTML" do
 
     it "should redirect to the network index" do
-      pending    
+      do_delete
+      response.should redirect_to(invitations_path)    
     end
     
     it "should flash a message regarding the success of the action" do
-      pending    
+      do_delete
+      flash[:notice].should eql("The invitation was deleted successfully.")
     end
   
   end
   
 end
 
-#describe InvitationsController, " handling PUT /invitations/1 (Network)" do
-#  it "should give an error is the organization requesting does not match the organization invited"
-#  it "should find the invitation requested"
-#  it "should destroy the selected invitation"
-#  it "should assign the organization to the network"
-#  it "should redirect to the show network view for associated network"
-#end
-
-#describe InvitationsController, " handling PUT /invitations/1 (Survey)" do
-#  it "should give an error is the organization requesting does not match the organization invited"
-#  it "should find the invitation requested"
-#  #it "should destroy the selected invitation" - I don't think this spec is valid anymore- JF
-#  it "should assign the organization to the survey"
-#  it "should redirect to the show survey view for associated survey"
-#end
 
