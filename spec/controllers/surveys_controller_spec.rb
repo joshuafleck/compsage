@@ -44,10 +44,8 @@ describe SurveysController, " handling GET /surveys" do
     @surveys_proxy = mock('surveys proxy')
     @closed_surveys = []
     @open_surveys = []
-    
     @surveys_proxy.stub!(:open).and_return(@open_surveys)
     @surveys_proxy.stub!(:closed).and_return(@closed_surveys)
-    
     @current_organization.stub!(:surveys).and_return(@surveys_proxy)
     @open_surveys.stub!(:find).and_return([])
     @closed_surveys.stub!(:find).and_return([])
@@ -67,7 +65,7 @@ describe SurveysController, " handling GET /surveys" do
   end
   
   it "should find all surveys for which the user has been invited or participated" do
-    @survey_invitations_proxy.should_receive(:find).with(:all, :include => :survey).and_return([])
+    @survey_invitations_proxy.should_receive(:find).with(:all, :include => :surveys).and_return([])
     
     do_get 
   end
@@ -279,6 +277,12 @@ describe SurveysController, " handling GET /surveys/new" do
     do_get
     response.should be_success
   end
+  
+  it "should find a list of predefined questions" do
+    PredefinedQuestion.should_receive(:all)
+    do_get
+  end
+  
   it "should render new template" do
     do_get
     response.should render_template('surveys/new')
@@ -293,10 +297,14 @@ describe SurveysController, " handling GET /surveys/1/edit" do
     @survey = mock_model(Survey, :id => 1, :sponsor => @current_organization)
     @surveys_proxy = mock('surveys proxy')
     @open_surveys = []
+    @predefined_questions = []
+    @questions = []
 
     @current_organization.stub!(:surveys).and_return(@surveys_proxy)
     @surveys_proxy.stub!(:open).and_return(@open_surveys)
     @open_surveys.stub!(:find).and_return(@survey)
+    PredefinedQuestion.stub!(:all).and_return(@predefined_questions)
+    @survey.stub!(:questions).and_return(@questions)
   end
 
   def do_get
@@ -316,7 +324,17 @@ describe SurveysController, " handling GET /surveys/1/edit" do
     @open_surveys.should_receive(:find).and_return(@survey)
     do_get
   end
-  it "should assign the found survey to the view" do
+  
+  it "should find predefined questions for the survey" do
+    PredefinedQuestion.should_receive(:all).and_return(@predefined_questions)
+    do_get
+  end
+  it "should determine if the predefined questions are chosen" do
+    @predefined_questions.should_receive(:collect!)
+    do_get
+  end
+  
+  it "should assign the found survey, and predefined questions to the view" do
     do_get
     assigns[:survey].should_not be_nil
   end
@@ -352,18 +370,34 @@ describe SurveysController, " handling POST /surveys" do
                :end_date => Time.now + 1.week ,
                :sponsor => mock_model(Organization)}
     @survey = mock_model(Survey, :id => 1, :save => true, :errors => [])
+    @surveys = []
+    @questions = []
+    @predefined_question = mock_model(PredefinedQuestion, :position => 1)
+    @predefined_questions = [@predefined_question]
+    @question = mock_model(Question)
+    
     @survey.stub!(:new_record?).and_return(true)
-    Survey.stub!(:create).and_return(@survey)
+    @current_organization.stub!(:surveys).and_return(@surveys)
+    @surveys.stub!(:new).and_return(@survey)
+    @survey.stub!(:questions).and_return(@questions)
+    @questions.stub!(:create).and_return(:question)
+
   end
   
   def do_post
+    
     post :create, :survey => @params
   end
 
   it "should create a new survey" do
-    Survey.should_receive(:create).and_return(@survey)
+    @surveys.should_receive(:new).and_return(@survey)
     do_post
   end
+  
+  it "should add predefined questions to the survey" do
+      pending
+  end
+  
   it "should redirect to the invitation show page upon success" do
     do_post
     response.should redirect_to(invitation_url(@survey))
@@ -379,8 +413,11 @@ describe SurveysController, " handling POST /surveys, upon failure" do
                :end_date => Time.now + 1.week ,
                :sponsor => mock_model(Organization)}
     @survey = mock_model(Survey, :id => 1, :save => true, :errors => ["asdfadsfdsa"])
+    @surveys = []
+    
     @survey.stub!(:new_record?).and_return(true)
-   Survey.stub!(:create).and_return(@survey)
+    @current_organization.stub!(:surveys).and_return(@surveys)
+    @surveys.stub!(:new).and_return(@survey)
   end
   
   def do_post
@@ -427,8 +464,12 @@ describe SurveysController, " handling PUT /surveys/1" do
     assigns(:survey).should equal(@survey)
   end
   
-  it "should update the questions for the survey"
-  it "should assign the found questions to the view"
+  it "should update the questions for the survey" do
+    pending
+  end
+  it "should assign the found questions to the view" do
+    pending
+  end
   it "should redirect to the show view page for this survey upon success" do
     do_update
     response.should redirect_to(survey_path(@survey))
@@ -552,21 +593,81 @@ describe SurveysController, "handling GET /surveys/search.xml" do
   end
 end
 
-describe SurveysController, "handling POST /surveys/1/respond, as invitee is not a shawarma user" do
-  it "should be successful"
-  it "should redirect to the success/sign-up page "
+describe SurveysController, "handling POST /surveys/1/respond, as invitee that is not a shawarma user" do
+  before(:each) do
+    @survey = mock_model(Survey, :id => 1)
+    @current_invitation = mock_model(SurveyInvitation, :survey => @survey)
+    login_as(@current_invitation)
+    
+    Survey.stub!(:find).and_return(@survey)
+    @survey.stub!(:questions).and_return([])
+  end
+  
+  def do_respond
+    post :respond, :id => 1
+  end
+  
+  it "should redirect to the success/sign-up page " do
+    do_respond
+    response.should redirect_to("/signup")
+  end
+  
+  it "should flash a success message" do
+    do_respond
+    flash[:notice].should eql("Survey was successfully completed!")
+  end
 end
 
 describe SurveysController, "handling POST /surveys/1/respond, as organization based user" do
-  it "should be successful"
-  it "should redirect to the survey show page"
-  it "should flash a success message"
+  before(:each) do
+    @survey = mock_model(Survey, :id => 1)
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    Survey.stub!(:find).and_return(@survey)
+    @survey.stub!(:questions).and_return([])
+  end
+  
+  def do_respond
+    post :respond, :id => 1
+  end
+  
+  it "should redirect to the survey show page" do
+    do_respond
+    response.should redirect_to(survey_path(@survey))
+  end
+  
+  it "should flash a success message" do
+    do_respond
+    flash[:notice].should eql("Survey was successfully completed!")
+  end
 end
 
 describe SurveysController, "handling POST /surveys/1/respond, with invalid respones" do
-  it "should flash error messages"
-  it "should redirect to the surveys/id/questions page "
-  it "should assign the invalid responses to the view "
+  before(:each) do
+    @survey = mock_model(Survey, :id => 1)
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    Survey.stub!(:find).and_return(@survey)
+  end
+  
+  def do_respond
+    post :respond, :id => 1
+  end
+  
+  it "should flash error messages" do 
+    pending
+  end
+  
+  it "should redirect to the surveys/id/questions page " do
+    pending
+  end
+  
+  it "should assign the invalid responses to the view " do
+    pending
+  end
+  
 end
 
 
