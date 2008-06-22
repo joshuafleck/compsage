@@ -7,7 +7,7 @@ class SurveysController < ApplicationController
     respond_to do |wants|
       wants.html {
         @running_surveys = current_organization.surveys.open.find(:all, :order => 'created_at DESC')
-        @invited_surveys = current_organization.survey_invitations.find(:all, :include => :survey)
+        @invited_surveys = current_organization.survey_invitations.find(:all, :include => :surveys)
         @completed_surveys = current_organization.surveys.closed.find(:all, :order => 'created_at DESC')
       }
       wants.xml {
