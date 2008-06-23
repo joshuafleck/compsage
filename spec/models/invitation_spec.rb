@@ -87,15 +87,17 @@ describe NetworkInvitation, ".accept!" do
   include NetworkInvitationSpecHelper
   
   before(:each) do
-    @invitee = mock_model(Organization)
+    @invitee = mock_model(Organization, :email => "brian.terlson@gmail.com",
+                                        :name => "invitee",
+                                        :contact_name => "Brian")
     @networks = []
-    @network = mock_model(Network)
+    @network = mock_model(Network, :name => "Network")
     @invitee.stub!(:networks).and_return(@networks)
     
     @network_invitation = NetworkInvitation.create(
       :invitee => @invitee,
       :network => @network,
-      :inviter => mock_model(Organization)
+      :inviter => mock_model(Organization, :name => "Inviter", :contact_name => "Bill")
     )
   end
   

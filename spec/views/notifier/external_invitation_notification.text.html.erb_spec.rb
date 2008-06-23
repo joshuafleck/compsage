@@ -6,12 +6,10 @@ describe "external invitation email" do
   
     @invitation = mock_model(ExternalInvitation, :message => 'message_text', :key => 'key_text', :name => 'name_text', :email => 'email_text')
     @organization = mock_model(Organization, :name => 'organization_name_text', :contact_name => 'contact_name_text')
-    @signup_link = 'new_account_link'
     
     @invitation.stub!(:inviter).and_return(@organization)
     
     assigns[:invitation] = @invitation
-    assigns[:signup_link] = @signup_link
     
   end
   
@@ -41,7 +39,7 @@ describe "external invitation email" do
   
   it "should link to the new account page" do
     render_view
-    response.should have_tag('a[href="new_account_link"]')
+    response.should have_tag("a[href=#{new_account_path(:key => 'key_text', :only_path => false)}]")
   end
   
 end
