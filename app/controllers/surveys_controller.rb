@@ -122,12 +122,13 @@ class SurveysController < ApplicationController
     @survey = Survey.find(params[:id])
     #validate all responses required for the survey  
     @survey.questions.each do |question|
+      puts "WHAT THE FUCK"
       @response = current_organization_or_survey_invitation.responses.find_or_create_by_question_id(question.id)
       @response.update_attributes(params[:question][question.id.to_s][:response])
       #if it is invalid, add to responses hash
       @responses[question.id] = @response unless @response.save
     end
-    
+    puts "hello joe"
     #if there were no invalid responses, redirect to the survey show page
     if @responses.empty?
       flash[:notice] = "Survey was successfully completed!"
