@@ -7,7 +7,7 @@ class SurveysController < ApplicationController
     respond_to do |wants|
       wants.html {
         @running_surveys = current_organization.surveys.open.find(:all, :order => 'created_at DESC')
-        @invited_surveys = current_organization.survey_invitations.find(:all, :include => :surveys)
+        @invited_surveys = current_organization.survey_invitations.find(:all, :include => :survey)
         @completed_surveys = current_organization.surveys.closed.find(:all, :order => 'created_at DESC')
       }
       wants.xml {
@@ -38,35 +38,46 @@ class SurveysController < ApplicationController
     #iterate through the survey questions to determine which predefined questions have been selected
     @predefined_questions = PredefinedQuestion.all
     @picked_questions = @survey.questions
-    @predefined_questions.collect! { |q| q.chosen = @picked_questions.any? { |pq| pq.text = q.text } }
+    @predefined_questions.collect! { |q| q.chosen = @picked_questions.any? { |pq| pq.predefined_question_id = q.id } }
   end
   
   def update
     @survey = current_organization.surveys.open.find(params[:id])
+
+    #update predefined question selection
     @predefined_questions = PredefinedQuestion.all
     @predefined_questions.each do |predefined_question|
       #if selected, create if not found
-      if params[:predefined_question][predefined_question.position][:selected]
-       #find_or_create_by_text will only create new.
-      #find and delete
+      if params[:predefined_question][predefined_question.id.to_s]
+         #find or create the question
+         @question = @survey.questions.find_or_create_by_predefined_question_id(predefined_question.id)
+         #assign the attributes
+         @question.attributes = predefined_question.attributes.except(:id)
+         @question.predefined_question_id = predefined_question.id
+
+         @question.save
+      #destroy if the question was previously selected.
       else
-        #find question
-        #destroy if found!!
+          @question = @survey.questions.find_by_predefined_question_id(predefined_question.id)
+          @question.destroy unless @question.nil?
       end
     end
-    respond_to do |wants|
-       if @survey.update_attributes(params[:survey])
+    #update the attributes for the survey
+    if @survey.update_attributes(params[:survey])
+       respond_to do |wants|  
          flash[:notice] = 'Survey was successfully updated.'
          wants.html{
            redirect_to survey_path(@survey) 
            }
-       else
+       end
+     else
+       respond_to do |wants|
          wants.html{ 
            redirect_to edit_survey_path(@survey)
-           }
+         }
        end
-    end
-end
+     end
+  end
   
   def new
     @predefined_questions = PredefinedQuestion.all
@@ -78,23 +89,20 @@ end
     
     #iterate through predefined questions and add to survey
     @predefined_questions.each do |predefined_question|
-      if params[:predefined_question][predefined_question.position][:selected]
-        @survey.questions.create(:position => predefined_question.position,
-                              :text => predefined_question.text,
-                              :question_type => predefined_question.question_type,
-                              :question_parameters => predefined_question.question_parameters,
-                              :html_parameters => predefined_question.html_parameters,
-                              :options => predefined_question.options)
+      if params[:predefined_question][predefined_question.id.to_s]
+        @question = @survey.questions.new(predefined_question.attributes.except(:id))
+        @question.predefined_question_id = predefined_question.id
+        @question.save                      
       end
     end
     
-    @survey.save
-    #render a response
-    respond_to do |wants|
-      if @survey.errors.empty?
+    if @survey.save
+      respond_to do |wants|
         flash[:notice] = "Survey was created successfully!"
         wants.html { redirect_to invitation_path(@survey) }
-      else
+      end
+    else
+      respond_to do |wants|
         wants.html { render :action => "new" }
       end
     end
@@ -112,33 +120,34 @@ end
   def respond
     @responses = []
     @survey = Survey.find(params[:id])
-    
     #validate all responses required for the survey  
     @survey.questions.each do |question|
       @response = current_organization_or_survey_invitation.responses.find_or_create_by_question_id(question.id)
-      @response.update_attributes(params[:question][question.id][:response])
+      @response.update_attributes(params[:question][question.id.to_s][:response])
       #if it is invalid, add to responses hash
       @responses[question.id] = @response unless @response.save
     end
     
     #if there were no invalid responses, redirect to the survey show page
-    respond_to do |wants|
-      wants.html{
-        if @responses.empty?
-          flash[:notice] = "Survey was successfully completed!"
-          #current user is an organization, redirect to the show page
-          if current_organization_or_survey_invitation.is_a?(Organization)
-            redirect_to survey_path(@survey)
-          #invite based user, redirect to sign-up page   
-          else
-            redirect_to signup_path
-          end
-        #else send back to the questions index
-        else
-          flash[:notice] = "Please review and re-submit your responses."
-          redirect_to survey_questions_path(@survey, @responses)
+    if @responses.empty?
+      flash[:notice] = "Survey was successfully completed!"
+      #current user is an organization, redirect to the show page
+      if current_organization_or_survey_invitation.is_a?(Organization)
+        respond_to do |wants|
+          wants.html{ redirect_to survey_path(@survey) }
         end
-      }
+      #invite based user, redirect to sign-up page   
+      else
+        respond_to do |wants|
+          wants.html{ redirect_to signup_path }
+        end
+      end
+    #else send back to the questions index
+    else
+      flash[:notice] = "Please review and re-submit your responses."
+      respond_to do |wants|
+        wants.html { redirect_to survey_questions_path(@survey) }
+      end
     end
   end
   
