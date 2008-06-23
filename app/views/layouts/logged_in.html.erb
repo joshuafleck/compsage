@@ -7,6 +7,12 @@
 </head>
 <body xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <div id="title">
+			<% if logged_in? && current_organization then %>
+				<div class="logged_in">
+					Welcome, <%=current_organization.name%> -
+					<%=link_to "Log Out", session_path, :method => :delete%>
+				</div>
+			<% end %>
       <img src="/images/title.gif" />
   </div>
   <div id="bar">
