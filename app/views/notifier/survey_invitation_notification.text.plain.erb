@@ -1,0 +1,6 @@
+<%=@invitation.invitee.contact_name%>,
+
+You have been invited by <%=@invitation.inviter.name%> to participate in a survey on <%=@invitation.survey.job_title%>.
+If you would like to participate in this survey, click the link below.
+
+<%=url_for(survey_path(@invitation.survey, :only_path => false))%>

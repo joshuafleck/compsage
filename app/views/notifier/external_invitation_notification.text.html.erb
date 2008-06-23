@@ -22,7 +22,7 @@ organizations of their choosing. [product name here] is a reliable and legal mea
 compensation practices.
 <br />
 <br />
-To become a member of [product name here], please click here: <a href="<%=@signup_link%>"></a>.
+To become a member of [product name here], please <%=link_to "click here", new_account_path(:key => @invitation.key, :only_path => false)%>.
 <br />
 <br />
 Best regards,
