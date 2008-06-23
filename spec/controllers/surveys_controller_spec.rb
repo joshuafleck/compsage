@@ -554,10 +554,6 @@ describe SurveysController, " handling PUT /surveys/1, with failure" do
   end
 end
 
-describe SurveysController, " handling PUT /surveys/1, with invalid responses" do
-  it "should assign invalid responses to the responses hash for the view"
-end
-
 describe SurveysController, "handling GET /surveys/search" do
   before(:each) do
     @current_organization = mock_model(Organization)
@@ -683,12 +679,13 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
     login_as(@current_organization)
     @q1 = mock_model(Question, :id => 1, :attributes => "")
     @q2 = mock_model(Question, :id => 2, :attributes => "")
-    @survey = mock_model(Survey, :id => 1, :questions => [@q1, @q2])
+    @questions = [@q1, @q2]
+    @survey = mock_model(Survey, :id => 1)
+    @survey.stub!(:questions).and_return(@questions)
     @responses = []
     @my_response = mock_model(Response, :update_attributes => true, :save => false)
-    @params = {
-      :id => 1,
-      :question => {"1" => @my_response, "2" => @my_response}
+    @params = {:id => 1,
+      :question => {"1" => {:response => @my_response}, "2" => {:response => @my_response}}
     }
     
     Survey.stub!(:find).and_return(@survey)
@@ -701,15 +698,18 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
   end
   
   it "should flash error messages" do 
-    pending
+    do_respond
+    flash[:notice].should eql("Please review and re-submit your responses.")
   end
   
-  it "should redirect to the surveys/id/questions page " do
-    pending
+  it "should render the surveys/id/questions page " do
+    do_respond
+    response.should render_template('surveys/questions')
   end
   
   it "should assign the invalid responses to the view " do
-    pending
+    do_respond
+    assigns[:responses].should_not be_nil
   end
   
 end
