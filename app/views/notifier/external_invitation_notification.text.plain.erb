@@ -14,7 +14,7 @@ of their fingertips. [product name here] allows HR professionals to send quick c
 compensation practices.
 
 To become a member of [product name here], please click the link below:
-<%=url_for(:host => "localhost:3000", :controller => 'accounts', :action => 'new', :key => @invitation.key)%>.
+<%=url_for(new_account_path(:key => @invitation.key, :only_path => false))%>.
 
 Best regards,
 The [product name here] team

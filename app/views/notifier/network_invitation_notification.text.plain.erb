@@ -1,0 +1,6 @@
+<%=@invitation.invitee.contact_name%>,
+
+You have been invited by <%=@invitation.inviter.name%> to join the network named <%=@invitation.network.name%>.
+If you would like to join, click the link below.
+
+<%=url_for(join_network_path(@invitation.network, :only_path => false))%>
