@@ -1,0 +1,11 @@
+brian_in_his_own:
+  network_id: 1
+  organization_id: 1
+  
+josh_in_his_own:
+  network_id: 2
+  organization_id: 2
+  
+dave_in_brians:
+  network_id: 1
+  organization_id: 3
