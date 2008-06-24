@@ -9,9 +9,20 @@ describe "/surveys/new" do
     render 'surveys/new'
   end
   
-  it "should render the new surveys form"
-  it "should render the survey questions form"
-  it "should have a submit button"
-  it "should have a cancel link"
+  it "should render the new surveys form" do
+     response.should have_tag("form")
+  end
+  
+  it "should render the survey questions form" do
+    pending
+  end
+  
+  it "should have a submit button" do
+    response.should have_tag("input[type=submit]")
+  end
+  
+  it "should have a cancel link" do
+    response.should have_tag("a[href=#{surveys_path}]", "Cancel")
+  end
 
 end

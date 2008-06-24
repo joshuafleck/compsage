@@ -81,9 +81,8 @@ class SurveysController < ApplicationController
   end
   
   def new
+    @page_title = "New Survey"
     @predefined_questions = PredefinedQuestion.all
-    puts @survey
-    puts ">>>>"
   end
   
   def create
