@@ -1,0 +1,19 @@
+<h2>New Survey</h2>
+<% form_for :survey, @survey, :url => surveys_path do |f| %>
+  <%=error_messages_for :survey %>
+  <p>Job Title: <%=f.text_field :job_title %></p>
+  <p>Job Description:<br />
+  <%=f.text_area :description, :rows => 4, :cols => 60 %></p>
+  <p>End Date: <%=f.text_field :end_date %>
+  <p>
+    Select the questions you wish to ask:
+    <ul>
+      <% @predefined_questions.each do |question| %>
+        <% fields_for "predefined_question", :index => question.id do |question_form| %>
+          <li><%=question_form.check_box :included%> <%=question.description%></li>
+        <% end %>
+      <% end %>
+    </ul>
+  </p>
+  <p><input type="submit" value="Create" /></p>
+<% end %>

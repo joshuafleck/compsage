@@ -374,9 +374,9 @@ describe SurveysController, " handling POST /surveys" do
     @survey = mock_model(Survey, :id => 1, :save => true, :errors => [], :new_record? => true)
     @surveys = []
     @questions = []
-    @pdq1 = mock_model(PredefinedQuestion, :id => 1, :attributes => {:id => 1, :another => "attribute"})
-    @pdq2 = mock_model(PredefinedQuestion, :id => 2, :attributes => {:id => 2, :another => "attribute"})
-    @pdq3 = mock_model(PredefinedQuestion, :id => 3, :attributes => {:id => 3, :another => "attribute3"})
+    @pdq1 = mock_model(PredefinedQuestion, :id => 1, :attributes => {'id' => 1, 'another' => "attribute"})
+    @pdq2 = mock_model(PredefinedQuestion, :id => 2, :attributes => {'id' => 2, 'another' => "attribute"})
+    @pdq3 = mock_model(PredefinedQuestion, :id => 3, :attributes => {'id' => 3, 'another' => "attribute3"})
     @question = mock_model(Question, :save => :true, :predefined_question_id= => 1)
     
     PredefinedQuestion.stub!(:all).and_return([@pdq1, @pdq2, @pdq3])
@@ -396,8 +396,8 @@ describe SurveysController, " handling POST /surveys" do
   end
   
   it "should add predefined questions to the survey" do
-    @questions.should_receive(:new).with(@pdq1.attributes.except(:id)).and_return(@question)
-    @questions.should_receive(:new).with(@pdq3.attributes.except(:id)).and_return(@question)
+    @questions.should_receive(:new).with(@pdq1.attributes.except('id')).and_return(@question)
+    @questions.should_receive(:new).with(@pdq3.attributes.except('id')).and_return(@question)
     @question.should_receive(:save).twice.and_return(true)
     
     do_post
@@ -443,9 +443,10 @@ describe SurveysController, " handling PUT /surveys/1" do
     @survey = mock_model(Survey, :id => "1", :update_attributes => true, :sponsor => @current_organization)
     @surveys_proxy = mock('surveys proxy')
     @open_surveys = []
-    @pdq1 = mock_model(PredefinedQuestion, :id => 1, :attributes => {:id => 1, :another => "attribute"})
-    @pdq2 = mock_model(PredefinedQuestion, :id => 2, :attributes => {:id => 2, :another => "attribute"})
-    @pdq3 = mock_model(PredefinedQuestion, :id => 3, :attributes => {:id => 3, :another => "attribute3"})
+    @pdq1 = mock_model(PredefinedQuestion, :id => 1, :attributes => {'id' => 1, 'another' => "attribute"})
+    @pdq2 = mock_model(PredefinedQuestion, :id => 2, :attributes => {'id' => 2, 'another' => "attribute"})
+    @pdq3 = mock_model(PredefinedQuestion, :id => 3, :attributes => {'id' => 3, 'another' => "attribute3"})
+    
     @params = {:predefined_question => {"1" => "true", "3" => "true"},
                :id => 1}
     @questions = []
@@ -488,8 +489,8 @@ describe SurveysController, " handling PUT /surveys/1" do
   
   it "should update the questions for the survey that are included in the params" do
     @questions.should_receive(:find_or_create_by_predefined_question_id).twice.and_return(@question)
-    @question.should_receive(:attributes=).with(@pdq1.attributes.except(:id))
-    @question.should_receive(:attributes=).with(@pdq3.attributes.except(:id))
+    @question.should_receive(:attributes=).with(@pdq1.attributes.except('id'))
+    @question.should_receive(:attributes=).with(@pdq3.attributes.except('id'))
     @question.should_receive(:save).twice.and_return(true)
     
     do_update

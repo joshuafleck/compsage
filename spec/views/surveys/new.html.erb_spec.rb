@@ -3,6 +3,9 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 describe "/surveys/new" do
 
   before(:each) do
+    # TODO: Implement the spec.
+    assigns[:predefined_questions] = []
+    
     render 'surveys/new'
   end
   

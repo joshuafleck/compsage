@@ -1,0 +1,24 @@
+base_average:
+  id: 1
+  position: 1
+  description: Average base wage/salary
+  text: What is the average base wage or salary for all incumbants?
+  question_type: numerical_field
+pay_range_minimum:
+  id: 2
+  position: 2
+  description: Pay range minimum
+  text: Pay range minimum
+  question_type: numerical_field
+pay_range_midpoint:
+  id: 3
+  position: 3
+  description: Pay range midpoint
+  text: Pay range midpoint
+  question_type: numerical_field
+pay_range_maximum:
+  id: 4
+  position: 4
+  description: Pay range maximum
+  text: Pay range maximum
+  question_type: numerical_field

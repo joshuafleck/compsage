@@ -1,4 +1,5 @@
 class SurveysController < ApplicationController
+  layout 'logged_in'
   #we require a valid login if you are creating or editing a survey.
   before_filter :login_required, :only => [ :edit, :update, :create, :new, :index ]
   before_filter :login_or_survey_invitation_required, :except => [ :edit, :update, :create, :new, :index ]
@@ -52,7 +53,7 @@ class SurveysController < ApplicationController
          #find or create the question
          @question = @survey.questions.find_or_create_by_predefined_question_id(predefined_question.id)
          #assign the attributes
-         @question.attributes = predefined_question.attributes.except(:id)
+         @question.attributes = predefined_question.attributes.except('id', 'description')
          @question.predefined_question_id = predefined_question.id
 
          @question.save
@@ -81,6 +82,8 @@ class SurveysController < ApplicationController
   
   def new
     @predefined_questions = PredefinedQuestion.all
+    puts @survey
+    puts ">>>>"
   end
   
   def create
@@ -90,7 +93,7 @@ class SurveysController < ApplicationController
     #iterate through predefined questions and add to survey
     @predefined_questions.each do |predefined_question|
       if params[:predefined_question][predefined_question.id.to_s]
-        @question = @survey.questions.new(predefined_question.attributes.except(:id))
+        @question = @survey.questions.new(predefined_question.attributes.except('id', 'description'))
         @question.predefined_question_id = predefined_question.id
         @question.save                      
       end
