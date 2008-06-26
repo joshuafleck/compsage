@@ -26,4 +26,11 @@ describe "/network_invitations/index" do
     response.should have_tag("form")
   end
   
+  it "should have a Invite! button" do
+    response.should have_tag("input[type=submit]")
+  end
+  
+  it "should have a Done link" do
+    response.should have_tag("a","Done")
+  end
 end
