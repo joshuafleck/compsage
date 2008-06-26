@@ -11,7 +11,11 @@ class Notifier < ActionMailer::Base
   
   # sent when an external network invitation is sent
   def external_network_invitation_notification(invitation)
-    
+     recipients invitation.email
+     from       "system@huminsight.com"
+     subject    "You have been invited to <product name here>"
+     
+     body :invitation => invitation, :network => invitation.network
   end
   
   # sent when a global external invitation is sent
