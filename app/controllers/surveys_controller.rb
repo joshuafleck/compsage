@@ -94,6 +94,7 @@ class SurveysController < ApplicationController
       if params[:predefined_question][predefined_question.id.to_s]
         @question = @survey.questions.new(predefined_question.attributes.except('id', 'description'))
         @question.predefined_question_id = predefined_question.id
+        @question.survey = @survey
         @question.save                      
       end
     end

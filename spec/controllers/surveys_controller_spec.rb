@@ -377,7 +377,7 @@ describe SurveysController, " handling POST /surveys" do
     @pdq1 = mock_model(PredefinedQuestion, :id => 1, :attributes => {'id' => 1, 'another' => "attribute"})
     @pdq2 = mock_model(PredefinedQuestion, :id => 2, :attributes => {'id' => 2, 'another' => "attribute"})
     @pdq3 = mock_model(PredefinedQuestion, :id => 3, :attributes => {'id' => 3, 'another' => "attribute3"})
-    @question = mock_model(Question, :save => :true, :predefined_question_id= => 1)
+    @question = mock_model(Question, :save => :true, :predefined_question_id= => 1, :survey= => @survey)
     
     PredefinedQuestion.stub!(:all).and_return([@pdq1, @pdq2, @pdq3])
     @current_organization.stub!(:surveys).and_return(@surveys)
