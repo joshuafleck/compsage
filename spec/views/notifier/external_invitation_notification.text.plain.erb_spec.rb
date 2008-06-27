@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "external invitation email" do
+describe "external invitation plain text email" do
 
   before(:each) do
   

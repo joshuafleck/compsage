@@ -4,13 +4,14 @@ class InvitationObserver < ActiveRecord::Observer
     # send emails
     if invitation.is_a?(ExternalNetworkInvitation)
       Notifier.deliver_external_network_invitation_notification(invitation)
-    elsif invitation.is_a?(NetworkInvitation)
+    elsif invitation.is_a?(ExternalSurveyInvitation)
+      Notifier.deliver_external_survey_invitation_notification(invitation)
+    elsif  invitation.is_a?(NetworkInvitation)
       Notifier.deliver_network_invitation_notification(invitation)
     elsif invitation.is_a?(ExternalInvitation)
       Notifier.deliver_external_invitation_notification(invitation)
     end
     
-    # TODO: Survey Invitation stuff.
   end
   
 end

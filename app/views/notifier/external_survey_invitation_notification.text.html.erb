@@ -5,7 +5,9 @@ Dear <%=@invitation.name%>,
 <br />
 <br />
 Your organization been invited by <%=@invitation.inviter.contact_name%> of <%=@invitation.inviter.name%> to
-become part of an expanding network of organizations that utilize [product name here].
+participate in a [product name here] compensation survey. By taking a few minutes to respond to this survey,
+you will be allowed to view the results of the survey for free. There is no signup required. Just click on this
+link to get started: <%=link_to 'Take Survey', survey_path(@survey, :key => @invitation.key, :only_path => false)%>
 <br />
 <br />
 <% if !@invitation.message.blank? then %>
@@ -16,18 +18,19 @@ become part of an expanding network of organizations that utilize [product name 
   <br />
   <br />  
 <% end %>
+Here are the details of the survey:
+<br />
+<b>Job Title: </b><%=@survey.job_title%>
+<br />
+<b>Response deadline: </b><%=time_ago_in_words(@survey.end_date)%>
+<br />
+<b>Sponsor: </b><%=@survey.sponsor.name%>
+<br />
+<br />
 [product name here] is a website for HR professionals that want compensation information at the touch
 of their fingertips. [product name here] allows HR professionals to send quick compensory surveys to 
 organizations of their choosing. [product name here] is a reliable and legal means to gauge competitor's
 compensation practices.
-<br />
-<br />
-To become a member of [product name here], please 
-<% if @network.nil? then %>
-  <%=link_to "click here", new_account_path(:key => @invitation.key, :only_path => false)%>.
-<% else %>
-    <%=link_to "click here", new_account_path(:key => @invitation.key, :network_id => @network.id, :only_path => false)%>.
-<% end %>
 <br />
 <br />
 Best regards,

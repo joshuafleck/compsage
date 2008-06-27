@@ -18,6 +18,15 @@ class Notifier < ActionMailer::Base
      body :invitation => invitation, :network => invitation.network
   end
   
+  # sent when an external survey invitation is sent
+  def external_survey_invitation_notification(invitation)
+     recipients invitation.email
+     from       "system@huminsight.com"
+     subject    "You have been invited to participate in a <product name here> compensation survey"
+     
+     body :invitation => invitation, :survey => invitation.survey  
+  end
+  
   # sent when a global external invitation is sent
   def external_invitation_notification(invitation)
      recipients invitation.email
@@ -27,4 +36,5 @@ class Notifier < ActionMailer::Base
      body :invitation => invitation    
   end
   
+  #TODO: send survey invitation notification
 end

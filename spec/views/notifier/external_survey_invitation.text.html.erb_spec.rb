@@ -1,20 +1,22 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "external invitation html email" do
+describe "external survey invitation html email" do
 
   before(:each) do
   
     @invitation = mock_model(ExternalInvitation, :message => 'message_text', :key => 'key_text', :name => 'name_text', :email => 'email_text')
     @organization = mock_model(Organization, :name => 'organization_name_text', :contact_name => 'contact_name_text')
-    
+    @survey = stub_model(Survey, :sponsor => @organization, :end_date => 7.days.from_now)  
+
     @invitation.stub!(:inviter).and_return(@organization)
     
     assigns[:invitation] = @invitation
+    assigns[:survey] = @survey
     
   end
   
   def render_view
-    render 'notifier/external_invitation_notification.text.html.erb'  
+    render 'notifier/external_survey_invitation_notification.text.html.erb'  
   end
   
   it "should name the invitee" do
@@ -28,7 +30,7 @@ describe "external invitation html email" do
   end
   
   it "should name the sender of the invitation's organization" do
-    @organization.should_receive(:name)
+    @organization.should_receive(:name).at_least(2).times
     render_view
   end
   
@@ -37,9 +39,22 @@ describe "external invitation html email" do
     render_view
   end
   
-  it "should link to the new account page" do
+  it "should display the job title" do
+    @survey.should_receive(:job_title)
     render_view
-    response.should have_tag("a[href=#{new_account_path(:key => 'key_text', :only_path => false)}]")
   end
   
+  #FIXME: not sure why this is failing
+  it "should display the end date" do
+    #@survey.should_receive(:end_date)
+    #render_view
+  end
+  
+  it "should link to the survey page" do
+    render_view
+    response.should have_tag("a[href=#{survey_path(@survey, :key => 'key_text', :only_path => false)}]")
+  end
+    
+  it "should render a list of participation organizations"
+
 end

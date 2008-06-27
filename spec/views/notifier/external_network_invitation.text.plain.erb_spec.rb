@@ -1,20 +1,21 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "external invitation html email" do
+describe "external network invitation plain text email" do
 
   before(:each) do
-  
+    @network = stub_model(Network)  
     @invitation = mock_model(ExternalInvitation, :message => 'message_text', :key => 'key_text', :name => 'name_text', :email => 'email_text')
     @organization = mock_model(Organization, :name => 'organization_name_text', :contact_name => 'contact_name_text')
-    
+
     @invitation.stub!(:inviter).and_return(@organization)
     
     assigns[:invitation] = @invitation
+    assigns[:network] = @network
     
   end
   
   def render_view
-    render 'notifier/external_invitation_notification.text.html.erb'  
+    render 'notifier/external_network_invitation_notification.text.plain.erb'  
   end
   
   it "should name the invitee" do
@@ -38,8 +39,7 @@ describe "external invitation html email" do
   end
   
   it "should link to the new account page" do
-    render_view
-    response.should have_tag("a[href=#{new_account_path(:key => 'key_text', :only_path => false)}]")
+    pending
   end
   
 end
