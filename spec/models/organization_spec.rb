@@ -66,6 +66,10 @@ describe Organization do
     Organization.reflect_on_association(:responses).should_not be_nil
   end
   
+  it "should have many participations" do
+    Organization.reflect_on_association(:participations).should_not be_nil
+  end
+  
   it 'should require a password' do
     @organization.attributes = valid_organization_attributes.except(:password)
     @organization.should have(3).errors_on(:password)

@@ -299,9 +299,7 @@ module ExternalSurveyInvitationSpecHelper
       :name => 'David E. Peteron',
       :email => 'pete2786@umn.edu',
       :inviter => organization_mock,
-      :survey => mock_model(Survey),
-      :discussion => [],
-      :responses => []
+      :survey => mock_model(Survey, :job_title => 'test', :end_date => Time.now + 2.days, :sponsor => organization_mock)
     }
   end
   
@@ -329,6 +327,10 @@ describe ExternalSurveyInvitation do
   
   it "should have many responses" do
   	ExternalSurveyInvitation.reflect_on_association(:responses).should_not be_nil 
+  end
+  
+  it "should have one participation" do
+  	ExternalSurveyInvitation.reflect_on_association(:participation).should_not be_nil 
   end
   
   it "should be invalid if a survey is not specified" do
