@@ -9,7 +9,7 @@
   <p><span class="label">Inviter: </span><%=survey_invitation.inviter.name%></p>
   </div>
   <div class="invitation_actions">    
-    <%=link_to "Accept", survey_path(survey_invitation.survey), :method => :put%>
+    <%=link_to "Take Survey", survey_path(survey_invitation.survey), :method => :put%>
     <%=link_to "Decline", invitation_path(survey_invitation), :method => :delete %>
   </div>
 </li>

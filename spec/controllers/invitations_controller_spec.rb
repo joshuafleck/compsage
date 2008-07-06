@@ -24,9 +24,6 @@ describe InvitationsController, " handling GET /invitations" do
     @current_organization.stub!(:survey_invitations).and_return(@survey_invitations)
     @current_organization.stub!(:network_invitations).and_return(@network_invitations)
     
-    @survey_invitations.stub!(:not_accepted).and_return(@survey_invitations)
-    @network_invitations.stub!(:not_accepted).and_return(@network_invitations)
-    
   end
   
   def do_get
@@ -50,9 +47,7 @@ describe InvitationsController, " handling GET /invitations" do
   
   it "should find all non-accepted invitations" do
     @current_organization.should_receive(:survey_invitations).and_return(@survey_invitations)
-    @survey_invitations.should_receive(:not_accepted).and_return(@survey_invitations)
     @current_organization.should_receive(:network_invitations).and_return(@network_invitations)
-    @network_invitations.should_receive(:not_accepted).and_return(@network_invitations)
     do_get
   end
   
@@ -73,8 +68,6 @@ describe InvitationsController, " handling GET /invitations.xml" do
     @invitations = [mock_model(Invitation)]
     
     @current_organization.stub!(:invitations).and_return(@invitations)
-    
-    @invitations.stub!(:not_accepted).and_return(@invitations)
     
     @invitations.stub!(:to_xml).and_return("XML")
     
@@ -97,7 +90,6 @@ describe InvitationsController, " handling GET /invitations.xml" do
   
   it "should find all non-accepted invitations" do
     @current_organization.should_receive(:invitations).and_return(@invitations)
-    @invitations.should_receive(:not_accepted).and_return(@invitations)
     do_get
   end
   
@@ -118,7 +110,6 @@ describe InvitationsController, " handling DELETE /invitations/1" do
     
     @current_organization.stub!(:invitations).and_return(@invitations)
     
-    @invitations.stub!(:not_accepted).and_return(@invitations)    
     @invitations.stub!(:find).and_return(@invitation)    
     
     @invitation.stub!(:destroy).and_return(true)

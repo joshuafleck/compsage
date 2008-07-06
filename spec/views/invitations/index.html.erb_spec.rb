@@ -30,7 +30,7 @@ describe "/invitations/index" do
   end
   
   it "should have one or more accept button" do
-    response.should have_tag("a","Accept")
+    response.should have_tag("a","Take Survey")
   end
   
   it "should have one or more decline button" do

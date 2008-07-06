@@ -8,13 +8,12 @@ class InvitationsController < ApplicationController
     
     respond_to do |wants|
       wants.html do
-        @survey_invitations = current_organization.survey_invitations.not_accepted
-        @network_invitations = current_organization.network_invitations.not_accepted 
-        #The not_accepted scope is here for consistency (network invitations are destroyed on acceptance)      
+        @survey_invitations = current_organization.survey_invitations
+        @network_invitations = current_organization.network_invitations    
         
       end
       wants.xml do      
-        @invitations = current_organization.invitations.not_accepted
+        @invitations = current_organization.invitations
       	render :xml => @invitations.to_xml 
       end
     end
@@ -24,7 +23,7 @@ class InvitationsController < ApplicationController
   def destroy
     @page_title = "My Invitations"
     
-    @invitation = current_organization.invitations.not_accepted.find(params[:id])
+    @invitation = current_organization.invitations.find(params[:id])
     
     @invitation.destroy
     
