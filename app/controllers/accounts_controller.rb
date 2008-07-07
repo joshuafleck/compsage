@@ -18,7 +18,8 @@ class AccountsController < ApplicationController
 	def new
 	  @page_title = "New Account"
 	  
-	  @external_invitation = ExternalInvitation.find_by_key(params[:key])
+	  #The external invitation can be found in the session if it is an external survey invitation, otherwise, check the URL for a key
+	  @external_invitation ||= current_survey_invitation || ExternalInvitation.find_by_key(params[:key])
 	   
 	  @organization = Organization.new
 	  
@@ -33,14 +34,19 @@ class AccountsController < ApplicationController
 	def create
 	  @page_title = "New Account"
 	
-	  @external_invitation = ExternalInvitation.find_by_key(params[:key])
+	  @external_invitation = Invitation.find_by_key(params[:key])
 	  
 	  @organization = Organization.new(params[:organization])
 	  	  
 	  @organization.set_logo(params[:logo])
 	    
-    if @organization.save then
+    #If the user was invited via ExternalNetworkInvitation, add the organization to the network
+    if @external_invitation.is_a?(ExternalNetworkInvitation) then
+      @organization.networks << @external_invitation.network
+    end
         
+    if @organization.save then
+    
       respond_to do |wants|
         wants.html {         
           flash[:notice] = "Your account was created successfully."

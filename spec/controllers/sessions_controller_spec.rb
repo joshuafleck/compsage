@@ -6,15 +6,25 @@ describe SessionsController do
     # set up an organization
     @brian = Organization.new(valid_organization_attributes)
     @brian.save
+    
+    @invitation = ExternalSurveyInvitation.new(:inviter => organization_mock, :survey => survey_mock, :name => 'TEST', :key => '1234', :email => '111@1.com')
+    @invitation.save!
   end
   
   after(:all) do
     @brian.destroy
+    @invitation.destroy
   end
   
   it 'logins and redirects' do
     post :create, :email => valid_organization_attributes[:email], :password => valid_organization_attributes[:password]
     session[:organization_id].should_not be_nil
+    response.should be_redirect
+  end
+  
+  it 'logins and redirects when there is a valid survey invitation' do
+    get :create_survey_session, :key => @invitation.key
+    session[:external_survey_invitation_id].should eql(@invitation.id)
     response.should be_redirect
   end
   

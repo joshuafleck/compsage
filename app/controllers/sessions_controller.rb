@@ -31,4 +31,10 @@ class SessionsController < ApplicationController
     flash[:notice] = "You have been logged out."
     redirect_back_or_default('/')
   end
+  
+  #This method is for creating a session when the user is responding to a survey with an External Survey Invitation
+  def create_survey_session
+    self.current_survey_invitation = ExternalSurveyInvitation.find_by_key(params[:key])
+    redirect_to survey_path(self.current_survey_invitation.survey)
+  end
 end

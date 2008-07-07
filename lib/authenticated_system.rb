@@ -22,7 +22,7 @@ module AuthenticatedSystem
     end
     
     def current_organization_or_survey_invitation
-      @current_organization || @current_survey_invitation
+      current_survey_invitation || current_organization
     end
     
     # Store the given organization id in the session.
@@ -32,7 +32,7 @@ module AuthenticatedSystem
     end
 
     def current_survey_invitation=(new_invitation)
-      session[:external_survey_invitation] = (new_invitation.nil? || new_invitation.is_a?(Symbol)) ? nil : new_invitation.id
+      session[:external_survey_invitation_id] = (new_invitation.nil? || new_invitation.is_a?(Symbol)) ? nil : new_invitation.id
       @current_survey_invitation = new_invitation || :false
     end
     

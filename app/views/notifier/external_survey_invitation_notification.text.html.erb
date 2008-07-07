@@ -7,7 +7,7 @@ Dear <%=@invitation.name%>,
 Your organization been invited by <%=@invitation.inviter.contact_name%> of <%=@invitation.inviter.name%> to
 participate in a [product name here] compensation survey. By taking a few minutes to respond to this survey,
 you will be allowed to view the results of the survey for free. There is no signup required. Just click on this
-link to get started: <%=link_to 'Take Survey', survey_path(@survey, :key => @invitation.key, :only_path => false)%>
+link to get started: <%=link_to 'Take Survey', survey_login_path(:survey_id => @survey.id, :key => @invitation.key, :only_path => false)%>
 <br />
 <br />
 <% if !@invitation.message.blank? then %>

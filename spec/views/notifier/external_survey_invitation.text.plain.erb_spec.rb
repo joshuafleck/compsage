@@ -50,7 +50,7 @@ describe "external survey invitation plain text email" do
     #render_view
   end
   
-  it "should link to the new account page" do
+  it "should link to take the survey" do
     pending
   end
   

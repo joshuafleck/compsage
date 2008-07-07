@@ -97,6 +97,8 @@ describe AccountsController, " handling GET /account/new" do
     ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     
     @params = {:key => @key}
+    
+    login_as_survey_invitation(false)
   end
   
   def do_get
@@ -139,9 +141,11 @@ describe AccountsController, " handling POST /account" do
     @organization = mock_model(Organization, :save => true)
     @external_invitation = mock_model(ExternalInvitation)
     
-    ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
+    Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:new).and_return(@organization)
+    
     @organization.stub!(:set_logo)
+    @external_invitation.stub!(:is_a?).with(ExternalNetworkInvitation).and_return(false) 
     
     @params = {:key => @key}
     
@@ -152,7 +156,7 @@ describe AccountsController, " handling POST /account" do
   end
 
   it "should require a valid external invitation key" do
-    ExternalInvitation.should_receive(:find_by_key).with(@key).and_return(@external_invitation)
+    Invitation.should_receive(:find_by_key).with(@key).and_return(@external_invitation)
     do_post
   end
   
@@ -187,6 +191,40 @@ describe AccountsController, " handling POST /account" do
 
   it "should destroy the external invitation" do
     pending
+  end
+
+end
+
+describe AccountsController, " handling POST /account with an external network invitation" do
+
+  before(:each) do
+  
+    @key = "1234"
+  
+    @organization = mock_model(Organization, :save => true)
+    @network = mock_model(Network)
+    @external_invitation = mock_model(ExternalNetworkInvitation, :network => @network, :is_a? => true)
+    @networks = []
+        
+    Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
+    Organization.stub!(:new).and_return(@organization)
+        
+    @networks.stub!(:<<)
+    @organization.stub!(:set_logo)
+    @organization.stub!(:networks).and_return(@networks)
+            
+    @params = {:key => @key}
+    
+  end
+  
+  def do_post
+    get :create, @params
+  end
+
+  it "should add the organization to the network" do
+    @organization.should_receive(:networks).and_return(@networks)
+    @networks.should_receive(:<<).with(@external_invitation.network)
+    do_post
   end
 
 end

@@ -6,7 +6,7 @@ describe "external survey invitation html email" do
   
     @invitation = mock_model(ExternalInvitation, :message => 'message_text', :key => 'key_text', :name => 'name_text', :email => 'email_text')
     @organization = mock_model(Organization, :name => 'organization_name_text', :contact_name => 'contact_name_text')
-    @survey = stub_model(Survey, :sponsor => @organization, :end_date => 7.days.from_now)  
+    @survey = stub_model(Survey, :sponsor => @organization, :end_date => 7.days.from_now, :id => '1')  
 
     @invitation.stub!(:inviter).and_return(@organization)
     
@@ -52,7 +52,7 @@ describe "external survey invitation html email" do
   
   it "should link to the survey page" do
     render_view
-    response.should have_tag("a[href=#{survey_path(@survey, :key => 'key_text', :only_path => false)}]")
+    response.should have_tag("a","Take Survey")
   end
     
   it "should render a list of participation organizations"

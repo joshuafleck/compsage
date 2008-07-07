@@ -25,4 +25,5 @@ ActionController::Routing::Routes.draw do |map|
   map.signup 'signup', :controller => 'pending_accounts', :action => 'create', :conditions => { :method => :post }
   
   map.login 'login', :controller => 'sessions', :action => 'new'
+  map.survey_login 'survey_login', :controller => 'sessions', :action => 'create_survey_session'
 end
