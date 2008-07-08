@@ -94,7 +94,7 @@ describe AccountsController, " handling GET /account/new" do
     @external_invitation = mock_model(ExternalInvitation)
     
     Organization.stub!(:new).and_return(@organization)    
-    ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
+    Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     
     @params = {:key => @key}
     
@@ -106,7 +106,7 @@ describe AccountsController, " handling GET /account/new" do
   end
 
   it "should require a valid external invitation key" do
-    ExternalInvitation.should_receive(:find_by_key).with(@key).and_return(@external_invitation)
+    Invitation.should_receive(:find_by_key).with(@key).and_return(@external_invitation)
     do_get
   end
   
@@ -238,7 +238,7 @@ describe AccountsController, " handling POST /account with validation error" do
     @organization = mock_model(Organization, :save => false)
     @external_invitation = mock_model(ExternalInvitation)
     
-    ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
+    Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:new).and_return(@organization)
     @organization.stub!(:set_logo)
     

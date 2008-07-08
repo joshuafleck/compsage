@@ -19,7 +19,7 @@ class AccountsController < ApplicationController
 	  @page_title = "New Account"
 	  
 	  #The external invitation can be found in the session if it is an external survey invitation, otherwise, check the URL for a key
-	  @external_invitation ||= current_survey_invitation || ExternalInvitation.find_by_key(params[:key])
+	  @external_invitation = current_survey_invitation || Invitation.find_by_key(params[:key])
 	   
 	  @organization = Organization.new
 	  
