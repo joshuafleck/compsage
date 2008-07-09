@@ -11,4 +11,6 @@ Rails::Initializer.run do |config|
   config.active_record.observers = :invitation_observer
   
   config.action_mailer.default_url_options = {:host => "localhost", :port => 3000}
+
+  config.gem 'fiveruns_tuneup', :version => '>=0.8.10'
 end
