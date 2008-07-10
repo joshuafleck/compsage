@@ -3,3 +3,5 @@ db/schema.rb
 log/*
 config/ultrasphinx/development.conf
 public/logos/*
+public/*/tuneup
+test
