@@ -34,6 +34,7 @@ class OrganizationsController < ApplicationController
   
   def search    
     @page_title = "Search Members"
+    @breadcrumbs << ["Members", url_for(organizations_path)] 
     @search = Ultrasphinx::Search.new(:query => params[:search_text])
     @search.run
     @organizations = @search.results

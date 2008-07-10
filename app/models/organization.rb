@@ -65,6 +65,9 @@ class Organization < ActiveRecord::Base
       self.logo = Logo.new(logo_params)
       self.logo.organization = self
       self.logo.save!
+      
+    else    
+      true
     end
   end
   

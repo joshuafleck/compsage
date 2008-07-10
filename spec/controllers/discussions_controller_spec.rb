@@ -310,7 +310,7 @@ describe DiscussionsController, " handling POST /discussions" do
   
   it "should redirect to the discussion index page upon success" do
     do_post
-    response.should redirect_to(survey_discussions_path(@survey))
+    response.should redirect_to(survey_path(@survey))
   end
   
   it "should flash a message indicating succcess" do
@@ -391,7 +391,7 @@ describe DiscussionsController, " handling PUT /discussions/1" do
      
   it "should redirect to the discussion page for related survey upon success" do
     do_put
-    response.should redirect_to(survey_discussions_path(@survey))
+    response.should redirect_to(survey_path(@survey))
   end
   
   it "should flash a message regarding the success of the edit" do
@@ -468,7 +468,7 @@ describe DiscussionsController, " handling DELETE /discussions/1" do
   
   it "should redirect discussions page for the related survey upon success" do
     do_delete
-    response.should redirect_to(survey_discussions_path(@survey)) 
+    response.should redirect_to(survey_path(@survey)) 
   end
   
   it "should flash a message regarding the success of the action" do
@@ -515,7 +515,7 @@ describe DiscussionsController, "handling PUT /discussions/1/report" do
   
   it "should redirect to the discussion page" do
     do_put
-    response.should redirect_to(survey_discussions_path(@survey))  
+    response.should redirect_to(survey_path(@survey))  
   end
   
   it "should flash a success message upon success" do

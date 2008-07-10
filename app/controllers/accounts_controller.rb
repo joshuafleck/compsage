@@ -31,6 +31,7 @@ class AccountsController < ApplicationController
 	
 	def edit
 	  @page_title = "Edit My Account"
+    @breadcrumbs << ["My Account", url_for(account_path)]
 	  
   	@organization = current_organization
 	end
@@ -47,6 +48,7 @@ class AccountsController < ApplicationController
       @organization.networks << @external_invitation.network
     end
         
+    #Save the organization and set the logo
     if @organization.save && @organization.set_logo(params[:logo]) then
       
       respond_to do |wants|
@@ -71,6 +73,7 @@ class AccountsController < ApplicationController
 	
 	def update
 	  @page_title = "Edit My Account"
+    @breadcrumbs << ["My Account", url_for(account_path)]
 	
 	  @organization = current_organization  
      

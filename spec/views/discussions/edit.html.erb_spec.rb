@@ -25,7 +25,7 @@ describe "discussions/edit" do
   end
   
   it "should have a cancel button" do
-    response.should have_tag("a[href=#{survey_discussions_path(@survey)}]", "Cancel")
+    response.should have_tag("a[href=#{survey_path(@survey)}]", "Cancel")
   end
   
   it "should allow the edit of a subject if the discussion is a root" do

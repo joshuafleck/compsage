@@ -24,7 +24,7 @@ describe "discussions/new" do
   end
   
   it "should have a cancel button" do
-    response.should have_tag("a[href=#{survey_discussions_path(@survey)}]", "Cancel")
+    response.should have_tag("a[href=#{survey_path(@survey)}]", "Cancel")
   end
   
   it "should have a parameter for the parent discussion id if the parent exists" do

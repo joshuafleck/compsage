@@ -17,12 +17,16 @@ module AuthenticatedSystem
       @current_organization ||= (login_from_session || login_from_basic_auth || login_from_cookie || :false)
     end
 
+    # Accesses the current survey invitation from the session.  Set it to :false if login fails
+    # so that future calls do not hit the database.
     def current_survey_invitation
       @current_survey_invitation ||= (login_from_survey_invitation || :false)
     end
     
+    # Accesses the current organization or survey invitation from the session.  Set it to :false if login fails
+    # so that future calls do not hit the database.    
     def current_organization_or_survey_invitation
-      current_survey_invitation || current_organization
+      @current_organization_or_survey_invitation ||= (login_from_session || login_from_basic_auth || login_from_cookie || login_from_survey_invitation || :false)
     end
     
     # Store the given organization id in the session.
@@ -31,6 +35,7 @@ module AuthenticatedSystem
       @current_organization = new_organization || :false
     end
 
+    # Store the given external survey invitation id in the session
     def current_survey_invitation=(new_invitation)
       session[:external_survey_invitation_id] = (new_invitation.nil? || new_invitation.is_a?(Symbol)) ? nil : new_invitation.id
       @current_survey_invitation = new_invitation || :false

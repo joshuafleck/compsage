@@ -90,8 +90,8 @@ describe AccountsController, " handling GET /account/new" do
   
     @key = "1234"
   
-    @organization = mock_model(Organization)
-    @external_invitation = mock_model(ExternalInvitation)
+    @organization = mock_model(Organization, :contact_name= => 'test', :email= => 'test')
+    @external_invitation = mock_model(ExternalInvitation, :name => 'test', :email => 'test')
     
     Organization.stub!(:new).and_return(@organization)    
     Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
@@ -139,12 +139,12 @@ describe AccountsController, " handling POST /account" do
     @key = "1234"
   
     @organization = mock_model(Organization, :save => true)
-    @external_invitation = mock_model(ExternalInvitation)
+    @external_invitation = mock_model(ExternalInvitation, :name => 'test', :email => 'test')
     
     Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:new).and_return(@organization)
     
-    @organization.stub!(:set_logo)
+    @organization.stub!(:set_logo).and_return(true)
     @external_invitation.stub!(:is_a?).with(ExternalNetworkInvitation).and_return(false) 
     
     @params = {:key => @key}
@@ -203,14 +203,14 @@ describe AccountsController, " handling POST /account with an external network i
   
     @organization = mock_model(Organization, :save => true)
     @network = mock_model(Network)
-    @external_invitation = mock_model(ExternalNetworkInvitation, :network => @network, :is_a? => true)
+    @external_invitation = mock_model(ExternalNetworkInvitation, :network => @network, :is_a? => true, :name => 'test', :email => 'test')
     @networks = []
         
     Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:new).and_return(@organization)
         
     @networks.stub!(:<<)
-    @organization.stub!(:set_logo)
+    @organization.stub!(:set_logo).and_return(true)
     @organization.stub!(:networks).and_return(@networks)
             
     @params = {:key => @key}
@@ -236,7 +236,7 @@ describe AccountsController, " handling POST /account with validation error" do
     @key = "1234"
   
     @organization = mock_model(Organization, :save => false)
-    @external_invitation = mock_model(ExternalInvitation)
+    @external_invitation = mock_model(ExternalInvitation, :name => 'test', :email => 'test')
     
     Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:new).and_return(@organization)
