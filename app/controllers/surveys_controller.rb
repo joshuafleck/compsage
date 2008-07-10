@@ -27,6 +27,8 @@ class SurveysController < ApplicationController
         if @survey.closed? == :true
           redirect_to survey_report_path(@survey)
         end
+        #Show a different layout if the user is replying with an external survey invitation
+        render :layout => 'survey_invitation_logged_in' if invited_to_survey?
       }
       wants.xml{
           render :xml => @survey.to_xml

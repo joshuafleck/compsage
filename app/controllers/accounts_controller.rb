@@ -23,6 +23,10 @@ class AccountsController < ApplicationController
 	   
 	  @organization = Organization.new
 	  
+	  #Prepopulate the name and email fields automagically
+	  @organization.contact_name = @external_invitation.name
+	  @organization.email = @external_invitation.email
+	  
 	end
 	
 	def edit
@@ -37,16 +41,14 @@ class AccountsController < ApplicationController
 	  @external_invitation = Invitation.find_by_key(params[:key])
 	  
 	  @organization = Organization.new(params[:organization])
-	  	  
-	  @organization.set_logo(params[:logo])
-	    
+	  	
     #If the user was invited via ExternalNetworkInvitation, add the organization to the network
     if @external_invitation.is_a?(ExternalNetworkInvitation) then
       @organization.networks << @external_invitation.network
     end
         
-    if @organization.save then
-    
+    if @organization.save && @organization.set_logo(params[:logo]) then
+      
       respond_to do |wants|
         wants.html {         
           flash[:notice] = "Your account was created successfully."

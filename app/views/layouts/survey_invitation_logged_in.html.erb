@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title><%=@page_title%></title>
+  <%=stylesheet_link_tag "styles" %>
+  <%=javascript_tag :defaults %>
+</head>
+<body xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <div id="title">
+			<% if invited_to_survey? && current_survey_invitation then %>
+				<div class="logged_in">
+					Welcome, <%=current_survey_invitation.name%> -
+					<%=link_to "Create an Account", new_account_path %>
+				</div>
+			<% end %>
+      <img src="/images/title.gif" />
+  </div>
+  <div id="bar">
+      <ul>
+          <li><a href="">Home</a></li>
+          <li><%=link_to "Survey", survey_path(current_survey_invitation.survey) %></li>
+          <li><a href="">About</a></li>
+          <li><a href="">Legal</a></li>
+          <li><%=link_to "Join", new_account_path %></li>
+      </ul>
+  </div>
+  <div id="main">
+    <% if @breadcrumbs then %><div id="breadcrumbs"><%=@breadcrumbs.links%></div><% end %>
+    <%=@content_for_layout%>
+	</div>
+</body>
+</html>
