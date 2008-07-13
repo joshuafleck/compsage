@@ -1,7 +1,9 @@
 config/database.yml
 db/schema.rb
 log/*
+config/fiveruns_tuneup.yml
 config/ultrasphinx/development.conf
 public/logos/*
 public/*/tuneup
 test
+tmp/*
