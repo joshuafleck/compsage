@@ -5,14 +5,13 @@ class SurveysController < ApplicationController
   before_filter :login_or_survey_invitation_required, :except => [ :edit, :update, :create, :new, :index ]
   
   def index    
+    @surveys = Survey.open
+    
     respond_to do |wants|
       wants.html {
-        @running_surveys = current_organization.surveys.open.find(:all, :order => 'created_at DESC')
         @invited_surveys = current_organization.survey_invitations.find(:all, :include => :survey)
-        @completed_surveys = current_organization.surveys.closed.find(:all, :order => 'created_at DESC')
       }
       wants.xml {
-        @surveys = current_organization.surveys.find(:all)
         render :xml => @surveys.to_xml
       }
     end

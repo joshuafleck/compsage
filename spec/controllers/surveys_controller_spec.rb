@@ -41,14 +41,8 @@ describe SurveysController, " handling GET /surveys" do
     @survey_invitations_proxy.stub!(:find).and_return([])
     @current_organization.stub!(:survey_invitations).and_return(@survey_invitations_proxy)
 
-    @surveys_proxy = mock('surveys proxy')
-    @closed_surveys = []
-    @open_surveys = []
-    @surveys_proxy.stub!(:open).and_return(@open_surveys)
-    @surveys_proxy.stub!(:closed).and_return(@closed_surveys)
-    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
-    @open_surveys.stub!(:find).and_return([])
-    @closed_surveys.stub!(:find).and_return([])
+    @surveys = []
+    Survey.stub!(:open).and_return(@surveys)
   end
   
   def do_get
@@ -71,21 +65,15 @@ describe SurveysController, " handling GET /surveys" do
   end
   
   it "should find all surveys for which the user has been the sponsor" do
-    @current_organization.should_receive(:survey_invitations).and_return(@survey_invitations_proxy)
-    @current_organization.should_receive(:surveys).at_least(:twice).and_return(@surveys_proxy)
-    @surveys_proxy.should_receive(:closed).and_return(@closed_surveys)
-    @closed_surveys.should_receive(:find)
-    @surveys_proxy.should_receive(:open).and_return(@open_surveys)
-    @open_surveys.should_receive(:find)
+    Survey.should_receive(:open).and_return(@surveys)
     
     do_get 
   end
   
   it "should assign the found surveys for the view" do
     do_get
-    assigns[:running_surveys].should_not be_nil
     assigns[:invited_surveys].should_not be_nil
-    assigns[:completed_surveys].should_not be_nil
+    assigns[:surveys].should_not be_nil
   end
 end
 
@@ -94,11 +82,9 @@ describe SurveysController, " handling GET /surveys.xml" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @surveys_proxy = mock('surveys proxy')
     @surveys = []
     @survey.stub!(:to_xml).and_return("XML")
-    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
-    @surveys_proxy.stub!(:find).and_return(@surveys)    
+    Survey.stub!(:open).and_return(@surveys)   
   end
   
   def do_get
@@ -112,13 +98,10 @@ describe SurveysController, " handling GET /surveys.xml" do
   end
   
   it "should find all surveys for which the user has participated, been invited, or sponsored" do
-    @current_organization.should_receive(:surveys).and_return(@survey_proxy)
-    @survey_proxy.should_receive(:find).at_least(:once)
+    Survey.should_receive(:open).and_return(@surveys)
     do_get
   end
   it "should render the found surveys as XML" do
-    @current_organization.should_receive(:surveys).and_return(@survey_proxy)
-    @survey_proxy.should_receive(:find).and_return(@surveys)
     @surveys.should_receive(:to_xml).and_return("XML")
     do_get
     response.body.should == "XML"
