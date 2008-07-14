@@ -5,7 +5,7 @@ class SurveysController < ApplicationController
   before_filter :login_or_survey_invitation_required, :except => [ :edit, :update, :create, :new, :index ]
   
   def index    
-    @surveys = Survey.open
+    @surveys = Survey.running
     
     respond_to do |wants|
       wants.html {

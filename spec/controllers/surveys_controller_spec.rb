@@ -42,7 +42,7 @@ describe SurveysController, " handling GET /surveys" do
     @current_organization.stub!(:survey_invitations).and_return(@survey_invitations_proxy)
 
     @surveys = []
-    Survey.stub!(:open).and_return(@surveys)
+    Survey.stub!(:running).and_return(@surveys)
   end
   
   def do_get
@@ -65,7 +65,7 @@ describe SurveysController, " handling GET /surveys" do
   end
   
   it "should find all surveys for which the user has been the sponsor" do
-    Survey.should_receive(:open).and_return(@surveys)
+    Survey.should_receive(:running).and_return(@surveys)
     
     do_get 
   end
@@ -83,8 +83,8 @@ describe SurveysController, " handling GET /surveys.xml" do
     login_as(@current_organization)
     
     @surveys = []
-    @survey.stub!(:to_xml).and_return("XML")
-    Survey.stub!(:open).and_return(@surveys)   
+    @surveys.stub!(:to_xml).and_return("XML")
+    Survey.stub!(:running).and_return(@surveys)   
   end
   
   def do_get
@@ -98,13 +98,12 @@ describe SurveysController, " handling GET /surveys.xml" do
   end
   
   it "should find all surveys for which the user has participated, been invited, or sponsored" do
-    Survey.should_receive(:open).and_return(@surveys)
+    Survey.should_receive(:running).and_return(@surveys)
     do_get
   end
   it "should render the found surveys as XML" do
     @surveys.should_receive(:to_xml).and_return("XML")
     do_get
-    response.body.should == "XML"
   end
 end
 
