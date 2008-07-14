@@ -5,6 +5,7 @@ open_survey:
   description: Code monkey like doritos and mountain dew
   created_at: <%=(Time.now - 2.days).to_s(:db) %>
   end_date: <%=(Time.now + 5.days).to_s(:db) %>
+  aasm_state: running
   
 closed_survey:
   id: 2
@@ -13,3 +14,4 @@ closed_survey:
   description: Assists people named dave with various tasks
   created_at: <%=(Time.now - 8.days).to_s(:db) %>
   end_date: <%=(Time.now - 1.day).to_s(:db)%>
+  aasm_state: finished
