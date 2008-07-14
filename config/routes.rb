@@ -26,4 +26,6 @@ ActionController::Routing::Routes.draw do |map|
   
   map.login 'login', :controller => 'sessions', :action => 'new'
   map.survey_login 'survey_login', :controller => 'sessions', :action => 'create_survey_session'
+  
+  map.path '', :controller => 'dashboards', :action => 'show'
 end
