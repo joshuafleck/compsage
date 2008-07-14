@@ -1,24 +1,28 @@
-base_average:
+pay_questions:
   id: 1
   position: 1
-  description: Average base wage/salary
-  text: What is the average base wage or salary for all incumbants?
-  question_type: numerical_field
-pay_range_minimum:
+  title: Pay Questions
+  description: "Questions regarding pay for a positions"
+  question_hash: --- 
+  - :position: 1
+    :question_type: numerical_field
+    :text: Average salary
+  - :position: 2
+    :question_type: numerical_field
+    :text: Pay range minimum
+  - :position: 3
+    :question_type: numerical_field
+    :text: Pay range midpoint
+  - :position: 4
+    :question_type: numerical_field
+    :text: Pay range maximum
+  
+affliation_questions:
   id: 2
   position: 2
-  description: Pay range minimum
-  text: Pay range minimum
-  question_type: numerical_field
-pay_range_midpoint:
-  id: 3
-  position: 3
-  description: Pay range midpoint
-  text: Pay range midpoint
-  question_type: numerical_field
-pay_range_maximum:
-  id: 4
-  position: 4
-  description: Pay range maximum
-  text: Pay range maximum
-  question_type: numerical_field
+  description: Questions regarding union affiliation for position
+  title: Affliation Questions
+  question_hash: --- 
+  - :text: "Are any unions affiliated with this position" 
+    :question_type: "text_field" 
+    :position: 5
