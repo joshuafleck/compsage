@@ -1,0 +1,11 @@
+<h2>My Surveys</h2>
+<p>
+These are the surveys you have sponsored or participated
+</p>
+<%=flash_messages%>
+<p><%=link_to "Sponsor a Survey", new_survey_path()%></p>
+<p><%=link_to "All Surveys", surveys_path()%></p>
+<!--TODO: Sorting an pagination-->
+<ul id="surveys">
+<%= render :partial => "survey", :collection => @surveys %>
+</ul>

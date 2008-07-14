@@ -12,7 +12,7 @@ Rails::Initializer.run do |config|
   
   config.action_mailer.default_url_options = {:host => "localhost", :port => 3000}
 
-  config.gem 'fiveruns_tuneup', :version => '>=0.8.10'
+#  config.gem 'fiveruns_tuneup', :version => '>=0.8.10'
   config.gem 'rubyist-aasm', :version => '>=2.0.1', :lib => 'aasm', :source => 'http://gems.github.com'
   
 end

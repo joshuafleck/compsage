@@ -29,6 +29,10 @@ describe SurveysController, "#route_for" do
   it "should map { :controller => 'surveys', :action => 'respond', :id => 1} to /surveys/1/respond" do
     route_for(:controller => "surveys", :action => "respond", :id => 1).should == "/surveys/1/respond"
   end
+  
+  it "should map { :controller => 'surveys', :action => 'my' } to /surveys/my" do
+    route_for(:controller => "surveys", :action => "my").should == "/surveys/my"
+  end  
 end
 
 describe SurveysController, " handling GET /surveys" do
@@ -113,7 +117,7 @@ describe SurveysController, " handling GET /surveys/1" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => 1)    
+    @survey = mock_model(Survey, :id => 1, :job_title => "test")    
     Survey.stub!(:find).and_return(@survey)
     @survey.stub!(:closed?).and_return(:false)
         
@@ -162,7 +166,7 @@ describe SurveysController, " handling GET /surveys/1 when survey is closed" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => 1, :discussions => nil)    
+    @survey = mock_model(Survey, :id => 1, :discussions => nil, :job_title => "test")    
     Survey.stub!(:find).and_return(@survey)
     @survey.stub!(:closed?).and_return(:true)
         
@@ -184,7 +188,7 @@ describe SurveysController, " handling GET /surveys/1.xml" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => 1)    
+    @survey = mock_model(Survey, :id => 1, :job_title => "test")    
     Survey.stub!(:find).and_return(@survey)
     @survey.stub!(:closed?).and_return(:false)
     @survey.stub!(:to_xml).and_return("XML")
@@ -221,7 +225,7 @@ describe SurveysController, " handling GET /surveys/1.xml when survey is closed"
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => 1)    
+    @survey = mock_model(Survey, :id => 1, :job_title => "test")    
     Survey.stub!(:find).and_return(@survey)
     @survey.stub!(:closed?).and_return(:true)
     
@@ -277,6 +281,7 @@ describe SurveysController, " handling GET /surveys/1/edit" do
     login_as(@current_organization)
     
     @survey = mock_model(Survey, :id => 1, :sponsor => @current_organization, :job_title => "Slave")
+
     @surveys_proxy = mock('surveys proxy')
     @open_surveys = []
     @predefined_questions = []
@@ -328,7 +333,7 @@ describe SurveysController, " handling GET /surveys/1/edit, without access" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => 1, :sponsor => mock_model(Organization))
+    @survey = mock_model(Survey, :id => 1, :sponsor => mock_model(Organization), :job_title => "test")
     @surveys_proxy = mock('surveys proxy')
     @open_surveys = []
 
@@ -354,7 +359,7 @@ describe SurveysController, " handling POST /surveys" do
                  },
                :predefined_question => {"1" => {'included' => "1"}, "2" => {'included' => "0"}, "3" => {'included' => "1"}}
                }
-    @survey = mock_model(Survey, :id => 1, :save => true, :errors => [], :new_record? => true)
+    @survey = mock_model(Survey, :id => 1, :save => true, :errors => [], :new_record? => true, :job_title => "test")
     @surveys = []
     @questions = []
     @question_hash = [{'id' => 1, 'another' => 2, 'text' => 'asdf'}, {'id' => 2, 'another' => 2, 'text' => 'asdf'}]
@@ -401,7 +406,7 @@ describe SurveysController, " handling POST /surveys, upon failure" do
     @params = {:job_title => 'That guy who yells "Scalpel, STAT!"' ,
                :end_date => Time.now + 1.week ,
                :sponsor => mock_model(Organization)}
-    @survey = mock_model(Survey, :id => 1, :save => false, :errors => ["asdfadsfdsa"])
+    @survey = mock_model(Survey, :id => 1, :save => false, :errors => ["asdfadsfdsa"], :job_title => "test")
     @surveys = []
     
     @survey.stub!(:new_record?).and_return(true)
@@ -424,7 +429,7 @@ describe SurveysController, " handling PUT /surveys/1" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => "1", :update_attributes => true, :sponsor => @current_organization)
+    @survey = mock_model(Survey, :id => "1", :update_attributes => true, :sponsor => @current_organization, :job_title => "test")
     @surveys_proxy = mock('surveys proxy')
     @open_surveys = []
     @question_hash = [{'id' => 1, 'another' => 2, 'text' => 'asdf'}, {'id' => 2, 'another' => 2, 'text' => 'asdf'}]
@@ -502,7 +507,7 @@ end
       @current_organization = mock_model(Organization)
       login_as(@current_organization)
 
-      @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization)
+      @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test")
       @surveys_proxy = mock('surveys proxy')
       @open_surveys = []
       @current_organization.stub!(:surveys).and_return(@surveys_proxy)
@@ -525,7 +530,7 @@ describe SurveysController, " handling PUT /surveys/1, with failure" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
 
-    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => mock_model(Organization))
+    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => mock_model(Organization), :job_title => "test")
     @surveys_proxy = mock('surveys proxy')
     @open_surveys = []
     
@@ -715,6 +720,41 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
     assigns[:responses].should_not be_nil
   end
   
+end
+
+describe SurveysController, " handling GET /surveys/my.xml" do
+  
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @surveys = []
+    @surveys.stub!(:to_xml).and_return("XML")
+    
+    @current_organization.stub!(:my_surveys).and_return(@surveys)
+
+  end
+  
+  def do_get
+    @request.env["HTTP_ACCEPT"] = "application/xml"
+    get :my
+  end
+  
+  it "should be successful" do
+    do_get
+    response.should be_success
+  end
+  
+  it "should find all surveys for which the user has been invited or participated" do
+    @current_organization.should_receive(:my_surveys).and_return(@surveys)
+    
+    do_get 
+  end
+  
+  it "should render the found surveys as XML" do
+    @surveys.should_receive(:to_xml).and_return("XML")
+    do_get
+  end
 end
 
 

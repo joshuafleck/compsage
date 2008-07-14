@@ -11,6 +11,8 @@ class Organization < ActiveRecord::Base
   
   has_many :surveys, :foreign_key => "sponsor_id"
   has_many :participated_surveys, :class_name => "Survey", :through => :participations, :source => 'survey'
+  #These are the surveys the user has sponsored or responded to
+  has_many :my_surveys, :class_name => "Survey", :finder_sql => 'select surveys.* from surveys LEFT JOIN participations ON surveys.id = participations.survey_id WHERE sponsor_id=#{id} OR participant_id=#{id}'
   
   has_many :participations, :as => :participant
   has_many :discussions, :as => :responder

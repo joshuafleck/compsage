@@ -5,6 +5,8 @@ class SurveysController < ApplicationController
   before_filter :login_or_survey_invitation_required, :except => [ :edit, :update, :create, :new, :index ]
   
   def index    
+	  @page_title = "Surveys"
+	  
     @surveys = Survey.running
     
     respond_to do |wants|
@@ -19,6 +21,10 @@ class SurveysController < ApplicationController
 
   def show
     @survey = Survey.find(params[:id])   
+        
+	  @page_title = @survey.job_title
+    @breadcrumbs << ["Surveys", url_for(surveys_path)]  
+    
 	  @discussions = @survey.discussions.roots
 	  
     respond_to do |wants|
@@ -36,8 +42,12 @@ class SurveysController < ApplicationController
   end
 
   def edit
+
     @survey = current_organization.surveys.running.find(params[:id])
     @page_title = "Editing Survey #{@survey.job_title}"
+
+    @breadcrumbs << ["Surveys", url_for(surveys_path)] 
+    
     #iterate through the survey questions to determine which predefined questions have been selected
     @predefined_questions = PredefinedQuestion.all
     @picked_questions = @survey.questions
@@ -55,6 +65,9 @@ class SurveysController < ApplicationController
   def update
     @survey = current_organization.surveys.running.find(params[:id])
 
+	  @page_title = 'Editing: '+@survey.job_title
+    @breadcrumbs << ["Surveys", url_for(surveys_path)] 
+    
     #update predefined question selection
     @predefined_questions = PredefinedQuestion.all
     @predefined_questions.each do |predefined_question_group|
@@ -129,6 +142,10 @@ class SurveysController < ApplicationController
   end
 
   def search
+  
+	  @page_title = "Search Surveys"
+    @breadcrumbs << ["Surveys", url_for(surveys_path)] 
+    
     @search = Ultrasphinx::Search.new(:query => params[:search_text])
     @search.run
     @surveys = @search.results
@@ -172,5 +189,20 @@ class SurveysController < ApplicationController
       end
     end
   end
+  
+  #These are the surveys the user has sponsored or responded to
+  def my   
+	  @page_title = "My Surveys"
+    @breadcrumbs << ["Surveys", url_for(surveys_path)] 
+    
+    @surveys = current_organization.my_surveys
+    
+    respond_to do |wants|
+      wants.html {}
+      wants.xml {
+        render :xml => @surveys.to_xml
+      }
+    end
+  end  
   
 end
