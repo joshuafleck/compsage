@@ -1,4 +1,5 @@
 <h2>New Survey</h2>
+<%=flash_messages%>
 <% form_for :survey, @survey, :url => surveys_path do |f| %>
   <%=error_messages_for :survey %>
   <p>Job Title: <%=f.text_field :job_title %></p>
@@ -10,7 +11,7 @@
     <ul>
       <% @predefined_questions.each do |question| %>
         <% fields_for "predefined_question", :index => question.id do |question_form| %>
-          <li><%=question_form.check_box :included%> <%=question.description%></li>
+          <li><%=question_form.check_box :included%> <%=question.title%> - <%=question.description%></li>
         <% end %>
       <% end %>
     </ul>

@@ -1,0 +1,21 @@
+<h2>Edit Survey</h2>
+<%=flash_messages%>
+<% form_for :survey, @survey, :url => survey_path(@survey),
+   :html => {:method => :put} do |f| %>
+  <%=error_messages_for :survey %>
+  <p>Job Title: <%=f.text_field :job_title %></p>
+  <p>Job Description:<br />
+  <%=f.text_area :description, :rows => 4, :cols => 60 %></p>
+  <p>End Date: <%=f.text_field :end_date %></p>
+  <p>
+    Select the questions you wish to ask:
+    <ul>
+      <% @predefined_questions.each do |predefined_question| %>
+        <% fields_for predefined_question, :index => predefined_question.id do |question_form| %>
+          <li><%=question_form.check_box :included%> <%=predefined_question.title%> - <%=predefined_question.description%></li>
+        <% end %>
+      <% end %>
+    </ul>
+  </p>
+  <p><input type="submit" value="Update" /> <%=link_to "Cancel", surveys_path %></p>
+<% end %>

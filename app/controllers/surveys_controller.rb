@@ -36,32 +36,45 @@ class SurveysController < ApplicationController
   end
 
   def edit
-    @survey = current_organization.surveys.open.find(params[:id])
+    @survey = current_organization.surveys.running.find(params[:id])
+    @page_title = "Editing Survey #{@survey.job_title}"
     #iterate through the survey questions to determine which predefined questions have been selected
     @predefined_questions = PredefinedQuestion.all
     @picked_questions = @survey.questions
-    @predefined_questions.collect! { |q| q.chosen = @picked_questions.any? { |pq| pq.predefined_question_id = q.id } }
+    
+    #check which pdqs are to be included on the edit form
+    @predefined_questions.each do |q| 
+      q.included = @picked_questions.any? do |pq| 
+        pq.predefined_question_id == q.id
+      end
+      p q.title.inspect
+      p q.included.inspect
+    end
   end
   
   def update
-    @survey = current_organization.surveys.open.find(params[:id])
+    @survey = current_organization.surveys.running.find(params[:id])
 
     #update predefined question selection
     @predefined_questions = PredefinedQuestion.all
-    @predefined_questions.each do |predefined_question|
+    @predefined_questions.each do |predefined_question_group|
       #if selected, create if not found
-      if params[:predefined_question][predefined_question.id.to_s]
-         #find or create the question
-         @question = @survey.questions.find_or_create_by_predefined_question_id(predefined_question.id)
-         #assign the attributes
-         @question.attributes = predefined_question.attributes.except('id', 'description')
-         @question.predefined_question_id = predefined_question.id
-
-         @question.save
+      if params[:predefined_question][predefined_question_group.id.to_s][:included] == "1"
+         #iterate through each pdq group and create the questions
+         predefined_question_group.question_hash.each do |predefined_question|
+           #find or create the question
+           @question = @survey.questions.find_or_create_by_text(predefined_question[:text])
+           #assign the attributes
+           @question.attributes = predefined_question.except("id", :id)
+           @question.predefined_question_id = predefined_question_group.id
+           @question.save
+         end
       #destroy if the question was previously selected.
       else
-          @question = @survey.questions.find_by_predefined_question_id(predefined_question.id)
+        predefined_question_group.question_hash.each do |predefined_question|
+          @question = @survey.questions.find_by_text(predefined_question[:text])
           @question.destroy unless @question.nil?
+        end
       end
     end
     #update the attributes for the survey
@@ -90,20 +103,23 @@ class SurveysController < ApplicationController
     @survey = current_organization.surveys.new(params[:survey])
     @predefined_questions = PredefinedQuestion.all
     
-    #iterate through predefined questions and add to survey
-    @predefined_questions.each do |predefined_question|
-      if params[:predefined_question][predefined_question.id.to_s]
-        @question = @survey.questions.new(predefined_question.attributes.except('id', 'description'))
-        @question.predefined_question_id = predefined_question.id
-        @question.survey = @survey
-        @question.save                      
+    #iterate through predefined questions and each group
+    @predefined_questions.each do |predefined_question_group|
+      @predefined_question_hash = predefined_question_group.question_hash
+      if params[:predefined_question][predefined_question_group.id.to_s][:included] == "1"
+        @predefined_question_hash.each do |predefined_question|
+          @question = @survey.questions.new(predefined_question.except("id", :id))
+          @question.predefined_question_id = predefined_question_group.id
+          @question.survey = @survey
+          @question.save
+        end
       end
     end
     
     if @survey.save
       respond_to do |wants|
         flash[:notice] = "Survey was created successfully!"
-        wants.html { redirect_to invitation_path(@survey) }
+        wants.html { redirect_to survey_invitations_path(@survey) }
       end
     else
       respond_to do |wants|

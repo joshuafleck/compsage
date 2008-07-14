@@ -276,16 +276,17 @@ describe SurveysController, " handling GET /surveys/1/edit" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => 1, :sponsor => @current_organization)
+    @survey = mock_model(Survey, :id => 1, :sponsor => @current_organization, :job_title => "Slave")
     @surveys_proxy = mock('surveys proxy')
     @open_surveys = []
     @predefined_questions = []
     @questions = []
 
     @current_organization.stub!(:surveys).and_return(@surveys_proxy)
-    @surveys_proxy.stub!(:open).and_return(@open_surveys)
+    @surveys_proxy.stub!(:running).and_return(@open_surveys)
     @open_surveys.stub!(:find).and_return(@survey)
     PredefinedQuestion.stub!(:all).and_return(@predefined_questions)
+    @predefined_questions.stub!(:question_hash).and_return([])
     @survey.stub!(:questions).and_return(@questions)
   end
 
@@ -302,7 +303,7 @@ describe SurveysController, " handling GET /surveys/1/edit" do
   end
   it "should find the survey requested" do
     @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
-    @surveys_proxy.should_receive(:open).and_return(@open_surveys)
+    @surveys_proxy.should_receive(:running).and_return(@open_surveys)
     @open_surveys.should_receive(:find).and_return(@survey)
     do_get
   end
@@ -312,7 +313,7 @@ describe SurveysController, " handling GET /surveys/1/edit" do
     do_get
   end
   it "should determine if the predefined questions are chosen" do
-    @predefined_questions.should_receive(:collect!)
+    @predefined_questions.should_receive(:each)
     do_get
   end
   
@@ -332,7 +333,7 @@ describe SurveysController, " handling GET /surveys/1/edit, without access" do
     @open_surveys = []
 
     @current_organization.stub!(:surveys).and_return(@surveys_proxy)
-    @surveys_proxy.stub!(:open).and_return(@open_surveys)
+    @surveys_proxy.stub!(:running).and_return(@open_surveys)
     @open_surveys.stub!(:find).and_raise(ActiveRecord::RecordNotFound)
   end
 
@@ -351,14 +352,16 @@ describe SurveysController, " handling POST /surveys" do
     @params = {:survey => {:job_title => 'That guy who yells "Scalpel, STAT!"' ,
                  :end_date => Time.now + 1.week
                  },
-               :predefined_question => {"1" => "true", "3" => "true"}
+               :predefined_question => {"1" => {'included' => "1"}, "2" => {'included' => "0"}, "3" => {'included' => "1"}}
                }
     @survey = mock_model(Survey, :id => 1, :save => true, :errors => [], :new_record? => true)
     @surveys = []
     @questions = []
-    @pdq1 = mock_model(PredefinedQuestion, :id => 1, :attributes => {'id' => 1, 'another' => "attribute"})
-    @pdq2 = mock_model(PredefinedQuestion, :id => 2, :attributes => {'id' => 2, 'another' => "attribute"})
-    @pdq3 = mock_model(PredefinedQuestion, :id => 3, :attributes => {'id' => 3, 'another' => "attribute3"})
+    @question_hash = [{'id' => 1, 'another' => 2, 'text' => 'asdf'}, {'id' => 2, 'another' => 2, 'text' => 'asdf'}]
+    @excluded_question_hash = {'another' => 2, 'text' => 'asdf'}
+    @pdq1 = mock_model(PredefinedQuestion, :id => 1, :question_hash => @question_hash)
+    @pdq2 = mock_model(PredefinedQuestion, :id => 2, :question_hash => @question_hash)
+    @pdq3 = mock_model(PredefinedQuestion, :id => 3, :question_hash => @question_hash)
     @question = mock_model(Question, :save => :true, :predefined_question_id= => 1, :survey= => @survey)
     
     PredefinedQuestion.stub!(:all).and_return([@pdq1, @pdq2, @pdq3])
@@ -378,16 +381,15 @@ describe SurveysController, " handling POST /surveys" do
   end
   
   it "should add predefined questions to the survey" do
-    @questions.should_receive(:new).with(@pdq1.attributes.except('id')).and_return(@question)
-    @questions.should_receive(:new).with(@pdq3.attributes.except('id')).and_return(@question)
-    @question.should_receive(:save).twice.and_return(true)
+    @questions.should_receive(:new).at_least(:once).and_return(@question)
+    @question.should_receive(:save).at_least(:twice).and_return(true)
     
     do_post
   end
   
   it "should redirect to the invitation show page upon success" do
     do_post
-    response.should redirect_to(invitation_url(@survey))
+    response.should redirect_to(survey_invitations_url(@survey))
   end
   
 end
@@ -425,11 +427,13 @@ describe SurveysController, " handling PUT /surveys/1" do
     @survey = mock_model(Survey, :id => "1", :update_attributes => true, :sponsor => @current_organization)
     @surveys_proxy = mock('surveys proxy')
     @open_surveys = []
-    @pdq1 = mock_model(PredefinedQuestion, :id => 1, :attributes => {'id' => 1, 'another' => "attribute"})
-    @pdq2 = mock_model(PredefinedQuestion, :id => 2, :attributes => {'id' => 2, 'another' => "attribute"})
-    @pdq3 = mock_model(PredefinedQuestion, :id => 3, :attributes => {'id' => 3, 'another' => "attribute3"})
+    @question_hash = [{'id' => 1, 'another' => 2, 'text' => 'asdf'}, {'id' => 2, 'another' => 2, 'text' => 'asdf'}]
+    @excluded_question_hash = {'another' => 2, 'text' => 'asdf'}
+    @pdq1 = mock_model(PredefinedQuestion, :id => 1, :question_hash => @question_hash)
+    @pdq2 = mock_model(PredefinedQuestion, :id => 2, :question_hash => @question_hash)
+    @pdq3 = mock_model(PredefinedQuestion, :id => 3, :question_hash => @question_hash)
     
-    @params = {:predefined_question => {"1" => "true", "3" => "true"},
+    @params = {:predefined_question => {"1" => {'included' => "1"}, "2" => {'included' => "0"}, "3" => {'included' => "1"}},
                :id => 1}
     @questions = []
     @question = mock_model(Question, :attributes= =>"", 
@@ -438,13 +442,15 @@ describe SurveysController, " handling PUT /surveys/1" do
                                      :destroy => true,
                                      :nil? => false)
     
-    PredefinedQuestion.stub!(:all).and_return([@pdq1, @pdq2, @pdq3])
+    @pdq_group = [@pdq1, @pdq2, @pdq3]
+    
+    PredefinedQuestion.stub!(:all).and_return(@pdq_group)
     @current_organization.stub!(:surveys).and_return(@surveys_proxy)
-    @surveys_proxy.stub!(:open).and_return(@open_surveys)
+    @surveys_proxy.stub!(:running).and_return(@open_surveys)
     @open_surveys.stub!(:find).and_return(@survey)
     @survey.stub!(:questions).and_return(@questions)
-    @questions.stub!(:find_by_predefined_question_id).and_return(@question)
-    @questions.stub!(:find_or_create_by_predefined_question_id).and_return(@question)
+    @questions.stub!(:find_by_text).and_return(@question)
+    @questions.stub!(:find_or_create_by_text).and_return(@question)
   end
   
   def do_update
@@ -453,7 +459,7 @@ describe SurveysController, " handling PUT /surveys/1" do
   
   it "should find the survey requested" do
     @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
-    @surveys_proxy.should_receive(:open).and_return(@open_surveys)
+    @surveys_proxy.should_receive(:running).and_return(@open_surveys)
     @open_surveys.should_receive(:find).and_return(@survey)
     do_update
   end
@@ -470,18 +476,17 @@ describe SurveysController, " handling PUT /surveys/1" do
   end
   
   it "should update the questions for the survey that are included in the params" do
-    @questions.should_receive(:find_or_create_by_predefined_question_id).twice.and_return(@question)
-    @question.should_receive(:attributes=).with(@pdq1.attributes.except('id'))
-    @question.should_receive(:attributes=).with(@pdq3.attributes.except('id'))
-    @question.should_receive(:save).twice.and_return(true)
+    @questions.should_receive(:find_or_create_by_text).at_least(:once).and_return(@question)
+    @question.should_receive(:attributes=).at_least(:once)
+    @question.should_receive(:save).at_least(:once).and_return(true)
     
     do_update
   end
   
   it "should delete questions that are not included in the params" do
-    @questions.should_receive(:find_by_predefined_question_id).and_return(@question)
-    @question.should_receive(:nil?).and_return(false)
-    @question.should_receive(:destroy).and_return(true)
+    @questions.should_receive(:find_by_text).at_least(:once).and_return(@question)
+    @question.should_receive(:nil?).at_least(:once).and_return(false)
+    @question.should_receive(:destroy).at_least(:once).and_return(true)
     
     do_update
   end
@@ -501,7 +506,7 @@ end
       @surveys_proxy = mock('surveys proxy')
       @open_surveys = []
       @current_organization.stub!(:surveys).and_return(@surveys_proxy)
-      @surveys_proxy.stub!(:open).and_return(@open_surveys)
+      @surveys_proxy.stub!(:running).and_return(@open_surveys)
       @open_surveys.stub!(:find).and_return(@survey)
     end
 
@@ -525,7 +530,7 @@ describe SurveysController, " handling PUT /surveys/1, with failure" do
     @open_surveys = []
     
     @current_organization.stub!(:surveys).and_return(@surveys_proxy)
-    @surveys_proxy.stub!(:open).and_return(@open_surveys)
+    @surveys_proxy.stub!(:running).and_return(@open_surveys)
     @open_surveys.stub!(:find).and_raise(ActiveRecord::RecordNotFound)
   end
 
