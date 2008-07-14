@@ -1,6 +1,9 @@
 class Survey < ActiveRecord::Base
+
   include AASM
-  
+
+	is_indexed :fields => [:job_title, :description]
+
   belongs_to :sponsor, :class_name => "Organization"
   has_many :discussions, :dependent => :destroy
   has_many :invitations, :class_name => 'SurveyInvitation', :dependent => :destroy

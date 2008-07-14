@@ -544,9 +544,15 @@ describe SurveysController, "handling GET /surveys/search" do
     login_as(@current_organization)
     
     @survey = mock_model(Survey, :id => 1, :title => "My Survey")
-    @params = {:search_text => "Web Developer"}
+    @surveys = [@survey]
     
-    Survey.stub!(:find_by_contents).and_return([@survey])
+    @search = mock_model(Ultrasphinx::Search, :run => nil)
+    @search.stub!(:results).and_return(@surveys)
+        
+    @params = {:search_text => "josh"}
+    
+    Ultrasphinx::Search.stub!(:new).and_return(@search)
+    
   end
   
   def do_get
@@ -564,13 +570,15 @@ describe SurveysController, "handling GET /surveys/search" do
   end
   
   it "should search the users surveys" do
-    Survey.should_receive(:find_by_contents).and_return([@survey])
+  	Ultrasphinx::Search.should_receive(:new).and_return(@search)
+  	@search.should_receive(:run)  	
+  	@search.should_receive(:results).and_return(@surveys)
     do_get
   end
   
   it "should assign found surveys to the view" do
     do_get
-    assigns[:surveys].should == [@survey]
+    assigns[:surveys].should eql(@surveys)
   end
 end
 
@@ -578,13 +586,18 @@ describe SurveysController, "handling GET /surveys/search.xml" do
   before(:each) do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
-    
+        
     @survey = mock_model(Survey, :id => 1, :title => "My Survey")
-    @params = {:search_text => "Web Developer"}
-    @surveys = [@survey]
+    @surveys = [@survey]    
     @surveys.stub!(:to_xml).and_return("XML")
     
-    Survey.stub!(:find_by_contents).and_return(@surveys)
+    @search = mock_model(Ultrasphinx::Search, :run => nil)
+    @search.stub!(:results).and_return(@surveys)
+        
+    @params = {:search_text => "josh"}
+    
+    Ultrasphinx::Search.stub!(:new).and_return(@search)
+    
   end
   def do_get
     @request.env["HTTP_ACCEPT"] = "application/xml"
@@ -597,7 +610,9 @@ describe SurveysController, "handling GET /surveys/search.xml" do
   end
   
   it "should search the users surveys" do
-    Survey.should_receive(:find_by_contents).and_return(@surveys)
+  	Ultrasphinx::Search.should_receive(:new).and_return(@search)
+  	@search.should_receive(:run)  	
+  	@search.should_receive(:results).and_return(@surveys)
     do_get
   end
 

@@ -1,0 +1,21 @@
+<h2>Surveys</h2>
+<p>
+Surveys allow you to query other member's compensation practices. 
+All surveys are open to participation for all members.
+By responding to a survey, you will be entitled to view the results of that survey*.
+Invited surveys are surveys in which other members have requested your participation.
+</p>
+<%=flash_messages%>
+<p><%=link_to "Sponsor a Survey", new_survey_path()%></p>
+<p><%=link_to "My Surveys", '#'%></p>
+<h3>Invited Surveys</h3>
+<ul id="invited_surveys">
+<%= render :partial => "survey_invitations/survey_invitation", :collection => @invited_surveys %>
+</ul>
+<h3>Search Surveys</h3>
+<%= render :partial => "search_form" %>
+<h3>Browse Surveys</h3>
+<!--TODO: Sorting an pagination-->
+<ul id="surveys">
+<%= render :partial => "survey", :collection => @surveys %>
+</ul>
