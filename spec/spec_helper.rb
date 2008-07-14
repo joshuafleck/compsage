@@ -67,8 +67,8 @@ def valid_organization_attributes
   {
     :email => 'brian.terlson@gmail.com',
     :zip_code => '55044',
-    :password => 'test1',
-    :password_confirmation => 'test1',
+    :password => 'test12',
+    :password_confirmation => 'test12',
     :name => 'Denarius',
     :contact_name => 'Andersen Cooper',
     :city => 'New York',

@@ -8,7 +8,7 @@ describe SessionsController do
     @brian.save
     
     @invitation = ExternalSurveyInvitation.new(:inviter => organization_mock, :survey => survey_mock, :name => 'TEST', :key => '1234', :email => '111@1.com')
-    @invitation.save!
+    @invitation.save
   end
   
   after(:all) do
@@ -48,7 +48,7 @@ describe SessionsController do
   
   it 'does not remember me' do
     post :create, :email => valid_organization_attributes[:email], :password => valid_organization_attributes[:password], :remember_me => "0"
-    response.cookies["auth_token"].should be_nil
+    response.cookies["auth_token"].should be_empty
   end
 
   it 'deletes token on logout' do

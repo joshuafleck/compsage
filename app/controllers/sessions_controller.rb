@@ -1,7 +1,6 @@
 # This controller handles the login/logout function of the site.  
 class SessionsController < ApplicationController
-  # Be sure to include AuthenticationSystem in Application Controller instead
-  include AuthenticatedSystem
+  layout 'front'
 
   # render new.rhtml
   def new
@@ -9,7 +8,7 @@ class SessionsController < ApplicationController
 
   def create
     logout_keeping_session!
-    organization = Organization.authenticate(params[:login], params[:password])
+    organization = Organization.authenticate(params[:email], params[:password])
     if organization
       # Protects against session fixation attacks, causes request forgery
       # protection if user resubmits an earlier form using back
@@ -22,7 +21,7 @@ class SessionsController < ApplicationController
       flash[:notice] = "Logged in successfully"
     else
       note_failed_signin
-      @login       = params[:login]
+      @login       = params[:email]
       @remember_me = params[:remember_me]
       render :action => 'new'
     end
@@ -33,11 +32,15 @@ class SessionsController < ApplicationController
     flash[:notice] = "You have been logged out."
     redirect_back_or_default('/')
   end
-
+  
+  def create_survey_session
+    self.current_survey_invitation = ExternalSurveyInvitation.find_by_key(params[:key])
+    redirect_to survey_path(self.current_survey_invitation.survey)
+  end
 protected
   # Track failed login attempts
   def note_failed_signin
-    flash[:error] = "Couldn't log you in as '#{params[:login]}'"
-    logger.warn "Failed login for '#{params[:login]}' from #{request.remote_ip} at #{Time.now.utc}"
+    flash[:error] = "Couldn't log you in as '#{params[:email]}'"
+    logger.warn "Failed login for '#{params[:email]}' from #{request.remote_ip} at #{Time.now.utc}"
   end
 end

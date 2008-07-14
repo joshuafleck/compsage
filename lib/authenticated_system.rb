@@ -6,6 +6,11 @@ module AuthenticatedSystem
       !!current_organization
     end
 
+    # returns true if the user is logged in with an external invitation.
+    def invited_to_survey?
+      current_survey_invitation != :false && current_survey_invitation.survey.id == (params[:survey_id] || params[:id]).to_i
+    end
+    
     # Accesses the current organization from the session.
     # Future calls avoid the database because nil is not equal to false.
     def current_organization
@@ -17,7 +22,25 @@ module AuthenticatedSystem
       session[:organization_id] = new_organization ? new_organization.id : nil
       @current_organization = new_organization || false
     end
-
+    
+    # Store the given external survey invitation id in the session
+    def current_survey_invitation=(new_invitation)
+      session[:external_survey_invitation_id] = (new_invitation.nil? || new_invitation.is_a?(Symbol)) ? nil : new_invitation.id
+      @current_survey_invitation = new_invitation || :false
+    end
+    
+    # Accesses the current survey invitation from the session.  Set it to :false if login fails
+    # so that future calls do not hit the database.
+    def current_survey_invitation
+      @current_survey_invitation ||= (login_from_survey_invitation || :false)
+    end
+    
+    # Accesses the current organization or survey invitation from the session.  Set it to :false if login fails
+    # so that future calls do not hit the database.    
+    def current_organization_or_survey_invitation
+      @current_organization_or_survey_invitation ||= (login_from_session || login_from_basic_auth || login_from_cookie || login_from_survey_invitation || :false)
+    end
+    
     # Check if the organization is authorized
     #
     # Override this method in your controllers if you want to restrict access
@@ -52,7 +75,10 @@ module AuthenticatedSystem
     def login_required
       authorized? || access_denied
     end
-
+    
+    def login_or_survey_invitation_required
+      authorized? || invited_to_survey? || access_denied
+    end
     # Redirect as appropriate when an access request fails.
     #
     # The default action is to redirect to the login screen.
@@ -94,7 +120,7 @@ module AuthenticatedSystem
     # Inclusion hook to make #current_organization and #logged_in?
     # available as ActionView helper methods.
     def self.included(base)
-      base.send :helper_method, :current_organization, :logged_in?, :authorized? if base.respond_to? :helper_method
+      base.send :helper_method, :current_organization, :logged_in?, :authorized?, :current_organization_or_survey_invitation if base.respond_to? :helper_method
     end
 
     #
@@ -128,6 +154,10 @@ module AuthenticatedSystem
       end
     end
 
+    def login_from_survey_invitation
+      self.current_survey_invitation = ExternalSurveyInvitation.find(session[:external_survey_invitation_id]) if session[:external_survey_invitation_id]
+    end
+    
     # This is ususally what you want; resetting the session willy-nilly wreaks
     # havoc with forgery protection, and is only strictly necessary on login.
     # However, **all session state variables should be unset here**.
