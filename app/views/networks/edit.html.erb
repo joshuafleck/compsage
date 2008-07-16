@@ -1,3 +1,8 @@
+<%
+  title "Editing #{@network.name}"
+  breadcrumbs(link_to("Your Networks", networks_path))
+%>
+
 <h2>Editing <%=@network.name%></h2>
 <%=error_messages_for :network%>
 <%=flash_messages%>

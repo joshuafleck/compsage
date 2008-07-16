@@ -3,8 +3,6 @@ class NetworksController < ApplicationController
   layout 'logged_in'
   # List all the networks.
   def index
-    @page_title = "Your Networks"
-    
     @networks = current_organization.networks
     
     respond_to do |wants|
@@ -19,9 +17,6 @@ class NetworksController < ApplicationController
   def show
     @network = current_organization.networks.find(params[:id])
     
-    @page_title = @network.name
-    @breadcrumbs << ["Your Networks", url_for(networks_path)]
-    
     respond_to do |wants|
       wants.html # render template
       wants.xml do
@@ -31,18 +26,12 @@ class NetworksController < ApplicationController
   end
   
   def new
-    @page_title = "New Network"
-    @breadcrumbs << ["Your Networks", url_for(networks_path)]
-    
     @network = Network.new
-    # show new template.
   end
   
   # edit a network that the organization owns.
   def edit
     @network = current_organization.owned_networks.find(params[:id])
-    @page_title = "Editing #{@network.name}"
-    @breadcrumbs << ["Your Networks", url_for(networks_path)]
   end
   
   # create a new network

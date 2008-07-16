@@ -5,4 +5,17 @@ module ApplicationHelper
       content_tag(:div, flash[key], :class => "flash_#{key}") unless flash[key].blank?
     end.join
   end
+  
+  def title(title)
+    content_for(:title) do
+      "#{title}"
+    end
+  end
+  
+  def breadcrumbs(*links)
+    content_for(:breadcrumbs) do
+      link_to("Dashboard", dashboard_path) + " < " + links.join(" < ")
+    end
+  end
+  
 end
