@@ -5,8 +5,6 @@ class SurveysController < ApplicationController
   before_filter :login_or_survey_invitation_required, :except => [ :edit, :update, :create, :new, :index ]
   
   def index    
-	  @page_title = "Surveys"
-	  
     @surveys = Survey.running
     
     respond_to do |wants|
@@ -21,8 +19,6 @@ class SurveysController < ApplicationController
 
   def show
     @survey = Survey.find(params[:id])   
-        
-	  @page_title = @survey.job_title
     @breadcrumbs << ["Surveys", url_for(surveys_path)]  
     
 	  @discussions = @survey.discussions.roots
@@ -44,7 +40,6 @@ class SurveysController < ApplicationController
   def edit
 
     @survey = current_organization.surveys.running.find(params[:id])
-    @page_title = "Editing Survey #{@survey.job_title}"
 
     @breadcrumbs << ["Surveys", url_for(surveys_path)] 
     
@@ -108,7 +103,6 @@ class SurveysController < ApplicationController
   end
   
   def new
-    @page_title = "New Survey"
     @predefined_questions = PredefinedQuestion.all
   end
   
@@ -142,8 +136,6 @@ class SurveysController < ApplicationController
   end
 
   def search
-  
-	  @page_title = "Search Surveys"
     @breadcrumbs << ["Surveys", url_for(surveys_path)] 
     
     @search = Ultrasphinx::Search.new(:query => params[:search_text])
@@ -192,7 +184,6 @@ class SurveysController < ApplicationController
   
   #These are the surveys the user has sponsored or responded to
   def my   
-	  @page_title = "My Surveys"
     @breadcrumbs << ["Surveys", url_for(surveys_path)] 
     
     @surveys = current_organization.my_surveys

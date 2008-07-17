@@ -4,6 +4,12 @@ describe "/surveys/edit" do
 
   before(:each) do
     assigns[:predefined_questions] = []
+    @survey = mock_model(Survey, 
+                         :job_title => "Worldy Oceanic Explorer",
+                         :description => "Spanish royal family seeking explorer to investigate Western sea.",
+                         :end_date => "07/12/1492"
+                         )
+    assigns[:survey] = @survey
     render 'surveys/edit'
   end
   
