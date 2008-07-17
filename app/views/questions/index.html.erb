@@ -1,1 +1,18 @@
-<%=print_question(question, responses[question.id] ||current_organization_or_invitation.responses.find_by_question(@question) %> 
+<% 
+  title "Taking Survey #{@survey.job_title}"
+  breadcrumbs(link_to("Survey", survey_path(@survey)))
+%>
+<h2>Taking Survey <%=@survey.job_title%></h2>
+<p>You are responding to a survey commissioned by survey.sponsor. If you are
+invited, inform the user, else if they are coming in as a stray, mention something
+else. You can come back and retake the survey as many times as you want. We will
+have code the repopulates this page with your questions.</p>
+<%=flash_messages%>
+<div id="questions">
+	<% 
+	  @survey.questions.each do |question|%>
+	   HELLO HELLO <br />
+	<%    print_question(question)
+	  end
+	%>
+</div>

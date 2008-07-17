@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
-include SurveysHelper
+include QuestionsHelper
 
-describe SurveysHelper do
+describe QuestionsHelper do
   def question_attributes
     {
       :text => "question text",
