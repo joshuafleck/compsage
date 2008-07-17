@@ -26,16 +26,9 @@ describe QuestionsController, "handling GET /questions" do
   before(:each) do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
+    @survey = mock_model(Survey, :questions => [])
     
-    @surveys_proxy = mock('surveys proxy')
-    @open_surveys_proxy = []
-    @open_surveys = []
-    @questions = []
-    
-    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
-    @surveys_proxy.stub!(:open).and_return(@open_surveys_proxy)
-    @open_surveys_proxy.stub!(:find).and_return(@open_surveys)
-    @open_surveys.stub!(:questions).and_return(@questions)
+    Survey.stub!(:find).and_return(@survey)
   end
   
   def do_get
@@ -47,18 +40,14 @@ describe QuestionsController, "handling GET /questions" do
     response.should be_success
   end
   
-  it "should find questions for the survey" do
-    @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
-    @surveys_proxy.should_receive(:open).and_return(@open_surveys_proxy)
-    @open_surveys_proxy.should_receive(:find).and_return(@open_surveys)
-    @open_surveys.should_receive(:questions).and_return(@questions)
-    
+  it "should find the survey" do
+    Survey.should_receive(:find).and_return(@survey)
     do_get
   end
   
-  it "should assign the found questions to the view" do
+  it "should assign the found survey to the view" do
     do_get
-    assigns[:questions].should_not be_nil
+    assigns[:survey].should_not be_nil
   end
   
   it "should render the questions view template" do
@@ -71,16 +60,11 @@ describe QuestionsController, "handling GET /questions.xml" do
   before(:each) do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
-    
-    @surveys_proxy = mock('surveys proxy')
-    @open_surveys_proxy = []
-    @open_surveys = []
+  
     @questions = []
+    @survey = mock_model(Survey, :questions => @questions)
     
-    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
-    @surveys_proxy.stub!(:open).and_return(@open_surveys_proxy)
-    @open_surveys_proxy.stub!(:find).and_return(@open_surveys)
-    @open_surveys.stub!(:questions).and_return(@questions)
+    Survey.stub!(:find).and_return(@survey)
     @questions.stub!(:to_xml).and_return("XML") 
   end
   
@@ -95,10 +79,7 @@ describe QuestionsController, "handling GET /questions.xml" do
   end
   
   it "should find questions for the survey" do
-    @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
-    @surveys_proxy.should_receive(:open).and_return(@open_surveys_proxy)
-    @open_surveys_proxy.should_receive(:find).and_return(@open_surveys)
-    @open_surveys.should_receive(:questions).and_return(@questions)
+    Survey.should_receive(:find).and_return(@survey)
     
     do_get
   end
@@ -114,13 +95,8 @@ describe QuestionsController, "handling GET /questions, when survey is closed" d
   before(:each) do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
-    
-    @surveys_proxy = mock('surveys proxy')
-    @open_surveys_proxy = []
-    
-    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
-    @surveys_proxy.stub!(:open).and_return(@open_surveys_proxy)
-    @open_surveys_proxy.stub!(:find).and_raise(ActiveRecord::RecordNotFound)
+
+    Survey.stub!(:find).and_raise(ActiveRecord::RecordNotFound)
   end
   
   def do_get
