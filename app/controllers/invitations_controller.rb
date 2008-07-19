@@ -4,7 +4,6 @@ class InvitationsController < ApplicationController
   layout 'logged_in'
 
   def index
-    @page_title = "My Invitations"
     
     respond_to do |wants|
       wants.html do
@@ -21,7 +20,6 @@ class InvitationsController < ApplicationController
   end
   
   def destroy
-    @page_title = "My Invitations"
     
     @invitation = current_organization.invitations.find(params[:id])
     

@@ -1,3 +1,5 @@
+<% title "Invitations to #{@network.name}" %>
+<% breadcrumbs(link_to(@network.name,network_path(@network))) %>
 <h2>Invitations to <%=@network.name%></h2>
 <%=flash_messages%>
 <% form_tag network_invitations_path(@network) do %>
