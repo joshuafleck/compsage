@@ -24,7 +24,12 @@ class AccountsController < ApplicationController
 	  #Prepopulate the name and email fields automagically
 	  @organization.contact_name = @external_invitation.name
 	  @organization.email = @external_invitation.email
-	  
+    
+    respond_to do |wants|
+      wants.html {
+        #Show a different layout if the user is replying with an external survey invitation
+        render :layout => 'survey_invitation_logged_in' if logged_in_from_survey_invitation?}
+    end
 	end
 	
 	def edit
@@ -45,6 +50,8 @@ class AccountsController < ApplicationController
         
     #Save the organization and set the logo
     if @organization.save && @organization.set_logo(params[:logo]) then
+      #Clear the existing session (in case the user is logged in as an external survey invitation)
+      logout_killing_session!
       
       respond_to do |wants|
         wants.html {         

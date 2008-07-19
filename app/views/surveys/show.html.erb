@@ -1,9 +1,12 @@
-<%title @survey.job_title 
-  breadcrumbs(link_to("Surveys", surveys_path ))%>
+<%
+  title @survey.job_title 
+  if logged_in? then breadcrumbs(link_to("Surveys", surveys_path )) end 
+  #Don't show breadcrumbs when not logged in (survey invitations do not have a dashboard
+%>
 <h2><%= @survey.job_title %></h2>
 <%=flash_messages%>
 <h3>Sponsored by <%=@survey.sponsor.name%></h3>
-<% if @survey.sponsor.id == current_organization.id then %>
+<% if logged_in? && @survey.sponsor.id == current_organization.id then %>
   <%=link_to 'Edit', edit_survey_path(@survey)%>
   <%=link_to 'Invite', new_survey_invitation_path(@survey)%>
 <% end %>

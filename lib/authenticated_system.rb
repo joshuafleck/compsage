@@ -5,10 +5,14 @@ module AuthenticatedSystem
     def logged_in?
       !!current_organization
     end
+    
+    def logged_in_from_survey_invitation?
+      !!current_survey_invitation
+    end
 
     # returns true if the user is logged in with an external invitation.
     def invited_to_survey?
-      current_survey_invitation != :false && current_survey_invitation.survey.id == (params[:survey_id] || params[:id]).to_i
+      current_survey_invitation != false && current_survey_invitation.survey.id == (params[:survey_id] || params[:id]).to_i
     end
     
     # Accesses the current organization from the session.
@@ -26,13 +30,13 @@ module AuthenticatedSystem
     # Store the given external survey invitation id in the session
     def current_survey_invitation=(new_invitation)
       session[:external_survey_invitation_id] = (new_invitation.nil? || new_invitation.is_a?(Symbol)) ? nil : new_invitation.id
-      @current_survey_invitation = new_invitation || :false
+      @current_survey_invitation = new_invitation || false
     end
     
     # Accesses the current survey invitation from the session.  Set it to :false if login fails
     # so that future calls do not hit the database.
     def current_survey_invitation
-      @current_survey_invitation ||= (login_from_survey_invitation || :false)
+      @current_survey_invitation ||= (login_from_survey_invitation || false)
     end
     
     # Accesses the current organization or survey invitation from the session.  Set it to :false if login fails
@@ -168,6 +172,11 @@ module AuthenticatedSystem
       kill_remember_cookie!     # Kill client-side auth cookie
       session[:organization_id] = nil   # keeps the session but kill our variable
       # explicitly kill any other session variables you set
+      # clear any session information from the external survey invitation
+      @current_survey_invitation = false
+      @current_organization_or_survey_invitation = false
+      session[:external_survey_invitation_id] = nil
+      
     end
 
     # The session should only be reset at the tail end of a form POST --

@@ -5,7 +5,9 @@ class QuestionsController < ApplicationController
   def index
     @survey = Survey.find(params[:survey_id])
     respond_to do |wants|
-      wants.html {}
+      wants.html {
+        #Show a different layout if the user is replying with an external survey invitation
+        render :layout => 'survey_invitation_logged_in' if invited_to_survey?}
       wants.xml {
          render :xml => @survey.questions.to_xml
       }

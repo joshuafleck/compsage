@@ -1,6 +1,7 @@
 <% 
   title "Responding to Survey #{@survey.job_title}"
-  breadcrumbs(link_to(@survey.job_title, survey_path(@survey)))
+  if logged_in? then breadcrumbs(link_to(@survey.job_title, survey_path(@survey))) end
+  #Don't show breadcrumbs when logged in as survey invitation (there is no concept of dashboard
 %>
 <h2>Responding to Survey <%=@survey.job_title%></h2>
 <p>You are responding to a survey commissioned by survey.sponsor. If you are
