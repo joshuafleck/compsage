@@ -1,3 +1,14 @@
-<%title @survey.job_title %>
+<%title @survey.job_title 
+  breadcrumbs(link_to("Surveys", surveys_path ))%>
+<h2><%= @survey.job_title %></h2>
+<%=flash_messages%>
+<h3>Sponsored by <%=@survey.sponsor.name%></h3>
+<% if @survey.sponsor.id == current_organization.id then %>
+  <%=link_to 'Edit', edit_survey_path(@survey)%>
+  <%=link_to 'Invite', new_survey_invitation_path(@survey)%>
+<% end %>
+<p><%=@survey.description%></p>
+<span>Time Remaining: </span><%=time_ago_in_words(@survey.end_date)%>
+<p><%=link_to "Respond to #{@survey.job_title}", survey_questions_path(@survey)%></p>
 <%= render "discussions/index" %>
 

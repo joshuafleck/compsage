@@ -37,8 +37,7 @@ module QuestionsHelper
       when 'text_field', 'numerical_field'
         html_parameters[:type] = "text"
         html_parameters[:value] = default_values.first
-        
-        content_tag(:label, text) + tag(:input, html_parameters)
+        content_tag(:label, text) + " " + tag(:input, html_parameters)
       when 'text_area'
         content_tag(:label, text) + content_tag(:textarea, default_values.first, html_parameters)
       when 'radio', 'checkbox'

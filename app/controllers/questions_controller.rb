@@ -1,5 +1,6 @@
 class QuestionsController < ApplicationController 
   before_filter :login_or_survey_invitation_required
+  layout 'logged_in'
   
   def index
     @survey = Survey.find(params[:survey_id])

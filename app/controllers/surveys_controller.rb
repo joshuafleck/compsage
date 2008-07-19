@@ -52,8 +52,6 @@ class SurveysController < ApplicationController
       q.included = @picked_questions.any? do |pq| 
         pq.predefined_question_id == q.id
       end
-      p q.title.inspect
-      p q.included.inspect
     end
   end
   
@@ -151,16 +149,32 @@ class SurveysController < ApplicationController
   def respond
     @responses = []
     @survey = Survey.find(params[:id])
-    #validate all responses required for the survey  
+    @participant = Participation.find_or_create_by_participant_id_and_survey_id(:participant => current_organization_or_survey_invitation, :survey => @survey)
+    #validate all responses required for the survey before saving, need
     @survey.questions.each do |question|
-      @response = current_organization_or_survey_invitation.responses.find_or_create_by_question_id(question.id)
-      @response.update_attributes(params[:question][question.id.to_s][:response])
-      #if it is invalid, add to responses hash
-      @responses << @response unless @response.save
+      @response = @participant.responses.find_or_create_by_question_id(question.id)
+      if question.numerical_response? #TODO: modifiy model code to figure out which of these to set
+        @response.numerical_response = params[:responses][question.id.to_s]
+      else
+        @response.textual_response = params[:responses][question.id.to_s]
+      end
+      @response.participation = @participant
+      #collect all responses, TODO: ignore non-required responses, not avail until phase 2
+      @responses << @response
     end
 
-    #if there were no invalid responses, redirect to the survey show page
-    if @responses.empty?
+    #if there were no invalid responses, save the results and redirect to the survey show page
+    if @responses.any? do |r| !r.valid? end #
+      flash[:notice] = "Please review and re-submit your responses."
+      respond_to do |wants|
+        wants.html { redirect_to survey_questions_path(@survey, :responses => @responses)  }
+      end
+      #we have all valid responses, proceed!
+    else
+      @responses.each do |response|
+        response.save!
+      end
+      
       flash[:notice] = "Survey was successfully completed!"
       #current user is an organization, redirect to the show page
       if current_organization_or_survey_invitation.is_a?(Organization)
@@ -172,12 +186,6 @@ class SurveysController < ApplicationController
         respond_to do |wants|
           wants.html{ redirect_to signup_path }
         end
-      end
-    #else send back to the questions index
-    else
-      flash[:notice] = "Please review and re-submit your responses."
-      respond_to do |wants|
-        wants.html { render :action => "questions", :responses => @responses }
       end
     end
   end
