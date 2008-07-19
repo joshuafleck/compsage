@@ -2,7 +2,7 @@
 <h2>Frequent Tasks</h2>
 <p><%=link_to "Sponsor a Survey", new_survey_path()%></p>
 <p><%=link_to "Browse All Surveys", search_surveys_path()%></p>
-<p><%=link_to "Send an Invitation", new_external_invitation_path()%></p>
+<p><%=link_to "Send an Invitation", external_invitations_path()%></p>
 <p><%=link_to "See My Invitations", invitations_path()%></p>
 <h2>Recent Activity</h2>
 <% if @recent_survey_invitations.empty? && @recent_network_invitations.empty? &&

@@ -298,7 +298,7 @@ describe AccountsController, " handling PUT /account" do
     login_as(@current_organization)
     
     @current_organization.stub!(:update_attributes).and_return(true)
-    @current_organization.stub!(:set_logo)
+    @current_organization.stub!(:set_logo).and_return(true)
     
   end
   

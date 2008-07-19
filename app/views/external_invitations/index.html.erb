@@ -1,10 +1,13 @@
-<h2>Sent Invitations</h2>
-<%=flash_messages%>
+<% title "[product name here] Invitations" %>
+<% breadcrumbs() %>
+<h2>[product name here] Invitations</h2>
 <p>
-The invitations listed below have been sent, but not yet accepted by the invitee.
+Invite other organizations to participate in [product name here]
 </p>
 <p>
-  <%=link_to "Send an invitation", new_external_invitation_path %>
+<%=error_messages_for :external_invitation%>
+<%=flash_messages%>
+<%= render :partial => "external_invitations/external_invitation_form"  %>
 </p>
 <ul id=invitations>
   <% @external_invitations.each do |invitation| %>

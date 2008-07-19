@@ -7,8 +7,6 @@ class DiscussionsController < ApplicationController
 	end
 	
 	def index
-	  @page_title = "Discussions"
-    @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
        
 	  @discussions = @survey.discussions.within_abuse_threshold.roots
 	  
@@ -21,8 +19,6 @@ class DiscussionsController < ApplicationController
   end
   
   def new
-    @page_title = "New Discussion"
-    @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
     
     #Create a new disussion and set its survey
     @discussion = Discussion.new

@@ -3,13 +3,11 @@ class PendingAccountsController < ApplicationController
   layout 'front'
 
   def new
-	  @page_title = "Signup"
 	  
     @pending_account = PendingAccount.new
   end
   
   def create
-	  @page_title = "Signup"
 	  
     @pending_account = PendingAccount.new(params[:pending_account])
   

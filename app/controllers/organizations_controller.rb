@@ -3,7 +3,6 @@ class OrganizationsController < ApplicationController
   layout 'logged_in'
 
   def index
-	  @page_title = "Members"
 	  
     @organizations = Organization.find(:all)
       
@@ -33,8 +32,6 @@ class OrganizationsController < ApplicationController
   end
   
   def search    
-    @page_title = "Search Members"
-    @breadcrumbs << ["Members", url_for(organizations_path)] 
     @search = Ultrasphinx::Search.new(:query => params[:search_text])
     @search.run
     @organizations = @search.results

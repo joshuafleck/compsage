@@ -1,4 +1,5 @@
 <% title "New Survey" %>
+<% breadcrumbs(link_to("Surveys",surveys_path)) %>
 <h2>New Survey</h2>
 <%=flash_messages%>
 <% form_for :survey, @survey, :url => surveys_path do |f| %>

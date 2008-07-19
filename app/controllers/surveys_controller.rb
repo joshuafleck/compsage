@@ -19,9 +19,7 @@ class SurveysController < ApplicationController
 
   def show
     @survey = Survey.find(params[:id])   
-    @breadcrumbs << ["Surveys", url_for(surveys_path)]  
-    
-	  @discussions = @survey.discussions.roots
+	  @discussions = @survey.discussions.within_abuse_threshold.roots
 	  
     respond_to do |wants|
       wants.html {        
@@ -41,8 +39,6 @@ class SurveysController < ApplicationController
 
     @survey = current_organization.surveys.running.find(params[:id])
 
-    @breadcrumbs << ["Surveys", url_for(surveys_path)] 
-    
     #iterate through the survey questions to determine which predefined questions have been selected
     @predefined_questions = PredefinedQuestion.all
     @picked_questions = @survey.questions
@@ -57,9 +53,6 @@ class SurveysController < ApplicationController
   
   def update
     @survey = current_organization.surveys.running.find(params[:id])
-
-	  @page_title = 'Editing: '+@survey.job_title
-    @breadcrumbs << ["Surveys", url_for(surveys_path)] 
     
     #update predefined question selection
     @predefined_questions = PredefinedQuestion.all
@@ -134,7 +127,6 @@ class SurveysController < ApplicationController
   end
 
   def search
-    @breadcrumbs << ["Surveys", url_for(surveys_path)] 
     
     @search = Ultrasphinx::Search.new(:query => params[:search_text])
     @search.run
@@ -192,7 +184,6 @@ class SurveysController < ApplicationController
   
   #These are the surveys the user has sponsored or responded to
   def my   
-    @breadcrumbs << ["Surveys", url_for(surveys_path)] 
     
     @surveys = current_organization.my_surveys
     

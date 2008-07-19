@@ -14,7 +14,7 @@ module ApplicationHelper
   
   def breadcrumbs(*links)
     content_for(:breadcrumbs) do
-      link_to("Dashboard", dashboard_path) + " < " + links.join(" < ")
+      link_to("Dashboard", dashboard_path) + if links.length > 0 then " < " else "" end + links.join(" < ")
     end
   end
   

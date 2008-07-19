@@ -4,7 +4,6 @@ class ExternalInvitationsController < ApplicationController
   layout 'logged_in'
   
   def index
-    @page_title = "External Invitations"
   
     @external_invitations = current_organization.sent_global_invitations
   
@@ -18,13 +17,11 @@ class ExternalInvitationsController < ApplicationController
   end
   
   def new
-    @page_title = "New External Invitation"
     
     @external_invitation = ExternalInvitation.new  
   end
   
   def create
-    @page_title = "New External Invitation"
     
     @external_invitation = current_organization.sent_global_invitations.new(params[:external_invitation])
     

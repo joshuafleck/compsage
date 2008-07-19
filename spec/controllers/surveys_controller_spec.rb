@@ -124,6 +124,7 @@ describe SurveysController, " handling GET /surveys/1" do
     @discussion = mock_model(Discussion)
     @discussions = [@discussion]
     @discussions.stub!(:roots).and_return(@discussions)
+    @discussions.stub!(:within_abuse_threshold).and_return(@discussions)
     @survey.stub!(:discussions).and_return(@discussions)
     
   end
@@ -146,6 +147,11 @@ describe SurveysController, " handling GET /surveys/1" do
   it "should assign the found survey to the view" do
     do_get
     assigns[:survey].should_not be_nil
+  end
+  
+  it "should only retrieve discussions within the abuse threshold" do
+    @discussions.should_receive(:within_abuse_threshold).and_return(@discussions)
+    do_get
   end
   
   it "should find all root discussions" do
@@ -172,6 +178,7 @@ describe SurveysController, " handling GET /surveys/1 when survey is closed" do
         
     @discussion = mock_model(Discussion)
     @discussions = [@discussion]
+    @discussions.stub!(:within_abuse_threshold).and_return(@discussions)
     @discussions.stub!(:roots).and_return(@discussions)
     @survey.stub!(:discussions).and_return(@discussions)
     
@@ -195,6 +202,7 @@ describe SurveysController, " handling GET /surveys/1.xml" do
         
     @discussion = mock_model(Discussion)
     @discussions = [@discussion]
+    @discussions.stub!(:within_abuse_threshold).and_return(@discussions)
     @discussions.stub!(:roots).and_return(@discussions)
     @survey.stub!(:discussions).and_return(@discussions)
     
@@ -233,6 +241,7 @@ describe SurveysController, " handling GET /surveys/1.xml when survey is closed"
         
     @discussion = mock_model(Discussion)
     @discussions = [@discussion]
+    @discussions.stub!(:within_abuse_threshold).and_return(@discussions)
     @discussions.stub!(:roots).and_return(@discussions)
     @survey.stub!(:discussions).and_return(@discussions)
     
@@ -685,15 +694,15 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
   before(:each) do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
-    @q1 = mock_model(Question, :id => 1, :attributes => "")
-    @q2 = mock_model(Question, :id => 2, :attributes => "")
+    @q1 = mock_model(Question, :id => 1, :attributes => "", :numerical_response? => false)
+    @q2 = mock_model(Question, :id => 2, :attributes => "", :numerical_response? => false)
     @questions = [@q1, @q2]
     @survey = mock_model(Survey, :id => 1)
     @survey.stub!(:questions).and_return(@questions)
     @responses = []
-    @my_response = mock_model(Response, :update_attributes => true, :save => false)
+    @my_response = mock_model(Response, :update_attributes => true, :valid? => false, :textual_response => "")
     @params = {:id => 1,
-      :question => {"1" => {:response => @my_response}, "2" => {:response => @my_response}}
+      :responses => {"1" => {:response => @my_response}, "2" => {:response => @my_response}}
     }
     
     Survey.stub!(:find).and_return(@survey)
@@ -712,7 +721,7 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
   
   it "should render the surveys/id/questions page " do
     do_respond
-    response.should render_template('surveys/questions')
+    response.should redirect_to(survey_questions_path(@survey, :responses => @responses))
   end
   
   it "should assign the invalid responses to the view " do

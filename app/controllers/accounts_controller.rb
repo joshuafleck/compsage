@@ -3,7 +3,6 @@ class AccountsController < ApplicationController
 	layout 'logged_in'
 	
 	def show
-	  @page_title = "My Account"
 	
 	  @organization = current_organization
 	  
@@ -16,7 +15,6 @@ class AccountsController < ApplicationController
 	end
 	
 	def new
-	  @page_title = "New Account"
 	  
 	  #The external invitation can be found in the session if it is an external survey invitation, otherwise, check the URL for a key
 	  @external_invitation = current_survey_invitation || Invitation.find_by_key(params[:key])
@@ -30,14 +28,11 @@ class AccountsController < ApplicationController
 	end
 	
 	def edit
-	  @page_title = "Edit My Account"
-    @breadcrumbs << ["My Account", url_for(account_path)]
 	  
   	@organization = current_organization
 	end
 	
 	def create
-	  @page_title = "New Account"
 	
 	  @external_invitation = Invitation.find_by_key(params[:key])
 	  
@@ -72,14 +67,10 @@ class AccountsController < ApplicationController
 	end
 	
 	def update
-	  @page_title = "Edit My Account"
-    @breadcrumbs << ["My Account", url_for(account_path)]
 	
 	  @organization = current_organization  
-     
-	  @organization.set_logo(params[:logo])
-	    
-    if @organization.update_attributes(params[:organization]) then
+     	    
+    if @organization.update_attributes(params[:organization]) && @organization.set_logo(params[:logo]) then
       respond_to do |wants|
         wants.html do
           flash[:notice] = "Your account was updated successfully."
