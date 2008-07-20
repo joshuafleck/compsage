@@ -7,7 +7,7 @@ class ReportsController < ApplicationController
   
   # for for flash charts
   def chart
-    
+    @question = Question.find(params[:question_id])
     respond_to do |wants|
       wants.xml { render(:layout => false) }
     end

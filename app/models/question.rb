@@ -65,11 +65,8 @@ class Question < ActiveRecord::Base
     return ['radio', 'checkbox'].include?(self[:question_type])
   end
   
-  def response_data
-    xml = Builder::XmlMarkup.new
-    
-    xml.mycar do
-    end
+  def grouped_responses
+    @grouped_responses ||= responses.group_by(&:numerical_response)
   end
   
 end
