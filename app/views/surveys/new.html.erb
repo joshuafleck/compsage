@@ -13,7 +13,7 @@
     <ul>
       <% @predefined_questions.each do |question| %>
         <% fields_for "predefined_question", :index => question.id do |question_form| %>
-          <li><%=question_form.check_box :included%> <%=question.title%> - <%=question.description%></li>
+          <li><%=question_form.check_box :included%> <%=question.name%> - <%=question.description%></li>
         <% end %>
       <% end %>
     </ul>

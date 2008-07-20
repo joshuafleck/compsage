@@ -1,28 +1,60 @@
 pay_questions:
   id: 1
   position: 1
-  title: Pay Questions
+  name: Pay Questions
   description: "Questions regarding pay for a positions"
   question_hash: --- 
-  - :position: 1
-    :question_type: numerical_field
-    :text: Average salary
-  - :position: 2
-    :question_type: numerical_field
-    :text: Pay range minimum
-  - :position: 3
-    :question_type: numerical_field
-    :text: Pay range midpoint
-  - :position: 4
-    :question_type: numerical_field
-    :text: Pay range maximum
+  - :question_type: numerical_field
+    :text: What is this position's average base wage/salary?
+  - :question_type: numerical_field
+    :text: What is this position's pay range minimum?
+  - :question_type: numerical_field
+    :text: What is this position's pay range midpoint?
+  - :question_type: numerical_field
+    :text: What is this position's pay range maximum?
   
-affliation_questions:
+incentive_question:
   id: 2
   position: 2
-  description: Questions regarding union affiliation for position
-  title: Affliation Questions
+  description: Whether the position is eligible for an incentive bonus
+  name: Incentive Bonus Eligibility
   question_hash: --- 
-  - :text: "Are any unions affiliated with this position" 
-    :question_type: "text_field" 
-    :position: 5
+  - :text: "Is this position eligible for incentive bonus?"
+    :question_type: "radio"
+    :options:
+        - "Yes"
+        - "No"
+
+incentive_target_question:
+    id: 3
+    position: 3
+    description: This positions target incentive as a percentage of base wage
+    name: Incentive Target
+    question_hash: ---
+    - :text: "What is this position's incentive pay target (as percent of base pay)?"
+      :question_type: "numerical_field"
+
+bargaining_unit_question:
+    id: 4
+    position: 4
+    description: Whether the position is part of a bargaining unit
+    name: Bargaining Unit
+    question_hash: ---
+    - :text: "Is this position part of a bargaining unit?"
+      :question_type: "radio"
+      :options:
+          - "Yes"
+          - "No"
+          
+flsa_question:
+    id: 5
+    position: 5
+    description: Whether the position is FLSA Exempt or Non-Exempt
+    name: FLSA Status
+    question_hash: ---
+    - :text: "What is this position's FLSA status with regard to overtime provisions?"
+      :question_type: "radio"
+      :options:
+          - "Exempt"
+          - "Non-Exempt"
+    

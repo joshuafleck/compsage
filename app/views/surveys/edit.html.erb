@@ -14,7 +14,7 @@
     <ul>
       <% @predefined_questions.each do |predefined_question| %>
         <% fields_for predefined_question, :index => predefined_question.id do |question_form| %>
-          <li><%=question_form.check_box :included%> <%=predefined_question.title%> - <%=predefined_question.description%></li>
+          <li><%=question_form.check_box :included%> <%=predefined_question.name%> - <%=predefined_question.description%></li>
         <% end %>
       <% end %>
     </ul>
