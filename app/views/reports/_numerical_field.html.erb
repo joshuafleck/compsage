@@ -1,5 +1,4 @@
 <% percentiles = question.responses.percentiles(:numerical_response, 25, 50, 75) %>
-<% p percentiles.inspect %>
 <div>
 	<div class="report_question"><%=question.text%>:</div>
 	<dl>
@@ -8,7 +7,7 @@
 		<dt>25th Percentile</dt>
 		<dd><%=percentiles[0]%></dd>
 		<dt>Median:</dt>
-		<dd><%=percentiles[1]%></dt>
+		<dd><%=percentiles[1]%></dd>
 		<dt>75th Percentile</dt>
 		<dd><%=percentiles[2]%></dd>
 	</dl>
