@@ -141,25 +141,27 @@ class SurveysController < ApplicationController
   def respond
     @responses = []
     @survey = Survey.find(params[:id])
-    @participant = Participation.find_or_create_by_participant_id_and_survey_id(:participant => current_organization_or_survey_invitation, :survey => @survey)
+    @participation = current_organization_or_survey_invitation.participations.find_or_create_by_survey_id(@survey)
+    
     #validate all responses required for the survey before saving, need
     @survey.questions.each do |question|
-      @response = @participant.responses.find_or_create_by_question_id(question.id)
+      @response = @participation.responses.find_or_create_by_question_id(question.id)
+      
       if question.numerical_response? #TODO: modifiy model code to figure out which of these to set
         @response.numerical_response = params[:responses][question.id.to_s]
       else
         @response.textual_response = params[:responses][question.id.to_s]
       end
-      @response.participation = @participant
+      
       #collect all responses, TODO: ignore non-required responses, not avail until phase 2
       @responses << @response
     end
 
     #if there were no invalid responses, save the results and redirect to the survey show page
-    if @responses.any? do |r| !r.valid? end #
+    if @responses.any? { |r| !r.valid? }
       flash[:notice] = "Please review and re-submit your responses."
       respond_to do |wants|
-        wants.html { redirect_to survey_questions_path(@survey, :responses => @responses)  }
+        wants.html { redirect_to survey_questions_path(@survey)  }
       end
       #we have all valid responses, proceed!
     else
