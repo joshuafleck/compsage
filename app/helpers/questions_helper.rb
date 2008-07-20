@@ -2,30 +2,25 @@ module QuestionsHelper
   def print_question(question, options = {})
 
     # insert the default html attributes to the current_html_parameters hash
-    html_parameters = Question::DEFAULT_HTML_ATTRIBUTES[question.question_type].merge(question.html_parameters || {});
-    question_parameters = Question::DEFAULT_QUESTION_ATTRIBUTES[question.question_type].merge(question.question_parameters || {});
+    html_parameters = Question::DEFAULT_HTML_ATTRIBUTES[question.question_type].merge(question.html_parameters || {})
+    question_parameters = Question::DEFAULT_QUESTION_ATTRIBUTES[question.question_type].merge(question.question_parameters || {})
     
-    # default name
     html_parameters[:name] ||= "responses[#{question.id}]"
 
     text = question.text
+    
     # If we're giving this question a number, then prepend it to the question's text.
     text = options[:number].to_s + ". " + text if options.include?(:number)
-    
-    # pull out the response(s)
     responses = options[:responses] || []
     
     # contains the default values based on the previous response(s).
     default_values = []
     
-    
     if question.numerical_response? then
-      # question has options, so default_value should use the numerical answer.
       responses.each { |response|
         default_values << response.numerical_response
       }
     else
-      # quesiton doesn't have options, is a textual response.
       responses.each { |response|
         default_values << response.textual_response
       }

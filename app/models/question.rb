@@ -61,4 +61,15 @@ class Question < ActiveRecord::Base
     return NUMERICAL_RESPONSES[self[:question_type]]
   end
   
+  def needs_chart?
+    return ['radio', 'checkbox'].include?(self[:question_type])
+  end
+  
+  def response_data
+    xml = Builder::XmlMarkup.new
+    
+    xml.mycar do
+    end
+  end
+  
 end

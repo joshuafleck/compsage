@@ -1,3 +1,15 @@
 class ReportsController < ApplicationController
-#TODO: Render a different layout if the user is viewing the results as an external survey invitation
+  layout 'logged_in'
+  
+  def show
+    @survey = Survey.find(params[:survey_id])
+  end
+  
+  # for for flash charts
+  def chart
+    
+    respond_to do |wants|
+      wants.xml { render(:layout => false) }
+    end
+  end
 end
