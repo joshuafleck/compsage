@@ -52,7 +52,7 @@ describe ExternalInvitationsController, " handling GET external_invitations" do
   
   it "should assign the found external_invitations for the view" do
   	do_get
-  	assigns[:external_invitations].should eql(@external_invitations)
+  	assigns[:invitations].should eql(@external_invitations)
   end
   
 end
@@ -132,7 +132,7 @@ describe ExternalInvitationsController, " handling GET /external_invitations/new
   end
   it "should assign the new external_invitation for the view" do
   	do_get
-  	assigns[:external_invitation].should eql(@external_invitation)
+  	assigns[:invitation].should eql(@external_invitation)
   end
   
 end
@@ -149,10 +149,11 @@ describe ExternalInvitationsController, " handling POST /external_invitations" d
     @current_organization.stub!(:sent_global_invitations).and_return(@external_invitations_proxy)
     @external_invitations_proxy.stub!(:new).and_return(@external_invitation)
     
+    @params = { :invitation => { :email => "test@test.com" } }
   end
 
   def do_post
-    post :create
+    post :create, @params
   end
 
   it "should require being logged in" do
@@ -172,7 +173,7 @@ describe ExternalInvitationsController, " handling POST /external_invitations" d
   it "should redirect to the dashboard and flash a message regarding the success of the action when the request is HTML" do
   	do_post
   	response.should redirect_to(external_invitations_path)
-  	flash[:notice].should eql("Your invitation was created successfully.")
+  	flash[:notice].should eql("Invitation sent to external email address test@test.com.")
   end
   
 end
@@ -195,9 +196,9 @@ describe ExternalInvitationsController, " handling POST /external_invitations wi
     post :create
   end
   
-  it "should redirect to the new view when the request is HTML" do
+  it "should redirect to the index view when the request is HTML" do
   	do_post
-  	response.should render_template('new')
+  	response.should render_template('index')
   end
   
 end

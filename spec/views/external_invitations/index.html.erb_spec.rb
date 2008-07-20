@@ -7,7 +7,7 @@ before(:each) do
     external_invitation = stub_model(ExternalInvitation)
     external_invitation.stub!(:created_at).and_return(Time.now)
     
-    assigns[:external_invitations] = [external_invitation]
+    assigns[:invitations] = [external_invitation]
     
     render 'external_invitations/index'
   end

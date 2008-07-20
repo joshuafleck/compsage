@@ -1,0 +1,20 @@
+<% title "Invitations to #{@survey.job_title}" %>
+<% breadcrumbs(link_to(@survey.job_title,survey_path(@survey))) %>
+<h2>Invitations to <%=@survey.job_title%></h2>
+<p>
+Invite other organizations to participate in <%=link_to(@survey.job_title,survey_path(@survey))%>
+</p>
+<p>
+<%=error_messages_for :invitation%>
+<%=flash_messages%>
+<%= render :partial => "survey_invitations/survey_invitation_form"  %>
+</p>
+<% if @invitations.size > 0 then %>
+  <ul id="invitations">
+    <% @invitations.each do |invitation| %>
+    <li><%=invitation.invitee.name%>
+      <div class="survey_actions"><%=link_to "Delete", survey_invitation_path(@survey, invitation), :method => :delete %></div>
+    </li>
+    <% end %>
+  </ul>
+<% end %>

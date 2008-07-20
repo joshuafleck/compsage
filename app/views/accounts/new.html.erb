@@ -8,6 +8,10 @@
                    :locals => { :f => f } %>
   <p>
     <input type="submit" value="Create" /> 
-    <%=link_to "Cancel", new_session_path %>
+    <% if logged_in_from_survey_invitation? then %>
+      <%=link_to "Cancel", survey_path(current_survey_invitation.survey.id) %>
+    <% else %>
+      <%=link_to "Cancel", new_session_path %>
+    <% end %>
   </p>
 <% end %>

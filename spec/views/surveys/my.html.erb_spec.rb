@@ -31,7 +31,7 @@ describe "/surveys/my" do
   end
   
   it "should have a link to invite users to the survey if the organization is the sponsor" do
-    response.should have_tag("a[href=#{new_survey_invitation_path(@survey.id)}]")
+    response.should have_tag("a[href=#{survey_invitations_path(@survey.id)}]")
   end
   
   it "should be paged if the user has more then X surveys" do

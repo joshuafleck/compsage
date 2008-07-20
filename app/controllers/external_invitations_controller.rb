@@ -5,12 +5,12 @@ class ExternalInvitationsController < ApplicationController
   
   def index
   
-    @external_invitations = current_organization.sent_global_invitations
+    @invitations = current_organization.sent_global_invitations
   
     respond_to do |wants|
       wants.html
       wants.xml do
-      	render :xml => @external_invitations.to_xml 
+      	render :xml => @invitations.to_xml 
       end
     end
     
@@ -18,17 +18,17 @@ class ExternalInvitationsController < ApplicationController
   
   def new
     
-    @external_invitation = ExternalInvitation.new  
+    @invitation = ExternalInvitation.new  
   end
   
   def create
     
-    @external_invitation = current_organization.sent_global_invitations.new(params[:external_invitation])
+    @invitation = current_organization.sent_global_invitations.new(params[:invitation])
     
-    if @external_invitation.save then
+    if @invitation.save then
       respond_to do |wants|
         wants.html {         
-          flash[:notice] = "Your invitation was created successfully."
+          flash[:notice] = "Invitation sent to external email address #{params[:invitation][:email]}."
           redirect_to external_invitations_path }      
         wants.xml do
           render :status => :created
@@ -37,10 +37,13 @@ class ExternalInvitationsController < ApplicationController
     else
       respond_to do |wants|
         wants.html do
-          render :action => 'new'
+        
+          @invitations = current_organization.sent_global_invitations
+  
+          render :action => 'index'
         end
         wants.xml do
-          render :xml => @external_invitation.errors.to_xml, :status => 422
+          render :xml => @invitation.errors.to_xml, :status => 422
         end
       end
     

@@ -9,7 +9,7 @@
   <div class="survey_actions">
   <% if survey.sponsor.id == current_organization.id then %>
     <%=link_to 'Edit', edit_survey_path(survey.id)%>
-    <%=link_to 'Invite', new_survey_invitation_path(survey.id)%>
+    <%=link_to 'Invite', survey_invitations_path(survey.id)%>
   <% end %>
   </div>
 </li>

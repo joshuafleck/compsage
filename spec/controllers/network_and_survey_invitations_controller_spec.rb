@@ -17,7 +17,21 @@ describe SurveyInvitationsController, " #route for" do
 end
 
 describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
+
   before do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @invitation = mock_model(SurveyInvitation, :id => 1, :inviter => @current_organization)
+    @invitations_proxy = mock('invitations proxy')
+    @invitations_proxy.stub!(:find).and_return(@invitation)
+    
+    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :invitations => @invitations_proxy)
+    @surveys_proxy = mock('surveys proxy')
+    @surveys_proxy.stub!(:find).and_return(@survey)
+    
+    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    
     @params = {:survey_id => 1}
   end
   
@@ -25,6 +39,11 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
     get :index, @params
   end
 
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_get
+  end
+  
   it "should be successful" do
   	do_get
   	response.should be_success
@@ -35,38 +54,228 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
   	response.should render_template('index')
   end
   
-  it "should assign the found survey invitations for the view"
-  it "should find the external survey invitations"
-  it "should find all invitations"
+  it "should assign the found survey invitations for the view" do    
+    do_get
+    assigns(:invitations).should equal(@invitation)
+   end
+   
+  it "should find the external survey invitations" do
+    pending
+   end
+   
+  it "should find all invitations" do
+    @invitations_proxy.should_receive(:find).and_return(@invitation)
+    do_get
+   end
+   
+  it "should error if requesting organization is not survey sponsor" do
+    @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
+    do_get
+  end
+   
 end
 
 describe SurveyInvitationsController, " handling GET /surveys/1/invitations.xml" do
-  it "should find all survey invitations"
-  it "should be successful"
-  it "should render the found invitations as XML"
+
+ before do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @invitation = mock_model(SurveyInvitation, :id => 1, :inviter => @current_organization, :to_xml => 'XML')
+    @invitations_proxy = mock('invitations proxy')
+    @invitations_proxy.stub!(:find).and_return(@invitation)
+    
+    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :invitations => @invitations_proxy)
+    @surveys_proxy = mock('surveys proxy')
+    @surveys_proxy.stub!(:find).and_return(@survey)
+    
+    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    
+    @params = {:survey_id => 1}
+  end
+ 
+  def do_get
+    @request.env["HTTP_ACCEPT"] = "application/xml"
+    get :index, @params
+  end
+  
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_get
+  end
+   
+  it "should find all survey invitations" do
+    @invitations_proxy.should_receive(:find).and_return(@invitation)
+    do_get
+   end
+   
+  it "should be successful" do
+  	do_get
+  	response.should be_success
+   end
+   
+  it "should render the found invitations as XML" do
+    @invitation.should_receive(:to_xml).and_return("XML")
+    do_get
+   end
+   
 end
 
+describe SurveyInvitationsController, " handling POST /surveys/1/invitations with internal invitation" do
 
-describe SurveyInvitationsController, " handling GET /surveys/1/invitations/new" do
-  it "should error if requesting organization is not survey sponsor"
-  it "should be successful"
-  it "should render new template"
+ before do
+    @current_organization = mock_model(Organization, :name => "test")
+    login_as(@current_organization)
+    
+    @invitation = mock_model(SurveyInvitation, :id => 1, :inviter => @current_organization, :to_xml => 'XML', :save => true)
+    @invitations_proxy = mock('invitations proxy')
+    @invitations_proxy.stub!(:find).and_return(@invitation)
+    
+    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :invitations => @invitations_proxy)
+    @surveys_proxy = mock('surveys proxy')
+    @surveys_proxy.stub!(:find).and_return(@survey)
+    
+    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @current_organization.stub!(:survey_invitations).and_return([])
+    Organization.stub!(:find_by_email).and_return(@current_organization)
+    
+    @surveys_proxy.stub!(:running).and_return(@surveys_proxy)
+    @invitations_proxy.stub!(:new).and_return(@invitation)
+    
+    @params = {:survey_id => 1, :invitation => {:email => "test", :name => "test"}}
+  end
+ 
+  def do_post
+    post :create, @params
+  end
+  
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_post
+  end
+  
+  it "should check to see if the invitee exists" do
+    Organization.should_receive(:find_by_email).with(@params[:invitation][:email]).and_return(@current_organization)
+    do_post
+  end
+   
+  it "should create a new survey_invitation if the invitee exists" do
+    @invitations_proxy.should_receive(:new).with(:invitee => @current_organization, :inviter => @current_organization).and_return(@invitation)
+    do_post
+  end
+     
+  it "should require the organization is the sponsor of the survey" do
+    @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
+    do_post
+  end
+   
+  it "should redirect to the invitation index page and flash a message regarding the success of the action" do
+    do_post
+    flash[:message].should eql("Invitation sent to #{@current_organization.name}.")
+    response.should redirect_to('surveys/1/invitations')
+  end
+   
 end
 
-describe SurveyInvitationsController, " handling POST /surveys/1/invitations" do
-  it "should create a new survey_invitation if the invitee exists"
-  it "should create a new external_survey_invitation if the invitee does not exist"
-  it "should error if requesting organization is not sponsor of the survey"
-  it "should redirect to the invitation index page and flash a message regarding the success of the action"
+describe SurveyInvitationsController, " handling POST /surveys/1/invitations with external invitation" do
+
+ before do
+    @current_organization = mock_model(Organization, :name => "test")
+    login_as(@current_organization)
+    
+    @invitation = mock_model(ExternalSurveyInvitation, :id => 1, :inviter => @current_organization, :to_xml => 'XML', :save => true, :inviter= => @current_organization)
+    @invitations_proxy = mock('invitations proxy')
+    @invitations_proxy.stub!(:find).and_return(@invitation)
+    
+    @external_invitations_proxy = mock('external invitations proxy')
+    @external_invitations_proxy.stub!(:new).and_return(@invitation)
+    
+    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :invitations => @invitations_proxy)
+    @surveys_proxy = mock('surveys proxy')
+    @surveys_proxy.stub!(:find).and_return(@survey)
+    
+    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @current_organization.stub!(:survey_invitations).and_return([])
+    Organization.stub!(:find_by_email).and_return(nil)
+    
+    @surveys_proxy.stub!(:running).and_return(@surveys_proxy)
+    @invitations_proxy.stub!(:new).and_return(@invitation)
+    @survey.stub!(:external_invitations).and_return(@external_invitations_proxy)
+        
+    @params = {:survey_id => 1, :invitation => {:email => "test", :name => "test"}}
+  end
+ 
+  def do_post
+    post :create, @params
+  end
+   
+  it "should create a new external_survey_invitation if the invitee does not exist" do
+    @external_invitations_proxy.should_receive(:new).and_return(@invitation)
+    do_post
+  end
+   
+  it "should redirect to the invitation index page and flash a message regarding the success of the action" do
+    do_post
+    flash[:message].should eql("Invitation sent to external email address #{@params[:invitation][:email]}.")
+    response.should redirect_to('surveys/1/invitations')
+  end
+   
 end
 
 describe SurveyInvitationsController, " handling DELETE /surveys/1/invitations/1" do
-  it "should error if requesting organization is not sponsor"
-  it "should find the invitation requested"
-  it "should destroy the invitation requested"
-  it "should redirect to the invitation index page"
-end
 
+ before do
+    @current_organization = mock_model(Organization, :name => "test")
+    login_as(@current_organization)
+    
+    @invitation = mock_model(SurveyInvitation, :id => 1, :inviter => @current_organization, :to_xml => 'XML', :destroy => true)
+    @invitations_proxy = mock('invitations proxy')
+    @invitations_proxy.stub!(:find).and_return(@invitation)
+    
+    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :invitations => @invitations_proxy)
+    @surveys_proxy = mock('surveys proxy')
+    @surveys_proxy.stub!(:find).and_return(@survey)
+    
+    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @current_organization.stub!(:survey_invitations).and_return([])
+    Organization.stub!(:find_by_email).and_return(@current_organization)
+    
+    @surveys_proxy.stub!(:running).and_return(@surveys_proxy)
+    @invitations_proxy.stub!(:new).and_return(@invitation)
+    
+    @params = {:survey_id => 1, :id => @invitation.id}
+  end
+ 
+  def do_delete
+    delete :destroy, @params
+  end
+  
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_delete
+  end
+  
+  it "should only allow the sponsor to delete invitations" do
+    @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
+    do_delete
+  end
+   
+  it "should find the invitation requested" do
+    @invitations_proxy.should_receive(:find).and_return(@invitation)
+    do_delete
+  end
+   
+  it "should destroy the invitation requested" do
+    @invitation.should_receive(:destroy).and_return(true)
+    do_delete
+  end
+   
+  it "should redirect to the invitation index page" do
+    do_delete
+    response.should redirect_to('/surveys/1/invitations')
+  end
+   
+end
 
   
 #specs specific to NetworkInvitationsController  

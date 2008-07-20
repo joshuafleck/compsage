@@ -656,7 +656,7 @@ describe SurveysController, "handling POST /surveys/1/respond, as invitee that i
   
   it "should redirect to the success/sign-up page " do
     do_respond
-    response.should redirect_to("/signup")
+    response.should redirect_to("/account/new")
   end
   
   it "should flash a success message" do

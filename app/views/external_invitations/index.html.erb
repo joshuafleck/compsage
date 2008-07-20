@@ -5,16 +5,18 @@
 Invite other organizations to participate in [product name here]
 </p>
 <p>
-<%=error_messages_for :external_invitation%>
+<%=error_messages_for :invitation%>
 <%=flash_messages%>
 <%= render :partial => "external_invitations/external_invitation_form"  %>
 </p>
-<ul id=invitations>
-  <% @external_invitations.each do |invitation| %>
-    <li>
-      <p><span>Invitee Name: </span><%=invitation.name%></p>
-      <p><span>Invitee email: </span><%=invitation.email%></p>
-      <p><span>Sent: </span><%=time_ago_in_words(invitation.created_at)%> ago</p>
-    </li>
-  <% end %>
-</ul>
+<% if @invitations.size > 0 then %>
+  <ul id="invitations">
+    <% @invitations.each do |invitation| %>
+      <li>
+        <p><span>Invitee Name: </span><%=invitation.name%></p>
+        <p><span>Invitee email: </span><%=invitation.email%></p>
+        <p><span>Sent: </span><%=time_ago_in_words(invitation.created_at)%> ago</p>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

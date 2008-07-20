@@ -178,7 +178,7 @@ class SurveysController < ApplicationController
       #invite based user, redirect to sign-up page   
       else
         respond_to do |wants|
-          wants.html{ redirect_to signup_path }
+          wants.html{ redirect_to new_account_path }
         end
       end
     end

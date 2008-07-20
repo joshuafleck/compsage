@@ -6,8 +6,6 @@ class NetworkInvitationsController < ApplicationController
     @network = current_organization.owned_networks.find(params[:network_id])
     @invitations = @network.invitations.find(:all, :include => :invitee)
     
-    @page_title = "Invitations"
-    @breadcrumbs << ["Your Networks", url_for(networks_path)] << [@network.name, url_for(network_path(@network))]
     respond_to do |wants|
       wants.html {} # render the template
       wants.xml { render :xml => @invitations.to_xml }
@@ -53,8 +51,6 @@ class NetworkInvitationsController < ApplicationController
       respond_to do |wants|
         wants.html do
           # get ready to render the index template again.
-          @page_title = "Invitations"
-          @breadcrumbs << ["Your Networks", url_for(networks_path)] << [@network.name, url_for(network_path(@network))]
 
           @invitations = @network.invitations.find(:all, :include => :invitee)
           render :action => 'index'

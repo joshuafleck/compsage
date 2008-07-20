@@ -8,7 +8,7 @@
 <h3>Sponsored by <%=@survey.sponsor.name%></h3>
 <% if logged_in? && @survey.sponsor.id == current_organization.id then %>
   <%=link_to 'Edit', edit_survey_path(@survey)%>
-  <%=link_to 'Invite', new_survey_invitation_path(@survey)%>
+  <%=link_to 'Invite', survey_invitations_path(@survey)%>
 <% end %>
 <p><%=@survey.description%></p>
 <span>Time Remaining: </span><%=time_ago_in_words(@survey.end_date)%>

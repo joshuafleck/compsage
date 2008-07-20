@@ -124,7 +124,7 @@ module AuthenticatedSystem
     # Inclusion hook to make #current_organization and #logged_in?
     # available as ActionView helper methods.
     def self.included(base)
-      base.send :helper_method, :current_organization, :logged_in?, :authorized?, :current_organization_or_survey_invitation, :current_survey_invitation, :invited_to_survey? if base.respond_to? :helper_method
+      base.send :helper_method, :current_organization, :logged_in?, :logged_in_from_survey_invitation?, :authorized?, :current_organization_or_survey_invitation, :current_survey_invitation, :invited_to_survey? if base.respond_to? :helper_method
     end
 
     #

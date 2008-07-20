@@ -5,7 +5,7 @@ describe "/external_invitations/new" do
   before(:each) do
     external_invitation = stub_model(ExternalInvitation)
     
-    assigns[:external_invitation] = external_invitation
+    assigns[:invitation] = external_invitation
     
     render 'external_invitations/new'
   end
@@ -15,15 +15,15 @@ describe "/external_invitations/new" do
   end
   
   it "should have a means for allowing the organization an email address" do
-  	response.should have_tag('input[id=external_invitation_email]')
+  	response.should have_tag('input[id=invitation_email]')
   end
   
   it "should have a means for allowing the organization to input a name"	 do
-  	response.should have_tag('input[id=external_invitation_name]')
+  	response.should have_tag('input[id=invitation_name]')
   end
   
   it "should have a means for allowing the organization to input a message"	 do
-  	response.should have_tag('textarea[id=external_invitation_message]')
+  	response.should have_tag('textarea[id=invitation_message]')
   end
   
   it "should have a submit button" do
