@@ -13,5 +13,36 @@
 <p><%=@survey.description%></p>
 <span>Time Remaining: </span><%=time_ago_in_words(@survey.end_date)%>
 <p><%=link_to "Respond to #{@survey.job_title}", survey_questions_path(@survey)%></p>
-<%= render "discussions/index" %>
 
+
+<h2>Discussing <%=@survey.job_title%></h2>
+<p>
+  This is a forum for questions and clarifications regarding a survey. 
+  Please remember to preserve your anonymity and the anonymity of the other participants.
+  The posting of compensation information is strictly forbidden.
+  If you encounter abuse of the discussion board, please report it immediately.
+</p>
+
+<p>
+  <%=link_to "Create new discussion topic", new_survey_discussion_path(@survey) %>
+</p>
+<ul id=discussions>
+  <% @discussions.sort.each do |discussion_topic| %>
+    <li>
+      <div class="discussion_topic">
+        <%= render(:partial => "discussions/discussion", 
+                   :object => discussion_topic)%>
+      </div>
+      <div class="discussion_replies">
+        <ul id="discussion_<%=discussion_topic.id%>_replies">
+          <% discussion_topic.all_children.find_all{|discussion| discussion.is_not_abuse}.sort.each do |discussion_reply| %>
+            <li>
+              <%= render :partial => "discussions/discussion",
+                         :object => discussion_reply %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </li>
+  <% end %>
+</ul>

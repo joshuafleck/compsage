@@ -1,10 +1,6 @@
 class DiscussionsController < ApplicationController
-	before_filter :login_or_survey_invitation_required, :setup
+	before_filter :login_or_survey_invitation_required, :find_survey
 	layout 'logged_in'
-  
-	def setup
-		@survey = Survey.find(params[:survey_id])
-	end
 	
 	def index
        
@@ -61,9 +57,6 @@ class DiscussionsController < ApplicationController
   
   def edit
     @discussion = current_organization_or_survey_invitation.discussions.find(params[:id])
-    
-    @page_title = "Editing #{@discussion.subject}"
-    @breadcrumbs << [@survey.job_title, url_for(survey_path(@survey))] 
   end
   
   def update
@@ -130,4 +123,9 @@ class DiscussionsController < ApplicationController
     end
   end
   
+  private
+  
+  def find_survey
+		@survey = Survey.find(params[:survey_id])
+	end
 end
