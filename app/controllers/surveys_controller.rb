@@ -1,8 +1,9 @@
 class SurveysController < ApplicationController
-  layout 'logged_in'
+  layout :logged_in_or_invited_layout 
   #we require a valid login if you are creating or editing a survey.
   before_filter :login_required, :only => [ :edit, :update, :create, :new, :index ]
   before_filter :login_or_survey_invitation_required, :except => [ :edit, :update, :create, :new, :index ]
+  
   
   def index    
     @surveys = Survey.running
@@ -26,8 +27,6 @@ class SurveysController < ApplicationController
         if @survey.closed? == :true
           redirect_to survey_report_path(@survey)
         end
-        #Show a different layout if the user is replying with an external survey invitation
-        render :layout => 'survey_invitation_logged_in' if invited_to_survey?
       }
       wants.xml{
           render :xml => @survey.to_xml
@@ -195,6 +194,11 @@ class SurveysController < ApplicationController
         render :xml => @surveys.to_xml
       }
     end
-  end  
+  end
+    
+  private
+    def logged_in_or_invited_layout
+      logged_in? ? "logged_in" : "survey_invitation_logged_in"
+    end
   
 end

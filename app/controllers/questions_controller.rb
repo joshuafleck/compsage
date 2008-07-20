@@ -1,6 +1,6 @@
 class QuestionsController < ApplicationController 
   before_filter :login_or_survey_invitation_required
-  layout 'logged_in'
+  layout :logged_in_or_invited_layout 
   
   def index
     @survey = Survey.find(params[:survey_id])
@@ -21,5 +21,10 @@ class QuestionsController < ApplicationController
         end
     end
   end
-  
+    
+  private
+    def logged_in_or_invited_layout
+      logged_in? ? "logged_in" : "survey_invitation_logged_in"
+    end
+    
 end

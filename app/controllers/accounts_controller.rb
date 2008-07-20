@@ -1,6 +1,6 @@
 class AccountsController < ApplicationController
   before_filter :login_required, :except => [ :new , :create ]
-	layout 'logged_in'
+  layout :logged_in_or_invited_layout 
 	
 	def show
 	
@@ -98,5 +98,10 @@ class AccountsController < ApplicationController
       end
     end
 	end
-  
+
+  private
+    def logged_in_or_invited_layout
+      logged_in_from_survey_invitation? ? "survey_invitation_logged_in" : (logged_in? ? "logged_in" : "front_with_invitation")
+    end
+      
 end
