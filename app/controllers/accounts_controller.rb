@@ -19,22 +19,15 @@ class AccountsController < ApplicationController
 	  #The external invitation can be found in the session if it is an external survey invitation, otherwise, check the URL for a key
 	  @external_invitation = current_survey_invitation || Invitation.find_by_key(params[:key])
 	   
-	  @organization = Organization.new
-	  
 	  #Prepopulate the name and email fields automagically
-	  @organization.contact_name = @external_invitation.name
-	  @organization.email = @external_invitation.email
-    
-    respond_to do |wants|
-      wants.html {
-        #Show a different layout if the user is replying with an external survey invitation
-        render :layout => 'survey_invitation_logged_in' if logged_in_from_survey_invitation?}
-    end
+	  @organization = Organization.new(:contact_name => @external_invitation.name, :email => @external_invitation.email)
+	      
 	end
 	
 	def edit
 	  
   	@organization = current_organization
+  	
 	end
 	
 	def create
@@ -50,13 +43,15 @@ class AccountsController < ApplicationController
         
     #Save the organization and set the logo
     if @organization.save && @organization.set_logo(params[:logo]) then
+    
       #Clear the existing session (in case the user is logged in as an external survey invitation)
       logout_killing_session!
       
       respond_to do |wants|
-        wants.html {         
+        wants.html do         
           flash[:notice] = "Your account was created successfully."
-          redirect_to new_session_path() }      
+          redirect_to new_session_path()
+        end   
         wants.xml do
           render :status => :created
         end
@@ -100,8 +95,10 @@ class AccountsController < ApplicationController
 	end
 
   private
-    def logged_in_or_invited_layout
-      logged_in_from_survey_invitation? ? "survey_invitation_logged_in" : (logged_in? ? "logged_in" : "front_with_invitation")
-    end
+  
+  #Use a different layout depending on how the user has entered the applications
+  def logged_in_or_invited_layout
+    logged_in_from_survey_invitation? ? "survey_invitation_logged_in" : (logged_in? ? "logged_in" : "front_with_invitation")
+  end
       
 end

@@ -7,7 +7,7 @@
   <%= render :partial => "accounts/account_form", 
                    :locals => { :f => f } %>
   <p>
-    <input type="submit" value="Create" /> 
+    <input type="submit" value="Post" /> 
     <% if logged_in_from_survey_invitation? then %>
       <%=link_to "Cancel", survey_path(current_survey_invitation.survey.id) %>
     <% else %>

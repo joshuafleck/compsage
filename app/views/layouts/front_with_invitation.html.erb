@@ -7,10 +7,18 @@
 </head>
 <body xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <div id="title">
+			<div class="logged_in">
+				Welcome
+				<%=link_to "Create an Account", new_account_path(:key => params[:key])%>
+			</div>
       <img src="/images/title.gif" />
   </div>
   <div id="bar">
       <ul>
+          <li><a href="">Home</a></li>
+          <li><a href="">About</a></li>
+          <li><a href="">Legal</a></li>
+          <li><%=link_to "Join", new_account_path(:key => params[:key])%></li>
       </ul>
   </div>
   <div id="main">

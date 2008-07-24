@@ -34,6 +34,7 @@ class SessionsController < ApplicationController
   end
   
   def create_survey_session
+    logout_keeping_session!
     self.current_survey_invitation = ExternalSurveyInvitation.find_by_key(params[:key])
     redirect_to survey_path(self.current_survey_invitation.survey)
   end
