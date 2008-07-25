@@ -1,13 +1,11 @@
 <% title "[product name here] Invitations" %>
 <% breadcrumbs() %>
 <h2>[product name here] Invitations</h2>
+<p>Invite other organizations to participate in [product name here]</p>
 <p>
-Invite other organizations to participate in [product name here]
-</p>
-<p>
-<%=error_messages_for :invitation%>
-<%=flash_messages%>
-<%= render :partial => "external_invitations/external_invitation_form"  %>
+  <%=flash_messages%>
+  <%=error_messages_for :invitation%>
+  <%= render :partial => "external_invitations/external_invitation_form"  %>
 </p>
 <% if @invitations.size > 0 then %>
   <ul id="invitations">

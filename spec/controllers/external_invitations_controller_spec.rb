@@ -149,6 +149,8 @@ describe ExternalInvitationsController, " handling POST /external_invitations" d
     @current_organization.stub!(:sent_global_invitations).and_return(@external_invitations_proxy)
     @external_invitations_proxy.stub!(:new).and_return(@external_invitation)
     
+    Organization.stub!(:find_by_email).and_return(nil)
+    
     @params = { :invitation => { :email => "test@test.com" } }
   end
 
@@ -173,7 +175,7 @@ describe ExternalInvitationsController, " handling POST /external_invitations" d
   it "should redirect to the dashboard and flash a message regarding the success of the action when the request is HTML" do
   	do_post
   	response.should redirect_to(external_invitations_path)
-  	flash[:notice].should eql("Invitation sent to external email address test@test.com.")
+  	flash[:notice].should eql("Invitation sent to external email address: test@test.com.")
   end
   
 end
@@ -190,10 +192,14 @@ describe ExternalInvitationsController, " handling POST /external_invitations wi
     @current_organization.stub!(:sent_global_invitations).and_return(@external_invitations_proxy)
     @external_invitations_proxy.stub!(:new).and_return(@external_invitation)
     
+    Organization.stub!(:find_by_email).and_return(nil)
+    
+    @params = {:invitation => {:email => "test"}}
+    
   end
 
   def do_post
-    post :create
+    post :create, @params
   end
   
   it "should redirect to the index view when the request is HTML" do

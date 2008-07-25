@@ -96,7 +96,7 @@ class AccountsController < ApplicationController
 
   private
   
-  #Use a different layout depending on how the user has entered the applications
+  #Use a different layout depending on how the user has entered the application
   def logged_in_or_invited_layout
     logged_in_from_survey_invitation? ? "survey_invitation_logged_in" : (logged_in? ? "logged_in" : "front_with_invitation")
   end
