@@ -18,10 +18,8 @@ class OrganizationsController < ApplicationController
   end
   
   def show
+  
     @organization = Organization.find(params[:id])   
-    
-    @page_title = @organization.name
-    @breadcrumbs << ["Members", url_for(organizations_path)]    
     
     respond_to do |wants|
       wants.html # render template
