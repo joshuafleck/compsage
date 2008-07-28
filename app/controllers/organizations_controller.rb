@@ -32,8 +32,6 @@ class OrganizationsController < ApplicationController
   end
   
   def search    
-    @search = Ultrasphinx::Search.new(:query => params[:search_text])
-    @search.run
-    @organizations = @search.results
+    @organizations = Organization.search(params[:search_text])
   end
 end

@@ -2,7 +2,10 @@ class Survey < ActiveRecord::Base
 
   include AASM
 
-	is_indexed :fields => [:job_title, :description]
+  define_index do
+    indexes job_title
+    indexes description
+  end
 
   belongs_to :sponsor, :class_name => "Organization"
   has_many :discussions, :dependent => :destroy

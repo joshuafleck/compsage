@@ -564,12 +564,9 @@ describe SurveysController, "handling GET /surveys/search" do
     @survey = mock_model(Survey, :id => 1, :title => "My Survey")
     @surveys = [@survey]
     
-    @search = mock_model(Ultrasphinx::Search, :run => nil)
-    @search.stub!(:results).and_return(@surveys)
-        
-    @params = {:search_text => "josh"}
+    Survey.stub!(:search).and_return(@surveys)
     
-    Ultrasphinx::Search.stub!(:new).and_return(@search)
+    @params = {:search_text => "josh"}
     
   end
   
@@ -587,10 +584,8 @@ describe SurveysController, "handling GET /surveys/search" do
   	response.should render_template('search')
   end
   
-  it "should search the users surveys" do
-  	Ultrasphinx::Search.should_receive(:new).and_return(@search)
-  	@search.should_receive(:run)  	
-  	@search.should_receive(:results).and_return(@surveys)
+  it "should search the users surveys" do	
+  	Survey.should_receive(:search).and_return(@surveys)
     do_get
   end
   
@@ -608,13 +603,9 @@ describe SurveysController, "handling GET /surveys/search.xml" do
     @survey = mock_model(Survey, :id => 1, :title => "My Survey")
     @surveys = [@survey]    
     @surveys.stub!(:to_xml).and_return("XML")
-    
-    @search = mock_model(Ultrasphinx::Search, :run => nil)
-    @search.stub!(:results).and_return(@surveys)
+    Survey.stub!(:search).and_return(@surveys)
         
     @params = {:search_text => "josh"}
-    
-    Ultrasphinx::Search.stub!(:new).and_return(@search)
     
   end
   def do_get
@@ -628,9 +619,7 @@ describe SurveysController, "handling GET /surveys/search.xml" do
   end
   
   it "should search the users surveys" do
-  	Ultrasphinx::Search.should_receive(:new).and_return(@search)
-  	@search.should_receive(:run)  	
-  	@search.should_receive(:results).and_return(@surveys)
+  	Survey.should_receive(:search).and_return(@surveys)
     do_get
   end
 

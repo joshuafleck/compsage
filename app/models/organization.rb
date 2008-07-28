@@ -5,7 +5,11 @@ class Organization < ActiveRecord::Base
   include Authentication::ByPassword
   include Authentication::ByCookieToken
 
-  is_indexed :fields => [:name]
+  define_index do
+    indexes :name, :sortable => true
+    
+  end
+  
   has_and_belongs_to_many :networks, :after_remove => :delete_empty_network
   has_many :owned_networks, :class_name => "Network", :foreign_key => "owner_id", :after_add => :join_created_network
   

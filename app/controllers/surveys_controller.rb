@@ -127,9 +127,7 @@ class SurveysController < ApplicationController
 
   def search
     
-    @search = Ultrasphinx::Search.new(:query => params[:search_text])
-    @search.run
-    @surveys = @search.results
+    @surveys = Survey.search(params[:search_text])
     
     respond_to do |wants|
       wants.html {}
