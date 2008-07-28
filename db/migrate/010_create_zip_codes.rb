@@ -38,19 +38,19 @@ class CreateZipCodes < ActiveRecord::Migration
      end
 
 		 puts "Uncomment code below to import zip codes into database"
-     #require 'csv'
-     #zip_code_data = File.expand_path(File.join(RAILS_ROOT, 'vendor/plugins/zipcodesearch/generators/zip_code_search/templates/zip_code_data.csv'))
-     #puts "Now importing about 45,000 zip codes from the free data set at http://www.cfdynamics.com/zipbase/."
-     #puts "This will probably take 5-10 minutes... "
-     #puts "[NOTE: if you want it to go faster, import the file\n #{zip_code_data} using your database's CSV import mechanism.]"
-     #CSV.open(zip_code_data, "r") do |row| 
-        #ZipCode.create!(:zip       => row[0], 
-                                 #:latitude   => row[1], 
-                                 #:longitude  => row[2], 
-                                 #:city       => row[3], 
-                                 #:state      => row[4], 
-                                 #:zip_class  => row[5])
-     #end 
+     require 'csv'
+     zip_code_data = File.expand_path(File.join(RAILS_ROOT, 'vendor/plugins/zipcodesearch/generators/zip_code_search/templates/zip_code_data.csv'))
+     puts "Now importing about 45,000 zip codes from the free data set at http://www.cfdynamics.com/zipbase/."
+     puts "This will probably take 5-10 minutes... "
+     puts "[NOTE: if you want it to go faster, import the file\n #{zip_code_data} using your database's CSV import mechanism.]"
+     CSV.open(zip_code_data, "r") do |row| 
+        ZipCode.create!(:zip       => row[0], 
+                                 :latitude   => row[1], 
+                                 :longitude  => row[2], 
+                                 :city       => row[3], 
+                                 :state      => row[4], 
+                                 :zip_class  => row[5])
+     end 
      # =========================================================================
 
      # No matter how you choose to do it, at the end of this migration, you

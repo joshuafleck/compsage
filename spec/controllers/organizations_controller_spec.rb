@@ -205,7 +205,7 @@ describe OrganizationsController, "handling GET /organizations/search" do
 	
 	before do
 
-    @current_organization = mock_model(Organization)
+    @current_organization = mock_model(Organization, :latitude => 1, :longitude => 1)
     login_as(@current_organization)
       
     @organization = mock_model(Organization, :id => 1, :name => "Denarius", :to_xml => "XML")

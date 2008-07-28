@@ -12,6 +12,8 @@ brian:
   state: MN
   zip_code: 55407
   industry: "Healthcare: Managed Care"
+  latitude: 0.784271815164674
+  longitude: -1.62758974208052
 
 josh:
   id: 2
@@ -25,6 +27,8 @@ josh:
   state: MN
   zip_code: 55044
   industry: "Healthcare: Managed Care"
+  latitude: 0.77900015287878
+  longitude: -1.62766124821997
   
 dave:
   id: 3
@@ -38,3 +42,5 @@ dave:
   state: MN
   zip_code: 55108
   industry: "Healthcare: Managed Care"
+  latitude: 0.785059813868657
+  longitude: -1.62624756643244

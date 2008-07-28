@@ -32,6 +32,9 @@ class OrganizationsController < ApplicationController
   end
   
   def search    
-    @organizations = Organization.search(params[:search_text])
+    @organizations = Organization.search(
+      params[:search_text],
+      :geo => [current_organization.latitude, current_organization.longitude]
+    )
   end
 end

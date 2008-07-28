@@ -5,9 +5,16 @@ class Organization < ActiveRecord::Base
   include Authentication::ByPassword
   include Authentication::ByCookieToken
 
+  before_save :assign_latitude_and_longitude
+  
   define_index do
     indexes :name, :sortable => true
     
+    has 'latitude', :as => :latitude, :type => :float
+    has 'longitude', :as => :longitude, :type => :float
+
+    set_property :latitude_attr   => "latitude"
+    set_property :longitude_attr  => "longitude"
   end
   
   has_and_belongs_to_many :networks, :after_remove => :delete_empty_network
@@ -98,6 +105,27 @@ class Organization < ActiveRecord::Base
   # Joins the network just created by this organization.
   def join_created_network(network)
     networks << network
+  end
+  
+  # finds the closest zipcode we have in our DB to the one they changed to.  Convert the
+  # degrees to radians to facilitate geodistance searching.
+  def assign_latitude_and_longitude
+    if zip_code_changed? then
+      current_code = zip_code.to_i
+      fuzzy = 0
+      while !(zip = ZipCode.find_by_zip(current_code + fuzzy) ||
+               (zip = ZipCode.find_by_zip(current_code - fuzzy) && fuzzy > 0)
+              ) do
+        fuzzy += 1
+        if fuzzy > 10 then
+          zip = ZipCode.new(:latitude => 44.935465, :longitude => -93.254023)
+          break
+        end
+      end
+      
+      self[:latitude] = zip.latitude * (Math::PI / 180)
+      self[:longitude] = zip.longitude * (Math::PI / 180)
+    end
   end
   
 end
