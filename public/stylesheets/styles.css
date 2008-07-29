@@ -411,6 +411,7 @@ ul.entity_list li.entity {
   padding: 10px;
   clear: both;
   border-bottom: 1px solid #264442;
+  position: relative;
 }
 ul.entity_list li.odd {
   background-color: #f7fbfb;
@@ -433,4 +434,18 @@ ul.entity_list li.entity div.actions {
 ul.entity_list li.entity div.actions a {
   display: block;
   padding: 2px;
+}
+
+ul.entity_list li.entity div.organization_logo {
+  width: 100px;
+  height: 50px;
+  margin-right: 1em;
+  float: left;
+  text-align: center;
+}
+
+img.inline_logo {
+  vertical-align: middle;
+  border: 0;
+  padding-right: 1em;
 }

@@ -1,7 +1,9 @@
 <li class="entity <%=cycle("even", "odd")%>">
   <div class="organization_logo">
     <% if !organization.logo.nil? then %>
-      <p><%=image_tag organization.logo.public_filename(:thumb) %></p>
+      <%=image_tag organization.logo.public_filename(:standard_thumbnail) %>
+    <% else %>
+      &nbsp;      
     <% end %>
   </div>
   <div class="title">

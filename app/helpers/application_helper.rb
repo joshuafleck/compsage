@@ -18,4 +18,16 @@ module ApplicationHelper
     end
   end
   
+  def link_to_organization_with_logo(organization)
+    
+    if organization.logo.nil? then
+      image_tag("tiny_thumbnail_placeholder.gif", :class => 'inline_logo') +
+      link_to(organization.name, organization_path(organization))
+    else
+      content_tag(:a, :href => url_for(organization)) do
+        image_tag(organization.logo.public_filename(:tiny_thumbnail), :class => 'inline_logo') +
+        link_to(organization.name, organization_path(organization))
+      end
+    end
+  end
 end

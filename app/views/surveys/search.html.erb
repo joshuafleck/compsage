@@ -1,2 +1,8 @@
 <% title "Search Surveys" %>
 <% breadcrumbs(link_to("Surveys",surveys_path)) %>
+<h2>Search Results</h2>
+<ul>
+  <% @surveys.each do |survey| %>
+    <%=render :partial => "survey", :object => survey %>
+  <% end %>
+</ul>

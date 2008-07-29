@@ -4,7 +4,7 @@
 <%=flash_messages%>
 <p><%=link_to "Edit My Account", edit_account_path %></p>
 <% if !@organization.logo.nil? then %>
-  <p><%=image_tag @organization.logo.public_filename(:thumb) %></p>
+  <p><%=image_tag @organization.logo.public_filename %></p>
 <% end %>
 <p><span class="label">Name of Organization: </span><%=@organization.name%></p>
 <p><span class="label">Contact Name: </span><%=@organization.contact_name%></p>

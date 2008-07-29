@@ -138,7 +138,7 @@
 </p>
 <p>
   <% if !@organization.logo.nil? then %>
-    <p><%=image_tag @organization.logo.public_filename(:thumb) %></p>
+    <p><%=image_tag @organization.logo.public_filename(:standard_thumbnail) %></p>
   <% end %>
   <label>Your Logo:</label><br/>
   <%= file_field 'logo','uploaded_data' %>

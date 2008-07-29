@@ -6,7 +6,11 @@ class Logo < ActiveRecord::Base
                  :storage => :file_system,
                  :max_size => 10.megabytes,
                  :resize_to => '500x500>',
-                 :thumbnails => { :thumb => '50x50>' },
+                 :thumbnails => {
+                   :tiny_thumbnail => '50x25>',
+                   :standard_thumbnail => '100x50>',
+                   :large_thumbnail => '200x100>'
+                 },
                  :processor => 'ImageScience'
 
   validates_as_attachment
