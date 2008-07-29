@@ -53,11 +53,6 @@ describe "/networks/index" do
      response.should have_tag("a[href=#{leave_network_path(@network_2)}]")
   end
    
-  it "should not have a link for editing the network" do
-    response.should_not have_tag("a[href=#{edit_network_path(@network_1)}]")
-    response.should_not have_tag("a[href=#{edit_network_path(@network_2)}]")
-  end
-  
   it "should not have a link for inviting new members" do
     response.should_not have_tag("a[href=#{network_invitations_path(@network_1)}]")
     response.should_not have_tag("a[href=#{network_invitations_path(@network_2)}]")
@@ -88,11 +83,6 @@ describe "/networks/index when a network is owned by the organization" do
     
     assigns[:networks] = [@network_1, @network_2]
     render 'networks/index'
-  end
-  
-  it "should have a link to edit the network" do
-    response.should have_tag("a[href=#{edit_network_path(@network_1)}]")
-    response.should have_tag("a[href=#{edit_network_path(@network_2)}]")
   end
   
   it "should have a link for inviting organizations to the network" do

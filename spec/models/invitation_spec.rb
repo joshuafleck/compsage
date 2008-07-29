@@ -329,8 +329,8 @@ describe ExternalSurveyInvitation do
   	ExternalSurveyInvitation.reflect_on_association(:responses).should_not be_nil 
   end
   
-  it "should have one participation" do
-  	ExternalSurveyInvitation.reflect_on_association(:participation).should_not be_nil 
+  it "should have many participations" do
+  	ExternalSurveyInvitation.reflect_on_association(:participations).should_not be_nil 
   end
   
   it "should be invalid if a survey is not specified" do
