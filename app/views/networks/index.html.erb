@@ -7,22 +7,21 @@
 <% if @networks.size == 0 then %>
   <p>You are currently not a part of any networks.  <%=link_to "Make one now", new_network_path %> to get started.</p>
 <% else %>
-  <ul id="networks">
+  <ul id="networks" class="entity_list">
     <% @networks.each do |network| %>
-      <li>
-        <div class="network_name"><%=link_to network.name, network_path(network)%></div>
-        <div class="network_description"><%=network.description%></div>
-        <div class="network_actions">
-          <a href="#" onclick="new Effect.toggle('network_<%=network.id%>_members_div', 'blind', {duration: .5});return false;"><%=pluralize(network.organizations.count, "Member")%></a>
+      <li class="entity <%=cycle("even", "odd")%>">
+        <div class="actions">
           <%=link_to "Survey Network", new_survey_path %>
           <% if network.owner_id == current_organization.id then %>
             <%=link_to "Invite Others", network_invitations_path(network) %>
-            <%=link_to "Edit Network", edit_network_path(network) %>
           <% end %>
           <%=link_to "Leave Network", leave_network_path(network), :method => :put %>
         </div>
+        <div class="title"><%=link_to network.name, network_path(network)%></div>
+        <div class="description"><%=network.description%></div>
+        <a href="#" onclick="new Effect.toggle('network_<%=network.id%>_members_div', 'blind', {duration: .5});return false;"><%=pluralize(network.organizations.count, "Member")%></a>
         <div class="network_members" id="network_<%=network.id%>_members_div" style="display:none;">
-          <ul id="network_<%=network.id%>_members">
+          <ul id="network_<%=network.id%>_members" class="sublist">
             <% network.organizations.each do |organization| %>
               <li><%=link_to organization.name, organization_path(organization)%></li>
             <% end %>

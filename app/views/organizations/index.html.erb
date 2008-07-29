@@ -7,7 +7,7 @@
 <%= render :partial => "search_form" %>
 <h3>Browse Members</h3>
 <!--TODO: Sorting an pagination-->
-<ul id="organizations">
-<%= render :partial => "organization", :collection => @organizations %>
+<ul id="organizations" class="entity_list">
+  <%= render :partial => "organization", :collection => @organizations %>
 </ul>
 

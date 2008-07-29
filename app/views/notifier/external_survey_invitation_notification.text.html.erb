@@ -1,23 +1,16 @@
 <html>
 <body>
-<p>
-Dear <%=@invitation.name%>,
-<br />
-<br />
-Your organization been invited by <%=@invitation.inviter.contact_name%> of <%=@invitation.inviter.name%> to
-participate in a [product name here] compensation survey. By taking a few minutes to respond to this survey,
-you will be allowed to view the results of the survey for free. There is no signup required. Just click on this
-link to get started: <%=link_to 'Take Survey', survey_login_path(:survey_id => @survey.id, :key => @invitation.key, :only_path => false)%>
-<br />
-<br />
+<p>Dear <%=@invitation.name%>,</p>
+<p>Your organization been invited by <%=@invitation.inviter.contact_name%> of <%=@invitation.inviter.name%> to
+participate in a [product name here] compensation survey for <%=pluralize(2, @survey.job_title)%>. By taking a few minutes to respond to this survey,
+you will be allowed to view the results for free when available. There is no signup required. 
+<%=link_to 'Take the survey now', survey_login_path(:survey_id => @survey.id, :key => @invitation.key, :only_path => false)%>!</p>
 <% if !@invitation.message.blank? then %>
-  Here is a personalized message from <%=@invitation.inviter.contact_name%>:
-  <span>
-    <%=@invitation.message%>
-  </span>
-  <br />
-  <br />  
+  <p>
+  Here is a personalized message from <%=@invitation.inviter.contact_name%>: <%=@invitation.message%>
+  </p>
 <% end %>
+<p>
 Here are the details of the survey:
 <br />
 <b>Job Title: </b><%=@survey.job_title%>
@@ -25,16 +18,13 @@ Here are the details of the survey:
 <b>Response deadline: </b><%=time_ago_in_words(@survey.end_date)%>
 <br />
 <b>Sponsor: </b><%=@survey.sponsor.name%>
-<br />
-<br />
-[product name here] is a website for HR professionals that want compensation information at the touch
+</p>
+<p>[product name here] is a website for HR professionals that want compensation information at the touch
 of their fingertips. [product name here] allows HR professionals to send quick compensory surveys to 
 organizations of their choosing. [product name here] is a reliable and legal means to gauge competitor's
-compensation practices.
-<br />
-<br />
-Best regards,
-The [product name here] team
-</p>
+compensation practices.</p>
+
+<p>Best regards,<br />
+The [product name here] Team</p>
 </body>
 </html>

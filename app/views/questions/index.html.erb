@@ -4,10 +4,7 @@
   #Don't show breadcrumbs when logged in as survey invitation (there is no concept of dashboard
 %>
 <h2>Responding to Survey <%=@survey.job_title%></h2>
-<p>You are responding to a survey commissioned by <%=link_to(@survey.sponsor.name,organization_path(@survey.sponsor.id))%>. If you are
-invited, inform the user, else if they are coming in as a stray, mention something
-else. You can come back and retake the survey as many times as you want. We will
-have code the repopulates this page with your questions.</p>
+<p>You are responding to a survey commissioned by <%=link_to(@survey.sponsor.name,organization_path(@survey.sponsor.id))%>.</p>
 <%=flash_messages%>
 <% form_for :response, :url => respond_survey_path(@survey), :html => {:method => :post, :multipart => true} do |f|%>
 <div id="questions">
@@ -18,5 +15,5 @@ have code the repopulates this page with your questions.</p>
 	  end
 	%>
 </div>
-<p><input type="submit" value="Submit Responses" /> <%=link_to "Cancel", survey_path(@survey) %></p>
+<p><input type="submit" value="Submit Responses" /> or <%=link_to "Cancel", survey_path(@survey) %></p>
 <% end %>

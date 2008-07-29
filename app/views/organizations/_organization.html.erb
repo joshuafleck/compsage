@@ -1,16 +1,13 @@
-<li>
-  <div class="organization_thumbnail">
-    <!--TODO-->
-  </div>
+<li class="entity <%=cycle("even", "odd")%>">
   <div class="organization_logo">
     <% if !organization.logo.nil? then %>
       <p><%=image_tag organization.logo.public_filename(:thumb) %></p>
     <% end %>
   </div>
-  <div class="organization_name">
+  <div class="title">
     <%=link_to organization.name, organization_path(organization.id)%>
   </div>
-  <div class="organization_description">
+  <div class="description">
     <%if !organization.location.blank? then%><%=organization.location%>: <% end %>
     <%if !organization.city.blank? then%><%=organization.city%>, <% end %>
     <%if !organization.state.blank? then%><%=organization.state%><% end %>

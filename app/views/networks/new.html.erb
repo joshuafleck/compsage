@@ -5,9 +5,9 @@
 <h2>Create a New Network</h2>
 <%=error_messages_for :network%>
 <% form_for :network, @network, :url => networks_path do |f| %>
-  <p><label>Network Name:</label><br />
-    <%=f.text_field :name %></p>
-  <p><label>Description:</label> <br />
+  <p><label>Network Name</label>
+    <%=f.text_field :name, :size => 30 %></p>
+  <p><label>Description</label>
     <%=f.text_area :description, :rows => 4, :cols => 30 %></p>
-  <p><input type="submit" value="Create" /> <%=link_to "Cancel", networks_path %></p>
+  <p><input type="submit" value="Create" /> or <%=link_to "Cancel", networks_path %></p>
 <% end %>

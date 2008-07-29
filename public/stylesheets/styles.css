@@ -125,6 +125,7 @@ body {
   margin: 0;
   background-color: #efefee;
   color: #333;
+  font-size: .875em; /* (16 * .875 = 14px) */
 }
 
 a {
@@ -165,8 +166,23 @@ h3 {
 h4 {
   font-size: 1.1em;
 }
+
 form label {
   font-weight: bold;
+  display: block;
+}
+form div#questions label {
+  font-weight: normal;
+  display: inline;
+}
+
+input[type="text"], input[type="password"], textarea {
+  padding: 4px;
+  border: 1px solid #264442;
+  background: #f7fbfb;
+}
+textarea {
+  font-size: 14px; /* make the default font size same for ff... */
 }
 
 table {
@@ -178,6 +194,7 @@ table td {
   border-bottom: 1px solid #cccccc;
   padding-right:3px;
 }
+
 table td, table th {
   padding: 2px 10px 2px 10px;
 }
@@ -382,4 +399,38 @@ div.logged_in {
 
 div.logged_in a {
   color: #eff;
+}
+
+ul.entity_list {
+  padding-left: 0;
+  list-style-type: none;
+  border-top: 1px solid #264442;
+}
+
+ul.entity_list li.entity {
+  padding: 10px;
+  clear: both;
+  border-bottom: 1px solid #264442;
+}
+ul.entity_list li.odd {
+  background-color: #f7fbfb;
+}
+ul.entity_list li.entity .title {
+  font-size: 1.1em;
+  margin-bottom: 0.5em;
+}
+
+ul.entity_list li.entity .description {
+  color: #444;
+}
+
+ul.entity_list li.entity div.actions {
+  float: right;
+  margin-right: 2em;
+  margin-left: 2em;
+}
+
+ul.entity_list li.entity div.actions a {
+  display: block;
+  padding: 2px;
 }
