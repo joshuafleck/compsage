@@ -177,12 +177,13 @@ form div#questions label {
 }
 
 input[type="text"], input[type="password"], textarea {
-  padding: 4px;
+  font-family: helvetica, arial, sans-serif;
+  padding: 0px;
+  margin: 0;
   border: 1px solid #264442;
   background: #f7fbfb;
-}
-textarea {
-  font-size: 14px; /* make the default font size same for ff... */
+  font-size: 1em;
+  padding: 4px;
 }
 
 table {
