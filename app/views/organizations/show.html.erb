@@ -2,10 +2,38 @@
 <% breadcrumbs(link_to("Members",organizations_path)) %>
 <h2><%=@organization.name%></h2>
 <%=flash_messages%>
-<!-- TODO links for inviting organization to network/survey-->
 <% if !@organization.logo.nil? then %>
   <p><%=image_tag @organization.logo.public_filename %></p>
 <% end %>
+<div class="organization_actions">
+  <%= link_to_function "Invite to Network", "Element.toggle('organization_#{@organization.id}_network_invitation')" %>
+  <div id='organization_<%=@organization.id%>_network_invitation' style='display:none;'>
+    <% form_tag(
+        {:id => "organization_#{@organization.id}_network_invitation_form"}, 
+        {:onsubmit => "return buildAjaxRequest(this,'network_network_id',new Template('#{networks_path}/\#{replacingID}/invitations'),'organization_#{@organization.id}_network_invitation_response');"}
+        ) do %>
+      <%= collection_select(:network, :network_id, current_organization.owned_networks, :id, :name, {:prompt => 'Select a Network'}) %>
+      <%= hidden_field_tag "email", @organization.email %>
+      <input type="submit" value="Invite!">  
+    <% end %>
+    <div id='organization_<%=@organization.id%>_network_invitation_response'>
+    </div>
+  </div>
+  <br />
+  <%= link_to_function "Invite to Survey", "Element.toggle('organization_#{@organization.id}_survey_invitation')" %>
+  <div id='organization_<%=@organization.id%>_survey_invitation' style='display:none;'>
+    <% form_tag(
+        {:id => "organization_#{@organization.id}_survey_invitation_form"}, 
+        {:onsubmit => "return buildAjaxRequest(this,'survey_survey_id',new Template('#{surveys_path}/\#{replacingID}/invitations'),'organization_#{@organization.id}_survey_invitation_response');"}
+      ) do %>
+      <%= collection_select(:survey, :survey_id, current_organization.surveys.running, :id, :name, {:prompt => 'Select a Survey'}) %>
+      <%= hidden_field_tag "email", @organization.email %>
+      <input type="submit" value="Invite!">  
+    <% end %>
+    <div id='organization_<%=@organization.id%>_survey_invitation_response'>
+    </div>
+  </div>
+</div>
 <p><span class="label">Location: </span><%=@organization.location%></p>
 <p><span class="label">City: </span><%=@organization.city%></p>
 <p><span class="label">State: </span><%=@organization.state%></p>

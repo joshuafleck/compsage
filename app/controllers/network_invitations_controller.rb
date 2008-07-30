@@ -46,6 +46,7 @@ class NetworkInvitationsController < ApplicationController
       respond_to do |wants|
         wants.html { redirect_to network_invitations_path(params[:network_id]) }
         wants.xml { head :status => :created }
+        wants.js { render :text => "Invitation to #{@network.name} sent to #{invited_organization.name}."}
       end
     else
       respond_to do |wants|
@@ -56,6 +57,7 @@ class NetworkInvitationsController < ApplicationController
           render :action => 'index'
         end
         wants.xml { render :xml => @invitation.errors.to_xml, :status => 422 }
+        wants.js { render :text => "Error creating invitation for #{@network.name}"}
       end
     end
     
@@ -64,6 +66,7 @@ class NetworkInvitationsController < ApplicationController
     respond_to do |wants|
       wants.html { redirect_to network_invitations_path(params[:network_id]) }
       wants.xml { head :status => 422 }
+      wants.js { render :text => "#{invited_organization.name} has already been invited to #{@network.name}."}
     end
   end
   

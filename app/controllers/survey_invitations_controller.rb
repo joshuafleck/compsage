@@ -47,6 +47,7 @@ class SurveyInvitationsController < ApplicationController
       respond_to do |wants|
         wants.html { redirect_to survey_invitations_path(params[:survey_id]) }
         wants.xml { head :status => :created }
+        wants.js { render :text => "Invitation to #{@survey.job_title} sent to #{invited_organization.name}."}
       end
     else
       respond_to do |wants|
@@ -56,6 +57,7 @@ class SurveyInvitationsController < ApplicationController
           render :action => 'index'
         end
         wants.xml { render :xml => @invitation.errors.to_xml, :status => 422 }
+        wants.js { render :text => "Error creating invitation for #{@survey.job_title}"}
       end
     end
     
@@ -64,6 +66,7 @@ class SurveyInvitationsController < ApplicationController
     respond_to do |wants|
       wants.html { redirect_to survey_invitations_path(params[:survey_id]) }
       wants.xml { head :status => 422 }
+      wants.js { render :text => "#{invited_organization.name} has already been invited to #{@survey.job_title}."}
     end
   end
   

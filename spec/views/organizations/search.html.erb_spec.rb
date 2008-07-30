@@ -12,9 +12,15 @@ describe "/organizations/search" do
     organization.stub!(:state).and_return("Minnesota")
     organization.stub!(:location).and_return("Headquarters")
     organization.stub!(:contact_name).and_return("Josh Fleck")
+    organization.stub!(:email).and_return("test")
     organization.stub!(:industry).and_return("Software")
     organization.stub!(:logo).and_return(logo)
     
+    current_organization = mock_model(Organization)
+    current_organization.stub!(:owned_networks).and_return([])
+    current_organization.stub!(:surveys).and_return(mock('surveys proxy', :running => []))
+    
+    assigns[:current_organization] = current_organization
     assigns[:organizations] = [organization]
     
     render 'organizations/search'
