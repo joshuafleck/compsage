@@ -4,14 +4,23 @@ describe "/organizations/show" do
   before(:each) do
     # create organizations
     organization = mock_model(Organization)
+    logo = mock_model(Logo, :public_filename => "blah")
+    
+    organization.stub!(:id).and_return("1")
     organization.stub!(:name).and_return("Huminsight")
     organization.stub!(:city).and_return("Minneapolis")
     organization.stub!(:state).and_return("Minnesota")
     organization.stub!(:location).and_return("Headquarters")
     organization.stub!(:contact_name).and_return("Josh Fleck")
+    organization.stub!(:email).and_return("test")
     organization.stub!(:industry).and_return("Software")
-    organization.stub!(:logo).and_return(mock_model(Logo, :public_filename => "test"))
+    organization.stub!(:logo).and_return(logo)
     
+    current_organization = mock_model(Organization)
+    current_organization.stub!(:owned_networks).and_return([])
+    current_organization.stub!(:surveys).and_return(mock('surveys proxy', :running => []))
+    
+    assigns[:current_organization] = current_organization
     assigns[:organization] = organization
     
     render 'organizations/show'
