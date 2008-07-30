@@ -729,7 +729,7 @@ describe SurveysController, " handling GET /surveys/my.xml" do
     @surveys = []
     @surveys.stub!(:to_xml).and_return("XML")
     
-    @current_organization.stub!(:my_surveys).and_return(@surveys)
+    @current_organization.stub!(:surveys).and_return(@surveys)
 
   end
   
@@ -744,7 +744,7 @@ describe SurveysController, " handling GET /surveys/my.xml" do
   end
   
   it "should find all surveys for which the user has been invited or participated" do
-    @current_organization.should_receive(:my_surveys).and_return(@surveys)
+    @current_organization.should_receive(:surveys).and_return(@surveys)
     
     do_get 
   end

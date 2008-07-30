@@ -184,7 +184,7 @@ class SurveysController < ApplicationController
   #These are the surveys the user has sponsored or responded to
   def my   
     
-    @surveys = current_organization.my_surveys
+    @surveys = current_organization.surveys
     
     respond_to do |wants|
       wants.html {}
