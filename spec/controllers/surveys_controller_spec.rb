@@ -296,7 +296,7 @@ describe SurveysController, " handling GET /surveys/1/edit" do
     @predefined_questions = []
     @questions = []
 
-    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
     @surveys_proxy.stub!(:running).and_return(@open_surveys)
     @open_surveys.stub!(:find).and_return(@survey)
     PredefinedQuestion.stub!(:all).and_return(@predefined_questions)
@@ -316,7 +316,7 @@ describe SurveysController, " handling GET /surveys/1/edit" do
     response.should render_template('surveys/edit')
   end
   it "should find the survey requested" do
-    @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
+    @current_organization.should_receive(:sponsored_surveys).and_return(@surveys_proxy)
     @surveys_proxy.should_receive(:running).and_return(@open_surveys)
     @open_surveys.should_receive(:find).and_return(@survey)
     do_get
@@ -346,7 +346,7 @@ describe SurveysController, " handling GET /surveys/1/edit, without access" do
     @surveys_proxy = mock('surveys proxy')
     @open_surveys = []
 
-    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
     @surveys_proxy.stub!(:running).and_return(@open_surveys)
     @open_surveys.stub!(:find).and_raise(ActiveRecord::RecordNotFound)
   end
@@ -379,7 +379,7 @@ describe SurveysController, " handling POST /surveys" do
     @question = mock_model(Question, :save => :true, :predefined_question_id= => 1, :survey= => @survey)
     
     PredefinedQuestion.stub!(:all).and_return([@pdq1, @pdq2, @pdq3])
-    @current_organization.stub!(:surveys).and_return(@surveys)
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys)
     @surveys.stub!(:new).and_return(@survey)
     @survey.stub!(:questions).and_return(@questions)
     @questions.stub!(:new).and_return(@question)
@@ -419,7 +419,7 @@ describe SurveysController, " handling POST /surveys, upon failure" do
     @surveys = []
     
     @survey.stub!(:new_record?).and_return(true)
-    @current_organization.stub!(:surveys).and_return(@surveys)
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys)
     @surveys.stub!(:new).and_return(@survey)
   end
   
@@ -459,7 +459,7 @@ describe SurveysController, " handling PUT /surveys/1" do
     @pdq_group = [@pdq1, @pdq2, @pdq3]
     
     PredefinedQuestion.stub!(:all).and_return(@pdq_group)
-    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
     @surveys_proxy.stub!(:running).and_return(@open_surveys)
     @open_surveys.stub!(:find).and_return(@survey)
     @survey.stub!(:questions).and_return(@questions)
@@ -472,7 +472,7 @@ describe SurveysController, " handling PUT /surveys/1" do
   end
   
   it "should find the survey requested" do
-    @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
+    @current_organization.should_receive(:sponsored_surveys).and_return(@surveys_proxy)
     @surveys_proxy.should_receive(:running).and_return(@open_surveys)
     @open_surveys.should_receive(:find).and_return(@survey)
     do_update
@@ -519,7 +519,7 @@ end
       @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test")
       @surveys_proxy = mock('surveys proxy')
       @open_surveys = []
-      @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+      @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
       @surveys_proxy.stub!(:running).and_return(@open_surveys)
       @open_surveys.stub!(:find).and_return(@survey)
     end
@@ -543,7 +543,7 @@ describe SurveysController, " handling PUT /surveys/1, with failure" do
     @surveys_proxy = mock('surveys proxy')
     @open_surveys = []
     
-    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
     @surveys_proxy.stub!(:running).and_return(@open_surveys)
     @open_surveys.stub!(:find).and_raise(ActiveRecord::RecordNotFound)
   end

@@ -36,7 +36,7 @@ class SurveysController < ApplicationController
 
   def edit
 
-    @survey = current_organization.surveys.running.find(params[:id])
+    @survey = current_organization.sponsored_surveys.running.find(params[:id])
 
     #iterate through the survey questions to determine which predefined questions have been selected
     @predefined_questions = PredefinedQuestion.all
@@ -51,7 +51,7 @@ class SurveysController < ApplicationController
   end
   
   def update
-    @survey = current_organization.surveys.running.find(params[:id])
+    @survey = current_organization.sponsored_surveys.running.find(params[:id])
     
     #update predefined question selection
     @predefined_questions = PredefinedQuestion.all
@@ -97,7 +97,7 @@ class SurveysController < ApplicationController
   end
   
   def create
-    @survey = current_organization.surveys.new(params[:survey])
+    @survey = current_organization.sponsored_surveys.new(params[:survey])
     @predefined_questions = PredefinedQuestion.all
     
     #iterate through predefined questions and each group

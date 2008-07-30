@@ -58,6 +58,10 @@ describe Organization do
     Organization.reflect_on_association(:surveys).should_not be_nil
   end
   
+  it 'should have many sponsored_surveys' do
+    Organization.reflect_on_association(:sponsored_surveys).should_not be_nil
+  end
+  
   it 'should have many participated surveys' do
     Organization.reflect_on_association(:participated_surveys).should_not be_nil
   end

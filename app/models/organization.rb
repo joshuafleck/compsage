@@ -20,10 +20,10 @@ class Organization < ActiveRecord::Base
   has_and_belongs_to_many :networks, :after_remove => :delete_empty_network
   has_many :owned_networks, :class_name => "Network", :foreign_key => "owner_id", :after_add => :join_created_network
   
-  has_many :surveys, :foreign_key => "sponsor_id"
+  has_many :sponsored_surveys, :foreign_key => "sponsor_id"
   has_many :participated_surveys, :class_name => "Survey", :through => :participations, :source => 'survey'
   #These are the surveys the user has sponsored or responded to
-  has_many :my_surveys, :class_name => "Survey", :finder_sql => 'select surveys.* from surveys LEFT JOIN participations ON surveys.id = participations.survey_id WHERE sponsor_id=#{id} OR participant_id=#{id}'
+  has_many :surveys, :class_name => "Survey", :finder_sql => 'select surveys.* from surveys LEFT JOIN participations ON surveys.id = participations.survey_id WHERE sponsor_id=#{id} OR (participant_id=#{id} AND participant_type=\'Organization\') GROUP BY surveys.id'
   
   has_many :participations, :as => :participant
   has_many :discussions, :as => :responder
