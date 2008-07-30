@@ -18,7 +18,7 @@ describe "/organizations/show" do
     
     current_organization = mock_model(Organization)
     current_organization.stub!(:owned_networks).and_return([])
-    current_organization.stub!(:surveys).and_return(mock('surveys proxy', :running => []))
+    current_organization.stub!(:sponsored_surveys).and_return(mock('surveys proxy', :running => []))
     
     assigns[:current_organization] = current_organization
     assigns[:organization] = organization

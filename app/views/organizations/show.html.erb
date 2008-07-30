@@ -26,7 +26,7 @@
         {:id => "organization_#{@organization.id}_survey_invitation_form"}, 
         {:onsubmit => "return buildAjaxRequest(this,'survey_survey_id',new Template('#{surveys_path}/\#{replacingID}/invitations'),'organization_#{@organization.id}_survey_invitation_response');"}
       ) do %>
-      <%= collection_select(:survey, :survey_id, current_organization.surveys.running, :id, :name, {:prompt => 'Select a Survey'}) %>
+      <%= collection_select(:survey, :survey_id, current_organization.sponsored_surveys.running, :id, :name, {:prompt => 'Select a Survey'}) %>
       <%= hidden_field_tag "email", @organization.email %>
       <input type="submit" value="Invite!">  
     <% end %>
