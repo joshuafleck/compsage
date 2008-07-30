@@ -28,7 +28,7 @@ describe DashboardsController, " handling GET /dashboard" do
     @surveys_proxy = mock('surveys proxy')
     @surveys_proxy.stub!(:running).and_return(@open_surveys)
     
-    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
     
     @closed_surves = mock('closed surveys')
     @closed_surveys.stub!(:recent).and_return([])
@@ -67,7 +67,7 @@ describe DashboardsController, " handling GET /dashboard" do
   it "should find 10 most recent running surveys the organization sponsored or participated in" do
     @open_surveys.should_receive(:recent).and_return([])
     @surveys_proxy.should_receive(:running).and_return(@open_surveys)
-    @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
+    @current_organization.should_receive(:sponsored_surveys).and_return(@surveys_proxy)
     get :show
   end
   
