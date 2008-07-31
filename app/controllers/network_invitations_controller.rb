@@ -24,7 +24,12 @@ class NetworkInvitationsController < ApplicationController
   def create
     @network = current_organization.owned_networks.find(params[:network_id])
     
-    invited_organization = Organization.find_by_email(params[:email])
+    # If there is an organization ID in the params great (this request likely came from the Memebrs page), otherwise use the email
+    if !params[:organization_id].blank? then
+      invited_organization = Organization.find_by_id(params[:organization_id]) 
+    else
+      invited_organization = Organization.find_by_email(params[:email])
+    end
     
     if invited_organization.nil? then
       # create an external invitation
