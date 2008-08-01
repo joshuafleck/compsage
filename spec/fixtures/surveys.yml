@@ -14,4 +14,4 @@ closed_survey:
   description: Assists people named dave with various tasks
   created_at: <%=(Time.now - 8.days).to_s(:db) %>
   end_date: <%=(Time.now - 1.day).to_s(:db)%>
-  aasm_state: finished
+  aasm_state: running
