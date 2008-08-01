@@ -37,4 +37,20 @@ class Notifier < ActionMailer::Base
   end
   
   #TODO: send survey invitation notification
+  
+  def survey_stalled_notification(survey)
+    recipients survey.sponsor.email
+    from       "system@huminsight.com"
+    subject    "Survey stalled"
+    
+    body :survey => survey
+  end
+  
+  def survey_results_available_notification(survey, participant)
+    recipients participant.email
+    from       "system@huminsight.com"
+    subject    "Survey results available for #{survey.job_title}"
+    
+    body :survey => survey, :participant => participant
+  end
 end

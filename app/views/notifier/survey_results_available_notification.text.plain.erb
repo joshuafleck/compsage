@@ -1,0 +1,10 @@
+Dear <%=@participant.contact_name%>,
+
+Results for the survey on <%=@survey.job_title%> are now available!
+
+To view the survey results, follow the link below:
+
+<%=url_for(survey_report_path(@survey, :only_path => false))%>
+
+Thanks,
+The Shawarma Team
