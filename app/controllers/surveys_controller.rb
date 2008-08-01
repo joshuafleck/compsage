@@ -138,7 +138,7 @@ class SurveysController < ApplicationController
   def respond
     @responses = []
     @survey = Survey.find(params[:id])
-    @participation = current_organization_or_survey_invitation.participations.find_or_create_by_survey_id(@survey)
+    @participation = current_organization_or_survey_invitation.participations.find_or_create_by_survey_id(@survey.id)
     
     #validate all responses required for the survey before saving, need
     @survey.questions.each do |question|
