@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'Daemons'
+require 'daemons'
 
 Daemons.run(File.join(File.dirname(__FILE__), 'beanstalk_dispatcher.rb'),
   :backtrace => true,
