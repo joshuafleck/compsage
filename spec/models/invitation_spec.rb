@@ -296,7 +296,7 @@ module ExternalSurveyInvitationSpecHelper
 
   def valid_external_survey_invitation_attributes
     {
-      :name => 'David E. Peteron',
+      :organization_name => 'David E. Peteron',
       :email => 'pete2786@umn.edu',
       :inviter => organization_mock,
       :survey => mock_model(Survey, :job_title => 'test', :end_date => Time.now + 2.days, :sponsor => organization_mock)
@@ -338,9 +338,9 @@ describe ExternalSurveyInvitation do
   	@external_survey_invitation.should have(1).errors_on(:survey)
   end
       
-  it "should be invalid if a name is not specified" do
-  	@external_survey_invitation.attributes = valid_external_survey_invitation_attributes.except(:name)
-  	@external_survey_invitation.should have(1).errors_on(:name)
+  it "should be invalid if an organization name is not specified" do
+  	@external_survey_invitation.attributes = valid_external_survey_invitation_attributes.except(:organization_name)
+  	@external_survey_invitation.should have(1).errors_on(:organization_name)
   end
      
   it "should be valid" do

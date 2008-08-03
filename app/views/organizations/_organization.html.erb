@@ -1,6 +1,6 @@
 <li class="entity <%=cycle("even", "odd")%>">
 <div class="actions">
-    <%= link_to_function "Invite to Network", "Element.toggle('organization_#{organization.id}_network_invitation')" %>
+    <%= link_to_function "Invite to Network", "new Effect.toggle('organization_#{organization.id}_network_invitation', 'blind', {duration: .5});return false;" %>
     <div id='organization_<%=organization.id%>_network_invitation' style='display:none;'>
       <% form_tag(
           {:id => "organization_#{organization.id}_network_invitation_form"}, 
@@ -13,7 +13,7 @@
       <div id='organization_<%=organization.id%>_network_invitation_response'>
       </div>
     </div>
-    <%= link_to_function "Invite to Survey", "Element.toggle('organization_#{organization.id}_survey_invitation')" %>
+    <%= link_to_function "Invite to Survey", "new Effect.toggle('organization_#{organization.id}_survey_invitation', 'blind', {duration: .5});return false;" %>
     <div id='organization_<%=organization.id%>_survey_invitation' style='display:none;'>
       <% form_tag(
           {:id => "organization_#{organization.id}_survey_invitation_form"}, 

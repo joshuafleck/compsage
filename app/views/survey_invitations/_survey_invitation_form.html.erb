@@ -1,18 +1,14 @@
-<% form_for :invitation, @invitation, :url => survey_invitations_path(@survey.id) do |f| %>
-  <p>
-    <label>Name of Invitee:</label><br />
-    <%=f.text_field :name %>
+<% form_tag :url => '#' do |f| %>
+  <p>  
+    <label>Invite a Network:</label>
+    <%= collection_select(:invitation, :network_id, current_organization.owned_networks, :id, :name, {:prompt => 'Select a Network'}) %>
   </p>
   <p>
-    <label>Invitee's email address:</label> <br />
-    <%=f.text_field :email %>
-  </p>
-  <p>
-    <label>Your personalized message:</label> <br />
-    <%=f.text_area :message, :rows => 4, :cols => 30 %>
-  </p>
-  <p>
-    <input type="submit" value="Send" /> 
+    <input type="submit" value="Send" />
     <%=link_to "Done", survey_path(@survey) %>
   </p>
-<% end %>
+<% end %>  
+<%= render :partial => "invitations/invitation_form", :locals => {
+  :url => survey_invitations_path(@survey), 
+  :done => survey_path(@survey)
+}%> 

@@ -5,7 +5,6 @@
 Invite other organizations to participate in <%=link_to(@survey.job_title,survey_path(@survey))%>
 </p>
 <p>
-<%=error_messages_for :invitation%>
 <%=flash_messages%>
 <%= render :partial => "survey_invitations/survey_invitation_form"  %>
 </p>

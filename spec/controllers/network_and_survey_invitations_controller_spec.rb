@@ -30,7 +30,7 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
     @surveys_proxy = mock('surveys proxy')
     @surveys_proxy.stub!(:find).and_return(@survey)
     
-    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
     
     @params = {:survey_id => 1}
   end
@@ -69,7 +69,7 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
    end
    
   it "should error if requesting organization is not survey sponsor" do
-    @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
+    @current_organization.should_receive(:sponsored_surveys).and_return(@surveys_proxy)
     do_get
   end
    
@@ -89,7 +89,7 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations.xml"
     @surveys_proxy = mock('surveys proxy')
     @surveys_proxy.stub!(:find).and_return(@survey)
     
-    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
     
     @params = {:survey_id => 1}
   end
@@ -135,7 +135,7 @@ describe SurveyInvitationsController, " handling POST /surveys/1/invitations wit
     @surveys_proxy = mock('surveys proxy')
     @surveys_proxy.stub!(:find).and_return(@survey)
     
-    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
     @current_organization.stub!(:survey_invitations).and_return([])
     Organization.stub!(:find_by_email).and_return(@current_organization)
     
@@ -165,7 +165,7 @@ describe SurveyInvitationsController, " handling POST /surveys/1/invitations wit
   end
      
   it "should require the organization is the sponsor of the survey" do
-    @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
+    @current_organization.should_receive(:sponsored_surveys).and_return(@surveys_proxy)
     do_post
   end
    
@@ -194,7 +194,7 @@ describe SurveyInvitationsController, " handling POST /surveys/1/invitations wit
     @surveys_proxy = mock('surveys proxy')
     @surveys_proxy.stub!(:find).and_return(@survey)
     
-    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
     @current_organization.stub!(:survey_invitations).and_return([])
     Organization.stub!(:find_by_email).and_return(nil)
     
@@ -236,7 +236,7 @@ describe SurveyInvitationsController, " handling DELETE /surveys/1/invitations/1
     @surveys_proxy = mock('surveys proxy')
     @surveys_proxy.stub!(:find).and_return(@survey)
     
-    @current_organization.stub!(:surveys).and_return(@surveys_proxy)
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
     @current_organization.stub!(:survey_invitations).and_return([])
     Organization.stub!(:find_by_email).and_return(@current_organization)
     
@@ -256,7 +256,7 @@ describe SurveyInvitationsController, " handling DELETE /surveys/1/invitations/1
   end
   
   it "should only allow the sponsor to delete invitations" do
-    @current_organization.should_receive(:surveys).and_return(@surveys_proxy)
+    @current_organization.should_receive(:sponsored_surveys).and_return(@surveys_proxy)
     do_delete
   end
    
@@ -431,7 +431,7 @@ describe NetworkInvitationsController, " handling POST /networks/1/invitations" 
     
     @organization.stub!(:owned_networks).and_return(@network_proxy)
 
-    @params = {:network_id => 1}
+    @params = {:network_id => 1, :invitation => {}}
   end
   
   def do_post

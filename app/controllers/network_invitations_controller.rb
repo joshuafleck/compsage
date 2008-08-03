@@ -28,12 +28,12 @@ class NetworkInvitationsController < ApplicationController
     if !params[:organization_id].blank? then
       invited_organization = Organization.find_by_id(params[:organization_id]) 
     else
-      invited_organization = Organization.find_by_email(params[:email])
+      invited_organization = Organization.find_by_email(params[:invitation][:email])
     end
     
     if invited_organization.nil? then
       # create an external invitation
-      @invitation = @network.external_invitations.new(:inviter => current_organization, :email => params[:email])
+      @invitation = @network.external_invitations.new(:inviter => current_organization, :email => params[:invitation][:email])
     else
       # Check for duplicate invite.
       raise AlreadyInvited if invited_organization.network_invitations.collect(&:network_id).include?(@network.id)
@@ -44,7 +44,7 @@ class NetworkInvitationsController < ApplicationController
     
     if @invitation.save then
       if invited_organization.nil? then
-        flash[:message] = "Invitation sent to external email address #{params[:email]}."
+        flash[:message] = "Invitation sent to external email address #{params[:invitation][:email]}."
       else
         flash[:message] = "Invitation sent to #{invited_organization.name}."
       end

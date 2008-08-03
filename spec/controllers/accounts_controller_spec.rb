@@ -90,8 +90,8 @@ describe AccountsController, " handling GET /account/new" do
   
     @key = "1234"
   
-    @organization = mock_model(Organization, :contact_name= => 'test', :email= => 'test')
-    @external_invitation = mock_model(ExternalInvitation, :name => 'test', :email => 'test')
+    @organization = mock_model(Organization, :contact_name= => 'test', :email= => 'test', :name= => 'test')
+    @external_invitation = mock_model(ExternalInvitation, :name => 'test', :email => 'test', :organization_name => 'test')
     
     Organization.stub!(:new).and_return(@organization)    
     Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 

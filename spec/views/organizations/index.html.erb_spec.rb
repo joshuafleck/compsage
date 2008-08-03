@@ -45,12 +45,12 @@ describe "/organizations/index" do
     response.should have_tag("div[class=organization_logo]")
   end
   
-  it "should have links for inviting organizations to a network" do
-    pending
+  it "should show a link to invite this organization to a network" do
+    response.should have_tag("form[action=/organizations?id=organization_1_network_invitation_form]")
   end
   
-  it "should have links for inviting organizations to a survey" do
-    pending
+  it "should show a link to invite this organization to a survey" do
+    response.should have_tag("form[action=/organizations?id=organization_1_survey_invitation_form]")
   end
-    
+  
 end

@@ -1,0 +1,42 @@
+<div id="known_organization_div" <%=!@invitation.nil? && @invitation.errors.size != 0 ? "style='display:none;'" : ""%>>
+<% form_tag :url => url do |f| %>
+  <p>
+  <label>Find Invitee by Organization Name:</label>
+  <%=text_field_tag :search_text %><br />
+  <div id="autocomplete_choices" class="autocomplete"></div>
+  <script type="text/javascript">
+    /* see http://github.com/madrobby/scriptaculous/wikis/ajax-autocompleter */
+    new Ajax.Autocompleter("search_text", "autocomplete_choices", "<%=search_organizations_path()%>", {  
+      afterUpdateElement : setSelectedOrganization
+    });
+    function setSelectedOrganization(text, li) {
+      document.getElementById('organization_id').value = li.id;
+    }
+  </script>
+  <%=hidden_field_tag :organization_id %>
+  </p>
+  <p>
+    <input type="submit" value="Send" />
+    <%=link_to "Done", done %>
+  </p>
+<% end %> 
+<%= link_to_function "Not sure if invitee is a member?", "new Effect.toggle('unknown_organization_div', 'blind', {duration: .5});Element.toggle('known_organization_div');return false;" %>
+</div>
+<div id="unknown_organization_div" <%=@invitation.nil? || @invitation.errors.size == 0 ? "style='display:none;'" : ""%>>
+<% form_for :invitation, @invitation, :url => url do |f| %>  
+  <%=error_messages_for :invitation%>
+  <p>  
+    <label>Email:</label>
+    <%=f.text_field :email %>
+  </p>
+  <p>
+    <label>Organization Name:</label>
+    <%=f.text_field :organization_name %>
+  </p>
+  <p>
+    <input type="submit" value="Send" />
+    <%=link_to "Done", done %>
+  </p>
+  <%= link_to_function "Find invitees by member name", "new Effect.toggle('known_organization_div', 'blind', {duration: .5});Element.toggle('unknown_organization_div');return false;" %>  
+<% end %>  
+</div>

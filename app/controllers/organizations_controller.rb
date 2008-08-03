@@ -29,10 +29,18 @@ class OrganizationsController < ApplicationController
     end
   end
   
-  def search    
+  def search    #render :inline => "<%= content_tag(:ul, @organizations.map { |org| content_tag(:li, h(org)) }) %>"
+  
     @organizations = Organization.search(
       params[:search_text],
       :geo => [current_organization.latitude, current_organization.longitude]
     )
+    
+    respond_to do |wants|
+      wants.html # render template
+      wants.js do
+         render :inline => "<%= content_tag(:ul, @organizations.map { |org| content_tag(:li, org.name, :id => org.id) }) %>"
+      end
+    end
   end
 end

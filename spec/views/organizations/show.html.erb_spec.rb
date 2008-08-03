@@ -52,7 +52,7 @@ describe "/organizations/show" do
   end
   
   it "should show the organization's logo if one exists" do
-  	response.should have_tag('img[src=/images/test]')
+  	response.should have_tag('img[src=/images/blah]')
   end
   
   it "should show a generic logo if one doesn't exist" do
@@ -60,11 +60,11 @@ describe "/organizations/show" do
   end
   
   it "should show a link to invite this organization to a network" do
-    pending
+    response.should have_tag("form[action=/organizations/organization_1_network_invitation_form]")
   end
   
   it "should show a link to invite this organization to a survey" do
-    pending
+    response.should have_tag("form[action=/organizations/organization_1_survey_invitation_form]")
   end
   
 end

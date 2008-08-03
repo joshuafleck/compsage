@@ -3,7 +3,7 @@ class SurveyInvitationsController < ApplicationController
   layout 'logged_in'
   
   def index
-    @survey = current_organization.surveys.find(params[:survey_id])
+    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
     @invitations = @survey.invitations.find(:all, :include => :invitee)
     
     respond_to do |wants|
@@ -16,13 +16,15 @@ class SurveyInvitationsController < ApplicationController
     # render the new template
   end
   
+  #TODO: Create method for inviting network to a survey
+  
   # Creates the new survey invitation.  If the organization is not found in the database (by
   # email), it will send an external invitation out.
   # 
   # Raises AlreadyInvited if the user is already invited to the survey.
   
   def create
-    @survey = current_organization.surveys.running.find(params[:survey_id])
+    @survey = current_organization.sponsored_surveys.running.find(params[:survey_id])
     
     # If there is an organization ID in the params great (this request likely came from the Memebrs page), otherwise use the email
     if !params[:organization_id].blank? then
@@ -77,7 +79,7 @@ class SurveyInvitationsController < ApplicationController
   
   def destroy
     flash[:message] = "Invitation removed."
-    survey = current_organization.surveys.find(params[:survey_id])
+    survey = current_organization.sponsored_surveys.find(params[:survey_id])
     invitation = survey.invitations.find(params[:id])
     invitation.destroy
     

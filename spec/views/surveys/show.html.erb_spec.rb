@@ -8,7 +8,7 @@ describe "/surveys/show" do
     template.stub!(:current_organization_or_invitation).and_return(@current_organization_or_invitation)
     template.stub!(:current_organization).and_return(@current_organization_or_invitation)
     
-    @survey = mock_model(Survey, :job_title => "Software Engineer", :id => "1", :sponsor => @current_organization_or_invitation, :description => "TEST", :end_date => Time.now)
+    @survey = mock_model(Survey, :job_title => "Software Engineer", :id => "1", :sponsor => @current_organization_or_invitation, :description => "TEST", :end_date => Time.now, :running? => true)
     @discussion_reply = mock_model(Discussion, :responder => @owner, :subject => "Reply Topic", :body => "Reply Body", :id => "2", :is_not_abuse => true)
     @discussion_children = [@discussion_reply]
     @discussion_topic = mock_model(Discussion, :all_children => @discussion_children, :responder => @current_organization_or_invitation, :subject => "Root Topic", :body => "Root Body", :id => "1", :survey_id => @survey.id)
