@@ -79,6 +79,27 @@ class SurveyInvitationsController < ApplicationController
     end
   end
   
+  #This method is for inviting a network to participate in a survey
+  def create_with_network
+    @survey = current_organization.sponsored_surveys.running.find(params[:survey_id])
+    @network = current_organization.networks.find(params[:invitation][:network_id])
+    
+    #Create an invitation for each network member
+    @network.organizations.each do |member| 
+      #Do not invite members already invited
+      if !member.survey_invitations.collect(&:survey_id).include?(@survey.id) then
+        invitation = @survey.invitations.new(:invitee => member, :inviter => current_organization)
+        invitation.save!
+      end
+    end
+
+    flash[:message] = "Invitation sent to all members of #{@network.name}."
+    respond_to do |wants|
+      wants.html { redirect_to survey_invitations_path(params[:survey_id]) }
+      wants.xml { head :status => :created }
+    end
+  end
+  
   def destroy
     flash[:message] = "Invitation removed."
     survey = current_organization.sponsored_surveys.find(params[:survey_id])

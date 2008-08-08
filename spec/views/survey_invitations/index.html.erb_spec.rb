@@ -4,6 +4,8 @@ describe "/survey_invitations/index" do
 
   before(:each) do
     
+    @current_organization = mock_model(Organization, :networks => [])
+    
     invitee = stub_model(Organization, :name => 'invitee')
     
     @invitation_1 = mock_model(Invitation, :invitee => invitee)
@@ -15,6 +17,7 @@ describe "/survey_invitations/index" do
     assigns[:external_invitations] = [@external_invitation_1, @external_invitation_2]
     assigns[:survey] = stub_model(Survey, :name => 'Test Survey')
     assigns[:invitations] = [@invitation_1, @invitation_2]
+    assigns[:current_organization] = @current_organization
     
     render 'survey_invitations/index'
   end

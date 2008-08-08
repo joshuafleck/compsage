@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 describe "/surveys/my" do
 
   before(:each) do
-    @survey = mock_model(Survey)
+    @survey = mock_model(Survey, :running? => true)
     organization = stub_model(Organization)
     
     template.stub!(:current_organization).and_return(organization)

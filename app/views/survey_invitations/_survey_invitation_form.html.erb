@@ -1,7 +1,7 @@
-<% form_tag :url => '#' do |f| %>
+<% form_tag(create_with_network_survey_invitations_path(@survey), :method => :get) do |f| %>
   <p>  
     <label>Invite a Network:</label>
-    <%= collection_select(:invitation, :network_id, current_organization.owned_networks, :id, :name, {:prompt => 'Select a Network'}) %>
+    <%= collection_select(:invitation, :network_id, current_organization.networks, :id, :name, {:prompt => 'Select a Network'}) %>
   </p>
   <p>
     <input type="submit" value="Send" />

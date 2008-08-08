@@ -14,6 +14,10 @@ describe SurveyInvitationsController, " #route for" do
     it "should map { :controller => 'invitations', :action => 'destroy', :id => 1, :survey_id => 1} to /surveys/1/invitations/1" do
       route_for(:controller => "survey_invitations", :action => "destroy", :id => 1, :survey_id => 1).should == "/surveys/1/invitations/1"
     end
+    
+    it "should map { :controller => 'invitations', :action => 'create_with_network', :survey_id => 1} to /surveys/1/invitations/create_with_network" do
+      route_for(:controller => "survey_invitations", :action => "create_with_network", :survey_id => 1).should == "/surveys/1/invitations/create_with_network"
+    end
 end
 
 describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
@@ -178,6 +182,74 @@ describe SurveyInvitationsController, " handling POST /surveys/1/invitations wit
   end
    
 end
+
+describe SurveyInvitationsController, " handling GET /surveys/1/create_with_network" do
+
+ before do
+    @current_organization = mock_model(Organization, :name => "test")
+    login_as(@current_organization)
+      
+    @invitations_proxy = mock('invitations proxy')
+    
+    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :invitations => @invitations_proxy)
+    @surveys_proxy = mock('surveys proxy')
+    @surveys_proxy.stub!(:find).and_return(@survey)
+    
+    @invitation = mock_model(SurveyInvitation, :id => 1, :inviter => @current_organization, :to_xml => 'XML', :save! => true)
+    @invitation.stub!(:survey_id).and_return(@survey.id)
+    @invitations_proxy.stub!(:find).and_return(@invitation)
+    
+    @organization_1 = mock_model(Organization, :survey_invitations => [mock_model(SurveyInvitation, :survey_id => @survey.id)])
+    @organizations = [@current_organization,@organization_1]
+    
+    @network = mock_model(Network, :id => '1', :name => "test")  
+    @network.stub!(:organizations).and_return(@organizations)  
+    @networks_proxy = mock('networks proxy')
+    @networks_proxy.stub!(:find).and_return(@network)
+    
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
+    @current_organization.stub!(:survey_invitations).and_return([])
+    @current_organization.stub!(:networks).and_return(@networks_proxy)
+    Organization.stub!(:find_by_email).and_return(@current_organization)
+    
+    @surveys_proxy.stub!(:running).and_return(@surveys_proxy)
+    @invitations_proxy.stub!(:new).and_return(@invitation)
+    
+    @params = {:survey_id => 1, :invitation => {:network_id => '1'}}
+  end
+ 
+  def do_get
+    post :create_with_network, @params
+  end
+  
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_get
+  end
+  
+  it "should find all members of the network" do
+    @network.should_receive(:organizations).and_return(@organizations)
+    do_get
+  end
+   
+  it "should create a new survey_invitation if the invitee has not already been invited" do
+    @invitations_proxy.should_receive(:new).with(:invitee => @current_organization, :inviter => @current_organization).and_return(@invitation)
+    do_get
+  end
+     
+  it "should require the organization is the sponsor of the survey" do
+    @current_organization.should_receive(:sponsored_surveys).and_return(@surveys_proxy)
+    do_get
+  end
+   
+  it "should redirect to the invitation index page and flash a message regarding the success of the action" do
+    do_get
+    flash[:message].should eql("Invitation sent to all members of #{@network.name}.")
+    response.should redirect_to('surveys/1/invitations')
+  end
+   
+end
+
 
 describe SurveyInvitationsController, " handling POST /surveys/1/invitations with external invitation" do
 
