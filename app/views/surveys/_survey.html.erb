@@ -7,7 +7,7 @@
     <span>Time Remaining: </span><%=time_ago_in_words(survey.end_date)%>
   </div>
   <div class="survey_actions">
-  <% if survey.sponsor.id == current_organization.id then %>
+  <% if survey.sponsor.id == current_organization.id && survey.running? then %>
     <%=link_to 'Edit', edit_survey_path(survey.id)%>
     <%=link_to 'Invite', survey_invitations_path(survey.id)%>
   <% end %>

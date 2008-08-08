@@ -26,7 +26,7 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
     @invitations_proxy = mock('invitations proxy')
     @invitations_proxy.stub!(:find).and_return(@invitation)
     
-    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :invitations => @invitations_proxy)
+    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :invitations => @invitations_proxy, :external_invitations => @invitations_proxy)
     @surveys_proxy = mock('surveys proxy')
     @surveys_proxy.stub!(:find).and_return(@survey)
     
@@ -60,14 +60,15 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
    end
    
   it "should find the external survey invitations" do
-    pending
-   end
-   
-  it "should find all invitations" do
-    @invitations_proxy.should_receive(:find).and_return(@invitation)
+    @survey.should_receive(:external_invitations).and_return(@invitations_proxy)
     do_get
    end
    
+  it "should find all invitations" do
+    @survey.should_receive(:invitations).and_return(@invitations_proxy)
+    do_get
+  end
+      
   it "should error if requesting organization is not survey sponsor" do
     @current_organization.should_receive(:sponsored_surveys).and_return(@surveys_proxy)
     do_get
@@ -82,10 +83,11 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations.xml"
     login_as(@current_organization)
     
     @invitation = mock_model(SurveyInvitation, :id => 1, :inviter => @current_organization, :to_xml => 'XML')
+    @invitations = [@invitation]
     @invitations_proxy = mock('invitations proxy')
-    @invitations_proxy.stub!(:find).and_return(@invitation)
+    @invitations_proxy.stub!(:find).and_return(@invitations)
     
-    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :invitations => @invitations_proxy)
+    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :invitations => @invitations_proxy, :external_invitations => @invitations_proxy)
     @surveys_proxy = mock('surveys proxy')
     @surveys_proxy.stub!(:find).and_return(@survey)
     
@@ -105,7 +107,7 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations.xml"
   end
    
   it "should find all survey invitations" do
-    @invitations_proxy.should_receive(:find).and_return(@invitation)
+    @survey.should_receive(:invitations).and_return(@invitations_proxy)
     do_get
    end
    
@@ -115,7 +117,7 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations.xml"
    end
    
   it "should render the found invitations as XML" do
-    @invitation.should_receive(:to_xml).and_return("XML")
+    @invitation.should_receive(:to_xml).at_least(:once).and_return("XML")
     do_get
    end
    
@@ -302,7 +304,7 @@ describe NetworkInvitationsController, " handling GET /networks/1/invitations" d
     @invitations = [@invitation]
     @invitations_proxy = mock('Invitations Proxy', :find => @invitations)
     
-    @network = mock_model(Network, :invitations => @invitations_proxy, :name => 'network')
+    @network = mock_model(Network, :invitations => @invitations_proxy, :external_invitations => @invitations_proxy, :name => 'network')
     @network_proxy = mock('Network Proxy', :find => @network)
     
     @organization.stub!(:owned_networks).and_return(@network_proxy)
@@ -328,6 +330,11 @@ describe NetworkInvitationsController, " handling GET /networks/1/invitations" d
     @network_proxy.should_receive(:find).and_return(@network)
     do_get
   end
+   
+  it "should find the external network invitations" do
+    @network.should_receive(:external_invitations).and_return(@invitations_proxy)
+    do_get
+   end
   
   it "should find all the network's invitations" do
   	@network.should_receive(:invitations).and_return(@invitations_proxy)
@@ -357,12 +364,12 @@ describe NetworkInvitationsController, " handling GET /networks/1/invitations.xm
     @organization = mock_model(Organization)
     login_as(@organization)
     
-    @invitation = mock_model(Invitation)
+    @invitation = mock_model(Invitation, :to_xml => 'XML')
     @invitations = [@invitation]
     @invitations.stub!(:to_xml).and_return('XML')
     @invitations_proxy = mock('Invitations Proxy', :find => @invitations)
     
-    @network = mock_model(Network, :invitations => @invitations_proxy, :name => 'network')
+    @network = mock_model(Network, :invitations => @invitations_proxy, :external_invitations => @invitations_proxy, :name => 'network')
     @network_proxy = mock('Network Proxy', :find => @network)
     
     @organization.stub!(:owned_networks).and_return(@network_proxy)
@@ -381,8 +388,8 @@ describe NetworkInvitationsController, " handling GET /networks/1/invitations.xm
   end
   
   it "should render the found invitations as XML" do
-  	do_get
-  	response.body.should == "XML"
+    @invitation.should_receive(:to_xml).at_least(:once).and_return("XML")
+    do_get
   end
   
 end
@@ -427,7 +434,7 @@ describe NetworkInvitationsController, " handling POST /networks/1/invitations" 
     @network = mock_model(Network, :invitations => @invitations_proxy, :external_invitations => @external_invitations_proxy)
     @network_proxy = mock('Network Proxy', :find => @network)
     
-    @invitation = mock_model(Invitation, :save => true, :network_id => @network.id)
+    @invitation = mock_model(Invitation, :save => true, :network_id => @network.id, :inviter= => @organization)
     
     @organization.stub!(:owned_networks).and_return(@network_proxy)
 

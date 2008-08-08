@@ -9,12 +9,20 @@ describe "/network_invitations/index" do
     
     @invitation_1 = mock_model(Invitation, :invitee => invitee)
     @invitation_2 = mock_model(Invitation, :invitee => invitee)
+    @external_invitation_1 = mock_model(ExternalNetworkInvitation, :email => 'invitee@invitee.com', :organization_name => nil)
+    @external_invitation_2 = mock_model(ExternalNetworkInvitation, :email => 'invitee@invitee.com', :organization_name => 'test')
+    
+    assigns[:external_invitations] = [@external_invitation_1, @external_invitation_2]
     assigns[:invitations] = [@invitation_1, @invitation_2]
     render 'network_invitations/index'
   end
   
   it "should render the the current invitations" do
      response.should have_tag('ul[id=invitations]')
+  end
+  
+  it "should render the the current external invitations" do
+     response.should have_tag('ul[id=external_invitations]')
   end
   
   it "should have a way to delete an invitation" do

@@ -5,10 +5,11 @@ class NetworkInvitationsController < ApplicationController
   def index
     @network = current_organization.owned_networks.find(params[:network_id])
     @invitations = @network.invitations.find(:all, :include => :invitee)
+    @external_invitations = @network.external_invitations.find(:all)
     
     respond_to do |wants|
       wants.html {} # render the template
-      wants.xml { render :xml => @invitations.to_xml }
+      wants.xml { render :xml => (@invitations + @external_invitations).to_xml }
     end
   end
   
@@ -33,7 +34,8 @@ class NetworkInvitationsController < ApplicationController
     
     if invited_organization.nil? then
       # create an external invitation
-      @invitation = @network.external_invitations.new(:inviter => current_organization, :email => params[:invitation][:email])
+      @invitation = @network.external_invitations.new(params[:invitation])
+      @invitation.inviter = current_organization
     else
       # Check for duplicate invite.
       raise AlreadyInvited if invited_organization.network_invitations.collect(&:network_id).include?(@network.id)
@@ -59,6 +61,7 @@ class NetworkInvitationsController < ApplicationController
           # get ready to render the index template again.
 
           @invitations = @network.invitations.find(:all, :include => :invitee)
+          @external_invitations = @network.external_invitations.find(:all)
           render :action => 'index'
         end
         wants.xml { render :xml => @invitation.errors.to_xml, :status => 422 }

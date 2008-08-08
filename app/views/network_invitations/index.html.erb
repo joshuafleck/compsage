@@ -7,10 +7,24 @@
   :done => network_path(@network)
 }%> 
 <% if @invitations.size > 0 then %>
+  <p>Invitations to [product name here] members:
   <ul id="invitations">
     <% @invitations.each do |invitation| %>
     <li><%=invitation.invitee.name%>
       <div class="network_actions"><%=link_to "Delete", network_invitation_path(@network, invitation), :method => :delete %></div>
+    </li>
+    <% end %>
+  </ul>
+<% end %>
+<% if @external_invitations.size > 0 then %>
+  <p>Invitations to non-members:
+  <ul id="external_invitations">
+    <% @external_invitations.each do |invitation| %>
+    <li>
+      <%=invitation.email%>
+      <%if !invitation.organization_name.blank? then %><span> from </span><%end%>
+      <%=invitation.organization_name%>
+      <div class="network_actions"></div>
     </li>
     <% end %>
   </ul>

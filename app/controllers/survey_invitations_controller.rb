@@ -5,10 +5,11 @@ class SurveyInvitationsController < ApplicationController
   def index
     @survey = current_organization.sponsored_surveys.find(params[:survey_id])
     @invitations = @survey.invitations.find(:all, :include => :invitee)
+    @external_invitations = @survey.external_invitations.find(:all)
     
     respond_to do |wants|
       wants.html {} # render the template
-      wants.xml { render :xml => @invitations.to_xml }
+      wants.xml { render :xml => (@invitations + @external_invitations).to_xml }
     end
   end
   
@@ -61,6 +62,7 @@ class SurveyInvitationsController < ApplicationController
         wants.html do
 
           @invitations = @survey.invitations.find(:all, :include => :invitee)
+          @external_invitations = @survey.external_invitations.find(:all)
           render :action => 'index'
         end
         wants.xml { render :xml => @invitation.errors.to_xml, :status => 422 }
