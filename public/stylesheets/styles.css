@@ -482,17 +482,3 @@ div.survey_sponsor {
   color: #666;
   font-size: .9em;
 }
-
-div.actions {
-  font-size: 1.1em;
-  padding: 10px;
-  border-top: 1px solid #6B4645;
-  border-bottom: 1px solid #6B4645;
-  color: #fff;
-  background: #4A302F;
-  display: inline;
-}
-
-div.actions a {
-  color: #5EA0D6;
-}

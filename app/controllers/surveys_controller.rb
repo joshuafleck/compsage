@@ -23,8 +23,8 @@ class SurveysController < ApplicationController
 	  @discussions = @survey.discussions.within_abuse_threshold.roots
 	  
     respond_to do |wants|
-      wants.html {        
-        if @survey.closed? == :true
+      wants.html {
+        if @survey.closed?
           redirect_to survey_report_path(@survey)
         end
       }

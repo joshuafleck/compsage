@@ -6,17 +6,29 @@
 <h2>Survey for <%= @survey.job_title %></h2>
 <div class="survey_sponsor">Sponsored by <%=@survey.sponsor.name%></div>
 <%=flash_messages%>
-<% if logged_in? && @survey.sponsor.id == current_organization.id && @survey.running? then %>
-  <p>This is your survey.  You can <%=link_to 'edit the survey', edit_survey_path(@survey)%> or
-  <%=link_to 'invite others to participate', survey_invitations_path(@survey)%>.</p>
+<% if @survey.stalled? then %>
+  <% if logged_in? && @survey.sponsor.id == current_organization.id && @survey.running? then %>
+    <p>Unfortunately, you did not get the required number of participants for results to be available.  You
+    can choose to leave this as-is, or you can <%=link_to "re-run the survey" %> and send out some additional
+    invitations.</p>
+  <% else %>
+    <p>This survey is currently closed.  Further, survey results are unavailable due to insufficient data.  The
+      survey sponsor may choose to re-run the survey in an effort to get increased participation.  If this is
+      the case, you will be notified.</p>
+      
+  <% end %>
+<% else %>
+  <% if logged_in? && @survey.sponsor.id == current_organization.id && @survey.running? then %>
+    <p>This is your survey.  You can <%=link_to 'edit the survey', edit_survey_path(@survey)%> or
+    <%=link_to 'invite others to participate', survey_invitations_path(@survey)%>.</p>
+  <% end %>
+  <p><%=@survey.description%></p>
+  <p>Response Deadline: <%=@survey.end_date.strftime("%B %d")%> (<%=time_ago_in_words(@survey.end_date)%> from now)</p>
+
+  <%=link_to "Take Survey Now", survey_questions_path(@survey), :class => 'button'%>
 <% end %>
-<p><%=@survey.description%></p>
-<p>Response Deadline: <%=@survey.end_date.strftime("%B %d")%> (<%=time_ago_in_words(@survey.end_date)%> from now)</p>
 
-<%=link_to "Take Survey Now", survey_questions_path(@survey), :class => 'button'%>
-
-
-<h2>Discussing <%=@survey.job_title%></h2>
+<h3>Discussion</h3>
 <p>
   This is a forum for questions and clarifications regarding a survey. 
   Please remember to preserve your anonymity and the anonymity of the other participants.
