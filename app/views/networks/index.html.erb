@@ -11,7 +11,7 @@
     <% @networks.each do |network| %>
       <li class="entity <%=cycle("even", "odd")%>">
         <div class="actions">
-          <%=link_to "Survey Network", new_survey_path %>
+          <%=link_to "Survey Network", new_survey_path(:network_id => network.id) %>
           <% if network.owner_id == current_organization.id then %>
             <%=link_to "Invite Others", network_invitations_path(network) %>
           <% end %>

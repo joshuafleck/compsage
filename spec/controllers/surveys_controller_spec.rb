@@ -284,6 +284,37 @@ describe SurveysController, " handling GET /surveys/new" do
   end
 end
 
+describe SurveysController, " handling GET /surveys/new from a 'survey network' link" do
+  before(:each) do
+    @networks_proxy = mock('networks proxy')
+    @current_organization = mock_model(Organization, :networks => @networks_proxy)
+
+    @network = mock_model(Network, :id => "1")
+    @networks_proxy.stub!(:find).and_return(@network)
+
+    login_as(@current_organization)
+  end
+
+  def do_get
+    get :new, :network_id => @network.id
+  end
+  
+  it "should be successful" do
+    do_get
+    response.should be_success
+  end
+  
+  it "should find the network" do
+    @networks_proxy.should_receive(:find).and_return(@network)
+    do_get
+  end
+  
+  it "should assign the network to the view" do
+    do_get
+    assigns[:network].should_not be_nil
+  end
+end
+
 describe SurveysController, " handling GET /surveys/1/edit" do
   before(:each) do
     @current_organization = mock_model(Organization)
@@ -404,6 +435,46 @@ describe SurveysController, " handling POST /surveys" do
   it "should redirect to the invitation show page upon success" do
     do_post
     response.should redirect_to(survey_invitations_url(@survey))
+  end
+  
+end
+
+describe SurveysController, " handling POST /surveys from a 'survey network' link" do
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    @params = {:survey => {:job_title => 'That guy who yells "Scalpel, STAT!"' ,
+                 :end_date => Time.now + 1.week
+                 },
+               :predefined_question => {"1" => {'included' => "1"}, "2" => {'included' => "0"}, "3" => {'included' => "1"}}, :invite_network => "1"
+               }
+    @survey = mock_model(Survey, :id => 1, :save => true, :errors => [], :new_record? => true, :job_title => "test")
+    @surveys = []
+    @questions = []
+    @question_hash = [{'id' => 1, 'another' => 2, 'text' => 'asdf'}, {'id' => 2, 'another' => 2, 'text' => 'asdf'}]
+    @excluded_question_hash = {'another' => 2, 'text' => 'asdf'}
+    @pdq1 = mock_model(PredefinedQuestion, :id => 1, :question_hash => @question_hash)
+    @pdq2 = mock_model(PredefinedQuestion, :id => 2, :question_hash => @question_hash)
+    @pdq3 = mock_model(PredefinedQuestion, :id => 3, :question_hash => @question_hash)
+    @question = mock_model(Question, :save => :true, :predefined_question_id= => 1, :survey= => @survey)
+    
+    PredefinedQuestion.stub!(:all).and_return([@pdq1, @pdq2, @pdq3])
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys)
+    @surveys.stub!(:new).and_return(@survey)
+    @survey.stub!(:questions).and_return(@questions)
+    @questions.stub!(:new).and_return(@question)
+  end
+  
+  def do_post
+    post :create, @params
+  end
+
+  it "should create the invitation upon success" do
+    do_post
+    response.should redirect_to(create_with_network_survey_invitations_path(@survey, :invitation => 
+            {
+              :network_id => @params[:invite_network]
+            }))
   end
   
 end

@@ -94,6 +94,11 @@ class SurveysController < ApplicationController
   
   def new
     @predefined_questions = PredefinedQuestion.all
+
+    #Check to see if we arrived here from a 'survey network' link. If so, send the network along.
+    if !params[:network_id].blank? then
+      @network = current_organization.networks.find(params[:network_id])
+    end
   end
   
   def create
@@ -116,7 +121,18 @@ class SurveysController < ApplicationController
     if @survey.save
       respond_to do |wants|
         flash[:notice] = "Survey was created successfully!"
-        wants.html { redirect_to survey_invitations_path(@survey) }
+        wants.html do
+
+          #Check to see if the user created the survey from a 'survey network' link. If so, create the invitation.
+          if params[:invite_network].blank? then
+            redirect_to survey_invitations_path(@survey)
+          else
+            redirect_to create_with_network_survey_invitations_path(@survey, :invitation => 
+            {
+              :network_id => params[:invite_network]
+            })
+          end
+        end
       end
     else
       respond_to do |wants|

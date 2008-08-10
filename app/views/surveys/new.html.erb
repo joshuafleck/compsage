@@ -18,5 +18,8 @@
       <% end %>
     </ul>
   </p>
+  <% if !@network.nil? then %>
+    <%=hidden_field_tag(:invite_network, @network.id ) %>
+  <% end %>
   <p><input type="submit" value="Create" /> <%=link_to "Cancel", surveys_path %></p>
 <% end %>
