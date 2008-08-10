@@ -20,7 +20,11 @@ class AccountsController < ApplicationController
 	  @external_invitation = current_survey_invitation || Invitation.find_by_key(params[:key])
 	   
 	  #Prepopulate the name and email fields automagically
-	  @organization = Organization.new(:name => @external_invitation.organization_name, :contact_name => @external_invitation.name, :email => @external_invitation.email)
+	  @organization = Organization.new({
+	    :name => @external_invitation.organization_name,
+	    :contact_name => @external_invitation.name,
+	    :email => @external_invitation.email
+	  })
 	      
 	end
 	

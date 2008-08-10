@@ -1,18 +1,19 @@
 <%
   title @survey.job_title 
-  if logged_in? then breadcrumbs(link_to("Surveys", surveys_path )) end 
-  #Don't show breadcrumbs when not logged in (survey invitations do not have a dashboard
+  # Don't show breadcrumbs when not logged in (survey invitations do not have a dashboard)
+  breadcrumbs(link_to("Surveys", surveys_path )) if logged_in?  
 %>
-<h2><%= @survey.job_title %></h2>
+<h2>Survey for <%= @survey.job_title %></h2>
+<div class="survey_sponsor">Sponsored by <%=@survey.sponsor.name%></div>
 <%=flash_messages%>
-<h3>Sponsored by <%=@survey.sponsor.name%></h3>
 <% if logged_in? && @survey.sponsor.id == current_organization.id && @survey.running? then %>
-  <%=link_to 'Edit', edit_survey_path(@survey)%>
-  <%=link_to 'Invite', survey_invitations_path(@survey)%>
+  <p>This is your survey.  You can <%=link_to 'edit the survey', edit_survey_path(@survey)%> or
+  <%=link_to 'invite others to participate', survey_invitations_path(@survey)%>.</p>
 <% end %>
 <p><%=@survey.description%></p>
-<span>Time Remaining: </span><%=time_ago_in_words(@survey.end_date)%>
-<p><%=link_to "Respond to #{@survey.job_title}", survey_questions_path(@survey)%></p>
+<p>Response Deadline: <%=@survey.end_date.strftime("%B %d")%> (<%=time_ago_in_words(@survey.end_date)%> from now)</p>
+
+<%=link_to "Take Survey Now", survey_questions_path(@survey), :class => 'button'%>
 
 
 <h2>Discussing <%=@survey.job_title%></h2>

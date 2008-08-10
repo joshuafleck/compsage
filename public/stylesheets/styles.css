@@ -310,10 +310,12 @@ div.options_vertical label {
   padding: 5px;
   background-image: url('/images/bar.jpg');
   text-decoration: none;
-  margin: 5px;
+  margin-top: 1em;
+  margin-bottom: 1em;
   font-weight: bold;
   letter-spacing: .1em;
   border: 1px solid #345c59;
+  font-size: 1.1em;
 }
 
 .button:hover {
@@ -475,3 +477,22 @@ div.autocomplete ul li {
   cursor:pointer;
 }
 
+div.survey_sponsor {
+  margin-top: -1em;
+  color: #666;
+  font-size: .9em;
+}
+
+div.actions {
+  font-size: 1.1em;
+  padding: 10px;
+  border-top: 1px solid #6B4645;
+  border-bottom: 1px solid #6B4645;
+  color: #fff;
+  background: #4A302F;
+  display: inline;
+}
+
+div.actions a {
+  color: #5EA0D6;
+}
