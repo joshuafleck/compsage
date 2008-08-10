@@ -9,6 +9,8 @@ class Organization < ActiveRecord::Base
   
   define_index do
     indexes :name, :sortable => true
+    indexes :contact_name
+    indexes :email
     
     has 'latitude', :as => :latitude, :type => :float
     has 'longitude', :as => :longitude, :type => :float

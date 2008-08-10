@@ -37,6 +37,9 @@
   <div class="title">
     <%=link_to organization.name, organization_path(organization.id)%>
   </div>
+  <div class="contact">
+    <span>Contact: </span><%=organization.contact_name%>
+  </div>
   <div class="description">
     <%if !organization.location.blank? then%><%=organization.location%>: <% end %>
     <%if !organization.city.blank? then%><%=organization.city%>, <% end %>

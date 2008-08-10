@@ -29,7 +29,7 @@ class OrganizationsController < ApplicationController
     end
   end
   
-  def search    #render :inline => "<%= content_tag(:ul, @organizations.map { |org| content_tag(:li, h(org)) }) %>"
+  def search   
   
     @organizations = Organization.search(
       params[:search_text],
@@ -38,8 +38,15 @@ class OrganizationsController < ApplicationController
     
     respond_to do |wants|
       wants.html # render template
-      wants.js do
-         render :inline => "<%= content_tag(:ul, @organizations.map { |org| content_tag(:li, org.name, :id => org.id) }) %>"
+      wants.js do #Scriptaculous auto-completion. Good example can be found here: http://demo.script.aculo.us/ajax/autocompleter_customized
+         render :inline => "<%= content_tag(:ul, @organizations.map { |org| content_tag(:li, 
+          '<div class=\"organization_name\">'+
+            org.name+
+          '</div>'+
+          '<div class=\"contact_name\"><span class=\"informal\">Contact: '+
+          org.contact_name+
+          '</span></div>',
+          :id => org.id) }) %>"
       end
     end
   end
