@@ -1,6 +1,6 @@
 <li>
   <div class="invitation_description">
-  <p><span class="label">Survey: </span><%=link_to(survey_invitation.survey.job_title,survey_path(survey_invitation.survey.id))%></p>
+  <p><%=link_to(survey_invitation.survey.job_title,survey_path(survey_invitation.survey.id))%></p>
   <p><span class="label">Inviter: </span><%=link_to(survey_invitation.inviter.name,organization_path(survey_invitation.inviter.id))%></p>
   </div>
   <div class="invitation_actions">    

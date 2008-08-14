@@ -8,7 +8,10 @@ describe "/surveys/show" do
     template.stub!(:current_organization_or_invitation).and_return(@current_organization_or_invitation)
     template.stub!(:current_organization).and_return(@current_organization_or_invitation)
     
-    @survey = mock_model(Survey, :job_title => "Software Engineer", :id => "1", :sponsor => @current_organization_or_invitation, :description => "TEST", :end_date => Time.now, :running? => true, :stalled? => false)
+    @invitations = [mock_model(Invitation, :invitee => mock_model(Organization, :name => "TESt", :id => "1"))]
+    @external_invitations = [mock_model(ExternalSurveyInvitation, :organization_name => "TESt")]
+    
+    @survey = mock_model(Survey, :job_title => "Software Engineer", :id => "1", :sponsor => @current_organization_or_invitation, :description => "TEST", :end_date => Time.now, :running? => true, :stalled? => false, :invitations => @invitations, :external_invitations => @external_invitations)
     @discussion_reply = mock_model(Discussion, :responder => @owner, :subject => "Reply Topic", :body => "Reply Body", :id => "2", :is_not_abuse => true, :survey => @survey)
     @discussion_children = [@discussion_reply]
     @discussion_topic = mock_model(Discussion, :all_children => @discussion_children, :responder => @current_organization_or_invitation, :subject => "Root Topic", :body => "Root Body", :id => "1", :survey => @survey)
@@ -44,6 +47,10 @@ describe "/surveys/show" do
   
   it "should have the a link to edit if user is the survey sponsor" do
     response.should have_tag("a[href=#{edit_survey_path(@survey)}]")
+  end
+  
+  it "should show the invitees" do
+    response.should have_tag("#invitations")
   end
 
 end

@@ -7,7 +7,7 @@
   :done => network_path(@network)
 }%> 
 <% if @invitations.size > 0 then %>
-  <p>Invitations to [product name here] members:
+  <p>Invitations to [product name here] members:</p>
   <ul id="invitations">
     <% @invitations.each do |invitation| %>
     <li><%=invitation.invitee.name%>
@@ -17,7 +17,7 @@
   </ul>
 <% end %>
 <% if @external_invitations.size > 0 then %>
-  <p>Invitations to non-members:
+  <p>Invitations to non-members:</p>
   <ul id="external_invitations">
     <% @external_invitations.each do |invitation| %>
     <li>

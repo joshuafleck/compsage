@@ -5,11 +5,24 @@
 Invite other organizations to participate in <%=link_to(@survey.job_title,survey_path(@survey))%>
 </p>
 <p>
-<%=flash_messages%>
-<%= render :partial => "survey_invitations/survey_invitation_form"  %>
+  <%=flash_messages%>
+  <% form_tag(create_with_network_survey_invitations_path(@survey), :method => :get) do |f| %>
+    <p>  
+      <label>Invite a Network:</label>
+      <%= collection_select(:invitation, :network_id, current_organization.networks, :id, :name, {:prompt => 'Select a Network'}) %>
+    </p>
+    <p>
+      <input type="submit" value="Send" />
+      <%=link_to "Done", survey_path(@survey) %>
+    </p>
+  <% end %>  
+  <%= render :partial => "invitations/invitation_form", :locals => {
+    :url => survey_invitations_path(@survey), 
+    :done => survey_path(@survey)
+  }%> 
 </p>
 <% if @invitations.size > 0 then %>
-  <p>Invitations to [product name here] members:
+  <p>Invitations to [product name here] members:</p>
   <ul id="invitations">
     <% @invitations.each do |invitation| %>
     <li><%=invitation.invitee.name%>
@@ -19,7 +32,7 @@ Invite other organizations to participate in <%=link_to(@survey.job_title,survey
   </ul>
 <% end %>
 <% if @external_invitations.size > 0 then %>
-  <p>Invitations to non-members:
+  <p>Invitations to non-members:</p>
   <ul id="external_invitations">
     <% @external_invitations.each do |invitation| %>
     <li>

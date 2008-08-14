@@ -17,8 +17,8 @@ describe "/invitations/index" do
   end
   
   it "should render the invitation attributes" do
-    response.should have_tag("span","Inviter:")
-    response.should have_tag("span","Survey:")
+    response.should have_tag("p",@organization.name)
+    response.should have_tag("p",@survey.job_title)
   end
   
   it "should render a list of invited networks" do

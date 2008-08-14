@@ -1,6 +1,6 @@
 <li>
   <div class="invitation_description">
-  <p><span class="label">Network: </span><%=network_invitation.network.name%></p>
+  <p><%=network_invitation.network.name%></p>
   <p><span class="label">Inviter: </span><%=link_to(network_invitation.inviter.name,organization_path(network_invitation.inviter.id))%></p>
   </div>
   <div class="invitation_actions">    

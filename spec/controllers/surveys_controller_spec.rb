@@ -35,7 +35,7 @@ describe SurveysController, "#route_for" do
   end 
   
   it "should map { :controller => 'surveys', :action => 'rerun' } to /surveys/1/rerun" do
-    route_for(:controller => "surveys", :action => "rerun").should == "/surveys/1/rerun"
+    route_for(:controller => "surveys", :action => "rerun", :id => "1").should == "/surveys/1/rerun"
   end  
 end
 

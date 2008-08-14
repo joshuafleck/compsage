@@ -1,7 +1,23 @@
 <%
 title("Report for #{@survey.job_title}")
 breadcrumbs(link_to(@survey.job_title, survey_path(@survey)))
-
-@survey.questions.each do |question| %>
+%>
+<p><%= link_to_function "Invitees (#{@survey.invitations.size + @survey.external_invitations.size})", "new Effect.toggle('invitation_section', 'blind', {duration: .5});return false;" %></p>
+<div id="invitation_section" style="display:none;">
+  <% if @survey.invitations.size > 0 || @survey.external_invitations.size > 0 then %>
+    <p>The following companies have been invited to participate:</p>
+    <ul id="invitations">
+      <% @survey.invitations.each do |invitation| %>
+        <li><%=link_to invitation.invitee.name, organization_path(invitation.invitee)%></li>
+      <% end %>
+      <% @survey.external_invitations.each do |invitation| %>
+        <li><%=invitation.organization_name%></li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No companies have been invited to participate</p>
+  <% end %>
+</div>
+<%@survey.questions.each do |question| %>
 	<%=render :partial => question.question_type, :locals => {:question => question}%>
 <% end %>

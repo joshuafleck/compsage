@@ -19,7 +19,7 @@ class SurveysController < ApplicationController
   end
 
   def show
-    @survey = Survey.find(params[:id])   
+    @survey = Survey.find(params[:id], :include => [:invitations, :external_invitations])   
 	  @discussions = @survey.discussions.within_abuse_threshold.roots
 	  
     respond_to do |wants|
