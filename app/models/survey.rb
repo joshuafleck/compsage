@@ -35,7 +35,7 @@ class Survey < ActiveRecord::Base
   end
   
   aasm_event :rerun do
-    transitions :to => :running, :from => :stalled
+    transitions :to => :running, :from => :stalled, :guard => :open?
   end
   
   def closed?

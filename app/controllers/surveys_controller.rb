@@ -24,7 +24,7 @@ class SurveysController < ApplicationController
 	  
     respond_to do |wants|
       wants.html {
-        if @survey.closed?
+        if @survey.finished?
           redirect_to survey_report_path(@survey)
         end
       }
@@ -209,6 +209,29 @@ class SurveysController < ApplicationController
       }
     end
   end
+  
+  #Allows users to re-run a stalled survey
+  def rerun
+    @survey = current_organization.sponsored_surveys.stalled.find(params[:id])
+    
+    #Set the new end date, attempt to reset the state of the survey
+    if @survey.update_attributes(params[:survey]) && @survey.rerun!
+       respond_to do |wants|  
+         flash[:notice] = 'Survey was successfully updated.'
+         wants.html do
+           redirect_to survey_invitations_path(@survey) 
+         end
+       end
+     else
+       respond_to do |wants|
+         flash[:notice] = 'Unable to rerun survey. Please choose an end date in the future.'
+         wants.html do
+           redirect_to survey_path(@survey)
+         end
+       end
+     end
+  end
+ 
     
   private
     def logged_in_or_invited_layout

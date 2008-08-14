@@ -32,6 +32,10 @@ describe SurveysController, "#route_for" do
   
   it "should map { :controller => 'surveys', :action => 'my' } to /surveys/my" do
     route_for(:controller => "surveys", :action => "my").should == "/surveys/my"
+  end 
+  
+  it "should map { :controller => 'surveys', :action => 'rerun' } to /surveys/1/rerun" do
+    route_for(:controller => "surveys", :action => "rerun").should == "/surveys/1/rerun"
   end  
 end
 
@@ -825,6 +829,66 @@ describe SurveysController, " handling GET /surveys/my.xml" do
     do_get
   end
 end
+
+ describe SurveysController, " handling GET /surveys/1/rerun" do
+    before(:each) do
+      @current_organization = mock_model(Organization)
+      login_as(@current_organization)
+
+      @survey = mock_model(Survey, :id => 1, :update_attributes => true, :sponsor => @current_organization, :job_title => "test", :rerun! => true)
+      @surveys_proxy = mock('surveys proxy')
+      @stalled_surveys = mock('stalled surveys', :find => @survey)
+      @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
+      @surveys_proxy.stub!(:stalled).and_return(@stalled_surveys)
+    end
+
+    def do_rerun
+      get :rerun, :id => @survey
+    end
+    
+    it "should be successful" do
+      do_rerun
+      response.should be_redirect
+    end
+    
+    it "should be update the end date" do
+      @survey.should_receive(:update_attributes).and_return(true)
+      do_rerun
+    end
+    
+    it "should rerun the survey" do
+      @survey.should_receive(:rerun!).and_return(true)
+      do_rerun
+    end
+    
+    it "should render the survey invitations page on success" do
+      do_rerun
+      response.should redirect_to(survey_invitations_path(@survey))
+    end
+  end
+  
+ describe SurveysController, " handling GET /surveys/1/rerun with error" do
+    before(:each) do
+      @current_organization = mock_model(Organization)
+      login_as(@current_organization)
+
+      @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :rerun! => true)
+      @surveys_proxy = mock('surveys proxy')
+      @stalled_surveys = mock('stalled surveys', :find => @survey)
+      @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
+      @surveys_proxy.stub!(:stalled).and_return(@stalled_surveys)
+    end
+
+    def do_rerun
+      get :rerun, :id => @survey
+    end
+    
+    it "should render the survey page on failure" do
+      do_rerun
+      response.should redirect_to(survey_path(@survey))
+    end
+  end
+  
 
 
 
