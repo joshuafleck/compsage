@@ -1,3 +1,6 @@
+require 'rubygems'
+require 'fastercsv'
+
 class CreateZipCodes < ActiveRecord::Migration
   def self.up
 
@@ -43,7 +46,7 @@ class CreateZipCodes < ActiveRecord::Migration
      puts "Now importing about 45,000 zip codes from the free data set at http://www.cfdynamics.com/zipbase/."
      puts "This will probably take 5-10 minutes... "
      puts "[NOTE: if you want it to go faster, import the file\n #{zip_code_data} using your database's CSV import mechanism.]"
-     CSV.open(zip_code_data, "r") do |row| 
+     FasterCSV.foreach(zip_code_data) do |row| 
         ZipCode.create!(:zip       => row[0], 
                                  :latitude   => row[1], 
                                  :longitude  => row[2], 
