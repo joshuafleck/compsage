@@ -5,6 +5,7 @@ class Survey < ActiveRecord::Base
   define_index do
     indexes job_title
     indexes description
+    indexes subscriptions.organization_id, :as => :subscribed_by
   end
 
   belongs_to :sponsor, :class_name => "Organization"
@@ -14,6 +15,8 @@ class Survey < ActiveRecord::Base
   has_many :questions
   has_many :responses, :through => :questions
   has_many :participations
+  has_many :subscriptions, :class_name => 'SurveySubscription', :dependent => :destroy
+  has_many :subscribed_organizations, :through => :survey_subscriptions, :source => :organization
   
   validates_presence_of :job_title
   validates_length_of :job_title, :maximum => 128
@@ -22,6 +25,7 @@ class Survey < ActiveRecord::Base
   
   named_scope :recent, :order => 'created_at DESC', :limit => 10
   
+  after_create :add_sponsor_subscription
   
   aasm_initial_state :running
   
@@ -77,5 +81,10 @@ class Survey < ActiveRecord::Base
     end
 
     Notifier.deliver_survey_results_available_notification(self, sponsor) unless participants.include?(sponsor)
+  end
+  
+  # Creates a survey subscription for the survey sponsor.
+  def add_sponsor_subscription
+    s = subscriptions.create!(:organization => sponsor, :relationship => 'sponsor')
   end
 end

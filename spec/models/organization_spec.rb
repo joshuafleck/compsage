@@ -58,6 +58,10 @@ describe Organization do
     Organization.reflect_on_association(:surveys).should_not be_nil
   end
   
+  it "should have many survey subscriptions" do
+    Organization.reflect_on_association(:survey_subscriptions).should_not be_nil
+  end
+  
   it 'should have many sponsored_surveys' do
     Organization.reflect_on_association(:sponsored_surveys).should_not be_nil
   end
@@ -272,5 +276,5 @@ describe Organization, "that already exists" do
     @organization.networks.destroy(@organization.networks.first)
     lambda { Network.find(@network.id) }.should raise_error(ActiveRecord::RecordNotFound)
   end
-  
+
 end

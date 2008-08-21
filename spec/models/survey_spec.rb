@@ -46,6 +46,14 @@ describe Survey do
     Survey.reflect_on_association(:responses).should_not be_nil
   end
   
+  it "should have many survey subscriptions" do
+    Survey.reflect_on_association(:subscriptions).should_not be_nil
+  end
+  
+  it "should have many subscriped organiations" do
+    Survey.reflect_on_association(:subscribed_organizations).should_not be_nil
+  end
+  
   it "should be invalid without an end date to be specified" do
     @survey.attributes = valid_survey_attributes.except(:end_date)
     @survey.should have(1).error_on(:end_date)
@@ -74,5 +82,13 @@ describe Survey do
   it "should be open if the current time is before the end date" do
     @survey.end_date = Time.now + 1.week
     @survey.should be_open
+  end
+  
+  it "should have a survey subscription for the survey sponsor after its created" do
+    @survey = Survey.create(valid_survey_attributes)
+    sub = @survey.subscriptions.detect { |s| s.organization_id = valid_survey_attributes[:sponsor].id} 
+    sub.should_not be_nil
+    sub.relationship.should == "sponsor"
+    @survey.destroy
   end
 end

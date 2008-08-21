@@ -22,10 +22,15 @@ class Organization < ActiveRecord::Base
   has_and_belongs_to_many :networks, :after_remove => :delete_empty_network
   has_many :owned_networks, :class_name => "Network", :foreign_key => "owner_id", :after_add => :join_created_network
   
-  has_many :sponsored_surveys, :class_name => 'Survey', :foreign_key => "sponsor_id"
-  has_many :participated_surveys, :class_name => "Survey", :through => :participations, :source => 'survey'
-  #These are the surveys the user has sponsored or responded to
-  has_many :surveys, :finder_sql => 'select surveys.* from surveys LEFT JOIN participations ON surveys.id = participations.survey_id WHERE sponsor_id=#{id} OR (participant_id=#{id} AND participant_type=\'Organization\') GROUP BY surveys.id'
+  has_many :sponsored_surveys, :class_name => 'Survey',
+    :foreign_key => "sponsor_id"
+    
+  has_many :participated_surveys, :class_name => "Survey",
+    :through => :participations,
+    :source => 'survey'
+    
+  has_many :survey_subscriptions, :dependent => :destroy
+  has_many :surveys, :through => :survey_subscriptions
   
   has_many :participations, :as => :participant
   has_many :discussions, :as => :responder
@@ -107,6 +112,16 @@ class Organization < ActiveRecord::Base
   # Joins the network just created by this organization.
   def join_created_network(network)
     networks << network
+  end
+  
+  # Creates a survey subscription for a sponsored survey
+  def subscribe_to_sponsored_survey(survey)
+    survey_subscriptions.create(:survey => survey, :type => 'sponsor')
+  end
+  
+  # Creates a survey subscription of a participated survey
+  def subscribe_to_participated_survey(survey)
+    survey_subscriptions.create(:survey => survey, :type => 'participant')
   end
   
   # finds the closest zipcode we have in our DB to the one they changed to.  Convert the
