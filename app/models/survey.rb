@@ -38,6 +38,16 @@ class Survey < ActiveRecord::Base
     transitions :to => :running, :from => :stalled, :guard => :open?
   end
   
+  def days_running
+    @days_running
+  end
+  
+  def days_running=(days)
+    @days_running = days
+    self[:end_date] = Time.now.at_beginning_of_day + days.to_i.days
+    p end_date
+  end
+  
   def closed?
     Time.now > end_date
   end

@@ -95,7 +95,7 @@ class SurveysController < ApplicationController
   def new
     @predefined_questions = PredefinedQuestion.all
 
-    #Check to see if we arrived here from a 'survey network' link. If so, send the network along.
+    # Check to see if we arrived here from a 'survey network' link. If so, send the network along.
     if !params[:network_id].blank? then
       @network = current_organization.networks.find(params[:network_id])
     end
@@ -105,20 +105,20 @@ class SurveysController < ApplicationController
     @survey = current_organization.sponsored_surveys.new(params[:survey])
     @predefined_questions = PredefinedQuestion.all
     
-    #iterate through predefined questions and each group
-    @predefined_questions.each do |predefined_question_group|
-      @predefined_question_hash = predefined_question_group.question_hash
-      if params[:predefined_question][predefined_question_group.id.to_s][:included] == "1"
-        @predefined_question_hash.each do |predefined_question|
-          @question = @survey.questions.new(predefined_question.except("id", :id))
-          @question.predefined_question_id = predefined_question_group.id
-          @question.survey = @survey
-          @question.save
+    if @survey.save
+      # iterate through predefined questions and each group
+      @predefined_questions.each do |predefined_question_group|
+        @predefined_question_hash = predefined_question_group.question_hash
+        if params[:predefined_question][predefined_question_group.id.to_s][:included] == "1"
+          @predefined_question_hash.each do |predefined_question|
+            @question = @survey.questions.new(predefined_question.except("id", :id))
+            @question.predefined_question_id = predefined_question_group.id
+            @question.survey = @survey
+            @question.save
+          end
         end
       end
-    end
-    
-    if @survey.save
+      
       respond_to do |wants|
         flash[:notice] = "Survey was created successfully!"
         wants.html do
