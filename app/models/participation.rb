@@ -11,7 +11,7 @@ class Participation < ActiveRecord::Base
   protected
   
   def create_participant_subscription
-    if participant.is_a?(Organization) then
+    if participant.is_a?(Organization) && survey.sponsor != participant then
       s = SurveySubscription.create!(
         :organization => participant,
         :survey => survey,

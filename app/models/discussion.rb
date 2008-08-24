@@ -30,6 +30,8 @@ class Discussion < ActiveRecord::Base
     return self.created_at <=> o.created_at
   end
   
+  private
+  
   #After the creation of a discussion, this will assign the discussion to its parent in the case of a reply
   def set_parent
     if !parent_discussion_id.blank? then

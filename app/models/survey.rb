@@ -31,7 +31,7 @@ class Survey < ActiveRecord::Base
   
   aasm_state :running
   aasm_state :stalled, :enter => :email_failed_message
-  aasm_state :finished, :enter => :email_results_available
+  aasm_state :finished, :enter => :finish_survey
   
   aasm_event :finish do
     transitions :to => :finished, :from => :running, :guard => :enough_responses?
@@ -39,6 +39,7 @@ class Survey < ActiveRecord::Base
   end
   
   aasm_event :rerun do
+    #TODO: send a notification to invitees that survey is being rerun
     transitions :to => :running, :from => :stalled, :guard => :open?
   end
   
@@ -87,4 +88,17 @@ class Survey < ActiveRecord::Base
   def add_sponsor_subscription
     s = subscriptions.create!(:organization => sponsor, :relationship => 'sponsor')
   end
+  
+  # This will remove all internal invitations when the survey transitions from 'running' state
+  def remove_invitations
+    self.invitations.delete_all
+  end
+  
+  # These tasks should be completed when a survey transitions to finished  
+  def finish_survey
+    #FIXME: can't figure out how to make the callback call more than one method :(
+    email_results_available()
+    remove_invitations()
+  end
+  
 end
