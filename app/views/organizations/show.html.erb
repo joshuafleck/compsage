@@ -1,5 +1,6 @@
 <% title @organization.name %>
 <% breadcrumbs(link_to("Members",organizations_path)) %>
+<% highlight_tab "members" %>
 <h2><%=@organization.name%></h2>
 <%=flash_messages%>
 <% if !@organization.logo.nil? then %>

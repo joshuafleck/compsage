@@ -1,5 +1,6 @@
 <% title "Invitations to #{@network.name}" %>
 <% breadcrumbs(link_to(@network.name,network_path(@network))) %>
+<% highlight_tab "networks" %>
 <h2>Invitations to <%=@network.name%></h2>
 <%=flash_messages%>
 <%= render :partial => "invitations/invitation_form", :locals => {

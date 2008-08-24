@@ -1,5 +1,6 @@
 <% title "Search Surveys" %>
 <% breadcrumbs(link_to("Surveys",surveys_path)) %>
+<% highlight_tab("surveys") %>
 <h2>Search Results</h2>
 <ul>
   <% @surveys.each do |survey| %>

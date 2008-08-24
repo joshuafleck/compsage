@@ -1,8 +1,7 @@
-<%
-  title @survey.job_title 
-  # Don't show breadcrumbs when not logged in (survey invitations do not have a dashboard)
-  breadcrumbs(link_to("Surveys", surveys_path )) if logged_in?  
-%>
+<% title @survey.job_title %>  
+<% # Don't show breadcrumbs when not logged in (survey invitations do not have a dashboard)
+breadcrumbs(link_to("Surveys", surveys_path )) if logged_in? %>
+<% if logged_in? then highlight_tab "surveys" else highlight_tab "survey" end %>
 <h2>Survey for <%= @survey.job_title %></h2>
 <div class="survey_sponsor">Sponsored by <%=@survey.sponsor.name%></div>
 <%=flash_messages%>

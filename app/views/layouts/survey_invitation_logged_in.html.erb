@@ -15,13 +15,13 @@
 			<% end %>
       <img src="/images/title.gif" />
   </div>
-  <div id="bar">
+  <div id="bar" class=<%=yield :highlighted_tab %>>
       <ul>
-          <li><a href="">Home</a></li>
-          <li><%=link_to "Survey", survey_path(current_survey_invitation.survey) %></li>
-          <li><a href="">About</a></li>
-          <li><a href="">Legal</a></li>
-          <li><%=link_to "Join", new_account_path %></li>
+          <li id="home"><a href="">Home</a></li>
+          <li id="survey"><%=link_to "Survey", survey_path(current_survey_invitation.survey) %></li>
+          <li id="about"><a href="">About</a></li>
+          <li id="legal"><a href="">Legal</a></li>
+          <li id="join"><%=link_to "Join", new_account_path %></li>
       </ul>
   </div>
   <div id="main">

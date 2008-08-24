@@ -35,14 +35,20 @@
   float: left;
 }
 
-#bar li.selected a {
-    color: #8D353F;
-}
 #bar a:hover {
   text-decoration: underline;
 }
 
-#bar li.selected {
+#bar.dashboard #dashboard,
+#bar.surveys #surveys,
+#bar.survey #survey,
+#bar.members #members,
+#bar.networks #networks,
+#bar.home #home,
+#bar.about #about,
+#bar.legal #legal,
+#bar.join #join,
+#bar.account #account {
   background: #fff;
   color: #25615a;
   border-bottom: 1px solid #fff;
@@ -51,7 +57,19 @@
   margin-bottom: -1px;
   padding-top: 1px;
   position: relative;
-}
+} 
+
+#bar.dashboard #dashboard a,
+#bar.surveys #surveys a,
+#bar.members #members a,
+#bar.networks #networks a,
+#bar.home #home a,
+#bar.about #about a,
+#bar.legal #legal a,
+#bar.join #join a,
+#bar.account #account a {
+  color: #8D353F;
+} 
 
 div.tab_row {
   margin-left: -30px;

@@ -1,7 +1,6 @@
-<%
-  title @network.name
-  breadcrumbs(link_to("Your Networks", networks_path))
-%>
+<% title @network.name %>
+<% breadcrumbs(link_to("Your Networks", networks_path)) %>
+<% highlight_tab "networks" %>
 <h2><%=@network.name%></h2>
 <div>Network Owner: <%=link_to @network.owner.name, organization_path(@network.owner)%></div>
 <div class="actions">

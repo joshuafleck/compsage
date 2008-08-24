@@ -17,4 +17,10 @@ module ApplicationHelper
       link_to("Dashboard", dashboard_path) + if links.length > 0 then " < " else "" end + links.join(" < ")
     end
   end
+  
+  def highlight_tab(tab)
+    content_for(:highlighted_tab) do
+      "#{tab}"
+    end
+  end
 end

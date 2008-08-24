@@ -1,7 +1,6 @@
-<%
-title("Report for #{@survey.job_title}")
-breadcrumbs(link_to(@survey.job_title, survey_path(@survey)))
-%>
+<% title("Report for #{@survey.job_title}") %>
+<% breadcrumbs(link_to(@survey.job_title, survey_path(@survey))) %>
+<% if logged_in? then highlight_tab "surveys" else highlight_tab "survey" end %>
 <p><%= link_to_function "Invitees (#{@survey.invitations.size + @survey.external_invitations.size})", "new Effect.toggle('invitation_section', 'blind', {duration: .5});return false;" %></p>
 <div id="invitation_section" style="display:none;">
   <% if @survey.invitations.size > 0 || @survey.external_invitations.size > 0 then %>

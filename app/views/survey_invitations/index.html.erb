@@ -1,5 +1,6 @@
 <% title "Invitations to #{@survey.job_title}" %>
 <% breadcrumbs(link_to(@survey.job_title,survey_path(@survey))) %>
+<% highlight_tab("surveys") %>
 <h2>Invitations to <%=@survey.job_title%></h2>
 <p>
 Invite other organizations to participate in <%=link_to(@survey.job_title,survey_path(@survey))%>

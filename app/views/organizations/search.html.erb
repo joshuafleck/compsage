@@ -1,5 +1,6 @@
 <% title "Search Members" %>
 <% breadcrumbs(link_to("Members",organizations_path)) %>
+<% highlight_tab "members" %>
 <h2>Search Members</h2>
 <%=flash_messages%>
 <%= render :partial => "search_form" %>
