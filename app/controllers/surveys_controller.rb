@@ -143,7 +143,11 @@ class SurveysController < ApplicationController
 
   def search
     
-    @surveys = Survey.search(params[:search_text])
+    if params[:search_subscribed_only].blank? then
+      @surveys = Survey.search(params[:search_text])
+    else
+      @surveys = Survey.search(params[:search_text], :conditions => {:subscribed_by => current_organization.id})
+    end
     
     respond_to do |wants|
       wants.html {}
