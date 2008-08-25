@@ -16,7 +16,7 @@ Invited surveys are surveys in which other members have requested your participa
 <%= render :partial => "invitations/survey_invitation", :collection => @invited_surveys %>
 </ul>
 <h3>Search Surveys</h3>
-<%= render :partial => "search_form" %>
+<%= render :partial => "search_form", :locals => { :search_subscribed_only => false } %>
 <h3>Browse Surveys</h3>
 <!--TODO: Sorting an pagination-->
 <ul id="surveys">

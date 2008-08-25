@@ -22,7 +22,7 @@
     <% @recent_survey_invitations.each do |invite| %>
       <tr id="survey_invitation_<%=invite.id%>">
         <td><%=link_to invite.survey.job_title, survey_path(invite.survey)%></td>
-        <td><%=invite.inviter.name%></td>
+        <td><%=link_to invite.inviter.name, organization_path(invite.inviter)%></td>
         <td><%=time_ago_in_words(invite.survey.end_date)%></td>
         <td>&nbsp;</td>
       </tr>
@@ -41,7 +41,7 @@
     <% @recent_network_invitations.each do |invite| %>
       <tr id="network_invitation_<%=invite.id%>">
         <td><%=invite.network.name%></td>
-        <td><%=invite.inviter.name%></td>
+        <td><%=link_to invite.inviter.name, organization_path(invite.inviter)%></td>
         <td>
           <%=link_to "Join Network", join_network_path(invite.network), :method => :put%>
         </td>
@@ -60,7 +60,7 @@
     </tr>
     <% @recent_running_surveys.each do |survey| %>
       <tr id="running_survey_<%=survey.id%>">
-        <td><%=survey.job_title%></td>
+        <td><%=link_to survey.job_title, survey_path(survey)%></td>
         <td><%=time_ago_in_words(survey.end_date)%></td>
         <td>&nbsp;</td>
       </tr>
@@ -78,8 +78,8 @@
     </tr>
     <% @recent_completed_surveys.each do |survey| %>
       <tr id="completed_survey_<%=survey.id%>">
-        <td><%=survey.job_title%></td>
-        <td><%=survey.sponsor.name%></td>
+        <td><%=link_to survey.job_title, survey_path(survey)%></td>
+        <td><%=link_to survey.sponsor.name, organization_path(survey.sponsor)%></td>
         <td>&nbsp;</td>
       </tr>
     <% end %>

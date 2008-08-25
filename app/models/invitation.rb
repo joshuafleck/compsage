@@ -5,6 +5,6 @@ class Invitation < ActiveRecord::Base
   #validates_presence_of :invitee (this has been pushed down to lower classes due to external invites)
   validates_presence_of :inviter
   
-  named_scope :recent, :order => 'created_at DESC', :limit => 10
+  named_scope :recent, :order => 'invitations.created_at DESC', :limit => 10
   
 end

@@ -10,7 +10,7 @@ class SurveysController < ApplicationController
     
     respond_to do |wants|
       wants.html {
-        @invited_surveys = current_organization.survey_invitations.find(:all, :include => :survey)
+        @invited_surveys = current_organization.survey_invitations.running
       }
       wants.xml {
         render :xml => @surveys.to_xml
@@ -142,7 +142,7 @@ class SurveysController < ApplicationController
   end
 
   def search
-    
+  
     if params[:search_subscribed_only].blank? then
       @surveys = Survey.search(params[:search_text])
     else

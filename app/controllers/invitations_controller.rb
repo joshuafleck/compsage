@@ -6,7 +6,7 @@ class InvitationsController < ApplicationController
     
     respond_to do |wants|
       wants.html do
-        @survey_invitations = current_organization.survey_invitations
+        @survey_invitations = current_organization.survey_invitations.running
         @network_invitations = current_organization.network_invitations            
       end
       wants.xml do      
