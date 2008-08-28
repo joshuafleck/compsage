@@ -1,5 +1,7 @@
 <div id="known_organization_div" <%=!@invitation.nil? && @invitation.errors.size != 0 ? "style='display:none;'" : ""%>>
-<% form_tag(url, {:onSubmit => "return validateOrganizationExists();"}) do %>
+<% form_tag(url, {
+    :onSubmit => "if ($('organization_id').value != '') { return true } else { alert('Member does not exist'); return false; }"
+   }) do %>
   <p>
   <label>Find Invitee by Organization Name:</label>
   <%=text_field_tag :search_text %><br />
@@ -13,19 +15,8 @@
 <script type="text/javascript">
   /* see http://github.com/madrobby/scriptaculous/wikis/ajax-autocompleter */
   new Ajax.Autocompleter("search_text", "autocomplete_choices", "<%=search_organizations_path()%>", {  
-    afterUpdateElement : setSelectedOrganization
-  });
-  function setSelectedOrganization(text, li) {
-    document.getElementById('organization_id').value = li.id;
-  }
-  function validateOrganizationExists() {
-    if (document.getElementById('organization_id').value != '') {
-      return true;
-    } else {
-      alert('Member does not exist');
-      return false;
-    }
-  }
+    afterUpdateElement : function setSelectedOrganization(text, li) { $('organization_id').value = li.id; }
+  });  
 </script>  
 <% end %> 
 <%= link_to_function "Not sure if invitee is a member?", "new Effect.toggle('unknown_organization_div', 'blind', {duration: .5});Element.toggle('known_organization_div');return false;" %>

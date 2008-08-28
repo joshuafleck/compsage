@@ -15,6 +15,7 @@ Rails::Initializer.run do |config|
   config.gem 'fiveruns_tuneup', :version => '>=0.8.10'
   config.gem 'rubyist-aasm', :version => '>=2.0.1', :lib => 'aasm', :source => 'http://gems.github.com'
   config.gem 'beanstalk-client', :version => '>=1.0.2'
+  config.gem 'will_paginate', :version => '>=2.2.2'
   
   config.load_paths << "app/workers"
 end

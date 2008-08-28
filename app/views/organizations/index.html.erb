@@ -11,4 +11,4 @@
 <ul id="organizations" class="entity_list">
   <%= render :partial => "organization", :collection => @organizations %>
 </ul>
-
+<%= will_paginate @organizations %>
