@@ -15,7 +15,7 @@
 <script type="text/javascript">
   /* see http://github.com/madrobby/scriptaculous/wikis/ajax-autocompleter */
   new Ajax.Autocompleter("search_text", "autocomplete_choices", "<%=search_organizations_path()%>", {  
-    afterUpdateElement : function setSelectedOrganization(text, li) { $('organization_id').value = li.id; }
+    afterUpdateElement : function (text, li) { $('organization_id').value = li.id; }
   });  
 </script>  
 <% end %> 
