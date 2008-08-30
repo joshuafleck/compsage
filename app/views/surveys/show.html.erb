@@ -32,21 +32,18 @@ breadcrumbs(link_to("Surveys", surveys_path )) if logged_in? %>
   <% end %>
   <p><%=@survey.description%></p>
   <p>Response Deadline: <%=@survey.end_date.strftime("%B %d")%> (<%=time_ago_in_words(@survey.end_date)%> from now)</p>
-  <p><%= link_to_function "Invitees (#{@survey.invitations.size + @survey.external_invitations.size})", "new Effect.toggle('invitation_section', 'blind', {duration: .5});return false;" %></p>
+  <p><%= link_to_function "Invitees (#{1 + @survey.invitations.size + @survey.external_invitations.size})", "new Effect.toggle('invitation_section', 'blind', {duration: .5});return false;" %></p>
   <div id="invitation_section" style="display:none;">
-    <% if @survey.invitations.size > 0 || @survey.external_invitations.size > 0 then %>
-      <p>The following companies have been invited to participate:</p>
-      <ul id="invitations">
-        <% @survey.invitations.each do |invitation| %>
-          <li><%=link_to invitation.invitee.name, organization_path(invitation.invitee)%></li>
-        <% end %>
-        <% @survey.external_invitations.each do |invitation| %>
-          <li><%=invitation.organization_name%></li>
-        <% end %>
-      </ul>
-    <% else %>
-      <p>No companies have been invited to participate</p>
-    <% end %>
+    <p>The following companies have been invited to participate:</p>
+    <ul id="invitations">
+      <li><%=link_to @survey.sponsor.name, organization_path(@survey.sponsor)%></li>
+      <% @survey.invitations.each do |invitation| %>
+        <li><%=link_to invitation.invitee.name, organization_path(invitation.invitee)%></li>
+      <% end %>
+      <% @survey.external_invitations.each do |invitation| %>
+        <li><%=invitation.organization_name%></li>
+      <% end %>
+    </ul>
   </div>
   <%=link_to "Take Survey Now", survey_questions_path(@survey), :class => 'button'%>
 <% end %>
