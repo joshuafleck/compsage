@@ -93,7 +93,7 @@ class SurveyInvitationsController < ApplicationController
     #Create an invitation for each network member
     @network.organizations.each do |member| 
       #Do not invite members already invited or the survey sponsor
-      if !member.survey_invitations.collect(&:survey_id).include?(@survey.id) && !(member == @survey.sponsor) then
+      if !member.survey_invitations.collect(&:survey_id).include?(@survey.id) && member != @survey.sponsor then
         invitation = @survey.invitations.new(:invitee => member, :inviter => current_organization)
         invitation.save!
       end

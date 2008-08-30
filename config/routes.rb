@@ -11,7 +11,7 @@ ActionController::Routing::Routes.draw do |map|
     survey.resource :report, :member => {:chart => :get}
   end
   
-  map.resources :networks, :member => {:join => :put, :leave => :put} do |network|
+  map.resources :networks, :member => {:join => :put, :leave => :put, :evict => :put} do |network|
     network.resources :organizations
     network.resources :invitations, :controller => :network_invitations
   end

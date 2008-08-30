@@ -39,7 +39,11 @@ class NetworkInvitationsController < ApplicationController
     else
       # Check for duplicate invite.
       raise AlreadyInvited if invited_organization.network_invitations.collect(&:network_id).include?(@network.id)
-      
+      # Check if invitee is already a member
+      raise AlreadyMember if invited_organization.networks.include?(@network)
+      # Check for sponsor inviting themself. This is not allowed
+      raise SelfInvitation if invited_organization == @network.owner
+            
       # create an internal invitation.
       @invitation = @network.invitations.new(:invitee => invited_organization, :inviter => current_organization)
     end
@@ -75,6 +79,20 @@ class NetworkInvitationsController < ApplicationController
       wants.html { redirect_to network_invitations_path(params[:network_id]) }
       wants.xml { head :status => 422 }
       wants.js { render :text => "#{invited_organization.name} has already been invited to #{@network.name}."}
+    end
+  rescue AlreadyMember
+    flash[:notice] = "#{invited_organization.name} is already a member of this network."
+    respond_to do |wants|
+      wants.html { redirect_to network_invitations_path(params[:network_id]) }
+      wants.xml { head :status => 422 }
+      wants.js { render :text => "#{invited_organization.name} is already a member of #{@network.name}."}
+    end  
+  rescue SelfInvitation
+    flash[:notice] = "As the network owner, you cannot be an invitee to your own network."
+    respond_to do |wants|
+      wants.html { redirect_to network_invitations_path(params[:network_id]) }
+      wants.xml { head :status => 422 }
+      wants.js { render :text => flash[:notice]}
     end
   end
   

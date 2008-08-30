@@ -144,4 +144,34 @@ class NetworksController < ApplicationController
     end
   end
   
+  # This method enables a network owner to remove organizations from the network
+  def evict
+    @network = current_organization.owned_networks.find(params[:id])
+    @organization = @network.organizations.find(params[:organization_id])
+    
+    @network.organizations.delete(@organization) if @network.owner != @organization
+    
+    if @network.save then
+      respond_to do |wants|
+        wants.html do
+          flash[:notice] = "#{@organization.name} was removed from the network"
+          redirect_to network_path(@network)
+        end
+        wants.xml do
+          render :status => :ok
+        end
+      end
+    else
+      respond_to do |wants|
+        wants.html do
+          flash[:notice] = "Unable to remove #{@organization.name} from the network. Please try again later."
+          redirect_to network_path(@network)
+        end
+        wants.xml do
+          render :xml => @network.errors.to_xml, :status => 422
+        end
+      end
+    end
+  end
+  
 end
