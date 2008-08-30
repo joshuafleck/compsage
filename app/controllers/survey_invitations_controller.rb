@@ -17,8 +17,6 @@ class SurveyInvitationsController < ApplicationController
     # render the new template
   end
   
-  #TODO: Create method for inviting network to a survey
-  
   # Creates the new survey invitation.  If the organization is not found in the database (by
   # email), it will send an external invitation out.
   # 
@@ -41,7 +39,8 @@ class SurveyInvitationsController < ApplicationController
     else
       # Check for duplicate invite.
       raise AlreadyInvited if invited_organization.survey_invitations.collect(&:survey_id).include?(@survey.id)
-      
+      # Check for sponsor inviting themself. This is not allowed
+      raise SelfInvitation if invited_organization == @survey.sponsor
       # create an internal invitation.
       @invitation = @survey.invitations.new(:invitee => invited_organization, :inviter => current_organization)
     end
@@ -77,6 +76,13 @@ class SurveyInvitationsController < ApplicationController
       wants.xml { head :status => 422 }
       wants.js { render :text => "#{invited_organization.name} has already been invited to #{@survey.job_title}."}
     end
+  rescue SelfInvitation
+    flash[:notice] = "As the survey sponsor, you cannot be an invitee to your own survey."
+    respond_to do |wants|
+      wants.html { redirect_to survey_invitations_path(params[:survey_id]) }
+      wants.xml { head :status => 422 }
+      wants.js { render :text => flash[:notice]}
+    end
   end
   
   #This method is for inviting a network to participate in a survey
@@ -86,8 +92,8 @@ class SurveyInvitationsController < ApplicationController
     
     #Create an invitation for each network member
     @network.organizations.each do |member| 
-      #Do not invite members already invited
-      if !member.survey_invitations.collect(&:survey_id).include?(@survey.id) then
+      #Do not invite members already invited or the survey sponsor
+      if !member.survey_invitations.collect(&:survey_id).include?(@survey.id) && !(member == @survey.sponsor) then
         invitation = @survey.invitations.new(:invitee => member, :inviter => current_organization)
         invitation.save!
       end
