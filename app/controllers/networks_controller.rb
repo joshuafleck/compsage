@@ -3,11 +3,13 @@ class NetworksController < ApplicationController
   layout 'logged_in'
   # List all the networks.
   def index
-    @networks = current_organization.networks
-    
+        
     respond_to do |wants|
-      wants.html # render template
+      wants.html do
+        @networks = current_organization.networks.paginate(:page => params[:page])
+      end
       wants.xml do
+        @networks = current_organization.networks
         render :xml => @networks.to_xml
       end
     end

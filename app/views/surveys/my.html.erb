@@ -14,3 +14,4 @@ These are the surveys you have sponsored or participated
 <ul id="surveys">
 <%= render :partial => "survey", :collection => @surveys %>
 </ul>
+<%= will_paginate @surveys %>

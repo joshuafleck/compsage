@@ -6,13 +6,14 @@ class SurveysController < ApplicationController
   
   
   def index    
-    @surveys = Survey.running
     
     respond_to do |wants|
       wants.html {
+        @surveys = Survey.running.paginate(:page => params[:page])  
         @invited_surveys = current_organization.survey_invitations.running
       }
       wants.xml {
+        @surveys = Survey.running
         render :xml => @surveys.to_xml
       }
     end
@@ -202,13 +203,14 @@ class SurveysController < ApplicationController
   end
   
   #These are the surveys the user has sponsored or responded to
-  def my   
-    
-    @surveys = current_organization.surveys
-    
+  def my
+  
     respond_to do |wants|
-      wants.html {}
+      wants.html {
+        @surveys = current_organization.surveys.paginate(:page => params[:page])  
+      }
       wants.xml {
+        @surveys = current_organization.surveys
         render :xml => @surveys.to_xml
       }
     end
