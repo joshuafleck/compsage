@@ -11,7 +11,8 @@
   <p>Invitations to [product name here] members:</p>
   <ul id="invitations">
     <% @invitations.each do |invitation| %>
-    <li><%=invitation.invitee.name%>
+    <li><%= render(:partial => "organizations/inline_organization", 
+                   :locals => { :organization => invitation.invitee})%>
       <div class="network_actions"><%=link_to "Delete", network_invitation_path(@network, invitation), :method => :delete %></div>
     </li>
     <% end %>

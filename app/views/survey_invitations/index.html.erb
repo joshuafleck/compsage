@@ -26,7 +26,8 @@ Invite other organizations to participate in <%=link_to(@survey.job_title,survey
   <p>Invitations to [product name here] members:</p>
   <ul id="invitations">
     <% @invitations.each do |invitation| %>
-    <li><%=invitation.invitee.name%>
+    <li><%= render(:partial => "organizations/inline_organization", 
+                   :locals => { :organization => invitation.invitee})%>
       <div class="survey_actions"><%=link_to "Delete", survey_invitation_path(@survey, invitation), :method => :delete %></div>
     </li>
     <% end %>

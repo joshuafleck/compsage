@@ -24,7 +24,8 @@
         <div class="network_members" id="network_<%=network.id%>_members_div" style="display:none;">
           <ul id="network_<%=network.id%>_members" class="sublist">
             <% network.organizations.each do |organization| %>
-              <li><%=link_to(organization.name, organization_path(organization))%></li>
+              <li><%= render(:partial => "organizations/inline_organization", 
+                   :locals => { :organization => organization})%></li>
             <% end %>
           </ul>
         </div>

@@ -1,7 +1,8 @@
 <li>
   <div class="invitation_description">
   <p><%=network_invitation.network.name%></p>
-  <p><span class="label">Inviter: </span><%=link_to(network_invitation.inviter.name,organization_path(network_invitation.inviter.id))%></p>
+  <p><span class="label">Inviter: </span><%= render(:partial => "organizations/inline_organization", 
+                   :locals => { :organization => network_invitation.inviter})%></p>
   </div>
   <div class="invitation_actions">    
     <%=link_to "Accept", join_network_path(network_invitation.network), :method => :put%>

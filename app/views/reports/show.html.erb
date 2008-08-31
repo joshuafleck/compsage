@@ -5,9 +5,11 @@
 <div id="invitation_section" style="display:none;">
   <p>The following companies have been invited to participate:</p>
   <ul id="invitations">
-    <li><%=link_to @survey.sponsor.name, organization_path(@survey.sponsor)%></li>  
+    <li><%= render(:partial => "organizations/inline_organization", 
+                   :locals => { :organization => @survey.sponsor})%></li>  
     <% @survey.invitations.each do |invitation| %>
-      <li><%=link_to invitation.invitee.name, organization_path(invitation.invitee)%></li>
+      <li><%= render(:partial => "organizations/inline_organization", 
+                   :locals => { :organization => invitation.invitee})%></li>
     <% end %>
     <% @survey.external_invitations.each do |invitation| %>
       <li><%=invitation.organization_name%></li>

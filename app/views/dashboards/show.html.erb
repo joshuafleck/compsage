@@ -22,7 +22,8 @@
     <% @recent_survey_invitations.each do |invite| %>
       <tr id="survey_invitation_<%=invite.id%>">
         <td><%=link_to invite.survey.job_title, survey_path(invite.survey)%></td>
-        <td><%=link_to invite.inviter.name, organization_path(invite.inviter)%></td>
+        <td><%= render(:partial => "organizations/inline_organization", 
+                   :locals => { :organization => invite.inviter})%></td>
         <td><%=time_ago_in_words(invite.survey.end_date)%></td>
         <td>&nbsp;</td>
       </tr>
@@ -41,7 +42,8 @@
     <% @recent_network_invitations.each do |invite| %>
       <tr id="network_invitation_<%=invite.id%>">
         <td><%=invite.network.name%></td>
-        <td><%=link_to invite.inviter.name, organization_path(invite.inviter)%></td>
+        <td><%= render(:partial => "organizations/inline_organization", 
+                   :locals => { :organization => invite.inviter})%></td>
         <td>
           <%=link_to "Join Network", join_network_path(invite.network), :method => :put%>
         </td>
@@ -79,7 +81,8 @@
     <% @recent_completed_surveys.each do |survey| %>
       <tr id="completed_survey_<%=survey.id%>">
         <td><%=link_to survey.job_title, survey_path(survey)%></td>
-        <td><%=link_to survey.sponsor.name, organization_path(survey.sponsor)%></td>
+        <td><%= render(:partial => "organizations/inline_organization", 
+                   :locals => { :organization => survey.sponsor})%></td>
         <td>&nbsp;</td>
       </tr>
     <% end %>

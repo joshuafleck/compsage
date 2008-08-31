@@ -52,12 +52,12 @@ class NetworkInvitationsController < ApplicationController
       if invited_organization.nil? then
         flash[:message] = "Invitation sent to external email address #{params[:invitation][:email]}."
       else
-        flash[:message] = "Invitation sent to #{invited_organization.name}."
+        flash[:message] = "Invitation sent to #{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)}."
       end
       respond_to do |wants|
         wants.html { redirect_to network_invitations_path(params[:network_id]) }
         wants.xml { head :status => :created }
-        wants.js { render :text => "Invitation to #{@network.name} sent to #{invited_organization.name}."}
+        wants.js { render :text => "Invitation to #{@network.name} sent to #{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)}."}
       end
     else
       respond_to do |wants|
@@ -74,18 +74,18 @@ class NetworkInvitationsController < ApplicationController
     end
     
   rescue AlreadyInvited
-    flash[:notice] = "#{invited_organization.name} has already been invited."
+    flash[:notice] = "#{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)} has already been invited."
     respond_to do |wants|
       wants.html { redirect_to network_invitations_path(params[:network_id]) }
       wants.xml { head :status => 422 }
-      wants.js { render :text => "#{invited_organization.name} has already been invited to #{@network.name}."}
+      wants.js { render :text => "#{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)} has already been invited to #{@network.name}."}
     end
   rescue AlreadyMember
-    flash[:notice] = "#{invited_organization.name} is already a member of this network."
+    flash[:notice] = "#{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)} is already a member of this network."
     respond_to do |wants|
       wants.html { redirect_to network_invitations_path(params[:network_id]) }
       wants.xml { head :status => 422 }
-      wants.js { render :text => "#{invited_organization.name} is already a member of #{@network.name}."}
+      wants.js { render :text => "#{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)} is already a member of #{@network.name}."}
     end  
   rescue SelfInvitation
     flash[:notice] = "As the network owner, you cannot be an invitee to your own network."

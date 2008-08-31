@@ -20,7 +20,8 @@
 <ul id="organizations">
   <% @network.organizations.each do |organization| %>
     <li>
-      <%=link_to organization.name, organization_path(organization)%>
+      <%= render(:partial => "organizations/inline_organization", 
+                   :locals => { :organization => organization})%>
       <% if @network.owner_id == current_organization.id && current_organization != organization then %>
         <%=link_to "Remove", evict_network_path(@network, :organization_id => organization.id), :method => :put %>
       <% end %>

@@ -1,0 +1,6 @@
+<%=link_to(organization.name+(!organization.location.blank? ? " | "+organization.location : ""), 
+  organization_path(organization), 
+  :title => "Contact: "+organization.contact_name+(!(organization.city.blank? && organization.state.blank?) ? ", " : "")+organization.city+(!organization.city.blank? ? ", " : "")+organization.state)
+%>
+
+

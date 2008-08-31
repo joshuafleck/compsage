@@ -19,7 +19,9 @@
   });  
 </script>  
 <% end %> 
-<%= link_to_function "Not sure if invitee is a member?", "new Effect.toggle('unknown_organization_div', 'blind', {duration: .5});Element.toggle('known_organization_div');return false;" %>
+<%= link_to_function "Not sure if invitee is a member?", 
+  "new Effect.toggle('unknown_organization_div','blind',{duration: .5});Element.toggle('known_organization_div');return false;" 
+%>
 </div>
 <div id="unknown_organization_div" <%=@invitation.nil? || @invitation.errors.size == 0 ? "style='display:none;'" : ""%>>
 <% form_for :invitation, @invitation, :url => url do |f| %>  
@@ -36,6 +38,8 @@
     <input type="submit" value="Send" />
     <%=link_to "Done", done %>
   </p>
-  <%= link_to_function "Find invitees by member name", "new Effect.toggle('known_organization_div', 'blind', {duration: .5});Element.toggle('unknown_organization_div');return false;" %>  
+  <%= link_to_function "Find invitees by member name", 
+    "new Effect.toggle('known_organization_div', 'blind', {duration: .5});Element.toggle('unknown_organization_div');return false;" 
+  %>  
 <% end %>  
 </div>

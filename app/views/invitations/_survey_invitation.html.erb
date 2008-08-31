@@ -1,7 +1,8 @@
 <li>
   <div class="invitation_description">
   <p><%=link_to(survey_invitation.survey.job_title,survey_path(survey_invitation.survey.id))%></p>
-  <p><span class="label">Inviter: </span><%=link_to(survey_invitation.inviter.name,organization_path(survey_invitation.inviter.id))%></p>
+  <p><span class="label">Inviter: </span><%= render(:partial => "organizations/inline_organization", 
+                   :locals => { :organization => survey_invitation.inviter})%></p>
   </div>
   <div class="invitation_actions">    
     <%=link_to "Take Survey", survey_questions_path(survey_invitation.survey)%>

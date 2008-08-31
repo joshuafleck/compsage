@@ -49,12 +49,12 @@ class SurveyInvitationsController < ApplicationController
       if invited_organization.nil? then
         flash[:message] = "Invitation sent to external email address #{params[:invitation][:email]}."
       else
-        flash[:message] = "Invitation sent to #{invited_organization.name}."
+        flash[:message] = "Invitation sent to #{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)}."
       end
       respond_to do |wants|
         wants.html { redirect_to survey_invitations_path(params[:survey_id]) }
         wants.xml { head :status => :created }
-        wants.js { render :text => "Invitation to #{@survey.job_title} sent to #{invited_organization.name}."}
+        wants.js { render :text => "Invitation to #{@survey.job_title} sent to #{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)}."}
       end
     else
       respond_to do |wants|
@@ -70,11 +70,11 @@ class SurveyInvitationsController < ApplicationController
     end
     
   rescue AlreadyInvited
-    flash[:notice] = "#{invited_organization.name} has already been invited."
+    flash[:notice] = "#{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)} has already been invited."
     respond_to do |wants|
       wants.html { redirect_to survey_invitations_path(params[:survey_id]) }
       wants.xml { head :status => 422 }
-      wants.js { render :text => "#{invited_organization.name} has already been invited to #{@survey.job_title}."}
+      wants.js { render :text => "#{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)} has already been invited to #{@survey.job_title}."}
     end
   rescue SelfInvitation
     flash[:notice] = "As the survey sponsor, you cannot be an invitee to your own survey."

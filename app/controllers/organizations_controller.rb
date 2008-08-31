@@ -39,7 +39,7 @@ class OrganizationsController < ApplicationController
       wants.js do #Scriptaculous auto-completion. Good example can be found here: http://demo.script.aculo.us/ajax/autocompleter_customized
          render :inline => "<%= content_tag(:ul, @organizations.map { |org| content_tag(:li, 
           '<div class=\"organization_name\">'+
-            org.name+
+            org.name+(org.location.blank? ? '' : ' | '+org.location)+
           '</div>'+
           '<div class=\"contact_name\"><span class=\"informal\">Contact: '+
           org.contact_name+
