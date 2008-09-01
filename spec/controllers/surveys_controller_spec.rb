@@ -50,7 +50,8 @@ describe SurveysController, " handling GET /surveys" do
     @current_organization.stub!(:survey_invitations).and_return(@survey_invitations_proxy)
 
     @surveys = []
-    Survey.stub!(:running).and_return(@surveys)
+    @survey_invitations_proxy.stub!(:running).and_return(@surveys)
+    @surveys.stub!(:paginate).and_return([])
   end
   
   def do_get
@@ -67,13 +68,14 @@ describe SurveysController, " handling GET /surveys" do
   end
   
   it "should find all surveys for which the user has been invited or participated" do
-    @survey_invitations_proxy.should_receive(:find).with(:all, :include => :survey).and_return([])
+    @survey_invitations_proxy.should_receive(:running).and_return(@surveys)
     
     do_get 
   end
   
   it "should find all surveys for which the user has been the sponsor" do
-    Survey.should_receive(:running).and_return(@surveys)
+    @survey_invitations_proxy.should_receive(:running).and_return(@surveys)
+    @surveys.should_receive(:paginate).and_return([])
     
     do_get 
   end
@@ -121,7 +123,7 @@ describe SurveysController, " handling GET /surveys/1" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => 1, :job_title => "test")    
+    @survey = mock_model(Survey, :id => 1, :job_title => "test", :finished? => false)    
     Survey.stub!(:find).and_return(@survey)
     @survey.stub!(:closed?).and_return(:false)
         

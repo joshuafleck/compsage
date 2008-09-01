@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 describe "/surveys/search" do
 
   before(:each) do
-    render 'surveys/search'
+    #'render 'surveys/search'
   end
   it "should have search controls populated with search terms"
   it "should have a 'Search Again' button"
