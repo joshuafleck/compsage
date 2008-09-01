@@ -57,4 +57,27 @@ flsa_question:
       :options:
           - "Exempt"
           - "Non-Exempt"
-    
+          
+mood_question:
+    id: 6
+    position: 6
+    description: How are you feeling today?
+    name: Your mood
+    question_hash: ---
+    - :text: "How are you feeling today?"
+      :question_type: "checkbox"
+      :options:
+          - "Happy"
+          - "Sad"  
+          - "Angry"
+          - "Bored"
+          - "Nervous"
+
+color_question:
+    id: 7
+    position: 7
+    description: What is your favourite color?
+    name: Your fav color
+    question_hash: ---
+    - :text: "What is your favourite color?"
+      :question_type: "text_field"

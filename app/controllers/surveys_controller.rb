@@ -22,6 +22,7 @@ class SurveysController < ApplicationController
   def show
     @survey = Survey.find(params[:id], :include => [:invitations, :external_invitations])   
 	  @discussions = @survey.discussions.within_abuse_threshold.roots
+	  @participation = current_organization_or_survey_invitation.participations.find_by_survey_id(@survey)
 	  
     respond_to do |wants|
       wants.html {
@@ -157,35 +158,23 @@ class SurveysController < ApplicationController
   end
   
   def respond
+  
     @responses = []
     @survey = Survey.find(params[:id])
     @participation = current_organization_or_survey_invitation.participations.find_or_create_by_survey_id(@survey.id)
-    
-    #validate all responses required for the survey before saving, need
-    @survey.questions.each do |question|
-      @response = @participation.responses.find_or_create_by_question_id(question.id)
-      
-      if question.numerical_response? #TODO: modifiy model code to figure out which of these to set
-        @response.numerical_response = params[:responses][question.id.to_s]
-      else
-        @response.textual_response = params[:responses][question.id.to_s]
-      end
-      
-      #collect all responses, TODO: ignore non-required responses, not avail until phase 2
-      @responses << @response
-    end
 
-    #if there were no invalid responses, save the results and redirect to the survey show page
-    if @responses.any? { |r| !r.valid? }
-      flash[:notice] = "Please review and re-submit your responses."
-      respond_to do |wants|
-        wants.html { redirect_to survey_questions_path(@survey)  }
-      end
-      #we have all valid responses, proceed!
-    else
-      @responses.each do |response|
-        response.save!
-      end
+    # build the response objects from the parameters
+    @survey.questions.each do |question|      
+      @responses += build_responses(@participation,question,params)
+    end
+  
+    # attempt to save the responses, noting any that failed
+    @invalid_responses = []
+    @responses.each do |response|
+      @invalid_responses << response if !response.save
+    end
+    
+    if @invalid_responses.size == 0 then
       
       flash[:notice] = "Survey was successfully completed!"
       #current user is an organization, redirect to the show page
@@ -198,6 +187,11 @@ class SurveysController < ApplicationController
         respond_to do |wants|
           wants.html{ redirect_to new_account_path }
         end
+      end
+    else
+      flash[:notice] = "Please review and re-submit your responses."
+      respond_to do |wants|
+        wants.html { redirect_to survey_questions_path(@survey)  }
       end
     end
   end
@@ -242,6 +236,48 @@ class SurveysController < ApplicationController
   private
     def logged_in_or_invited_layout
       logged_in? ? "logged_in" : "survey_invitation_logged_in"
+    end
+    
+    # This will check the params to see if any responses exist for
+    # the particular question. If responses exist, objects will be created for them.
+    # Any existing responses will be updated or deleted (checkboxes only).
+    def build_responses(participation,question,params)
+      responses = []
+      
+      # For questions with options, iterate through the options
+      # and search the parameters to see which options have been selected
+      if question.question_type == 'checkbox'  then
+      
+        # delete any existing responses, as we will be recreating them based on the new input
+        participation.responses.find_all_by_question_id(question.id).each do |response| Response.destroy(response) end
+        
+        question.options.each_with_index do |option, index|
+          if !params[:responses]["#{question.id.to_s}_#{index}"].blank? then
+          
+            response = participation.responses.find_or_create_by_question_id(question.id)
+            response.numerical_response = params[:responses]["#{question.id.to_s}_#{index}"]
+            response.qualifications = params[:responses]["#{question.id.to_s}_#{index}_qualifications"]
+            
+            responses << response
+          
+          end
+        end
+      else
+      
+        response = participation.responses.find_or_create_by_question_id(question.id)
+        
+        if question.numerical_response? 
+          response.numerical_response = params[:responses][question.id.to_s]
+          response.qualifications = params[:responses][question.id.to_s+"_qualifications"]
+        else
+          response.textual_response = params[:responses][question.id.to_s]
+        end
+        
+        responses << response
+        
+      end
+      
+      responses
     end
   
 end

@@ -4,6 +4,8 @@ class QuestionsController < ApplicationController
   
   def index
     @survey = Survey.find(params[:survey_id])
+    @participation = current_organization_or_survey_invitation.participations.find_by_survey_id(@survey.id)
+    @responses = @participation.responses if !@participation.nil?
     respond_to do |wants|
       wants.html {
         #Show a different layout if the user is replying with an external survey invitation

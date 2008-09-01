@@ -4,8 +4,6 @@ module QuestionsHelper
     # insert the default html attributes to the current_html_parameters hash
     html_parameters = Question::DEFAULT_HTML_ATTRIBUTES[question.question_type].merge(question.html_parameters || {})
     question_parameters = Question::DEFAULT_QUESTION_ATTRIBUTES[question.question_type].merge(question.question_parameters || {})
-    
-    html_parameters[:name] ||= "responses[#{question.id}]"
 
     text = question.text
     
@@ -25,15 +23,26 @@ module QuestionsHelper
         default_values << response.textual_response
       }
     end
-  
+    
+    # contains the default qualifications based on the previous response(s).
+    default_qualifications = {}
+    
+    responses.each { |response|
+      default_qualifications[response.numerical_response.to_i] = response.qualifications
+    } if question.numerical_response?
+      
     # construct our html
     return content_tag(:div, :class => question.has_options? ? "options_#{question_parameters[:style]}" : nil) do
       case question.question_type
-      when 'text_field', 'numerical_field'
+      when 'text_field', 'numerical_field'    
+        html_parameters[:name] ||= "responses[#{question.id}]"
         html_parameters[:type] = "text"
         html_parameters[:value] = default_values.first
-        content_tag(:label, text) + " " + tag(:input, html_parameters)
-      when 'text_area'
+        content_tag(:label, text) + " " + tag(:input, html_parameters) + 
+          # All non-text questions should allow for user qualifications
+          build_qualifications(question,default_qualifications)
+      when 'text_area'    
+        html_parameters[:name] ||= "responses[#{question.id}]"
         content_tag(:label, text) + content_tag(:textarea, default_values.first, html_parameters)
       when 'radio', 'checkbox'
         html_parameters[:type] = question.question_type
@@ -45,13 +54,21 @@ module QuestionsHelper
         question_html = content_tag(:p, text)
         
         # then build the options.
-        question.options.each_with_index do |option, index|
+        question.options.each_with_index do |option, index|    
+          # radio button groups must share the same names, checkbox groups must not share the same names
+          html_parameters[:name] = "responses[#{question.id}"+(question.question_type == 'checkbox' ? "_#{index}" : "")+"]"
           html_parameters[:value] = index
-          html_parameters[:checked] = 'checked' if default_values.include?(index)
+          html_parameters[:checked] = (default_values.include?(index) ? 'checked' : nil)
           question_html += content_tag(:label) do
             tag(:input, html_parameters) + option.to_s
-          end
+          end 
+          
+          # All non-text questions should allow for user qualifications (note there can be multiple qualifications for checkbox input)
+          question_html += build_qualifications(question,default_qualifications,index) if question.question_type == 'checkbox'
         end
+        
+        # All non-text questions should allow for user qualifications
+        question_html += build_qualifications(question,default_qualifications) if question.question_type == 'radio'
         
         # and return it from the block.
         question_html
@@ -63,5 +80,13 @@ module QuestionsHelper
       end
     
     end
+  end
+  
+  private
+  
+  # this method will build the input field for qualifications (numerical responses only)
+  def build_qualifications(question,default_qualifications,index = nil)
+    question.numerical_response? ? content_tag(:span," Qualifications: ",{:class => "label"}) + 
+      tag(:input, {:type => "text", :size => "30", :name => "responses[#{question.id}_"+(index.nil? ? "" : "#{index}_")+"qualifications]", :value => (index.nil? ? default_qualifications.values.first : default_qualifications[index])}) : ""
   end
 end

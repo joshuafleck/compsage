@@ -3,14 +3,17 @@
   #Don't show breadcrumbs when logged in as survey invitation (there is no concept of dashboard) %>
 <% if logged_in? then highlight_tab "surveys" else highlight_tab "survey" end %>
 <h2>Responding to Survey <%=@survey.job_title%></h2>
-<p>You are responding to a survey commissioned by <%=link_to(@survey.sponsor.name,organization_path(@survey.sponsor.id))%>.  Report data
-as of <%=(Time.now - 90.days).strftime("%B %d, %Y")%>.</p>
+<p>You are responding to a survey commissioned by
+  <%= render(:partial => "organizations/inline_organization", 
+                     :locals => { :organization => @survey.sponsor})%>.  
+  Report data as of <%=(Time.now - 90.days).strftime("%B %d, %Y")%>.
+</p>
 <%=flash_messages%>
 <% form_for :response, :url => respond_survey_path(@survey), :html => {:method => :post, :multipart => true} do |f|%>
 <div id="questions">
 	<%
 	  @survey.questions.each do |question|%>
-	    <%=print_question(question)%><br />
+	    <%=print_question(question, { :responses => (@responses.nil? ? [] : @responses.find_all_by_question_id(question.id)) })%><br />
 	<%
 	  end
 	%>

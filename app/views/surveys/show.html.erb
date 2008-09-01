@@ -49,7 +49,11 @@ breadcrumbs(link_to("Surveys", surveys_path )) if logged_in? %>
       <% end %>
     </ul>
   </div>
-  <%=link_to "Take Survey Now", survey_questions_path(@survey), :class => 'button'%>
+  <% if @participation.nil? then %>
+    <%=link_to "Take Survey Now", survey_questions_path(@survey), :class => 'button'%>
+  <%else%>
+    You responded on <%=@participation.created_at.strftime("%B %d")%>. <%=link_to "Edit your response.", survey_questions_path(@survey)%>
+  <%end%>
 <% end %>
 
 <h3>Discussion</h3>
