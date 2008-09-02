@@ -46,12 +46,14 @@ describe SurveysController, " handling GET /surveys" do
     login_as(@current_organization)
     
     @survey_invitations_proxy = mock('survey invitations proxy')
-    @survey_invitations_proxy.stub!(:find).and_return([])
+
     @current_organization.stub!(:survey_invitations).and_return(@survey_invitations_proxy)
 
     @surveys = []
+    Survey.stub!(:running).and_return(@surveys)
     @survey_invitations_proxy.stub!(:running).and_return(@surveys)
     @surveys.stub!(:paginate).and_return([])
+    @survey_invitations_proxy.stub!(:paginate).and_return([])
   end
   
   def do_get
@@ -68,13 +70,13 @@ describe SurveysController, " handling GET /surveys" do
   end
   
   it "should find all surveys for which the user has been invited or participated" do
-    @survey_invitations_proxy.should_receive(:running).and_return(@surveys)
-    
+    Survey.should_receive(:running).and_return(@surveys)
+    @survey_invitations_proxy.should_receive(:running)
     do_get 
   end
   
   it "should find all surveys for which the user has been the sponsor" do
-    @survey_invitations_proxy.should_receive(:running).and_return(@surveys)
+    Survey.should_receive(:running).and_return(@surveys)
     @surveys.should_receive(:paginate).and_return([])
     
     do_get 
@@ -125,13 +127,18 @@ describe SurveysController, " handling GET /surveys/1" do
     
     @survey = mock_model(Survey, :id => 1, :job_title => "test", :finished? => false)    
     Survey.stub!(:find).and_return(@survey)
-    @survey.stub!(:closed?).and_return(:false)
         
     @discussion = mock_model(Discussion)
     @discussions = [@discussion]
     @discussions.stub!(:roots).and_return(@discussions)
     @discussions.stub!(:within_abuse_threshold).and_return(@discussions)
     @survey.stub!(:discussions).and_return(@discussions)
+    
+    #participations stub
+    @participations = []
+    @participations = mock_model(Participation)
+    @current_organization.stub!(:participations).and_return(@participations)
+    @participations.stub!(:find_by_survey_id).and_return(@participation)
     
   end
   
@@ -180,13 +187,19 @@ describe SurveysController, " handling GET /surveys/1 when survey is closed" do
     
     @survey = mock_model(Survey, :id => 1, :discussions => nil, :job_title => "test")    
     Survey.stub!(:find).and_return(@survey)
-    @survey.stub!(:closed?).and_return(:true)
+    @survey.stub!(:finished?).and_return(:true)
         
     @discussion = mock_model(Discussion)
     @discussions = [@discussion]
     @discussions.stub!(:within_abuse_threshold).and_return(@discussions)
     @discussions.stub!(:roots).and_return(@discussions)
     @survey.stub!(:discussions).and_return(@discussions)
+    
+    #participations stub
+    @participations = []
+    @participations = mock_model(Participation)
+    @current_organization.stub!(:participations).and_return(@participations)
+    @participations.stub!(:find_by_survey_id).and_return(@participation)
     
   end
 
@@ -203,7 +216,7 @@ describe SurveysController, " handling GET /surveys/1.xml" do
     
     @survey = mock_model(Survey, :id => 1, :job_title => "test")    
     Survey.stub!(:find).and_return(@survey)
-    @survey.stub!(:closed?).and_return(:false)
+    @survey.stub!(:finished?).and_return(:false)
     @survey.stub!(:to_xml).and_return("XML")
         
     @discussion = mock_model(Discussion)
@@ -212,6 +225,11 @@ describe SurveysController, " handling GET /surveys/1.xml" do
     @discussions.stub!(:roots).and_return(@discussions)
     @survey.stub!(:discussions).and_return(@discussions)
     
+    #participations stub
+    @participations = []
+    @participations = mock_model(Participation)
+    @current_organization.stub!(:participations).and_return(@participations)
+    @participations.stub!(:find_by_survey_id).and_return(@participation)
   end
   
   def do_get
@@ -241,7 +259,7 @@ describe SurveysController, " handling GET /surveys/1.xml when survey is closed"
     
     @survey = mock_model(Survey, :id => 1, :job_title => "test")    
     Survey.stub!(:find).and_return(@survey)
-    @survey.stub!(:closed?).and_return(:true)
+    @survey.stub!(:finished?).and_return(:true)
     
     @survey.stub!(:to_xml).and_return("XML")
         
@@ -251,6 +269,11 @@ describe SurveysController, " handling GET /surveys/1.xml when survey is closed"
     @discussions.stub!(:roots).and_return(@discussions)
     @survey.stub!(:discussions).and_return(@discussions)
     
+    #participations stub
+    @participations = []
+    @participations = mock_model(Participation)
+    @current_organization.stub!(:participations).and_return(@participations)
+    @participations.stub!(:find_by_survey_id).and_return(@participation)
   end
   
   def do_get
@@ -714,6 +737,12 @@ describe SurveysController, "handling POST /surveys/1/respond, as invitee that i
     
     Survey.stub!(:find).and_return(@survey)
     @survey.stub!(:questions).and_return([])
+    
+    #participations stub
+    @participations = []
+    @participations = mock_model(Participation)
+    @current_invitation.stub!(:participations).and_return(@participations)
+    @participations.stub!(:find_or_create_by_survey_id).and_return(@participation)
   end
   
   def do_respond
@@ -739,6 +768,12 @@ describe SurveysController, "handling POST /surveys/1/respond, as organization b
     
     Survey.stub!(:find).and_return(@survey)
     @survey.stub!(:questions).and_return([])
+    
+    #participations stub
+    @participations = []
+    @participations = mock_model(Participation)
+    @current_organization.stub!(:participations).and_return(@participations)
+    @participations.stub!(:find_or_create_by_survey_id).and_return(@participation)
   end
   
   def do_respond
@@ -766,6 +801,7 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
     @survey = mock_model(Survey, :id => 1)
     @survey.stub!(:questions).and_return(@questions)
     @responses = []
+
     @my_response = mock_model(Response, :update_attributes => true, :valid? => false, :textual_response => "")
     @params = {:id => 1,
       :responses => {"1" => {:response => @my_response}, "2" => {:response => @my_response}}
@@ -773,7 +809,15 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
     
     Survey.stub!(:find).and_return(@survey)
     @current_organization.stub!(:responses).and_return(@responses)
+    @current_organization.stub!(:participations).and_return(@participations)
+    @participations.stub!(:find_or_create_by_survey_id).and_return(@participation)
     @responses.stub!(:find_or_create_by_question_id).and_return(@my_response)
+    
+    #participations stub
+    @participations = []
+    @participations = mock_model(Participation)
+    @current_organization.stub!(:participations).and_return(@participations)
+    @participations.stub!(:find_or_create_by_survey_id).and_return(@participation)
   end
   
   def do_respond
