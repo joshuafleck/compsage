@@ -11,8 +11,8 @@ describe "/survey_invitations/index" do
     @invitation_1 = mock_model(Invitation, :invitee => invitee)
     @invitation_2 = mock_model(Invitation, :invitee => invitee)
 
-    @external_invitation_1 = mock_model(ExternalSurveyInvitation, :email => 'invitee@invitee.com', :name => nil)
-    @external_invitation_2 = mock_model(ExternalSurveyInvitation, :email => 'invitee@invitee.com', :name => 'test')
+    @external_invitation_1 = mock_model(ExternalSurveyInvitation, :email => 'invitee@invitee.com', :name => '', :contact_name => 'asdf')
+    @external_invitation_2 = mock_model(ExternalSurveyInvitation, :email => 'invitee@invitee.com', :name => 'test', :contact_name => 'asdf')
     
     assigns[:external_invitations] = [@external_invitation_1, @external_invitation_2]
     assigns[:survey] = stub_model(Survey, :name => 'Test Survey')

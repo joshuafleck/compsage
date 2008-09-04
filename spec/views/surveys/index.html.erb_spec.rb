@@ -5,7 +5,8 @@ describe "/surveys/index" do
   before(:each) do
     @survey = mock_model(Survey, :running? => true)
     organization = stub_model(Organization)
-    survey_invitation = mock_model(SurveyInvitation)
+    survey_invitation = mock_model(SurveyInvitation, :inviter => mock_model(Organization, :name => 'ILS', :location => 'Yeosu', :contact_name => 'Park, JS',
+                                                                                          :city => 'Yeosu', :state => ''))
     
     template.stub!(:current_organization).and_return(organization)
     
@@ -13,11 +14,13 @@ describe "/surveys/index" do
     @survey.stub!(:sponsor).and_return(organization)
     @survey.stub!(:id).and_return("1")
     @survey.stub!(:end_date).and_return(Time.now)
+    @surveys = [@survey]
+    @surveys.stub!(:total_pages).and_return(1)
     
     survey_invitation.stub!(:survey).and_return(@survey)
     survey_invitation.stub!(:id).and_return("1")
     
-    assigns[:surveys] = [@survey]
+    assigns[:surveys] = @surveys
     assigns[:invited_surveys] = [survey_invitation]
     
     render 'surveys/index'

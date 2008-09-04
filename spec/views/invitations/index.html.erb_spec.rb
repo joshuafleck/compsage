@@ -4,7 +4,8 @@ describe "/invitations/index" do
 
   before(:each) do
     @logo = mock_model(Logo, :public_filename => "TEST")
-    @organization = mock_model(Organization, :logo => @logo, :name => "TEST")
+    @organization = mock_model(Organization, :logo => @logo, :name => "TESt", :id => "1", :location => 'Yeosu', :contact_name => 'Park, JS',
+                                                               :city => 'Yeosu', :state => '')
     @survey = mock_model(Survey, :job_title => "TEST")
     @survey_invitation = mock_model(SurveyInvitation, :survey => @survey, :inviter => @organization)
     @survey_invitations = [@survey_invitation]

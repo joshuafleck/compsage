@@ -4,14 +4,16 @@ describe "/surveys/show" do
 
   before(:each) do  
     @owner = mock_model(ExternalSurveyInvitation)
-    @current_organization_or_invitation = mock_model(Organization, :name => "TESt", :id => "1")
+    @current_organization_or_invitation = mock_model(Organization, :name => "TESt", :id => "1", :location => 'Yeosu', :contact_name => 'Park, JS',
+                                                                   :city => 'Yeosu', :state => '')
     template.stub!(:current_organization_or_invitation).and_return(@current_organization_or_invitation)
     template.stub!(:current_organization).and_return(@current_organization_or_invitation)
     
-    @invitations = [mock_model(Invitation, :invitee => mock_model(Organization, :name => "TESt", :id => "1"))]
+    @invitations = [mock_model(Invitation, :invitee => mock_model(Organization, :name => "TESt", :id => "1", :location => 'Yeosu', :contact_name => 'Park, JS',
+                                                                   :city => 'Yeosu', :state => ''))]
     @external_invitations = [mock_model(ExternalSurveyInvitation, :organization_name => "TESt")]
     
-    @survey = mock_model(Survey, :job_title => "Software Engineer", :id => "1", :sponsor => @current_organization_or_invitation, :description => "TEST", :end_date => Time.now, :running? => true, :stalled? => false, :invitations => @invitations, :external_invitations => @external_invitations)
+    @survey = mock_model(Survey, :job_title => "Software Engineer", :id => "1", :sponsor => @current_organization_or_invitation, :description => "TEST", :end_date => Time.now, :running? => true, :stalled? => false, :invitations => @invitations, :external_invitations => @external_invitations, :days_running => 4)
     @discussion_reply = mock_model(Discussion, :responder => @owner, :subject => "Reply Topic", :body => "Reply Body", :id => "2", :is_not_abuse => true, :survey => @survey)
     @discussion_children = [@discussion_reply]
     @discussion_topic = mock_model(Discussion, :all_children => @discussion_children, :responder => @current_organization_or_invitation, :subject => "Root Topic", :body => "Root Body", :id => "1", :survey => @survey)

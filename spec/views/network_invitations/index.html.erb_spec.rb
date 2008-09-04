@@ -5,7 +5,8 @@ describe "/network_invitations/index" do
   before(:each) do
     assigns[:network] = mock_model(Network, :name => 'Test Network')
     
-    invitee = mock_model(Organization, :name => 'invitee')
+    invitee = mock_model(Organization, :name => 'ILS', :location => 'Yeosu', :contact_name => 'Park, JS',
+                                       :city => 'Yeosu', :state => '')
     
     @invitation_1 = mock_model(Invitation, :invitee => invitee)
     @invitation_2 = mock_model(Invitation, :invitee => invitee)

@@ -12,8 +12,10 @@ describe "/surveys/my" do
     @survey.stub!(:sponsor).and_return(organization)
     @survey.stub!(:id).and_return("1")
     @survey.stub!(:end_date).and_return(Time.now)
+    @surveys = [@survey]
+    @surveys.stub!(:total_pages).and_return(1)
     
-    assigns[:surveys] = [@survey]
+    assigns[:surveys] = @surveys
     
     render 'surveys/my'
   end
