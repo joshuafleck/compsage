@@ -795,27 +795,24 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
   before(:each) do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
-    @q1 = mock_model(Question, :id => 1, :attributes => "", :numerical_response? => false)
-    @q2 = mock_model(Question, :id => 2, :attributes => "", :numerical_response? => false)
+    @q1 = mock_model(Question, :id => 1, :attributes => "", :numerical_response? => false, :question_type => "text_field")
+    @q2 = mock_model(Question, :id => 2, :attributes => "", :numerical_response? => false, :question_type => "text_field")
     @questions = [@q1, @q2]
     @survey = mock_model(Survey, :id => 1)
     @survey.stub!(:questions).and_return(@questions)
     @responses = []
 
-    @my_response = mock_model(Response, :update_attributes => true, :valid? => false, :textual_response => "")
+    @my_response = mock_model(Response, :update_attributes => true, :valid? => false, :textual_response => "", :textual_response= => true, :save => false)
     @params = {:id => 1,
       :responses => {"1" => {:response => @my_response}, "2" => {:response => @my_response}}
     }
     
     Survey.stub!(:find).and_return(@survey)
-    @current_organization.stub!(:responses).and_return(@responses)
-    @current_organization.stub!(:participations).and_return(@participations)
-    @participations.stub!(:find_or_create_by_survey_id).and_return(@participation)
     @responses.stub!(:find_or_create_by_question_id).and_return(@my_response)
     
     #participations stub
     @participations = []
-    @participations = mock_model(Participation)
+    @participation = mock_model(Participation, :responses => @responses)
     @current_organization.stub!(:participations).and_return(@participations)
     @participations.stub!(:find_or_create_by_survey_id).and_return(@participation)
   end
@@ -831,7 +828,7 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
   
   it "should render the surveys/id/questions page " do
     do_respond
-    response.should redirect_to(survey_questions_path(@survey, :responses => @responses))
+    response.should redirect_to(survey_questions_path(@survey))
   end
   
   it "should assign the invalid responses to the view " do
