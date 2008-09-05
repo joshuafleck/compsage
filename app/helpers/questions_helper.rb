@@ -86,25 +86,40 @@ module QuestionsHelper
   
   # this method will build the input field for qualifications (numerical responses only)
   def build_qualifications(question,default_qualifications,index = nil)
-    question.numerical_response? ? 
-      "&nbsp;" +
-      # build link to toggle display of qualifications div
-      content_tag(:a,
-        "Show/Hide Qualifications", 
-        {:href => "#", :onclick => "new Effect.toggle('#{question.id}_"+(index.nil? ? "" : "#{index}_")+"qualifications', 'blind', {duration: .5});return false;"}
-      ) +
-      # div for entering qualifications
-      content_tag(:div,
-        content_tag(:span,
-          " Qualifications: ",
-          {:class => "label"}
-        ) + 
+  
+    qualifications_html = ""
+    
+    if question.numerical_response? then
+    
+      qualifications_html += "&nbsp;"
+      
+      # build link to toggle display of qualifications input
+      qualifications_html += content_tag(:a,
+        "enter qualifications >>", 
+        {
+          :href => "#", 
+          :onclick => "new Effect.toggle('#{question.id}_"+(index.nil? ? "" : "#{index}_")+"qualifications', 'appear', {duration: .5});return false;"
+        }
+      )
+      
+      qualifications_html += "&nbsp;"
+      
+      # input field for entering qualifications
+      qualifications_html +=  
         tag(:input, 
-          {:type => "text", :size => "30", :name => "responses[#{question.id}_"+(index.nil? ? "" : "#{index}_")+"qualifications]", :value => (index.nil? ? default_qualifications.values.first : default_qualifications[index])}
-        ), 
-        # be sure to display the qualifications div if the qualifications were prepopulated
-        {:style => ((index.nil? ? default_qualifications.values.first : default_qualifications[index]).blank? ? "display:none;" : ""), :id => "#{question.id}_"+(index.nil? ? "" : "#{index}_")+"qualifications"}
-      ) : "" 
+          {
+            :type => "text", 
+            :size => "30", 
+            :name => "responses[#{question.id}_"+(index.nil? ? "" : "#{index}_")+"qualifications]", 
+            :value => (index.nil? ? default_qualifications.values.first : default_qualifications[index]), 
+            :style => ((index.nil? ? default_qualifications.values.first : default_qualifications[index]).blank? ? "display:none;" : ""), 
+            :id => "#{question.id}_"+(index.nil? ? "" : "#{index}_")+"qualifications"
+          }
+        )
+      
+    end
+    
+    qualifications_html
   end
   
 end
