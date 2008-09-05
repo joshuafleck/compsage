@@ -32,20 +32,19 @@ breadcrumbs(link_to("Surveys", surveys_path )) if logged_in? %>
   <% end %>
   <p><%=@survey.description%></p>
   <p>Response Deadline: <%=@survey.end_date.strftime("%B %d")%> (<%=time_ago_in_words(@survey.end_date)%> from now)</p>
-  <p><%= link_to_function "Invitees (#{1 + @survey.invitations.size + @survey.external_invitations.size})", "new Effect.toggle('invitation_section', 'blind', {duration: .5});return false;" %></p>
+  <p><%= link_to_function "Invitees (#{@invitations.size})", "new Effect.toggle('invitation_section', 'blind', {duration: .5});return false;" %></p>
   <div id="invitation_section" style="display:none;">
     <p>The following companies have been invited to participate:</p>
     <ul id="invitations">
-      <li><%= render(:partial => "organizations/inline_organization", 
-                   :locals => { :organization => @survey.sponsor})%>
-      </li>
-      <% @survey.invitations.each do |invitation| %>
-        <li><%= render(:partial => "organizations/inline_organization", 
-                   :locals => { :organization => invitation.invitee})%>
+      <% @invitations.each do |invitation| %>
+        <li>
+          <%if invitation.is_a?(SurveyInvitation) then%>
+            <%= render(:partial => "organizations/inline_organization", 
+              :locals => { :organization => invitation.invitee})%>          
+          <%else%>      
+            <%=invitation.organization_name%> (<%=invitation.email%>)
+          <%end%>          
         </li>
-      <% end %>
-      <% @survey.external_invitations.each do |invitation| %>
-        <li><%=invitation.organization_name%></li>
       <% end %>
     </ul>
   </div>

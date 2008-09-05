@@ -4,8 +4,7 @@ class NetworkInvitationsController < ApplicationController
   
   def index
     @network = current_organization.owned_networks.find(params[:network_id])
-    @invitations = @network.invitations.find(:all, :include => :invitee)
-    @external_invitations = @network.external_invitations.find(:all)
+    @invitations = @network.all_invitations
     
     respond_to do |wants|
       wants.html {} # render the template
@@ -63,9 +62,7 @@ class NetworkInvitationsController < ApplicationController
       respond_to do |wants|
         wants.html do
           # get ready to render the index template again.
-
-          @invitations = @network.invitations.find(:all, :include => :invitee)
-          @external_invitations = @network.external_invitations.find(:all)
+          @invitations = @network.all_invitations
           render :action => 'index'
         end
         wants.xml { render :xml => @invitation.errors.to_xml, :status => 422 }

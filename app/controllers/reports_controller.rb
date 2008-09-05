@@ -4,6 +4,7 @@ class ReportsController < ApplicationController
   
   def show
     @survey = Survey.find(params[:survey_id])
+    @invitations = @survey.all_invitations(true)
   end
   
   # for for flash charts

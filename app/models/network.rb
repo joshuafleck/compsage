@@ -12,6 +12,16 @@ class Network < ActiveRecord::Base
   
   after_create :set_owner_member
   
+  # returns a sorted list of all (network and external_network) invitations
+  def all_invitations(include_owner = false)
+    invitations = self.invitations.find(:all, :include => :invitee)
+    invitations += self.external_invitations.find(:all)
+    invitations << NetworkInvitation.new(:invitee => self.owner) if include_owner
+    invitations.sort    
+  end
+  
+  private
+  
   #This will add the owner as a member of the network
   def set_owner_member
     self.organizations = [self.owner]

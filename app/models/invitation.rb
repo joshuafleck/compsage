@@ -7,4 +7,10 @@ class Invitation < ActiveRecord::Base
   
   named_scope :recent, :order => 'invitations.created_at DESC', :limit => 10
   
+  #This will sort the invitations by invitee organization name, regardless of type
+  def <=>(o)
+    (self.kind_of?(ExternalInvitation) ? self.organization_name.to_s : self.invitee.name.to_s).casecmp(
+     (o.kind_of?(ExternalInvitation) ? o.organization_name.to_s : o.invitee.name.to_s))
+  end
+  
 end

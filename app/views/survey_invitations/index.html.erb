@@ -23,26 +23,19 @@ Invite other organizations to participate in <%=link_to(@survey.job_title,survey
   }%> 
 </p>
 <% if @invitations.size > 0 then %>
-  <p>Invitations to [product name here] members:</p>
   <ul id="invitations">
     <% @invitations.each do |invitation| %>
-    <li><%= render(:partial => "organizations/inline_organization", 
-                   :locals => { :organization => invitation.invitee})%>
-      <div class="survey_actions"><%=link_to "Delete", survey_invitation_path(@survey, invitation), :method => :delete %></div>
-    </li>
-    <% end %>
-  </ul>
-<% end %>
-<% if @external_invitations.size > 0 then %>
-  <p>Invitations to non-members:</p>
-  <ul id="external_invitations">
-    <% @external_invitations.each do |invitation| %>
     <li>
-      <%=invitation.email%>
-      <span> from </span>
-      <%=invitation.organization_name%>
-      <div class="survey_actions"></div>
+      <%if invitation.is_a?(SurveyInvitation) then%>
+        <%= render(:partial => "organizations/inline_organization", 
+          :locals => { :organization => invitation.invitee})%>
+        <div class="actions"><%=link_to "Delete", survey_invitation_path(@survey, invitation), :method => :delete %></div>
+      <%else%>      
+        <%=invitation.organization_name%> (<%=invitation.email%>)
+      <%end%>
     </li>
     <% end %>
   </ul>
+<% else %>  
+  <p>No invitations have been sent</p>
 <% end %>

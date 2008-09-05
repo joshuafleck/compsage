@@ -1,20 +1,21 @@
 <% title("Report for #{@survey.job_title}") %>
 <% breadcrumbs(link_to(@survey.job_title, survey_path(@survey))) %>
 <% if logged_in? then highlight_tab "surveys" else highlight_tab "survey" end %>
-<p><%= link_to_function "Invitees (#{1 + @survey.invitations.size + @survey.external_invitations.size})", "new Effect.toggle('invitation_section', 'blind', {duration: .5});return false;" %></p>
+<p><%= link_to_function "Invitees (#{@invitations.size})", "new Effect.toggle('invitation_section', 'blind', {duration: .5});return false;" %></p>
 <div id="invitation_section" style="display:none;">
   <p>The following companies have been invited to participate:</p>
   <ul id="invitations">
-    <li><%= render(:partial => "organizations/inline_organization", 
-                   :locals => { :organization => @survey.sponsor})%></li>  
-    <% @survey.invitations.each do |invitation| %>
-      <li><%= render(:partial => "organizations/inline_organization", 
-                   :locals => { :organization => invitation.invitee})%></li>
-    <% end %>
-    <% @survey.external_invitations.each do |invitation| %>
-      <li><%=invitation.organization_name%></li>
-    <% end %>
-  </ul>
+      <% @invitations.each do |invitation| %>
+        <li>
+          <%if invitation.is_a?(SurveyInvitation) then%>
+            <%= render(:partial => "organizations/inline_organization", 
+              :locals => { :organization => invitation.invitee})%>          
+          <%else%>      
+            <%=invitation.organization_name%> (<%=invitation.email%>)
+          <%end%>          
+        </li>
+      <% end %>
+    </ul>
 </div>
 <%@survey.questions.each do |question| %>
 	<%=render :partial => question.question_type, :locals => {:question => question}%>
