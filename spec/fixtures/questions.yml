@@ -1,0 +1,50 @@
+question_one_for_test_survey:
+    id: 1
+    survey_id: 2
+    position: 1
+    text: Average salary for this position?
+    question_type: numerical_field
+    
+question_two_for_test_survey:
+    id: 2
+    survey_id: 2
+    position: 2
+    text: Pay range minimum for the position?
+    question_type: numerical_field  
+    
+question_three_for_test_survey:
+    id: 3
+    survey_id: 2
+    position: 3
+    text: Pay range maximum for the position?
+    question_type: numerical_field
+    
+question_four_for_test_survey:
+    id: 4
+    survey_id: 2
+    position: 4
+    text: How are you feeling today?
+    question_type: checkbox
+    options:--- 
+    - "Happy"
+    - "Sad"
+    - "Angry"
+    - "Bored"
+    - "Nervous"
+    
+question_five_for_test_survey:
+    id: 5
+    survey_id: 2
+    position: 5
+    text: What is this position's FLSA status with regard to overtime provisions?
+    question_type: radio
+    options:--- 
+    - "Yes"
+    - "No"    
+    
+question_six_for_test_survey:
+    id: 6
+    survey_id: 2
+    position: 6
+    text: What is your favourite color?
+    question_type: text_field
