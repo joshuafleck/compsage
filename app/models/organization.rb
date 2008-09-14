@@ -11,6 +11,7 @@ class Organization < ActiveRecord::Base
     indexes :name, :sortable => true
     indexes :contact_name
     indexes :email
+    indexes :industry
     
     has 'latitude', :as => :latitude, :type => :float
     has 'longitude', :as => :longitude, :type => :float

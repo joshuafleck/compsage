@@ -21,7 +21,7 @@ describe "ThinkingSphinx::ActiveRecord" do
       # Remove the class so we can redefine it
       TestModule.send(:remove_const, :TestModel)
       
-      ThinkingSphinx::Index.unstub_method(:new)
+      ThinkingSphinx.indexed_models.delete "TestModule::TestModel"
     end
     
     it "should return nil and do nothing if indexes are disabled" do
@@ -206,6 +206,19 @@ describe "ThinkingSphinx::ActiveRecord" do
       @client.should_not have_received(:update).with(
         "person_delta", ["sphinx_deleted"], {@person.id => 1}
       )
+    end
+    
+    it "should not update either index if updates are disabled" do
+      ThinkingSphinx.stub_methods(
+        :updates_enabled? => false,
+        :deltas_enabled   => true
+      )
+      Person.indexes.each { |index| index.stub_method(:delta? => true) }
+      @person.delta = true
+      
+      @person.toggle_deleted
+      
+      @client.should_not have_received(:update)
     end
   end
 

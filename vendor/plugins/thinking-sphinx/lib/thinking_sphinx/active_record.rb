@@ -99,6 +99,10 @@ module ThinkingSphinx
             end
             result ^ 0xFFFFFFFF
           end
+          
+          def to_crc32s
+            (subclasses << self).collect { |klass| klass.to_crc32 }
+          end
         end
       end
       
@@ -118,6 +122,8 @@ module ThinkingSphinx
     end
     
     def toggle_deleted
+      return unless ThinkingSphinx.updates_enabled?
+      
       config = ThinkingSphinx::Configuration.new
       client = Riddle::Client.new config.address, config.port
       

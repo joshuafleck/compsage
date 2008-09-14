@@ -20,7 +20,8 @@ module ThinkingSphinx
         # long.
         undef_method :parent
         
-        attr_accessor :fields, :attributes, :properties, :conditions
+        attr_accessor :fields, :attributes, :properties, :conditions,
+          :groupings
         
         # Set up all the collections. Consider this the equivalent of an
         # instance's initialize method.
@@ -30,6 +31,7 @@ module ThinkingSphinx
           @attributes = []
           @properties = {}
           @conditions = []
+          @groupings  = []
         end
         
         # This is how you add fields - the strings Sphinx looks at - to your
@@ -81,8 +83,7 @@ module ThinkingSphinx
         def indexes(*args)
           options = args.extract_options!
           args.each do |columns|
-            columns = FauxColumn.new(columns) if columns.is_a?(Symbol)
-            fields << Field.new(columns, options)
+            fields << Field.new(FauxColumn.coerce(columns), options)
             
             if fields.last.sortable
               attributes << Attribute.new(
@@ -137,23 +138,7 @@ module ThinkingSphinx
         def has(*args)
           options = args.extract_options!
           args.each do |columns|
-            columns = case columns
-            when Symbol, String
-              FauxColumn.new(columns)
-            when Array
-              columns.collect { |col|
-                case col
-                when Symbol, String
-                  FauxColumn.new(col)
-                else
-                  col
-                end
-              }
-            else
-              columns
-            end
-            
-            attributes << Attribute.new(columns, options)
+            attributes << Attribute.new(FauxColumn.coerce(columns), options)
           end
         end
         alias_method :attribute, :has
@@ -167,6 +152,16 @@ module ThinkingSphinx
         # 
         def where(*args)
           @conditions += args
+        end
+        
+        # Use this method to add some manual SQL strings to the GROUP BY
+        # clause. You can pass in as many strings as you'd like, they'll get
+        # joined together with commas later on.
+        # 
+        #   group_by "lat", "lng"
+        # 
+        def group_by(*args)
+          @groupings += args
         end
         
         # This is what to use to set properties on the index. Chief amongst

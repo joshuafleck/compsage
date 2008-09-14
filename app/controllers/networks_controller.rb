@@ -6,7 +6,7 @@ class NetworksController < ApplicationController
         
     respond_to do |wants|
       wants.html do
-        @networks = current_organization.networks.paginate(:page => params[:page])
+        @networks = current_organization.networks.paginate(:page => params[:page], :order => "name")
       end
       wants.xml do
         @networks = current_organization.networks

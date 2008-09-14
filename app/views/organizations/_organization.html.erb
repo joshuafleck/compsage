@@ -61,13 +61,20 @@
     <% end %>
   </div>
   <div class="title">
-    <%=link_to organization.name+(!organization.location.blank? ? " | "+organization.location : ""), organization_path(organization.id)%>
+    <%=link_to(
+      highlight(organization.name+(!organization.location.blank? ? " | "+organization.location : ""),@search_text), 
+      organization_path(organization.id))
+    %>
   </div>
   <div class="description">
-    <%if !organization.city.blank? then%><%=organization.city%>, <% end %>
+    <%if geodist then%><span class="label">Distance: </span><%=pluralize(geodist,'miles')%> <br /><% end %>
+    <%if !organization.city.blank? then%>
+      <%=organization.city%><% end %><%if !organization.city.blank? && !organization.state.blank? then%>, <% end %>
     <%if !organization.state.blank? then%><%=organization.state%><% end %>
-  </div>
-  <div class="contact">
-    <span class="label">Contact: </span><%=organization.contact_name%>
+    <%if !organization.city.blank? || !organization.state.blank? then%><br /><% end %>
+    <%if !organization.industry.blank? then%>
+      <span class="label">Industry: </span><%=highlight(organization.industry,@search_text)%><br />
+    <% end %>
+    <%if !organization.contact_name.blank? then%><span class="label">Contact: </span><%=highlight(organization.contact_name,@search_text)%><% end %>
   </div>
 </li>

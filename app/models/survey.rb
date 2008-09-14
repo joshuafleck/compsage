@@ -6,6 +6,13 @@ class Survey < ActiveRecord::Base
     indexes job_title
     indexes description
     indexes subscriptions.organization_id, :as => :subscribed_by
+    indexes sponsor.industry, :as => :industry
+    
+    has sponsor.latitude, :as => :latitude, :type => :float
+    has sponsor.longitude, :as => :longitude, :type => :float
+
+    set_property :latitude_attr   => "latitude"
+    set_property :longitude_attr  => "longitude"
   end
 
   belongs_to :sponsor, :class_name => "Organization"

@@ -1,8 +1,12 @@
 <li>
   <div class="survey_job_title">
-    <%=link_to survey.job_title, survey_path(survey.id)%>
+    <%=link_to highlight(survey.job_title,@search_text), survey_path(survey.id), :title => survey.description%>
   </div>
   <div class="survey_attributes">
+    <%if geodist then%><span class="label">Distance: </span><%=pluralize(geodist,'miles')%> <br /><% end %>
+    <%if !survey.sponsor.industry.blank? then%>
+      <span class="label">Industry: </span><%=highlight(survey.sponsor.industry,@search_text)%><br />
+    <% end %>
     <span>Sponsor: </span><%=link_to survey.sponsor.name, organization_path(survey.sponsor.id)%>
     <span>Time Remaining: </span><%=time_ago_in_words(survey.end_date)%>
   </div>

@@ -9,7 +9,8 @@ module ThinkingSphinx
   # Enjoy.
   # 
   class Index
-    attr_accessor :model, :fields, :attributes, :conditions, :delta, :options
+    attr_accessor :model, :fields, :attributes, :conditions, :groupings,
+      :delta, :options
     
     # Create a new index instance by passing in the model it is tied to, and
     # a block to build it with (optional but recommended). For documentation
@@ -31,6 +32,7 @@ module ThinkingSphinx
       @fields       = []
       @attributes   = []
       @conditions   = []
+      @groupings    = []
       @options      = {}
       @delta        = false
       
@@ -38,6 +40,10 @@ module ThinkingSphinx
     end
     
     def name
+      self.class.name(@model)
+    end
+    
+    def self.name(model)
       model.name.underscore.tr(':/\\', '_')
     end
     
@@ -46,8 +52,9 @@ module ThinkingSphinx
       File.size?("#{config.searchd_file_path}/#{self.name}_#{part}.spa").nil?
     end
     
-    def to_config(index, database_conf, charset_type)
+    def to_config(model, index, database_conf, charset_type, offset)
       # Set up associations and joins
+      add_internal_attributes
       link!
       
       attr_sources = attributes.collect { |attrib|
@@ -65,20 +72,21 @@ module ThinkingSphinx
       
       config = <<-SOURCE
 
-source #{model.indexes.first.name}_#{index}_core
+source #{self.class.name(model)}_#{index}_core
 {
 type     = #{db_adapter}
 sql_host = #{database_conf[:host] || "localhost"}
-sql_user = #{database_conf[:username]}
-sql_pass = #{database_conf[:password]}
+sql_user = #{database_conf[:username] || database_conf[:user]}
+sql_pass = #{(database_conf[:password] || "").gsub('#', '\#')}
 sql_db   = #{database_conf[:database]}
+#{"sql_sock = #{database_conf[:socket]}" unless database_conf[:socket].blank? }
 
 sql_query_pre    = #{charset_type == "utf-8" && adapter == :mysql ? "SET NAMES utf8" : ""}
 #{"sql_query_pre    = SET SESSION group_concat_max_len = #{@options[:group_concat_max_len]}" if @options[:group_concat_max_len]}
 sql_query_pre    = #{to_sql_query_pre}
-sql_query        = #{to_sql.gsub(/\n/, ' ')}
+sql_query        = #{to_sql(:offset => offset).gsub(/\n/, ' ')}
 sql_query_range  = #{to_sql_query_range}
-sql_query_info   = #{to_sql_query_info}
+sql_query_info   = #{to_sql_query_info(offset)}
 #{attr_sources}
 }
       SOURCE
@@ -86,12 +94,12 @@ sql_query_info   = #{to_sql_query_info}
       if delta?
         config += <<-SOURCE
 
-source #{model.indexes.first.name}_#{index}_delta : #{model.indexes.first.name}_#{index}_core
+source #{self.class.name(model)}_#{index}_delta : #{self.class.name(model)}_#{index}_core
 {
 sql_query_pre    = 
 sql_query_pre    = #{charset_type == "utf-8" && adapter == :mysql ? "SET NAMES utf8" : ""}
 #{"sql_query_pre    = SET SESSION group_concat_max_len = #{@options[:group_concat_max_len]}" if @options[:group_concat_max_len]}
-sql_query        = #{to_sql(:delta => true).gsub(/\n/, ' ')}
+sql_query        = #{to_sql(:delta => true, :offset => offset).gsub(/\n/, ' ')}
 sql_query_range  = #{to_sql_query_range :delta => true}
 }
         SOURCE
@@ -149,9 +157,11 @@ sql_query_range  = #{to_sql_query_range :delta => true}
         where_clause << " AND " << @conditions.join(" AND ")
       end
       
+      unique_id_expr = "* #{ThinkingSphinx.indexed_models.size} + #{options[:offset] || 0}"
+      
       sql = <<-SQL
 SELECT #{ (
-  ["#{@model.quoted_table_name}.#{quote_column(@model.primary_key)}"] + 
+  ["#{@model.quoted_table_name}.#{quote_column(@model.primary_key)} #{unique_id_expr} AS #{quote_column(@model.primary_key)} "] + 
   @fields.collect { |field| field.to_select_sql } +
   @attributes.collect { |attribute| attribute.to_select_sql }
 ).join(", ") }
@@ -163,7 +173,8 @@ WHERE #{@model.quoted_table_name}.#{quote_column(@model.primary_key)} >= $start
 GROUP BY #{ (
   ["#{@model.quoted_table_name}.#{quote_column(@model.primary_key)}"] + 
   @fields.collect { |field| field.to_group_sql }.compact +
-  @attributes.collect { |attribute| attribute.to_group_sql }.compact
+  @attributes.collect { |attribute| attribute.to_group_sql }.compact +
+  @groupings
 ).join(", ") }
       SQL
       
@@ -177,9 +188,9 @@ GROUP BY #{ (
     # Simple helper method for the query info SQL - which is a statement that
     # returns the single row for a corresponding id.
     # 
-    def to_sql_query_info
+    def to_sql_query_info(offset)
       "SELECT * FROM #{@model.quoted_table_name} WHERE " +
-      " #{quote_column(@model.primary_key)} = $id"
+      " #{quote_column(@model.primary_key)} = (($id - #{offset}) / #{ThinkingSphinx.indexed_models.size})"
     end
     
     # Simple helper method for the query range SQL - which is a statement that
@@ -263,19 +274,9 @@ GROUP BY #{ (
       @fields     = builder.fields
       @attributes = builder.attributes
       @conditions = builder.conditions
+      @groupings  = builder.groupings
       @delta      = builder.properties[:delta]
       @options    = builder.properties.except(:delta)
-      
-      @attributes << Attribute.new(
-        FauxColumn.new(@model.to_crc32.to_s),
-        :type => :integer,
-        :as   => :class_crc
-      )
-      @attributes << Attribute.new(
-        FauxColumn.new("0"),
-        :type => :integer,
-        :as   => :sphinx_deleted
-      )
     end
     
     # Returns all associations used amongst all the fields and attributes.
@@ -334,6 +335,44 @@ GROUP BY #{ (
       else
         val ? '1' : '0'
       end
+    end
+    
+    def crc_column
+      if adapter == :postgres
+        @model.to_crc32.to_s
+      elsif @model.column_names.include?(@model.inheritance_column)
+        "IFNULL(CRC32(#{@model.quoted_table_name}.#{quote_column(@model.inheritance_column)}), #{@model.to_crc32.to_s})"
+      else
+        @model.to_crc32.to_s
+      end
+    end
+    
+    def add_internal_attributes
+      @attributes << Attribute.new(
+        FauxColumn.new(:id),
+        :type => :integer,
+        :as   => :sphinx_internal_id
+      ) unless @attributes.detect { |attr| attr.alias == :sphinx_internal_id }
+      
+      @attributes << Attribute.new(
+        FauxColumn.new(crc_column),
+        :type => :integer,
+        :as   => :class_crc
+      ) unless @attributes.detect { |attr| attr.alias == :class_crc }
+      
+      @attributes << Attribute.new(
+        FauxColumn.new("'" + (@model.send(:subclasses).collect { |klass|
+          klass.to_crc32.to_s
+        } << @model.to_crc32.to_s).join(",") + "'"),
+        :type => :multi,
+        :as   => :subclass_crcs
+      ) unless @attributes.detect { |attr| attr.alias == :subclass_crcs }
+      
+      @attributes << Attribute.new(
+        FauxColumn.new("0"),
+        :type => :integer,
+        :as   => :sphinx_deleted
+      ) unless @attributes.detect { |attr| attr.alias == :sphinx_deleted }
     end
   end
 end

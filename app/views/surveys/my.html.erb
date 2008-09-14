@@ -10,7 +10,6 @@ These are the surveys you have sponsored or participated
 <p><%=link_to "All Surveys", surveys_path()%></p>
 <h3>Search My Surveys</h3>
 <%= render :partial => "search_form", :locals => { :search_subscribed_only => true } %>
-<!--TODO: Sorting an pagination-->
 <ul id="surveys">
 <%= render :partial => "survey", :collection => @surveys %>
 </ul>

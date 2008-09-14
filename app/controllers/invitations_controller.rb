@@ -6,8 +6,8 @@ class InvitationsController < ApplicationController
     
     respond_to do |wants|
       wants.html do
-        @survey_invitations = current_organization.survey_invitations.running
-        @network_invitations = current_organization.network_invitations            
+        @survey_invitations = current_organization.survey_invitations.running.find(:all, :order => 'invitations.created_at desc')
+        @network_invitations = current_organization.network_invitations.find(:all, :order => 'invitations.created_at desc')        
       end
       wants.xml do      
         @invitations = current_organization.invitations

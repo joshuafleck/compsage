@@ -1,5 +1,68 @@
-<% form_tag search_surveys_path(), :method => :get do %>
-  <%= text_field_tag 'search_text' %>
-  <%= hidden_field_tag 'search_subscribed_only', search_subscribed_only %>
-  <%= submit_tag 'Search'%>
+<% form_tag search_surveys_path, :method => :get do %>
+  <%= hidden_field_tag 'filter_by_subscription', @filter_by_subscription %>
+  <%= text_field_tag 'search_text', @search_text %>
+  within <%= select_tag "filter_by_proximity", options_for_select([['none selected',nil],'20','50','100'],@filter_by_proximity) %> miles
+  <label>Industry:</label>
+  <%= select_tag "filter_by_industry", 
+    options_for_select(
+      [['none selected',nil],'Advertising',
+      'Aerospace & Defense',
+      'Agribusiness',
+      'Airlines',
+      'Alcoholic Beverages & Tobacco',
+      'Apparel & Footwear',
+      'Autos & Auto Parts',
+      'Banking',
+      'Biotechnology',
+      'Broadcasting & Cable',
+      'Cable TV',
+      'Chemicals: Basic',
+      'Chemicals: Specialty',
+      'Coal Mining',
+      'Computers: Hardware',
+      'Computers: Networking',
+      'Computers: Software',
+      'Educationial Services',
+      'Environmental & Waste Management',
+      'Financial Services: Diversified',
+      'Foods & Nonalcoholic Beverages',
+      'Healthcare: Facilities',
+      'Healthcare: Managed Care',
+      'Healthcare: Pharmaceuticals',
+      'Healthcare: Products & Supplies',
+      'Homebuilding',
+      'Household Durables',
+      'Household Nondurables',
+      'Industrial and Analytical Instruments',
+      'Insurance',
+      'Investment Services',
+      'Lodging & Gaming',
+      'Machinery',
+      'Metals: Industrial',
+      'Movies & Home Entertainment',
+      'Natural Gas Distribution',
+      'Packaging & Containers',
+      'Paper & Forest Products',
+      'Publishing',
+      'Recreation',
+      'Restaurants',
+      'Retailing: General',
+      'Retailing: Specialty',
+      'Savings & Loans',
+      'Securities, Mutual Funds, and Commodity Futures Trading',
+      'Semiconductors',
+      'Shipbuilding & Repair',
+      'Supermarkets & Drugstores',
+      'Telecommunications: Wireless',
+      'Telecommunications: Wireline',
+      'Textile',
+      'Transportation: Commercial',
+      'Travel & Tourism',
+      'Wholesaling',
+      'Wood Products'],
+      @filter_by_industry
+    ) %><br />
+  <input type="submit" value="Search" />
 <% end %>
+
+

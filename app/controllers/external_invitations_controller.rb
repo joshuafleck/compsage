@@ -4,7 +4,7 @@ class ExternalInvitationsController < ApplicationController
   
   def index
   
-    @invitations = current_organization.sent_global_invitations
+    @invitations = current_organization.sent_global_invitations.find(:all, :order => 'created_at desc')
   
     respond_to do |wants|
       wants.html
@@ -42,7 +42,7 @@ class ExternalInvitationsController < ApplicationController
       respond_to do |wants|
         wants.html do
           #Retrieve the invitations for display on the index page
-          @invitations = current_organization.sent_global_invitations  
+          @invitations = current_organization.sent_global_invitations.find(:all, :order => 'created_at desc')  
           render :action => 'index'
         end
         wants.xml do

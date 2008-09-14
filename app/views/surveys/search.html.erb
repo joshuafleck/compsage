@@ -2,9 +2,14 @@
 <% breadcrumbs(link_to("Surveys",surveys_path)) %>
 <% highlight_tab("surveys") %>
 <h2>Search Results</h2>
+<%= render :partial => "search_form" %>
 <ul>
-  <% @surveys.each do |survey| %>
-    <%=render :partial => "survey", :object => survey %>
+  <% @surveys.each_with_geodist do |survey, geodist| %>
+    <%=render :partial => "survey", :object => survey, :locals => 
+        { # grab the organization and their distance from the source organization
+          # must convert from distance in meters to distance in miles
+          :geodist => (geodist/1609.344).round(1)
+        } %>
   <% end %>
 </ul>
 <%= will_paginate @surveys %>

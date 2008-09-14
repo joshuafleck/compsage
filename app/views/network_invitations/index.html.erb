@@ -1,5 +1,5 @@
 <% title "Invitations to #{@network.name}" %>
-<% breadcrumbs(link_to(@network.name,network_path(@network))) %>
+<% breadcrumbs(link_to("Your Networks",networks_path),link_to(@network.name,network_path(@network))) %>
 <% highlight_tab "networks" %>
 <h2>Invitations to <%=@network.name%></h2>
 <%=flash_messages%>

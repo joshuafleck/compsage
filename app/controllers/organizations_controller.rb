@@ -6,7 +6,7 @@ class OrganizationsController < ApplicationController
 	  
     respond_to do |wants|
       wants.html do
-        @organizations = Organization.paginate(:page => params[:page])
+        @organizations = Organization.paginate(:page => params[:page], :order => 'name, location')
       end
       wants.xml do
         @organizations = Organization.find(:all)
@@ -29,20 +29,37 @@ class OrganizationsController < ApplicationController
   
   def search   
   
-    @organizations = Organization.search(
-      params[:search_text],
-      :geo => [current_organization.latitude, current_organization.longitude]
-    )
+    @search_text = params[:search_text]
+    @filter_by_industry = params[:filter_by_industry]
+    @filter_by_proximity = params[:filter_by_proximity]
     
+    @search_params = {
+      :geo => [current_organization.latitude, current_organization.longitude],
+      :conditions => {},
+      :with => {},
+      :order => '@weight desc, @geodist asc' # sort by relevance, then distance
+    }
+    
+    # filters by industry
+    @search_params[:conditions][:industry] = @filter_by_industry unless @filter_by_industry.blank?
+    # filters by distance (must convert from miles to meters)
+    @search_params[:with]['@geodist'] = 0.0..(@filter_by_proximity.to_i * 1609.344) unless @filter_by_proximity.blank?
+        
+    @organizations = Organization.search @search_text, @search_params
+        
     respond_to do |wants|
       wants.html # render template
-      wants.js do #Scriptaculous auto-completion. Good example can be found here: http://demo.script.aculo.us/ajax/autocompleter_customized
+      wants.js do 
+        #Scriptaculous auto-completion. Good example can be found here: http://demo.script.aculo.us/ajax/autocompleter_customized
          render :inline => "<%= content_tag(:ul, @organizations.map { |org| content_tag(:li, 
           '<div class=\"organization_name\">'+
-            org.name+(org.location.blank? ? '' : ' | '+org.location)+
+            highlight(org.name,@search_text)+(org.location.blank? ? '' : ' | '+org.location)+
           '</div>'+
           '<div class=\"contact_name\"><span class=\"informal\">Contact: '+
-          org.contact_name+
+          highlight(org.contact_name,@search_text)+
+          '</span></div>'+
+          '<div class=\"industry\"><span class=\"informal\">Industry: '+
+          highlight(org.industry,@search_text)+
           '</span></div>',
           :id => org.id) }) %>"
       end

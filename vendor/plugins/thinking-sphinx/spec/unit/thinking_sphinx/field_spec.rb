@@ -158,8 +158,17 @@ describe ThinkingSphinx::Field do
       @first_join   = Object.stub_instance(:aliased_table_name => "tabular")
       @second_join  = Object.stub_instance(:aliased_table_name => "data")
       
-      @first_assoc  = ThinkingSphinx::Association.stub_instance(:join => @first_join)
-      @second_assoc = ThinkingSphinx::Association.stub_instance(:join => @second_join)
+      @first_assoc  = ThinkingSphinx::Association.stub_instance(
+        :join => @first_join, :has_column? => true
+      )
+      @second_assoc = ThinkingSphinx::Association.stub_instance(
+        :join => @second_join, :has_column? => true
+      )
+    end
+    
+    it "should return the column name if the column is a string" do
+      @field.columns = [ThinkingSphinx::Index::FauxColumn.new("string")]
+      @field.send(:column_with_prefix, @field.columns.first).should == "string"
     end
     
     it "should return the column with model's table prefix if there's no associations for the column" do

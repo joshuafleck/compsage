@@ -9,8 +9,8 @@ class SurveysController < ApplicationController
     
     respond_to do |wants|
       wants.html {
-        @surveys = Survey.running.paginate(:page => params[:page])  
-        @invited_surveys = current_organization.survey_invitations.running
+        @surveys = Survey.running.paginate(:page => params[:page], :order => 'job_title')  
+        @invited_surveys = current_organization.survey_invitations.running.find(:all,:order => 'invitations.created_at desc')
       }
       wants.xml {
         @surveys = Survey.running
@@ -145,13 +145,29 @@ class SurveysController < ApplicationController
   end
 
   def search
+    #TODO: highlight search text in survey description (if applicable)
   
-    if params[:search_subscribed_only].blank? then
-      @surveys = Survey.search(params[:search_text])
-    else
-      @surveys = Survey.search(params[:search_text], :conditions => {:subscribed_by => current_organization.id})
-    end
+    @search_text = params[:search_text]
+    @filter_by_subscription = params[:filter_by_subscription]
+    @filter_by_industry = params[:filter_by_industry]
+    @filter_by_proximity = params[:filter_by_proximity]
     
+    @search_params = {
+      :geo => [current_organization.latitude, current_organization.longitude],
+      :conditions => {},
+      :with => {},
+      :order => '@weight desc, @geodist asc' # sort by relevance, then distance
+    }
+    
+    # filters by industry
+    @search_params[:conditions][:industry] = @filter_by_industry unless @filter_by_industry.blank?
+    # filters by subscription (my surveys)
+    @search_params[:conditions][:subscribed_by] = current_organization.id unless @filter_by_subscription.blank?
+    # filters by distance (must convert from miles to meters)
+    @search_params[:with]['@geodist'] = 0.0..(@filter_by_proximity.to_i * 1609.344) unless @filter_by_proximity.blank?
+        
+    @surveys = Survey.search @search_text, @search_params
+         
     respond_to do |wants|
       wants.html {}
       wants.xml {render :xml => @surveys.to_xml}
@@ -202,7 +218,8 @@ class SurveysController < ApplicationController
   
     respond_to do |wants|
       wants.html {
-        @surveys = current_organization.surveys.paginate(:page => params[:page])  
+        @filter_by_subscription = "true" # need this flag to designate any searches should be against subscribed surveys
+        @surveys = current_organization.surveys.paginate(:page => params[:page], :order => 'job_title')  
       }
       wants.xml {
         @surveys = current_organization.surveys
