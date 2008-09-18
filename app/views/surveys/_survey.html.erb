@@ -3,7 +3,7 @@
     <%=link_to highlight(survey.job_title,@search_text), survey_path(survey.id), :title => survey.description%>
   </div>
   <div class="survey_attributes">
-    <%if geodist then%><span class="label">Distance: </span><%=pluralize(geodist,'miles')%> <br /><% end %>
+    <%if @geodist then%><span class="label">Distance: </span><%=pluralize(@geodist,'miles')%> <br /><% end %>
     <%if !survey.sponsor.industry.blank? then%>
       <span class="label">Industry: </span><%=highlight(survey.sponsor.industry,@search_text)%><br />
     <% end %>

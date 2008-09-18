@@ -67,7 +67,7 @@
     %>
   </div>
   <div class="description">
-    <%if geodist then%><span class="label">Distance: </span><%=pluralize(geodist,'miles')%> <br /><% end %>
+    <%if @geodist then%><span class="label">Distance: </span><%=pluralize(@geodist,'miles')%> <br /><% end %>
     <%if !organization.city.blank? then%>
       <%=organization.city%><% end %><%if !organization.city.blank? && !organization.state.blank? then%>, <% end %>
     <%if !organization.state.blank? then%><%=organization.state%><% end %>

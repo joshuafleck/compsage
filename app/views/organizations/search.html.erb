@@ -13,7 +13,7 @@
       <%= render :partial => "organization", :object => organization, :locals => 
         { # grab the organization and their distance from the source organization
           # must convert from distance in meters to distance in miles
-          :geodist => (geodist/1609.344).round(1)
+          :@geodist => (geodist/1609.344).round(1)
         } %>
     <% end %>
   </ul>

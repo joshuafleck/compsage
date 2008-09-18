@@ -148,25 +148,25 @@ class SurveysController < ApplicationController
     #TODO: highlight search text in survey description (if applicable)
   
     @search_text = params[:search_text]
+    
+     # tack the industry on to the search query to ensure matches with same industry float to the top
+    @search_text_with_industry = @search_text + 
+      (current_organization.industry.blank? ? "" : " | \"" + current_organization.industry + "\"")
+    
     @filter_by_subscription = params[:filter_by_subscription]
-    @filter_by_industry = params[:filter_by_industry]
-    @filter_by_proximity = params[:filter_by_proximity]
     
     @search_params = {
       :geo => [current_organization.latitude, current_organization.longitude],
       :conditions => {},
       :with => {},
+      :match_mode => :extended, # this allows us to use boolean operators in the search query
       :order => '@weight desc, @geodist asc' # sort by relevance, then distance
     }
     
-    # filters by industry
-    @search_params[:conditions][:industry] = @filter_by_industry unless @filter_by_industry.blank?
     # filters by subscription (my surveys)
     @search_params[:conditions][:subscribed_by] = current_organization.id unless @filter_by_subscription.blank?
-    # filters by distance (must convert from miles to meters)
-    @search_params[:with]['@geodist'] = 0.0..(@filter_by_proximity.to_i * 1609.344) unless @filter_by_proximity.blank?
         
-    @surveys = Survey.search @search_text, @search_params
+    @surveys = Survey.search @search_text_with_industry, @search_params
          
     respond_to do |wants|
       wants.html {}
