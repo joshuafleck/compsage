@@ -10,6 +10,7 @@ module QuestionsHelper
     # If we're giving this question a number, then prepend it to the question's text.
     text = options[:number].to_s + ". " + text if options.include?(:number)
     responses = options[:responses] || []
+    invalid_response = options[:invalid_response]
     
     # contains the default values based on the previous response(s).
     default_values = []
@@ -31,8 +32,58 @@ module QuestionsHelper
       default_qualifications[response.numerical_response.to_i] = response.qualifications
     } if question.numerical_response?
       
-    # construct our html
-    return content_tag(:div, :class => question.has_options? ? "options_#{question_parameters[:style]}" : nil) do
+    # construct our html, must wrap question in div if there was an error saving the response
+    if invalid_response.nil? then
+      question_html = build_question_html(
+        question, 
+        text, 
+        question_parameters, 
+        html_parameters, 
+        default_qualifications, 
+        default_values)
+    else
+      question_html = build_question_html_with_error(
+        question, 
+        text, 
+        question_parameters, 
+        html_parameters, 
+        default_qualifications, 
+        default_values, 
+        invalid_response)
+    end    
+     
+    return question_html
+    
+  end
+  
+  private
+  
+  def build_question_html_with_error(
+    question, 
+    text, 
+    question_parameters, 
+    html_parameters, 
+    default_qualifications, 
+    default_values, 
+    invalid_response)
+    
+    # wrap the question in the error markup, with explanation
+    content_tag(:div, :class => 'errorExplanation', :id => 'errorExplanation') do
+      content_tag(:p,'The following problem prevented the response from being saved:') +
+      content_tag(:ul) do
+        messages = ""
+        invalid_response.errors.each do |attr,msg|
+          messages = content_tag(:li,"Response " + msg) # this is not a mistake, we should only display one error
+        end
+        messages
+      end +
+      build_question_html(question, text, question_parameters, html_parameters, default_qualifications, default_values)
+    end
+  end
+  
+  def build_question_html(question, text, question_parameters, html_parameters, default_qualifications, default_values)
+  
+    content_tag(:div, :class => question.has_options? ? "options_#{question_parameters[:style]}" : nil) do
       case question.question_type
       when 'text_field', 'numerical_field'    
         html_parameters[:name] ||= "responses[#{question.id}]"
@@ -63,8 +114,10 @@ module QuestionsHelper
             tag(:input, html_parameters) + option.to_s
           end 
           
-          # All non-text questions should allow for user qualifications (note there can be multiple qualifications for checkbox input)
-          question_html += build_qualifications(question,default_qualifications,index) + tag(:br) if question.question_type == 'checkbox'
+          # All non-text questions should allow for user qualifications 
+          # (note there can be multiple qualifications for checkbox input)
+          question_html += build_qualifications(question,default_qualifications,index) + 
+            tag(:br) if question.question_type == 'checkbox'
         end
         
         # All non-text questions should allow for user qualifications
@@ -77,12 +130,10 @@ module QuestionsHelper
       else
         # should never get here.
         raise Exception.new("QuestionType not supported")
-      end
-    
+      end    
     end
+    
   end
-  
-  private
   
   # this method will build the input field for qualifications (numerical responses only)
   def build_qualifications(question,default_qualifications,index = nil)
@@ -98,7 +149,8 @@ module QuestionsHelper
         "enter qualifications >>", 
         {
           :href => "#", 
-          :onclick => "new Effect.toggle('#{question.id}_"+(index.nil? ? "" : "#{index}_")+"qualifications', 'appear', {duration: .5});return false;"
+          :onclick => "new Effect.toggle('#{question.id}_"+(index.nil? ? "" : "#{index}_") +
+            "qualifications', 'appear', {duration: .5});return false;"
         }
       )
       

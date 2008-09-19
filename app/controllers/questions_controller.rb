@@ -6,10 +6,9 @@ class QuestionsController < ApplicationController
     @survey = Survey.find(params[:survey_id])
     @participation = current_organization_or_survey_invitation.participations.find_by_survey_id(@survey.id)
     @responses = @participation.responses if !@participation.nil?
+    @invalid_responses = {}
     respond_to do |wants|
-      wants.html {
-        #Show a different layout if the user is replying with an external survey invitation
-        render :layout => 'survey_invitation_logged_in' if invited_to_survey?}
+      wants.html { }
       wants.xml {
          render :xml => @survey.questions.to_xml
       }

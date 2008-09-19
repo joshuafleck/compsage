@@ -1,3 +1,4 @@
+include QuestionsHelper
 class SurveysController < ApplicationController
   layout :logged_in_or_invited_layout 
   #we require a valid login if you are creating or editing a survey.
@@ -186,9 +187,9 @@ class SurveysController < ApplicationController
     end
   
     # attempt to save the responses, noting any that failed
-    @invalid_responses = []
+    @invalid_responses = {}
     @responses.each do |response|
-      @invalid_responses << response if !response.save
+      @invalid_responses[response.question.id] = response if !response.save
     end
     
     if @invalid_responses.size == 0 then
@@ -208,7 +209,13 @@ class SurveysController < ApplicationController
     else
       flash[:notice] = "Please review and re-submit your responses."
       respond_to do |wants|
-        wants.html { redirect_to survey_questions_path(@survey)  }
+        wants.html do 
+          
+          @participation = current_organization_or_survey_invitation.participations.find_by_survey_id(@survey.id)
+          @responses = @participation.responses if !@participation.nil?
+          
+          render :template => 'questions/index' 
+        end
       end
     end
   end

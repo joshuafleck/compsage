@@ -13,7 +13,10 @@
 <div id="questions">
 	<%
 	  @survey.questions.each do |question|%>
-	    <%=print_question(question, { :responses => (@responses.nil? ? [] : @responses.find_all_by_question_id(question.id)) })%><br />
+	    <%=print_question(question, { 
+	      :responses => (@responses.nil? ? [] : @responses.find_all_by_question_id(question.id)),
+	      :invalid_response => @invalid_responses[question.id]
+	     })%><br />
 	<%
 	  end
 	%>
