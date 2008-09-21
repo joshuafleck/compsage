@@ -17,7 +17,6 @@
   </div>
   <div id="bar" class=<%=yield :highlighted_tab %>>
       <ul>
-          <li id="dashboard"><%=link_to "Dashboard", dashboard_path %></li>
           <li id="surveys"><%=link_to "Surveys", surveys_path %></li>
           <li id="networks"><%=link_to "Networks", networks_path %></li>
           <li id="members"><%=link_to "Members", organizations_path %></li>
@@ -25,7 +24,6 @@
       </ul>
   </div>
   <div id="main">
-    <%=(breadcrumbs = yield(:breadcrumbs)) ? content_tag('div', breadcrumbs + " < " + yield(:title), :id => 'breadcrumbs') : "" %>
     <%=yield %>
 	</div>
 </body>
