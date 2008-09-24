@@ -18,5 +18,5 @@
     </ul>
 </div>
 <%@survey.questions.each do |question| %>
-	<%=render :partial => question.question_type, :locals => {:question => question}%>
+	<%=render :partial => question.question_type, :locals => {:question => question, :survey => @survey}%>
 <% end %>

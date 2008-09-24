@@ -3,37 +3,37 @@ participations_for_survey_for_user_a:
     participant_id: 1
     participant_type: Organization
     survey_id: 2
-    created_at: <%=(Time.now - 1.days).to_s(:db) %>
-    updated_at: <%=(Time.now - 1.days).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     
 participations_for_survey_for_user_b:
     id: 2
     participant_id: 2
     participant_type: Organization
     survey_id: 2
-    created_at: <%=(Time.now - 1.days).to_s(:db) %>
-    updated_at: <%=(Time.now - 1.days).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     
 participations_for_survey_for_user_c:
     id: 3
     participant_id: 3
     participant_type: Organization    
     survey_id: 2
-    created_at: <%=(Time.now - 1.days).to_s(:db) %>
-    updated_at: <%=(Time.now - 1.days).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     
 participations_for_survey_for_user_d:
     id: 4
     participant_id: 4
     participant_type: Organization    
     survey_id: 2
-    created_at: <%=(Time.now - 1.days).to_s(:db) %>
-    updated_at: <%=(Time.now - 1.days).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
         
 participations_for_survey_for_user_e:
     id: 5
     participant_id: 5
     participant_type: Organization    
     survey_id: 2
-    created_at: <%=(Time.now - 1.days).to_s(:db) %>
-    updated_at: <%=(Time.now - 1.days).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>

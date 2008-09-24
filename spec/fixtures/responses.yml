@@ -2,298 +2,298 @@ response_1_for_participation_1_test_survey_2:
     id: 1
     question_id: 1
     numerical_response: 25000
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 1
     
 response_2_for_participation_1_test_survey_2:
     id: 2
     question_id: 2
     numerical_response: 20000
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 1    
     
 response_3_for_participation_1_test_survey_2:
     id: 3
     question_id: 3
     numerical_response: 40000
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 1    
 response_4a_for_participation_1_test_survey_2:
     id: 4
     question_id: 4
     numerical_response: 0
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 1
 response_4b_for_participation_1_test_survey_2:
     id: 5
     question_id: 4
     numerical_response: 1
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 1    
 response_4c_for_participation_1_test_survey_2:    
     id: 6
-    question_id: 3
+    question_id: 4
     numerical_response: 3
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 1
 
 response_5_for_participation_1_test_survey_2:
     id: 7
-    question_id: 3
+    question_id: 5
     numerical_response: 0
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 1
         
 response_6_for_participation_1_test_survey_2:
     id: 8
-    question_id: 3
+    question_id: 6
     textual_response: "Blue"
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 1
 
 response_1_for_participation_2_test_survey_2:
     id: 9
     question_id: 1
     numerical_response: 35000
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 2
     
 response_2_for_participation_2_test_survey_2:
     id: 10
     question_id: 2
     numerical_response: 17000
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 2
 
 response_3_for_participation_2_test_survey_2:
     id: 11
     question_id: 3
     numerical_response: 41000
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 2
     
 response_4a_for_participation_2_test_survey_2:
     id: 12
     question_id: 4
     numerical_response: 1
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 2
     
 response_4b_for_participation_2_test_survey_2:
     id: 13
     question_id: 4
     numerical_response: 3
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 2
 
 response_5_for_participation_2_test_survey_2:
     id: 14
-    question_id: 3
+    question_id: 5
     numerical_response: 0
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 2
     
 response_6_for_participation_2_test_survey_2:                        
     id: 15
-    question_id: 3
+    question_id: 6
     textual_response: "Red"
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 2
 
 response_1_for_participation_3_test_survey_2:
     id: 16
     question_id: 1
     numerical_response: 29000
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 3    
 
 response_2_for_participation_3_test_survey_2:
     id: 17
     question_id: 2
     numerical_response: 25000
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 3
     
 response_3_for_participation_3_test_survey_2:
     id: 18
     question_id: 3
     numerical_response: 39000
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 3
     
 response_4a_for_participation_3_test_survey_2:
     id: 19
     question_id: 4
     numerical_response: 0
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 3
     
 response_4b_for_participation_3_test_survey_2:
     id: 20
     question_id: 4
     numerical_response: 1
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 3
     
 response_4c_for_participation_3_test_survey_2:    
     id: 21
     question_id: 4
     numerical_response: 2
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 3
 
 response_4d_for_participation_3_test_survey_2:    
     id: 22
     question_id: 4
     numerical_response: 3
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 3
     
 response_4e_for_participation_3_test_survey_2:    
     id: 23
     question_id: 4
     numerical_response: 4
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 3
 
 response_5_for_participation_3_test_survey_2:
     id: 24
-    question_id: 3
+    question_id: 5
     numerical_response: 1
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 3
     
 response_6_for_participation_3_test_survey_2:
     id: 25
-    question_id: 3
+    question_id: 6
     textual_response: "Blue"
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 3
 
 response_1_for_participation_4_test_survey_2:
     id: 26
     question_id: 1
     numerical_response: 20000
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 4
     
 response_2_for_participation_4_test_survey_2:
     id: 27
     question_id: 2
     numerical_response: 20000
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 4
 
 response_3_for_participation_4_test_survey_2:
     id: 28
     question_id: 3
     numerical_response: 20000
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 4
     
 response_4a_for_participation_4_test_survey_2:
     id: 29
     question_id: 4
     numerical_response: 0
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 4
 
 response_5_for_participation_4_test_survey_2:
     id: 30
-    question_id: 3
+    question_id: 5
     numerical_response: 1
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 4
     
 response_6_for_participation_4_test_survey_2:
     id: 31
-    question_id: 3
+    question_id: 6
     textual_response: "Magenta"
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 4
 
 response_1_for_participation_5_test_survey_2:
     id: 32
     question_id: 1
     numerical_response: 32000
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 5
     
 response_2_for_participation_5_test_survey_2:
     id: 33
     question_id: 2
     numerical_response: 21000
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.hours).to_s(:db) %>
     participation_id: 5
 
 response_3_for_participation_5_test_survey_2:
     id: 34
     question_id: 3
     numerical_response: 48009
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 5
     
 response_4a_for_participation_5_test_survey_2:
     id: 35
     question_id: 4
     numerical_response: 3
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 5
 response_4b_for_participation_5_test_survey_2:
     id: 36
     question_id: 4
     numerical_response: 4
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 5
 
 response_5_for_participation_5_test_survey_2:
     id: 37
-    question_id: 3
+    question_id: 5
     numerical_response: 0
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 5
     
 response_6_for_participation_5_test_survey_2:
     id: 38
-    question_id: 3
+    question_id: 6
     textual_response: "Hot Pink"
-    created_at: <%=(Time.now - 2.hours).to_s(:db) %>
-    updated_at: <%=(Time.now - 2.hours).to_s(:db) %>
+    created_at: <%=(Time.now - 4.days).to_s(:db) %>
+    updated_at: <%=(Time.now - 4.days).to_s(:db) %>
     participation_id: 1

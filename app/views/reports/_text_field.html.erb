@@ -1,0 +1,6 @@
+<div>
+	<div class="report_question"><%=question.text%>:</div>
+	<% question.responses.each do |response| %>
+	<div><%= response.textual_response %></div>
+	<% end %>
+</div>

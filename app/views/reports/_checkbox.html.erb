@@ -1,0 +1,13 @@
+<%
+	total_responses = survey.participations.size
+%>
+<div>
+	<div class="report_question"><%=question.text%>:</div>
+	<dl>
+		<% question.options.each_with_index do |option, index| %>
+			<dt><%=option%></dt>
+			<dd><%=question.grouped_responses[index].nil? ? 0 : question.grouped_responses[index].size%> out of <%=total_responses%></dd>
+		<% end %>
+	</dl>
+</div>
+<%=chart('bar', url_for(chart_survey_report_path(:question_id => question.id)))%>

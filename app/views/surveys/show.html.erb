@@ -31,7 +31,8 @@ breadcrumbs(link_to("Surveys", surveys_path )) if logged_in? %>
     <%=link_to 'invite others to participate', survey_invitations_path(@survey)%>.</p>
   <% end %>
   <p><%=@survey.description%></p>
-  <p>Response Deadline: <%=@survey.end_date.strftime("%B %d")%> (<%=time_ago_in_words(@survey.end_date)%> from now)</p>
+  <p>Response Deadline: <%=@survey.end_date.strftime("%B %d")%> (<%=time_ago_in_words(@survey.end_date)%> 
+<% if @survey.end_date > Time.now %>from now<% else %> ago<% end %>)</p>
   <p><%= link_to_function "Invitees (#{@invitations.size})", "new Effect.toggle('invitation_section', 'blind', {duration: .5});return false;" %></p>
   <div id="invitation_section" style="display:none;">
     <p>The following companies have been invited to participate:</p>
