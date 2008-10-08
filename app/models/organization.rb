@@ -35,7 +35,7 @@ class Organization < ActiveRecord::Base
     :source => 'survey'
     
   has_many :survey_subscriptions, :dependent => :destroy
-  has_many :surveys, :through => :survey_subscriptions
+  has_many :surveys, :through => :survey_subscriptions, :order => 'created_at DESC'
   
   has_many :participations, :as => :participant
   has_many :discussions, :as => :responder
