@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <body>
 	<div id="header">
-		<a href="#"><img src="images/shawarma.gif" /></a>
+		<a href="#"><img src="/images/shawarma.gif" /></a>
 		<div id="account_settings">
 			<% if logged_in? && current_organization then %>
 				<%=link_to "Account Settings", account_path%>
@@ -10,14 +10,16 @@
 			<% end %>
 		</div>
 		<ul id="nav" class="<%=yield :highlighted_tab %>">
-			<li id="surveys"><a href="#">Surveys &amp; Results</a></li>
-			<li id="networks"><a href="#">Networks &amp; Contacts</a></li>
+			<li id="surveys"><%=link_to "Surveys &amp; Results", surveys_path%></li>
+			<li id="networks"><%=link_to "Networks &amp; Contacts", networks_path%></li>
 		</ul>
 	</div>
 	<div id="container">
+		<%=yield(:sidebar)%>
 		<div id="main_content" class="<%=yield(:sidebar) ? 'with_side_bar' : ''%>">
 			<%=yield %>
 		</div>
+		<br id="end_break">
 	</div>
 	<div id="container_cap">&nbsp;</div>
 </body>
