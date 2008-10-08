@@ -44,7 +44,11 @@ img {
 	height: 28px;
 }
 
-#header #nav li.active {
+#header #nav.surveys li#surveys {
+	background: url('../images/selected_menu_item.gif') bottom center no-repeat;
+}
+
+#header #nav.networks li#networks {
 	background: url('../images/selected_menu_item.gif') bottom center no-repeat;
 }
 #header #nav li a {
@@ -92,8 +96,7 @@ img {
 #my_surveys {
 	width: 246px;
 	padding: 0 10px;
-	top: 10px;
-	position: absolute;
+	float: left;
 }
 
 #my_surveys h2 {
@@ -125,13 +128,16 @@ img {
 }
 
 #search_box input#search_text {
-	width: 135px;
+	width: 125px;
 	padding: 5px;
 	font-size: 1em;
 	border: 1px solid #3f3f3e;
 	background-color: #fefdfb;
 }
 
+#end_break {
+	clear: both;
+}
 ul#surveys {
 	margin: 0;
 	padding: 0;
@@ -158,6 +164,7 @@ ul#surveys li {
 ul#surveys li.odd {
 	border-top: none;
 }
+
 h2 {
 	font-size: 1.4em;
 	font-family: georgia, serif;
