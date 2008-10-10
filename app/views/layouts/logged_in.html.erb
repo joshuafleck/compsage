@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <body>
 	<div id="header">
-		<a href="#"><img src="/images/shawarma.gif" /></a>
+		<a href="/"><img src="/images/shawarma.gif" /></a>
 		<div id="account_settings">
 			<% if logged_in? && current_organization then %>
 				<%=link_to "Account Settings", account_path%>
@@ -11,7 +11,7 @@
 		</div>
 		<ul id="nav" class="<%=yield :highlighted_tab %>">
 			<li id="surveys"><%=link_to "Surveys &amp; Results", surveys_path%></li>
-			<li id="networks"><%=link_to "Networks &amp; Contacts", networks_path%></li>
+			<li id="networks"><%=link_to "Networks &amp; Contacts", networks_path%></a></li>
 		</ul>
 	</div>
 	<div id="container">

@@ -2,7 +2,7 @@ body {
 	background: #faf6f0 url('../images/header_background.gif') repeat-x;
 	margin: 0;
 	padding: 0;
-	font-family: helvetica, sans-serif;
+	font-family: 'Adobe Garamond Pro', 'Adobe Garamond', 'AGaramond', 'Hoefler Text', 'Baskerville', 'Times New Roman', serif;
 	font-size: 0.875em;
 	color: #333;
 }
@@ -18,7 +18,7 @@ img {
 
 #header {
 	height: 53px;
-	font-family: Georgia, Times, Serif;
+ 	font-family: 'Adobe Garamond Pro', 'Adobe Garamond', 'AGaramond', 'Hoefler Text', 'Baskerville', 'Times New Roman', serif;
 	background: url('../images/inner_header_background.gif');
 }
 
@@ -39,7 +39,7 @@ img {
 #header #nav li {
 	display: block;
 	float: left;
-	font-size: 16px;
+	font-size: 18px;
 	padding: 0px 20px 0 20px;
 	height: 28px;
 }
@@ -138,45 +138,62 @@ img {
 #end_break {
 	clear: both;
 }
-ul#surveys {
+
+ul.surveys {
 	margin: 0;
 	padding: 0;
 	list-style-type: none;
 }
-ul#surveys span.sponsor {
+
+ul.surveys span.sponsor {
 	color: #888;
 	font-size: .9em	;
 }
 
-ul#surveys .sponsor a {
+ul.surveys .sponsor a {
 	color: #4e728b;
 }
-ul#surveys div.description_box {
-	color: #666;
+ul.surveys div.description_box {
+	color: #555;
 	margin-top: -1.2857em;
-	font-size: 0.9em;
+	font-size: 1em;
 }
 
-ul#surveys li {
+ul.surveys h3 a {
+	text-decoration: none;
+	color: #333;
+}
+ul.surveys div.no_description {
+	margin-top: -1.2857em;
+	margin-bottom: -1.2857em;
+}
+
+ul.surveys li {
 	padding-bottom: 1.2857em;
 }
 
-ul#surveys li.odd {
+ul.surveys li.odd {
 	border-top: none;
 }
 
+
+
+div#invitations ul{
+	padding: 0 0 2em 0;
+	background: url('../images/embellish.gif') bottom center no-repeat;
+}
 h2 {
 	font-size: 1.4em;
-	font-family: georgia, serif;
+	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
 	color: #455349;
 	font-weight: normal;
-	letter-spacing: .05em;
 }
 
 h3 {
 	font-size: 1.15em;
 	font-weight: normal;
-	font-family: georgia, serif;
+	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
+/*	'Adobe Garamond Pro', 'Adobe Garamond', 'AGaramond', 'Hoefler Text', 'Baskerville', 'Times New Roman', serif; */
 }
 
 a {
@@ -189,4 +206,8 @@ a:hover {
 
 table th {
 	text-align: left;	
+}
+
+.abbrev {
+	font-variant: small-caps;
 }
