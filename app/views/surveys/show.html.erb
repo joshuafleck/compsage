@@ -1,10 +1,31 @@
-<% title @survey.job_title %>  
-<% # Don't show breadcrumbs when not logged in (survey invitations do not have a dashboard)
-breadcrumbs(link_to("Surveys", surveys_path )) if logged_in? %>
-<% if logged_in? then highlight_tab "surveys" else highlight_tab "survey" end %>
-<h2>Survey for <%= @survey.job_title %></h2>
-<div class="survey_sponsor">Sponsored by <%=@survey.sponsor.name%></div>
+<% title @survey.job_title %>
+<% highlight_tab logged_in? ? "surveys" : "survey" %>
+<h2>Survey for <%= @survey.job_title %>
+	<span class="sponsor">sponsored by <%=link_to_organization(@survey.sponsor)%></span></h2>
 <%=flash_messages%>
+<div id="invitation_list">
+	<% if @survey.sponsor == current_organization then %>
+		<h3>Manage Your Survey</h3>
+			<p><%=link_to "Edit Questions &amp; Job Description", edit_survey_path(@survey)%><br />
+			<%=link_to "Manage Invitation List", survey_invitations_path(@survey) %></p>
+	<% end %>
+	<h3>Invitation List</h3>
+	<ol>
+		<% @invitations.each do |invitation| %>
+			<li>
+				<% if invitation.is_a?(SurveyInvitation) then %>
+          <%=link_to_organization(invitation.invitee)%>     
+        <% else %>      
+          <%=invitation.organization_name%> (<%=invitation.email%>)
+        <% end %>
+			</li>
+		<% end %>
+	</ol>
+	There are <%=pluralize(@survey.participations.count, 'participant')%> so far.
+</div>
+
+<h3>Job Description</h3>
+<p class="description_box"><%=@survey.description%></p>
 <% if @survey.stalled? then %>
   <% if logged_in? && @survey.sponsor.id == current_organization.id then %>
     <p>Unfortunately, you did not get the required number of participants for results to be available.  You
@@ -26,64 +47,38 @@ breadcrumbs(link_to("Surveys", surveys_path )) if logged_in? %>
       the case, you will be notified.</p>      
   <% end %>
 <% else %>
-  <% if logged_in? && @survey.sponsor.id == current_organization.id && @survey.running? then %>
-    <p>This is your survey.  You can <%=link_to 'edit the survey', edit_survey_path(@survey)%> or
-    <%=link_to 'invite others to participate', survey_invitations_path(@survey)%>.</p>
-  <% end %>
-  <p><%=@survey.description%></p>
-  <p>Response Deadline: <%=@survey.end_date.strftime("%B %d")%> (<%=time_ago_in_words(@survey.end_date)%> 
-<% if @survey.end_date > Time.now %>from now<% else %> ago<% end %>)</p>
-  <p><%= link_to_function "Invitees (#{@invitations.size})", "new Effect.toggle('invitation_section', 'blind', {duration: .5});return false;" %></p>
-  <div id="invitation_section" style="display:none;">
-    <p>The following companies have been invited to participate:</p>
-    <ul id="invitations">
-      <% @invitations.each do |invitation| %>
-        <li>
-          <%if invitation.is_a?(SurveyInvitation) then%>
-            <%= render(:partial => "organizations/inline_organization", 
-              :locals => { :organization => invitation.invitee})%>          
-          <%else%>      
-            <%=invitation.organization_name%> (<%=invitation.email%>)
-          <%end%>          
-        </li>
-      <% end %>
-    </ul>
-  </div>
   <% if @participation.nil? then %>
-    <%=link_to "Take Survey Now", survey_questions_path(@survey), :class => 'button'%>
+    <%=link_to image_tag("respond_button.gif"), survey_questions_path(@survey)%> (<%=time_ago_in_words(@survey.end_date)%> left)
   <%else%>
     You responded on <%=@participation.created_at.strftime("%B %d")%>. <%=link_to "Edit your response.", survey_questions_path(@survey)%>
   <%end%>
 <% end %>
 
 <h3>Discussion</h3>
-<p>
-  This is a forum for questions and clarifications regarding a survey. 
-  Please remember to preserve your anonymity and the anonymity of the other participants.
-  The posting of compensation information is strictly forbidden.
-  If you encounter abuse of the discussion board, please report it immediately.
-</p>
-
-<p>
-  <%=link_to "Create new discussion topic", new_survey_discussion_path(@survey) %>
-</p>
-<ul id=discussions>
-  <% @discussions.sort.each do |discussion_topic| %>
-    <li>
-      <div class="discussion_topic">
-        <%= render(:partial => "discussions/discussion", 
-                   :object => discussion_topic)%>
-      </div>
-      <div class="discussion_replies">
-        <ul id="discussion_<%=discussion_topic.id%>_replies">
-          <% discussion_topic.all_children.find_all{|discussion| discussion.is_not_abuse}.sort.each do |discussion_reply| %>
-            <li>
-              <%= render :partial => "discussions/discussion",
-                         :object => discussion_reply %>
-            </li>
-          <% end %>
-        </ul>
-      </div>
-    </li>
-  <% end %>
-</ul>
+<p>You must preserve your anonymity and the anonymity of the other participants. The posting of
+	compensation information is unlawful.</p>
+<% if @discussions.any? then %>
+	<p><%=link_to "Create new discussion topic", new_survey_discussion_path(@survey) %></p>
+	<ul id="discussions">
+	  <% @discussions.sort.each do |discussion_topic| %>
+	    <li>
+	      <div class="discussion_topic">
+	        <%= render(:partial => "discussions/discussion", 
+	                   :object => discussion_topic)%>
+	      </div>
+	      <div class="discussion_replies">
+	        <ul id="discussion_<%=discussion_topic.id%>_replies">
+	          <% discussion_topic.all_children.find_all{|discussion| discussion.is_not_abuse}.sort.each do |discussion_reply| %>
+	            <li>
+	              <%= render :partial => "discussions/discussion",
+	                         :object => discussion_reply %>
+	            </li>
+	          <% end %>
+	        </ul>
+	      </div>
+	    </li>
+	  <% end %>
+	</ul>
+<% else %>
+	There are currently no discussion topics.  You may <%=link_to "start one now", new_survey_discussion_path(@survey)%>.
+<% end %>

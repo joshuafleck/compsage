@@ -83,7 +83,7 @@ img {
 }
 #container {
 	background: #fbfaf8 url('../images/main_background.gif') repeat-y;
-	padding: 5px 8px 0px 11px;
+	padding: 0px 8px 0px 11px;
 	width: 799px;
 	position: relative;
 }
@@ -127,6 +127,22 @@ img {
 	width: 246px;
 }
 
+#invitation_list {
+	float: right;
+	width: 256px;
+	margin-left: 10px;
+}
+
+#invitation_list h3 {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+#invitation_list ol {
+	padding-left: 1.5em;
+	margin-top: 0;
+	padding-top: 0;
+}
 #search_box input#search_text {
 	width: 125px;
 	padding: 5px;
@@ -135,6 +151,15 @@ img {
 	background-color: #fefdfb;
 }
 
+div.link_bar {
+	margin-bottom: 1.2857em;
+}
+
+div.link_bar a {
+	font-size: 1.2857em;
+	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;;
+	padding: 0 1em 0 0;
+}
 #end_break {
 	clear: both;
 }
@@ -145,27 +170,14 @@ ul.surveys {
 	list-style-type: none;
 }
 
-ul.surveys span.sponsor {
-	color: #888;
-	font-size: .9em	;
-}
-
-ul.surveys .sponsor a {
-	color: #4e728b;
-}
-ul.surveys div.description_box {
+div.description_box {
 	color: #555;
-	margin-top: -1.2857em;
 	font-size: 1em;
 }
 
 ul.surveys h3 a {
 	text-decoration: none;
 	color: #333;
-}
-ul.surveys div.no_description {
-	margin-top: -1.2857em;
-	margin-bottom: -1.2857em;
 }
 
 ul.surveys li {
@@ -176,12 +188,11 @@ ul.surveys li.odd {
 	border-top: none;
 }
 
-
-
 div#invitations ul{
-	padding: 0 0 2em 0;
+	padding: 0 0 1em 0;
 	background: url('../images/embellish.gif') bottom center no-repeat;
 }
+
 h2 {
 	font-size: 1.4em;
 	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
@@ -190,10 +201,17 @@ h2 {
 }
 
 h3 {
-	font-size: 1.15em;
+	margin-bottom: 0;
+	font-size: 1.142857em;
+	line-height: .875;
 	font-weight: normal;
 	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
 /*	'Adobe Garamond Pro', 'Adobe Garamond', 'AGaramond', 'Hoefler Text', 'Baskerville', 'Times New Roman', serif; */
+}
+
+h4 {
+	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
+	font-weight: normal;
 }
 
 a {
@@ -204,10 +222,31 @@ a:hover {
 	color: #11609f;
 }
 
+a img {
+	vertical-align: middle;
+}
 table th {
 	text-align: left;	
 }
 
 .abbrev {
 	font-variant: small-caps;
+}
+
+span.sponsor {
+	color: #888;
+	font-size: .9em	;
+}
+
+span.sponsor a {
+	color: #4e728b;
+}
+
+.description_box {
+	color: #555;
+	font-size: 1em;
+}
+
+p {
+	margin-top: 0;
 }

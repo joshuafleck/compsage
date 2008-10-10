@@ -30,7 +30,7 @@
 		<ul class="surveys">
 			<% @invited_surveys.each do |invite| %>
 				<li>
-					<h3><%=link_to invite.survey.job_title, survey_path(invite.survey.job_title)%> <span class="sponsor">sponsored by
+					<h3><%=link_to invite.survey.job_title, survey_path(invite.survey)%> <span class="sponsor">sponsored by
 						<%=link_to invite.survey.sponsor.name, organization_path(invite.survey.sponsor) %></span></h3>
 					<div class="actions no_description"><%=link_to "More information", survey_path(invite.survey), :class => 'action'%> or
 						<%=link_to "Decline", survey_invitation_path(invite.survey, invite), :method => :delete, :class => 'action' %></div>
