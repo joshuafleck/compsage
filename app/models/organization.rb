@@ -95,7 +95,14 @@ class Organization < ActiveRecord::Base
     end
   end
 
-
+  # returns the organization's name and location if they have one.
+  def name_and_location
+    if location.blank?
+      name
+    else
+      "#{name} &ndash; #{location}"
+    end
+  end
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   #
   # uff.  this is really an authorization, not authentication routine.  
