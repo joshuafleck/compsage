@@ -193,6 +193,29 @@ div#invitations ul{
 	background: url('../images/embellish.gif') bottom center no-repeat;
 }
 
+ul#discussions {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+ul#discussions > li {
+	margin-bottom: 1em;
+}
+
+ul#discussions ul {
+	margin-left: 1em;
+	list-style-type: none;
+}
+
+ul#discussions .subject {
+	font-weight: bold;
+}
+
+ul#discussions .actions {
+	margin-bottom: .25em;
+} 
+
 h2 {
 	font-size: 1.4em;
 	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
@@ -245,6 +268,11 @@ span.sponsor a {
 .description_box {
 	color: #555;
 	font-size: 1em;
+}
+
+.discussion_warning {
+	font-style: italic;
+	color: #666;
 }
 
 p {

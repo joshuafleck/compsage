@@ -1,14 +1,27 @@
-<div class="discussion_subject">
-  <%= discussion.subject %>
-</div>
-<div class="discussion_body">
-  <%= discussion.body %>
-</div>
-<div class="discussion_actions">
-  <%=link_to "Reply", new_survey_discussion_path(discussion.survey, :parent_discussion_id => discussion.id) %>
-  <% if current_organization_or_survey_invitation.eql?(discussion.responder) then %>
-    <%=link_to "Edit", edit_survey_discussion_path(discussion.survey,discussion) %>
-    <%=link_to "Delete", survey_discussion_path(discussion.survey,discussion), :method => :delete %>
-  <% end %>
-  <%=link_to "Report Abuse", report_survey_discussion_path(discussion.survey,discussion) %>  
-</div>
+<li>
+	<% if discussion.parent.nil? then %>
+	  <div class="subject">
+		  <%= discussion.subject %>
+		</div>
+	<% end %>
+	<div class="body">
+	  <%= discussion.body %>
+	</div>
+	<div class="actions">
+	  <%=link_to "Reply", new_survey_discussion_path(discussion.survey, :parent_discussion_id => discussion.id) %>
+	  <% if current_organization_or_survey_invitation.eql?(discussion.responder) then %>
+	    <%=link_to "Edit", edit_survey_discussion_path(discussion.survey,discussion) %>
+		<% else %>
+			<%=link_to "Report Abuse", report_survey_discussion_path(discussion.survey,discussion) %>  
+	  <% end %>
+	</div>
+  <div class="discussion_replies">
+    <ul id="discussion_<%=discussion.id%>_replies">
+      <% discussion.all_children.find_all{|discussion| discussion.is_not_abuse}.sort.each do |discussion_reply| %>
+        <li>
+          <%= render :partial => "discussions/discussion", :object => discussion_reply %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</li>
