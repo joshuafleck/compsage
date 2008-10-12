@@ -18,7 +18,12 @@
       the case, you will be notified.</p>      
   <% end %>
 <% else %>
-<%=flash_messages%>
+	<%=flash_messages%>
+	<% if @participation.nil? then %>
+	  <%=link_to image_tag("respond_button.gif"), survey_questions_path(@survey)%> (<%=time_ago_in_words(@survey.end_date)%> left)
+	<%else%>
+	  You responded on <%=@participation.created_at.strftime("%B %d")%>. <%=link_to "Edit your response.", survey_questions_path(@survey)%>
+	<%end%>
 	<div id="invitation_list">
 		<% if @survey.sponsor == current_organization then %>
 			<h3>Manage Your Survey</h3>
@@ -41,11 +46,6 @@
 	</div>
 	<h3>Job Description</h3>
 	<p class="description_box"><%=@survey.description%></p>
-	<% if @participation.nil? then %>
-	  <%=link_to image_tag("respond_button.gif"), survey_questions_path(@survey)%> (<%=time_ago_in_words(@survey.end_date)%> left)
-	<%else%>
-	  You responded on <%=@participation.created_at.strftime("%B %d")%>. <%=link_to "Edit your response.", survey_questions_path(@survey)%>
-	<%end%>
 	<h3>Discussion</h3>
 	<% if @discussions.any? then %>
 		<p><%=link_to "New Discussion Subject", new_survey_discussion_path(@survey) %></p>
