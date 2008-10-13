@@ -19,11 +19,13 @@ describe ExternalInvitationsController, " handling GET external_invitations" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
+    @external_invitations_proxy = mock('external invitations proxy')
     @external_invitation = mock_model(ExternalInvitation)
     @external_invitations = [@external_invitation]
+    @external_invitations_proxy.stub!(:find).and_return(@external_invitations)
     
-    @current_organization.stub!(:sent_global_invitations).and_return(@external_invitations)
-    
+    @current_organization.stub!(:sent_global_invitations).and_return(@external_invitations_proxy)
+
   end
 
   def do_get
@@ -46,7 +48,7 @@ describe ExternalInvitationsController, " handling GET external_invitations" do
   end
   
   it "should find all external_invitations by inviter" do
-  	@current_organization.should_receive(:sent_global_invitations).and_return(@external_invitations)
+  	@current_organization.should_receive(:sent_global_invitations).and_return(@external_invitations_proxy)
   	do_get
   end
   
@@ -63,11 +65,13 @@ describe ExternalInvitationsController, " handling GET /external_invitations.xml
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
+    @external_invitations_proxy = mock('external invitations proxy')
     @external_invitation = mock_model(ExternalInvitation)
     @external_invitations = [@external_invitation]
     @external_invitations.stub!(:to_xml).and_return("XML")
+    @external_invitations_proxy.stub!(:find).and_return(@external_invitations)
     
-    @current_organization.stub!(:sent_global_invitations).and_return(@external_invitations)
+    @current_organization.stub!(:sent_global_invitations).and_return(@external_invitations_proxy)
     
   end
 
@@ -87,7 +91,7 @@ describe ExternalInvitationsController, " handling GET /external_invitations.xml
   end
   
   it "should find all external_invitations by inviter" do
-  	@current_organization.should_receive(:sent_global_invitations).and_return(@external_invitations)
+  	@current_organization.should_receive(:sent_global_invitations).and_return(@external_invitations_proxy)
   	do_get
   end
   

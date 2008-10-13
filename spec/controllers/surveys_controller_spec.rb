@@ -50,10 +50,10 @@ describe SurveysController, " handling GET /surveys" do
     @current_organization.stub!(:survey_invitations).and_return(@survey_invitations_proxy)
 
     @surveys = []
+    @surveys.stub!(:paginate).and_return([])
+    @surveys.stub!(:find).and_return([])
     Survey.stub!(:running).and_return(@surveys)
     @survey_invitations_proxy.stub!(:running).and_return(@surveys)
-    @surveys.stub!(:paginate).and_return([])
-    @survey_invitations_proxy.stub!(:paginate).and_return([])
   end
   
   def do_get
@@ -71,7 +71,8 @@ describe SurveysController, " handling GET /surveys" do
   
   it "should find all surveys for which the user has been invited or participated" do
     Survey.should_receive(:running).and_return(@surveys)
-    @survey_invitations_proxy.should_receive(:running)
+    @survey_invitations_proxy.should_receive(:running).and_return(@surveys)
+    @surveys.should_receive(:find)
     do_get 
   end
   
@@ -125,7 +126,7 @@ describe SurveysController, " handling GET /surveys/1" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => 1, :job_title => "test", :finished? => false)    
+    @survey = mock_model(Survey, :id => 1, :job_title => "test", :finished? => false, :all_invitations => [])    
     Survey.stub!(:find).and_return(@survey)
         
     @discussion = mock_model(Discussion)
@@ -139,6 +140,7 @@ describe SurveysController, " handling GET /surveys/1" do
     @participations = mock_model(Participation)
     @current_organization.stub!(:participations).and_return(@participations)
     @participations.stub!(:find_by_survey_id).and_return(@participation)
+    
     
   end
   
@@ -185,7 +187,7 @@ describe SurveysController, " handling GET /surveys/1 when survey is closed" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => 1, :discussions => nil, :job_title => "test")    
+    @survey = mock_model(Survey, :id => 1, :discussions => nil, :job_title => "test", :all_invitations => [])    
     Survey.stub!(:find).and_return(@survey)
     @survey.stub!(:finished?).and_return(:true)
         
@@ -214,7 +216,7 @@ describe SurveysController, " handling GET /surveys/1.xml" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => 1, :job_title => "test")    
+    @survey = mock_model(Survey, :id => 1, :job_title => "test", :all_invitations => [])    
     Survey.stub!(:find).and_return(@survey)
     @survey.stub!(:finished?).and_return(:false)
     @survey.stub!(:to_xml).and_return("XML")
@@ -257,7 +259,7 @@ describe SurveysController, " handling GET /surveys/1.xml when survey is closed"
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => 1, :job_title => "test")    
+    @survey = mock_model(Survey, :id => 1, :job_title => "test", :all_invitations => [])    
     Survey.stub!(:find).and_return(@survey)
     @survey.stub!(:finished?).and_return(:true)
     
@@ -658,7 +660,7 @@ end
 
 describe SurveysController, "handling GET /surveys/search" do
   before(:each) do
-    @current_organization = mock_model(Organization)
+    @current_organization = mock_model(Organization, :industry => 'Fun', :latitude => 12, :longitude => 12)
     login_as(@current_organization)
     
     @survey = mock_model(Survey, :id => 1, :title => "My Survey")
@@ -697,7 +699,7 @@ end
 
 describe SurveysController, "handling GET /surveys/search.xml" do
   before(:each) do
-    @current_organization = mock_model(Organization)
+    @current_organization = mock_model(Organization, :industry => 'Fun', :latitude => 12, :longitude => 12)
     login_as(@current_organization)
         
     @survey = mock_model(Survey, :id => 1, :title => "My Survey")
@@ -802,7 +804,7 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
     @survey.stub!(:questions).and_return(@questions)
     @responses = []
 
-    @my_response = mock_model(Response, :update_attributes => true, :valid? => false, :textual_response => "", :textual_response= => true, :save => false)
+    @my_response = mock_model(Response, :update_attributes => true, :valid? => false, :textual_response => "", :textual_response= => true, :save => false, :question => mock_model(Question))
     @params = {:id => 1,
       :responses => {"1" => {:response => @my_response}, "2" => {:response => @my_response}}
     }
@@ -814,6 +816,7 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
     @participations = []
     @participation = mock_model(Participation, :responses => @responses)
     @current_organization.stub!(:participations).and_return(@participations)
+    @participations.stub!(:find_by_survey_id).and_return(@participation)
     @participations.stub!(:find_or_create_by_survey_id).and_return(@participation)
   end
   
@@ -824,11 +827,6 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
   it "should flash error messages" do 
     do_respond
     flash[:notice].should eql("Please review and re-submit your responses.")
-  end
-  
-  it "should render the surveys/id/questions page " do
-    do_respond
-    response.should redirect_to(survey_questions_path(@survey))
   end
   
   it "should assign the invalid responses to the view " do

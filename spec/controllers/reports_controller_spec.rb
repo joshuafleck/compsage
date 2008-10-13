@@ -13,7 +13,7 @@ end
 
 describe ReportsController, "handling GET /survey/1/report" do
   before do
-    @survey = mock_model(Survey)
+    @survey = mock_model(Survey, :all_invitations => [])
     @organization = mock_model( Organization,
       valid_organization_attributes.with(
         :participations => mock(

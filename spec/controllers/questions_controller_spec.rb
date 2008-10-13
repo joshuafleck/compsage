@@ -28,6 +28,11 @@ describe QuestionsController, "handling GET /questions" do
     login_as(@current_organization)
     @survey = mock_model(Survey, :questions => [])
     
+    @participation = mock_model(Participation, :responses => [])
+    @participations = []
+    @participations.stub!(:find_by_survey_id).and_return(@participation)
+
+    @current_organization.stub!(:participations).and_return(@participations)
     Survey.stub!(:find).and_return(@survey)
   end
   
@@ -63,6 +68,12 @@ describe QuestionsController, "handling GET /questions.xml" do
   
     @questions = []
     @survey = mock_model(Survey, :questions => @questions)
+    
+    @participation = mock_model(Participation, :responses => [])
+    @participations = []
+    @participations.stub!(:find_by_survey_id).and_return(@participation)
+
+    @current_organization.stub!(:participations).and_return(@participations)
     
     Survey.stub!(:find).and_return(@survey)
     @questions.stub!(:to_xml).and_return("XML") 

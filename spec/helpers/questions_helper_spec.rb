@@ -13,7 +13,7 @@ describe QuestionsHelper do
   end
   
   before do
-    @response = mock_model(Response, :textual_response => 'text_response', :numerical_response => 1)
+    @response = mock_model(Response, :textual_response => 'text_response', :numerical_response => 1, :qualifications => [])
   end
   
   it "should print a text box question without a response" do

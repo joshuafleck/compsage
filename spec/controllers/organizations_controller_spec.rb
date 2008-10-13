@@ -56,7 +56,7 @@ describe OrganizationsController, "handling GET /organizations" do
   
   it "should find all organizations" do
     #Organization.should_receive(:paginate).with({:page => @params[:page]}).and_return([@organization])
-    Organization.should_receive(:find).with(:all).and_return([@organization])
+    Organization.should_receive(:find).and_return([@organization])
     do_get
   end
   
@@ -205,7 +205,7 @@ describe OrganizationsController, "handling GET /organizations/search" do
 	
 	before do
 
-    @current_organization = mock_model(Organization, :latitude => 1, :longitude => 1)
+    @current_organization = mock_model(Organization, :industry => 'Coal', :latitude => 1, :longitude => 1)
     login_as(@current_organization)
       
     @organization = mock_model(Organization, :id => 1, :name => "Denarius", :to_xml => "XML")

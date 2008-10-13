@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 def valid_participation_attributes
   {
-    :survey => mock_model(Survey, :id => 1),
+    :survey => mock_model(Survey, :id => 1, :sponsor => mock_model(Organization)),
     :participant => mock_model(Organization, :id => 1)
   }
 end

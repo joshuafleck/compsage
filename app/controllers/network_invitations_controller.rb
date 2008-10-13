@@ -8,7 +8,7 @@ class NetworkInvitationsController < ApplicationController
     
     respond_to do |wants|
       wants.html {} # render the template
-      wants.xml { render :xml => (@invitations + @external_invitations).to_xml }
+      wants.xml { render :xml => @invitations.to_xml }
     end
   end
   
