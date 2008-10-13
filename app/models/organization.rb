@@ -35,7 +35,7 @@ class Organization < ActiveRecord::Base
     :source => 'survey'
     
   has_many :survey_subscriptions, :dependent => :destroy
-  has_many :surveys, :through => :survey_subscriptions
+  has_many :surveys, :through => :survey_subscriptions, :order => 'created_at DESC'
   
   has_many :participations, :as => :participant
   has_many :discussions, :as => :responder
@@ -95,7 +95,14 @@ class Organization < ActiveRecord::Base
     end
   end
 
-
+  # returns the organization's name and location if they have one.
+  def name_and_location
+    if location.blank?
+      name
+    else
+      "#{name} &ndash; #{location}"
+    end
+  end
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   #
   # uff.  this is really an authorization, not authentication routine.  

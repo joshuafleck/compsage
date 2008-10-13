@@ -23,4 +23,9 @@ module ApplicationHelper
       "#{tab}"
     end
   end
+  
+  def link_to_organization(organization)
+    link_to(organization.name_and_location, organization_path(organization),
+      :title => "Contact: #{organization.contact_name} #{organization.city + ", " + organization.state unless organization.city.blank?}")
+  end
 end

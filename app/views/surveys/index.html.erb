@@ -1,24 +1,46 @@
 <% title "Surveys" %>
-<% breadcrumbs() %>
 <% highlight_tab("surveys") %>
-<h2>Surveys</h2>
-<p>
-Surveys allow you to query other member's compensation practices. 
-All surveys are open to participation for all members.
-By responding to a survey, you will be entitled to view the results of that survey*.
-Invited surveys are surveys in which other members have requested your participation.
-</p>
+<% content_for :sidebar do %>
+	<div id="my_surveys">
+		<h2>My Surveys</h2>
+		<% if @my_surveys.empty? then %>
+			<p>You currently don't have any survey results.  You can search for surveys to participate in to the right, as well
+				as <%=link_to "sponsor a survey", new_survey_path()%>.</p>
+		<% else %>
+			<ul>
+				<%=render :partial => 'my_survey', :collection => @my_surveys %>
+			</ul>
+			<%=link_to "Older Surveys", my_surveys_path%></a>
+		<% end %>
+	</div>
+<% end %>
+
+<div id="search_box">
+	<% form_tag search_surveys_path, :method => :get do %>
+	  <%= hidden_field_tag 'filter_by_subscription', @filter_by_subscription %>
+	  <%= text_field_tag 'search_text', @search_text %>
+		<input type="submit" id="search_submit" value="Find a Survey">
+	<% end %>
+</div>
+<%=link_to image_tag("sponsor_a_survey_button.gif"), new_survey_path%>
 <%=flash_messages%>
-<p><%=link_to "Sponsor a Survey", new_survey_path()%></p>
-<p><%=link_to "My Surveys", my_surveys_path()%></p>
-<h3>Invited Surveys</h3>
-<ul id="invited_surveys">
-<%= render :partial => "invitations/survey_invitation", :collection => @invited_surveys %>
+<% if @invited_surveys.any? then %>
+	<div id="invitations">
+		<h2>Invitations</h2>
+		<ul class="surveys">
+			<% @invited_surveys.each do |invite| %>
+				<li>
+					<h3><%=link_to invite.survey.job_title, survey_path(invite.survey)%> <span class="sponsor">sponsored by
+						<%=link_to invite.survey.sponsor.name, organization_path(invite.survey.sponsor) %></span></h3>
+					<div class="actions no_description"><%=link_to "More information", survey_path(invite.survey), :class => 'action'%> or
+						<%=link_to "Decline", survey_invitation_path(invite.survey, invite), :method => :delete, :class => 'action' %></div>
+				</li>
+			<% end %>
+		</ul>
+	</div>
+<% end %>
+<h2>Browse Current Surveys</h2>
+<ul class="surveys">
+	<%=render :partial => 'survey', :collection => @surveys %>
 </ul>
-<h3>Search Surveys</h3>
-<%= render :partial => "search_form" %>
-<h3>Browse Surveys</h3>
-<ul id="surveys">
-<%= render :partial => "survey", :collection => @surveys %>
-</ul>
-<%= will_paginate @surveys %>
+<%=will_paginate @surveys%>

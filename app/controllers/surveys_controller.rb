@@ -12,6 +12,7 @@ class SurveysController < ApplicationController
       wants.html {
         @surveys = Survey.running.paginate(:page => params[:page], :order => 'job_title')  
         @invited_surveys = current_organization.survey_invitations.running.find(:all,:order => 'invitations.created_at desc')
+        @my_surveys = current_organization.surveys.recent
       }
       wants.xml {
         @surveys = Survey.running

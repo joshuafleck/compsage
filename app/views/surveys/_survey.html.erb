@@ -1,19 +1,8 @@
-<li>
-  <div class="survey_job_title">
-    <%=link_to highlight(survey.job_title,@search_text), survey_path(survey.id), :title => survey.description%>
-  </div>
-  <div class="survey_attributes">
-    <%if @geodist then%><span class="label">Distance: </span><%=pluralize(@geodist,'miles')%> <br /><% end %>
-    <%if !survey.sponsor.industry.blank? then%>
-      <span class="label">Industry: </span><%=highlight(survey.sponsor.industry,@search_text)%><br />
-    <% end %>
-    <span>Sponsor: </span><%=link_to survey.sponsor.name, organization_path(survey.sponsor.id)%>
-    <span>Time Remaining: </span><%=time_ago_in_words(survey.end_date)%>
-  </div>
-  <div class="survey_actions">
-  <% if survey.sponsor.id == current_organization.id && survey.running? then %>
-    <%=link_to 'Edit', edit_survey_path(survey.id)%>
-    <%=link_to 'Invite', survey_invitations_path(survey.id)%>
-  <% end %>
-  </div>
+<li>	
+	<h3><%=link_to survey.job_title, survey_path(survey)%>
+		<span class="sponsor">sponsored by <%=link_to survey.sponsor.name, organization_path(survey.sponsor)%></span></h3>
+	<div class="description_box">
+		<%=survey.description.gsub(/\b([A-Z][A-Z0-9]{2,})\b/, '<span class="abbrev">\1</span>')%> <%=link_to "More&nbsp;details…", survey_path(survey)%></a>
+	</div>
+	<div class="actions"><%=link_to "Participate now", survey_path(survey)%> (<%=distance_of_time_in_words_to_now(survey.end_date)%> left)</div>
 </li>

@@ -4,8 +4,7 @@
 <% if logged_in? then highlight_tab "surveys" else highlight_tab "survey" end %>
 <h2>Responding to Survey <%=@survey.job_title%></h2>
 <p>You are responding to a survey commissioned by
-  <%= render(:partial => "organizations/inline_organization", 
-                     :locals => { :organization => @survey.sponsor})%>.  
+  <%=link_to_organization(@survey.sponsor)%>.  
   Report data as of <%=(Time.now - 90.days).strftime("%B %d, %Y")%>.
 </p>
 <%=flash_messages%>
