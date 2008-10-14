@@ -220,6 +220,53 @@ ul#discussions .actions {
 	margin-bottom: .25em;
 } 
 
+
+.abbrev {
+	font-variant: small-caps;
+}
+
+span.sponsor {
+	color: #888;
+	font-size: .9em	;
+}
+
+span.sponsor a {
+	color: #4e728b;
+}
+
+.description_box {
+	color: #555;
+	font-size: 1em;
+}
+
+.discussion_warning {
+	font-style: italic;
+	color: #666;
+}
+
+form#new_survey input {
+	font-size: .9em;
+}
+
+form#new_survey input#survey_job_title {
+	width: 300px;
+	border: 1px solid #3f3f3e;
+	background-color: #fffefc;
+	padding: 5px;
+}
+
+form#new_survey textarea {
+	font-size: 1.25em;
+	width: 300px;
+	border: 1px solid #3f3f3e;
+	background-color: #fffefc;
+	padding: 5px;
+}
+
+p {
+	margin-top: 0;
+}
+
 h2 {
 	font-size: 1.4em;
 	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
@@ -256,29 +303,9 @@ table th {
 	text-align: left;	
 }
 
-.abbrev {
-	font-variant: small-caps;
-}
-
-span.sponsor {
-	color: #888;
-	font-size: .9em	;
-}
-
-span.sponsor a {
-	color: #4e728b;
-}
-
-.description_box {
-	color: #555;
-	font-size: 1em;
-}
-
-.discussion_warning {
-	font-style: italic;
-	color: #666;
-}
-
-p {
-	margin-top: 0;
+label, div.label {
+	display: block;
+	margin-top: 1em;
+	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
+	font-size: 1.1em;
 }

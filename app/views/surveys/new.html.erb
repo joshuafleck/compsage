@@ -3,14 +3,15 @@
 <% highlight_tab("surveys") %>
 <h2>New Survey</h2>
 <%=flash_messages%>
-<% form_for :survey, @survey, :url => surveys_path do |f| %>
+<% form_for :survey, @survey, :url => surveys_path, :html => {:id => 'new_survey'} do |f| %>
   <%=error_messages_for :survey %>
-  <p>Job Title: <%=f.text_field :job_title %></p>
-  <p>Job Description:<br />
-  <%=f.text_area :description, :rows => 4, :cols => 60 %></p>
-  <p>Run for <%=f.select :days_running, (3..7).to_a %> days.</p>
-  <p>
-    Select the questions you wish to ask:
+  <%=f.label :job_title%>
+	<%=f.text_field :job_title, :size => 40 %>
+  <%=f.label :job_description%>
+  <%=f.text_area :description, :rows => 4, :cols => 40 %>
+	<%=f.label :days_running, "Run length" %>
+	<%=f.select :days_running, (3..7).to_a.collect {|i| ["#{i} days", i]} %>
+  <div class="label">Questions</div>
     <ul>
       <% @predefined_questions.each do |question| %>
         <% fields_for "predefined_question", :index => question.id do |question_form| %>
@@ -22,5 +23,5 @@
   <% if !@network.nil? then %>
     <%=hidden_field_tag(:invite_network, @network.id ) %>
   <% end %>
-  <p><input type="submit" value="Create" /> <%=link_to "Cancel", surveys_path %></p>
+  <p><input type="submit" value="Create" /> or <%=link_to "Cancel", surveys_path %></p>
 <% end %>
