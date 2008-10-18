@@ -17,6 +17,10 @@ namespace :beanstalk_dispatcher do
   task :insert_checker_job => :environment do
     Beanstalker.run(:checker, :check_for_closed_surveys, {})
   end
+    
+  task :insert_rebuilder_job => :environment do
+    Beanstalker.run(:rebuilder, :rebuild_sphinx_indexes, {})
+  end
 end
 
 namespace :bd do
@@ -25,4 +29,6 @@ namespace :bd do
   task :restart => "beanstalk_dispatcher:restart"
   task :insert_checker_job => "beanstalk_dispatcher:insert_checker_job"
   task :icj => "beanstalk_dispatcher:insert_checker_job"
+  task :insert_rebuilder_job => "beanstalk_dispatcher:insert_rebuilder_job"
+  task :irj => "beanstalk_dispatcher:insert_rebuilder_job"
 end
