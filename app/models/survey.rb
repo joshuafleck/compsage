@@ -17,6 +17,9 @@ class Survey < ActiveRecord::Base
     # because we are adding the industry to the query itself, we need to 
     # weight the other fields to ensure relevant matches still float to the top
     set_property :field_weights => {"job_title" => 6, "description" => 4, "@geodist" => 2}
+    
+    # this will cause any changes to surveys between index rebuilds to be stored in a delta index until the next rebuild
+    set_property :delta => true
   end
 
   belongs_to :sponsor, :class_name => "Organization"
