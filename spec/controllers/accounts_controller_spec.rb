@@ -139,13 +139,12 @@ describe AccountsController, " handling POST /account" do
     @key = "1234"
   
     @organization = mock_model(Organization, :save => true)
-    @external_invitation = mock_model(ExternalInvitation, :name => 'test', :email => 'test')
+    @external_invitation = mock_model(ExternalInvitation, :name => 'test', :email => 'test', :is_a? => false)
     
     Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:new).and_return(@organization)
     
     @organization.stub!(:set_logo).and_return(true)
-    @external_invitation.stub!(:is_a?).with(ExternalNetworkInvitation).and_return(false) 
     
     @params = {:key => @key}
     
@@ -185,38 +184,83 @@ describe AccountsController, " handling POST /account" do
   
   end
 
-  it "should replace all survey relationships to external survey invitation with new organization" do
-    pending
-  end
-
   it "should destroy the external invitation" do
     pending
   end
 
 end
 
-describe AccountsController, " handling POST /account with an external network invitation" do
+describe AccountsController, " handling POST /account with an external survey invitation" do
 
   before(:each) do
   
     @key = "1234"
   
     @organization = mock_model(Organization, :save => true)
-    @network = mock_model(Network)
-    @external_invitation = mock_model(ExternalNetworkInvitation, :network => @network, :is_a? => true, :name => 'test', :email => 'test')
-    @networks = []
+    @survey = mock_model(Survey, :id => "1")
+    @participation = mock_model(Participation, :survey => @survey)
+    @participations = mock("participations proxy",:find => @participation, :count => 1)    
+    @external_invitation = mock_model(ExternalSurveyInvitation, :survey => @survey, :name => 'test', :email => 'test')
+    
+    @external_invitation.stub!(:is_a?).with(ExternalSurveyInvitation).and_return(true)
+    @external_invitation.stub!(:is_a?).with(ExternalNetworkInvitation).and_return(false)
+    @external_invitation.stub!(:participations).and_return(@participations)
+    @participations.stub!(:<<)
+    @organization.stub!(:set_logo).and_return(true)
+    @organization.stub!(:participations).and_return(@participations)
         
     Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:new).and_return(@organization)
-        
-    @networks.stub!(:<<)
-    @organization.stub!(:set_logo).and_return(true)
-    @organization.stub!(:networks).and_return(@networks)
+    SurveySubscription.stub!(:create!)
             
     @params = {:key => @key}
     
   end
   
+  def do_post
+    get :create, @params
+  end
+
+  it "should attribute the external invitation's survey participation to new organization" do
+    @organization.should_receive(:participations).and_return(@participations)
+    @participations.should_receive(:<<).with(@participation)
+    do_post
+  end
+  
+  it "should subscribe the new organization to the survey" do
+    SurveySubscription.should_receive(:create!).with(
+          :organization => @organization,
+          :survey => @external_invitation.survey,
+          :relationship => 'participant'
+        )
+     do_post
+  end
+
+end
+
+describe AccountsController, " handling POST /account with an external network invitation" do
+  before(:each) do
+
+    @key = "1234"
+
+    @organization = mock_model(Organization, :save => true)
+    @network = mock_model(Network)
+    @external_invitation = mock_model(ExternalNetworkInvitation, :network => @network, :name => 'test', :email => 'test')
+    @networks = []
+  
+    @external_invitation.stub!(:is_a?).with(ExternalSurveyInvitation).and_return(false)
+    @external_invitation.stub!(:is_a?).with(ExternalNetworkInvitation).and_return(true)
+    Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
+    Organization.stub!(:new).and_return(@organization)
+
+    @networks.stub!(:<<)
+    @organization.stub!(:set_logo).and_return(true)
+    @organization.stub!(:networks).and_return(@networks)
+
+    @params = {:key => @key}
+
+  end
+
   def do_post
     get :create, @params
   end

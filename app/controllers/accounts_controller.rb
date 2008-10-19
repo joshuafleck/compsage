@@ -39,14 +39,22 @@ class AccountsController < ApplicationController
 	  @external_invitation = Invitation.find_by_key(params[:key])
 	  
 	  @organization = Organization.new(params[:organization])
-	  	
-    #If the user was invited via ExternalNetworkInvitation, add the organization to the network
-    if @external_invitation.is_a?(ExternalNetworkInvitation) then
-      @organization.networks << @external_invitation.network
-    end
         
     #Save the organization and set the logo
     if @organization.save && @organization.set_logo(params[:logo]) then
+    	  	
+      #If the user was invited via network invitation, add the organization to the network
+      if @external_invitation.is_a?(ExternalNetworkInvitation) then
+        @organization.networks << @external_invitation.network
+      #If the user was invited via a survey invitation and has completed the survey, attribute their participation to their organization
+      elsif @external_invitation.is_a?(ExternalSurveyInvitation) && @external_invitation.participations.count > 0 then
+        @organization.participations << @external_invitation.participations.find(:first)
+        SurveySubscription.create!(
+          :organization => @organization,
+          :survey => @external_invitation.survey,
+          :relationship => 'participant'
+        )
+      end
     
       #Clear the existing session (in case the user is logged in as an external survey invitation)
       logout_killing_session!
