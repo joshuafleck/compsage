@@ -68,7 +68,6 @@ class NetworksController < ApplicationController
     if @network.save then
       respond_to do |wants|
         wants.html do
-          flash[:notice] = "Your network was updated successfully."
           redirect_to network_path(@network)
         end
         wants.xml do

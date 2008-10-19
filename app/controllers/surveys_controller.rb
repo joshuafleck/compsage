@@ -125,7 +125,6 @@ class SurveysController < ApplicationController
       end
       
       respond_to do |wants|
-        flash[:notice] = "Survey was created successfully!"
         wants.html do
 
           #Check to see if the user created the survey from a 'survey network' link. If so, create the invitation.

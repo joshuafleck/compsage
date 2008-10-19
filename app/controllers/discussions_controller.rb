@@ -37,7 +37,6 @@ class DiscussionsController < ApplicationController
     if @discussion.save then
       respond_to do |wants|
         wants.html {         
-          flash[:notice] = "Your discussion was created successfully."
           redirect_to survey_path(@survey) }      
         wants.xml do
           render :status => :created
@@ -65,7 +64,6 @@ class DiscussionsController < ApplicationController
     if @discussion.update_attributes(params[:discussion]) then    
       respond_to do |wants|
         wants.html do
-          flash[:notice] = "Your discussion was updated successfully."
           redirect_to survey_path(@survey)
         end
         wants.xml do
@@ -115,7 +113,6 @@ class DiscussionsController < ApplicationController
     
     respond_to do |wants|
       wants.html {         
-        flash[:notice] = "The discussion was deleted successfully."
         redirect_to survey_path(@survey) }      
       wants.xml do
         render :status => :ok

@@ -313,11 +313,6 @@ describe DiscussionsController, " handling POST /discussions" do
     response.should redirect_to(survey_path(@survey))
   end
   
-  it "should flash a message indicating succcess" do
-    do_post
-    flash[:notice].should eql("Your discussion was created successfully.")
-  end
-  
 end
 
 describe DiscussionsController, " handling POST /discussions with validation error" do
@@ -394,11 +389,6 @@ describe DiscussionsController, " handling PUT /discussions/1" do
     response.should redirect_to(survey_path(@survey))
   end
   
-  it "should flash a message regarding the success of the edit" do
-    do_put
-    flash[:notice].should == "Your discussion was updated successfully."
-  end
-  
 end
 
 describe DiscussionsController, " handling PUT /discussions/1 with validation error" do
@@ -471,11 +461,7 @@ describe DiscussionsController, " handling DELETE /discussions/1" do
     response.should redirect_to(survey_path(@survey)) 
   end
   
-  it "should flash a message regarding the success of the action" do
-    do_delete
-    flash[:notice].should eql('The discussion was deleted successfully.')    
-  end  
- end
+end
 
 describe DiscussionsController, "handling PUT /discussions/1/report" do
   

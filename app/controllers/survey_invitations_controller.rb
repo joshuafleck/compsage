@@ -105,7 +105,6 @@ class SurveyInvitationsController < ApplicationController
   end
   
   def destroy
-    flash[:message] = "Invitation removed."
     survey = current_organization.sponsored_surveys.find(params[:survey_id])
     invitation = survey.invitations.find(params[:id])
     invitation.destroy

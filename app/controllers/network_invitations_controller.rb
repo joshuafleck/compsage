@@ -94,7 +94,6 @@ class NetworkInvitationsController < ApplicationController
   end
   
   def destroy
-    flash[:message] = "Invitation removed."
     network = current_organization.owned_networks.find(params[:network_id])
     invitation = network.invitations.find(params[:id])
     invitation.destroy

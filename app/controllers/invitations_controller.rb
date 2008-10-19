@@ -24,7 +24,6 @@ class InvitationsController < ApplicationController
     
     respond_to do |wants|
       wants.html do 
-        flash[:notice] = "The invitation was deleted successfully."
         redirect_to invitations_path
       end
       wants.xml do

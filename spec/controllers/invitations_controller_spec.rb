@@ -144,11 +144,6 @@ describe InvitationsController, " handling DELETE /invitations/1" do
       response.should redirect_to(invitations_path)    
     end
     
-    it "should flash a message regarding the success of the action" do
-      do_delete
-      flash[:notice].should eql("The invitation was deleted successfully.")
-    end
-  
   end
   
 end

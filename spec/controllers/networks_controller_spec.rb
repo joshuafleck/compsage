@@ -354,11 +354,6 @@ describe NetworksController, " handling PUT /networks/1" do
     response.should redirect_to(network_path(@network))
   end
   
-  it "should flash a message regarding the success of the edit" do
-    do_put
-    flash[:notice].should == "Your network was updated successfully."
-  end
-
 end
 
 describe NetworksController, " handling PUT /networks/1/leave" do
