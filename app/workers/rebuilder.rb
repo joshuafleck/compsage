@@ -5,7 +5,7 @@ class Rebuilder < BeanstalkWorker
   def rebuild_sphinx_indexes(payload)
     Rake::Task["ts:index"].invoke
 
-    # rebuild every 60 minutes
-    job.release(job.pri,3600)
+    # rebuild once a day
+    job.release(job.pri,86400)
   end
 end
