@@ -696,15 +696,16 @@ describe SurveysController, "handling GET /surveys/search" do
     assigns[:surveys].should eql(@surveys)
   end
 end
-
+#NOTE: Test spec to move to factory_girl
 describe SurveysController, "handling GET /surveys/search.xml" do
   before(:each) do
-    @current_organization = mock_model(Organization, :industry => 'Fun', :latitude => 12, :longitude => 12)
+    @current_organization = Factory.create(:organization) #mock_model(Organization, :industry => 'Fun', :latitude => 12, :longitude => 12)
+    #raise @current_organization.email.to_s
     login_as(@current_organization)
         
-    @survey = mock_model(Survey, :id => 1, :title => "My Survey")
+    @survey = Factory.create(:survey) #mock_model(Survey, :id => 1, :title => "My Survey")
     @surveys = [@survey]    
-    @surveys.stub!(:to_xml).and_return("XML")
+    #@surveys.stub!(:to_xml).and_return("XML")
     Survey.stub!(:search).and_return(@surveys)
         
     @params = {:search_text => "josh"}
@@ -727,7 +728,7 @@ describe SurveysController, "handling GET /surveys/search.xml" do
 
   it "should render the found surveys in XML" do
     do_get
-    response.body.should == "XML"
+    response.body.should == @surveys.to_xml
   end
 end
 

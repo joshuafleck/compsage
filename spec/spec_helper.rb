@@ -4,6 +4,8 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'spec'
 require 'spec/rails'
+require 'factory_girl'
+require File.dirname(__FILE__) + '/factories'
 
 include AuthenticatedTestHelper
 
