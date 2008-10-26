@@ -11,17 +11,55 @@
   <%=f.text_area :description, :rows => 4, :cols => 40 %>
 	<%=f.label :days_running, "Run length" %>
 	<%=f.select :days_running, (3..7).to_a.collect {|i| ["#{i} days", i]} %>
-  <div class="label">Questions</div>
-    <ul>
-      <% @predefined_questions.each do |question| %>
-        <% fields_for "predefined_question", :index => question.id do |question_form| %>
-          <li><%=question_form.check_box :included%> <%=question.name%> - <%=question.description%></li>
-        <% end %>
-      <% end %>
-    </ul>
-  </p>
+	<h3>Standard questions</h3>
+	<div id="standard_questions">
+		<ul>
+		  <% @predefined_questions.each do |question| %>
+		    <% fields_for "predefined_question", :index => question.id do |question_form| %>
+		      <li><%=question_form.check_box :included%>
+						<span class="name"><%=question.name%></span>
+					</li>
+		    <% end %>
+		  <% end %>
+		</ul>
+	</div>
+	<h3>Custom questions</h4>
+	<div id="custom_questions">
+		<div class="box_container">
+			<div class="box">
+				<label>Question Text</label>
+				<input type="text" size="30" id="question_text" />
+			</div>
+			<div class="box">
+				<label>Response Type</label>
+				<select id="response_type">
+					<option>Free response</option>
+					<option>Numeric response</option>
+					<option>Yes/No</option>
+					<option>Agreement Scale</option>
+				</select>
+			</div>
+			<div class="box">
+				<label>&nbsp;</label>
+				<input type="button" value="Add Question" id="question_submit">
+			</div>
+		</div>
+		<p>
+		<ul>
+      <li><%=check_box_tag 'included' %>
+				<span class="name">Do you allow your workers to get out of the basement?</span>
+				<span class="description">Yes/No</span>
+			</li>
+			<li><%=check_box_tag 'included' %>
+				<span class="name">Do you only hire ugly people?</span>
+				<span class="description">Yes/No</span>
+			</li>
+		</ul>
+		</p>
+	</div>
+	<br clear="both" />
   <% if !@network.nil? then %>
     <%=hidden_field_tag(:invite_network, @network.id ) %>
   <% end %>
-  <p><input type="submit" value="Create" /> or <%=link_to "Cancel", surveys_path %></p>
+  <p><input type="submit" value="Create Survey" /> or <%=link_to "Cancel", surveys_path %></p>
 <% end %>

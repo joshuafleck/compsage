@@ -249,18 +249,67 @@ form#new_survey input {
 }
 
 form#new_survey input#survey_job_title {
-	width: 300px;
+	width: 500px;
 	border: 1px solid #3f3f3e;
 	background-color: #fffefc;
 	padding: 5px;
+	font-size: 1em;
 }
 
 form#new_survey textarea {
 	font-size: 1.25em;
-	width: 300px;
+	width: 500px;
 	border: 1px solid #3f3f3e;
 	background-color: #fffefc;
 	padding: 5px;
+	font-family: helvetica;
+	letter-spacing: .05em;
+	font-weight: normal;
+	font-size: 1em;
+}
+
+#standard_questions h4, #custom_questions h4 {
+  margin: 1em 0 0 0;
+}
+#standard_questions, #custom_questions {
+  margin-left: 1em;
+}
+
+#standard_questions ul, #custom_questions ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+#custom_questions ul span.description {
+  color: #666;
+  font-style: italic;
+}
+
+#custom_questions label {
+  margin: 0;
+  font-size: 0.9em;
+  font-weight: normal;
+  letter-spacing: .05em;
+  display: block;
+  line-height: 20px;
+  margin-top: 0.5em;
+}
+
+#custom_questions input#question_text {
+  width: 350px;
+  padding: 5px;
+	font-size: 1em;
+	border: 1px solid #3f3f3e;
+	background-color: #fefdfb;
+}
+
+#custom_questions select#response_type {
+  margin-top: 4px;
+}
+
+#custom_questions input#question_submit {
+  margin-top: 4px;
 }
 
 p {
@@ -284,6 +333,7 @@ h3 {
 }
 
 h4 {
+  font-size: 1.07142857em;
 	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
 	font-weight: normal;
 }
@@ -308,4 +358,13 @@ label, div.label {
 	margin-top: 1em;
 	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
 	font-size: 1.1em;
+}
+
+form div.box_container {
+  overflow: hidden;
+}
+
+form div.box {
+  float: left;
+  margin-right: 10px;
 }
