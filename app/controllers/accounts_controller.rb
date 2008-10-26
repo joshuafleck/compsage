@@ -46,14 +46,24 @@ class AccountsController < ApplicationController
       #If the user was invited via network invitation, add the organization to the network
       if @external_invitation.is_a?(ExternalNetworkInvitation) then
         @organization.networks << @external_invitation.network
-      #If the user was invited via a survey invitation and has completed the survey, attribute their participation to their organization
+        
+      #If the user was invited via a survey invitation and has completed the survey, 
+      # attribute their participation to their organization
       elsif @external_invitation.is_a?(ExternalSurveyInvitation) && @external_invitation.participations.count > 0 then
+      
         @organization.participations << @external_invitation.participations.find(:first)
         SurveySubscription.create!(
           :organization => @organization,
           :survey => @external_invitation.survey,
           :relationship => 'participant'
         )
+        
+        #Convert the external invitation to a regular invitation, so the organization still shows as invited
+        @external_invitation.type = 'SurveyInvitation'
+        @external_invitation.save!
+        @survey_invitation = SurveyInvitation.find(@external_invitation.id)
+        @organization.survey_invitations << @survey_invitation
+        
       end
     
       #Clear the existing session (in case the user is logged in as an external survey invitation)

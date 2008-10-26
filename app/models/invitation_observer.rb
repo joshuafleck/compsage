@@ -1,6 +1,6 @@
 class InvitationObserver < ActiveRecord::Observer
   
-  def after_save(invitation)
+  def after_create(invitation)
     # send emails
     if invitation.is_a?(ExternalNetworkInvitation)
       Notifier.deliver_external_network_invitation_notification(invitation)
