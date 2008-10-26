@@ -8,6 +8,13 @@ class Participation < ActiveRecord::Base
   
   after_create :create_participant_subscription
   
+  named_scope :belongs_to_invitee, 
+    :include => [{:survey => [:invitations]}], 
+    :conditions => ['participations.participant_type = ? OR (participations.participant_type = ? AND participations.participant_id = surveys.sponsor_id) OR (invitations.invitee_id = participations.participant_id AND participations.participant_type = ?)',
+      'Invitation', 
+      'Organization', 
+      'Organization']  
+    
   protected
   
   def create_participant_subscription

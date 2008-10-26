@@ -69,4 +69,14 @@ class Question < ActiveRecord::Base
     @grouped_responses ||= responses.group_by(&:numerical_response)
   end
   
+  # responses belonging to invitees of the survey
+  def invitee_responses
+    self.responses.from_invitee
+  end
+  
+  # grouped responses belonging to invitees of the survey
+  def invitee_grouped_responses
+    @grouped_responses ||= invitee_responses.group_by(&:numerical_response)
+  end
+  
 end

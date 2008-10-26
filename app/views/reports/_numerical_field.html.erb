@@ -1,9 +1,9 @@
-<% percentiles = question.responses.percentiles(:numerical_response, 25, 50, 75) %>
+<% percentiles = question.send(@responses_method).percentiles(:numerical_response, 25, 50, 75) %>
 <div>
 	<div class="report_question"><%=question.text%>:</div>
 	<dl>
 		<dt>Average:</dt>
-		<dd><%=question.responses.average(:numerical_response)%></dd>
+		<dd><%=question.send(@responses_method).average(:numerical_response)%></dd>
 		<dt>25th Percentile</dt>
 		<dd><%=percentiles[0]%></dd>
 		<dt>Median:</dt>

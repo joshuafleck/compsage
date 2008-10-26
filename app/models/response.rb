@@ -8,6 +8,13 @@ class Response < ActiveRecord::Base
   validates_presence_of :numerical_response, :if => Proc.new { |response| response.textual_response.blank? }
   validates_numericality_of :numerical_response, :allow_nil => true
   
+  named_scope :from_invitee,
+    :include => {:participation => [{:survey => [:invitations]}]}, 
+    :conditions => ['participations.participant_type = ? OR (participations.participant_type = ? AND participations.participant_id = surveys.sponsor_id) OR (invitations.invitee_id = participations.participant_id AND participations.participant_type = ?)',
+      'Invitation', 
+      'Organization', 
+      'Organization']
+  
   #Depending on the type of question, this will return the textual or numerical response
   def get_response 
   	if self.question.numerical_response? == :true

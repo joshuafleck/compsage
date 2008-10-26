@@ -37,6 +37,10 @@ class Organization < ActiveRecord::Base
     :through => :participations,
     :source => 'survey'
     
+  has_many :invited_surveys, :class_name => "Survey",
+    :through => :survey_invitations,
+    :source => 'invitee'
+    
   has_many :survey_subscriptions, :dependent => :destroy
   has_many :surveys, :through => :survey_subscriptions, :order => 'created_at DESC'
   
