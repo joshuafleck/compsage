@@ -287,13 +287,10 @@ form#new_survey textarea {
 }
 
 #custom_questions label {
-  margin: 0;
+  margin: 0.5em 0 0 0;
   font-size: 0.9em;
-  font-weight: normal;
   letter-spacing: .05em;
-  display: block;
   line-height: 20px;
-  margin-top: 0.5em;
 }
 
 #custom_questions input#question_text {
@@ -312,6 +309,66 @@ form#new_survey textarea {
   margin-top: 4px;
 }
 
+/* Invitations Page */
+
+#current_invitation_list {
+  width: 246px;
+	padding: 0 10px;
+	float: left;
+}
+
+#current_invitation_list ol {
+	padding-left: 1.5em;
+	margin-top: 0;
+	padding-top: 0;
+}
+
+#current_invitation_list h3 {
+  margin-top: 0;
+}
+#send_invitations {
+  width: 512px;
+  margin-left: 266px;
+}
+#send_invitations ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+#send_invitations .description {
+  font-style: italic;
+  color: #666;
+}
+#send_invitations label {
+  margin: 0.5em 0 0 0;
+  font-size: 0.9em;
+  letter-spacing: .05em;
+  line-height: 20px;
+  display: block;
+}
+
+#send_invitations input#search {
+  width: 350px;
+}
+
+#send_invitations #search_results {
+  margin-top: 1em;
+}
+
+#invite_organizations {
+  margin-bottom: 2em;
+  margin-left: 1em;
+}
+
+#external_invitation_form label {
+  margin-top: 0;
+}
+
+#invite_organizations p {
+  margin: .5em 0;
+}
+/* Generic Element Styles */
 p {
 	margin-top: 0;
 }

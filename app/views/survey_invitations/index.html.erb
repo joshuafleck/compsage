@@ -1,39 +1,132 @@
 <% title "Invitations to #{@survey.job_title}" %>
-<% breadcrumbs(link_to(@survey.job_title,survey_path(@survey))) %>
 <% highlight_tab("surveys") %>
 <h2>Invitations to <%=@survey.job_title%></h2>
-<p>
-Invite other organizations to participate in <%=link_to(@survey.job_title,survey_path(@survey))%>
-</p>
-<p>
-  <%=flash_messages%>
-  <% form_tag(create_with_network_survey_invitations_path(@survey), :method => :get) do |f| %>
-    <p>  
-      <label>Invite a Network:</label>
-      <%= collection_select(:invitation, :network_id, current_organization.networks, :id, :name, {:prompt => 'Select a Network'}) %>
-    </p>
-    <p>
-      <input type="submit" value="Send" />
-      <%=link_to "Done", survey_path(@survey) %>
-    </p>
-  <% end %>  
-  <%= render :partial => "invitations/invitation_form", :locals => {
-    :url => survey_invitations_path(@survey), 
-    :done => survey_path(@survey)
-  }%> 
-</p>
-<% if @invitations.size > 0 then %>
-  <ul id="invitations">
-    <% @invitations.each do |invitation| %>
-    <li>
-      <%if invitation.is_a?(SurveyInvitation) then%>
-        <%=link_to_organization(invitation.invitee) %></div>
-      <%else%>      
-        <%=invitation.organization_name%> (<%=invitation.email%>)
-      <%end%>
-    </li>
-    <% end %>
-  </ul>
-<% else %>  
-  <p>No invitations have been sent</p>
-<% end %>
+<%=flash_messages%>
+<div id="current_invitation_list">
+	<h3>Current Invitation List</h3>
+	<ol id="invitations">
+		<li><%=link_to_organization(current_organization)%></li>
+		<% @invitations.each do |invitation| %>
+			<li>
+			  <%if invitation.is_a?(SurveyInvitation) then%>
+			    <%=link_to_organization(invitation.invitee) %></div>
+			  <%else%>      
+			    <%=invitation.organization_name%> (<%=invitation.email%>)
+			  <%end%>
+			</li>
+		<% end %>
+	</ol>
+</div>
+<div id="send_invitations">
+	<% form_tag do %>
+		<h3>Invite Your Networks</h3>
+		<ul>
+			<% current_organization.networks.each do |network| %>
+				<li><%=check_box_tag 'network'%>
+					<span class="name"><%=network.name%></span>:
+					<span class="description"><%=network.description%></span>
+				</li>
+			<% end %>
+	 	</ul>
+	  <h3>Invite Individual Organizations</h3>
+		<ul id="organizations_to_invite">
+		</ul>
+		<div id="invite_organizations">
+			<label>Organization name, contact, or email address</label>
+			<input type="text" id="search" name="search_text" autocomplete="off" />
+			<p id="search_instructions">Begin typing a company name, contact name, or email address above.  Your search results
+				will show up here.  If no results are found, you may enter the organization name and
+				your contact's email address.</p>
+			<div id="search_results">
+
+			</div>
+			<div id="external_invitation_form" style="display:none;">
+				<p>No organizations matched your query.  You may enter the contact details below.</p>
+					<div class="box_container">
+						<div class="box">
+							<label>Email Address</label>
+							<input type="text" id="external_invitation_email" size="25" />
+						</div>
+						<div class="box">
+							<label>Organization Name</label>
+							<input type="text" id="external_invitation_organization_name" size="20" />
+						</div>
+						<div class="box">
+							<label>&nbsp;</label>
+							<input type="submit" value="Add Invitation" />
+						</div>
+					</div>
+			</div>
+		</div>
+		<p><input type="submit" value="Send Invitations" /></p>
+	<% end %>
+</div>
+
+<script type="text/javascript">
+function observeSearchBox() {
+	$('search').observe('keyup', liveOrganizationSearch);
+}
+
+function liveOrganizationSearch() {
+	if($F('search').length == 0) return;
+	
+	new Ajax.Request('<%=search_organizations_path%>', {
+		method: 'get',
+		parameters: $('search').serialize(),
+		requestHeaders: {accept:'application/json'},
+		onSuccess: function(transport) {
+			showResults(transport.responseJSON);
+		}
+	});
+}
+
+function showResults(organizations) {
+	search_results = $('search_results')
+	$('search_instructions').hide();
+	if(organizations.length == 0) {
+		if($F('search').match(/\@/)) {
+			showExternalInvitationForm($F('search'), '');
+		}
+		else {
+			showExternalInvitationForm('', $F('search'));
+		}
+	}
+	else {
+		hideExternalInvitationForm();
+		org_list = new Element('ul', {id: "search_results_list"})
+		organizations.each(function(organization) {
+			org_item = new Element('li', {id:"invite_organization_" + organization.id});
+			checkbox = new Element('input', {type: 'checkbox'});
+			checkbox.onclick = function() {
+				addOrganizationToInvite(organization);
+			}
+			org_item.update(checkbox);
+			org_item.insert(" " + organization.name_and_location + " <span class='contact'>" + "Contact: " + organization.contact_name + "</span>");
+			organization.list_item = org_item;
+			org_list.insert(org_item);
+		});
+		search_results.update(org_list);
+	}
+}
+
+function addOrganizationToInvite(organization) {
+	invite_list = $('organizations_to_invite');
+	item = organization.list_item.remove()
+	if(invite_list.select('#invite_organization_' + organization.id).length == 0)
+		invite_list.insert(item);
+}
+
+function showExternalInvitationForm(email, org_name) {
+	$('search_results').hide();
+	$('external_invitation_form').show();
+	$('external_invitation_email').value = email;
+	$('external_invitation_organization_name').value = org_name;
+}
+
+function hideExternalInvitationForm() {
+	$('search_results').show();
+	$('external_invitation_form').hide();
+}
+</script>
+
+<% content_for :initialize_js, "observeSearchBox();"%>
