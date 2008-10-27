@@ -32,8 +32,11 @@ class OrganizationsController < ApplicationController
     @search_text = params[:search_text]    
     
     # tack the industry on to the search query to ensure matches with same industry float to the top
-    @search_text_with_industry = @search_text + 
-      (current_organization.industry.blank? ? "" : " | \"" + current_organization.industry + "\"")
+    # TODO: Implement more intelligently so queries for non-existant industries, organizations, or contacts don't return results
+    # anyway due to industry simularity.
+    
+    @search_text_with_industry = @search_text + "*" # + 
+      # (current_organization.industry.blank? ? "" : " | \"" + current_organization.industry + "\"")
     
     @search_params = {
       :geo => [current_organization.latitude, current_organization.longitude],
@@ -47,6 +50,7 @@ class OrganizationsController < ApplicationController
        
     respond_to do |wants|
       wants.html # render template
+      wants.json { render :json => @organizations.to_json(:methods => 'name_and_location') }
       wants.js do 
         #Scriptaculous auto-completion. Good example can be found here: http://demo.script.aculo.us/ajax/autocompleter_customized
          render :inline => "<%= content_tag(:ul, @organizations.map { |org| content_tag(:li, 
