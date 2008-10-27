@@ -200,18 +200,24 @@ describe AccountsController, " handling POST /account with an external survey in
     @survey = mock_model(Survey, :id => "1")
     @participation = mock_model(Participation, :survey => @survey)
     @participations = mock("participations proxy",:find => @participation, :count => 1)    
-    @external_invitation = mock_model(ExternalSurveyInvitation, :survey => @survey, :name => 'test', :email => 'test')
+    @external_invitation = mock_model(ExternalSurveyInvitation, :survey => @survey, :name => 'test', :email => 'test', :save! => true)
+    @survey_invitation = mock_model(SurveyInvitation, :survey => @survey, :name => 'test', :email => 'test', :save! => true)
+    @survey_invitations = mock('survey invitations proxy')
     
     @external_invitation.stub!(:is_a?).with(ExternalSurveyInvitation).and_return(true)
     @external_invitation.stub!(:is_a?).with(ExternalNetworkInvitation).and_return(false)
     @external_invitation.stub!(:participations).and_return(@participations)
+    @external_invitation.stub!(:type=).and_return('SurveyInvitation')
     @participations.stub!(:<<)
+    @survey_invitations.stub!(:<<)
     @organization.stub!(:set_logo).and_return(true)
     @organization.stub!(:participations).and_return(@participations)
+    @organization.stub!(:survey_invitations).and_return(@survey_invitations)
         
     Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:new).and_return(@organization)
     SurveySubscription.stub!(:create!)
+    SurveyInvitation.stub!(:find).and_return(@survey_invitation)
             
     @params = {:key => @key}
     
@@ -234,6 +240,17 @@ describe AccountsController, " handling POST /account with an external survey in
           :relationship => 'participant'
         )
      do_post
+  end
+  
+  it "should change the external survey invitation to a survey invitation" do
+    @external_invitation.should_receive(:type=)
+    @external_invitation.should_receive(:save!)
+    do_post
+  end
+  
+  it "should add the new organization to the survey invitation" do
+    @survey_invitations.should_receive(:<<).with(@survey_invitation)
+    do_post
   end
 
 end
