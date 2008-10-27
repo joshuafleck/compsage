@@ -1,4 +1,3 @@
-include QuestionsHelper
 class SurveysController < ApplicationController
   layout :logged_in_or_invited_layout 
   #we require a valid login if you are creating or editing a survey.
