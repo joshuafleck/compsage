@@ -75,7 +75,7 @@ class Question < ActiveRecord::Base
   end
   
   # grouped responses belonging to invitees of the survey
-  def invitee_grouped_responses
+  def grouped_invitee_responses
     @grouped_responses ||= invitee_responses.group_by(&:numerical_response)
   end
   
