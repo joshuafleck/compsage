@@ -34,14 +34,14 @@
 		<div id="invite_organizations">
 			<label>Organization name, contact, or email address</label>
 			<input type="text" id="search" name="search_text" autocomplete="off" />
-			<p id="search_instructions">Begin typing a company name, contact name, or email address above.  Your search results
-				will show up here.  If no results are found, you may enter the organization name and
-				your contact's email address.</p>
+			<p id="search_instructions">Type a company name, contact name, or email address above.  If the company
+				is a member, it will show up here.  If no companies matching the criteria are found, enter
+				the organization name and a contact's email address to send the invitation.</p>
 			<div id="search_results">
 
 			</div>
 			<div id="external_invitation_form" style="display:none;">
-				<p>No organizations matched your query.  You may enter the contact details below.</p>
+				<p>No organizations found.  You may enter the contact details below.</p>
 					<div class="box_container">
 						<div class="box">
 							<label>Email Address</label>
@@ -61,7 +61,14 @@
 		<p><input type="submit" value="Send Invitations" /></p>
 	<% end %>
 </div>
-
+<div class="separator"><%=image_tag 'embellish.gif' %></div>
+<div id="survey_finish_links">
+	<% unless @survey.participations.find_by_survey_id(@survey.id) then %>
+		<%=link_to "Respond Now", survey_questions_path(@survey)%> or <%=link_to "Maybe Later", survey_path(@survey)%>
+	<% else %>
+		<%=link_to "Finished", survey_path(@survey)%>
+	<% end %>
+</div>
 <script type="text/javascript">
 function observeSearchBox() {
 	$('search').observe('keyup', liveOrganizationSearch);

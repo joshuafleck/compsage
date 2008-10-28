@@ -4,5 +4,5 @@
 	<div class="description_box">
 		<%=survey.description.gsub(/\b([A-Z][A-Z0-9]{2,})\b/, '<span class="abbrev">\1</span>')%> <%=link_to "More&nbsp;details…", survey_path(survey)%></a>
 	</div>
-	<div class="actions"><%=link_to "Participate now", survey_path(survey)%> (<%=distance_of_time_in_words_to_now(survey.end_date)%> left)</div>
+	<div class="actions"><%=link_to "Respond", survey_questions_path(survey)%> (<%=distance_of_time_in_words_to_now(survey.end_date)%> left)</div>
 </li>

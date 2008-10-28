@@ -356,6 +356,10 @@ form#new_survey textarea {
   margin-top: 1em;
 }
 
+#send_invitations .contact {
+  color: #666;
+}
+
 #invite_organizations {
   margin-bottom: 2em;
   margin-left: 1em;
@@ -367,6 +371,12 @@ form#new_survey textarea {
 
 #invite_organizations p {
   margin: .5em 0;
+}
+
+#survey_finish_links {
+  text-align: center;
+  font-size: 1.4em;
+  font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
 }
 /* Generic Element Styles */
 p {
@@ -410,6 +420,7 @@ table th {
 	text-align: left;	
 }
 
+/* Custom Elements */
 label, div.label {
 	display: block;
 	margin-top: 1em;
@@ -424,4 +435,10 @@ form div.box_container {
 form div.box {
   float: left;
   margin-right: 10px;
+}
+
+div.separator {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  text-align: center;
 }
