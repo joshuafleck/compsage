@@ -18,5 +18,5 @@ Rails::Initializer.run do |config|
   config.gem 'beanstalk-client', :version => '>=1.0.2'
   config.gem 'will_paginate', :version => '>=2.2.2'
   
-  config.load_paths << "app/workers"
+  config.load_paths += ["app/workers", "app/builders"]
 end

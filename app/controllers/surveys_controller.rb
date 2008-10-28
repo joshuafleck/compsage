@@ -175,25 +175,11 @@ class SurveysController < ApplicationController
   end
   
   def respond
-  
-    @responses = []
     @survey = Survey.find(params[:id])
-    @participation = current_organization_or_survey_invitation.participations.find_or_create_by_survey_id(@survey.id)
-
-    # build the response objects from the parameters
-    @survey.questions.each do |question|      
-      @responses += build_responses(@participation,question,params)
-    end
-  
-    # attempt to save the responses, noting any that failed
-    @invalid_responses = {}
-    @responses.each do |response|
-      @invalid_responses[response.question.id] = response if !response.save
-    end
-    
-    if @invalid_responses.size == 0 then
-      
-      flash[:notice] = "Survey was successfully completed!"
+    @participation = current_organization_or_survey_invitation.participations.find_or_initialize_by_survey_id(@survey.id)
+    @participation.attributes = params[:participation]
+    if @participation.save then
+      flash[:notice] = "Thank you for your participation!"
       #current user is an organization, redirect to the show page
       if current_organization_or_survey_invitation.is_a?(Organization)
         respond_to do |wants|
@@ -206,13 +192,8 @@ class SurveysController < ApplicationController
         end
       end
     else
-      flash[:notice] = "Please review and re-submit your responses."
       respond_to do |wants|
         wants.html do 
-          
-          @participation = current_organization_or_survey_invitation.participations.find_by_survey_id(@survey.id)
-          @responses = @participation.responses if !@participation.nil?
-          
           render :template => 'questions/index' 
         end
       end
@@ -258,50 +239,8 @@ class SurveysController < ApplicationController
  
     
   private
-    def logged_in_or_invited_layout
-      logged_in? ? "logged_in" : "survey_invitation_logged_in"
-    end
-    
-    # This will check the params to see if any responses exist for
-    # the particular question. If responses exist, objects will be created for them.
-    # Any existing responses will be updated or deleted (checkboxes only).
-    def build_responses(participation,question,params)
-      responses = []
-      
-      # For questions with options, iterate through the options
-      # and search the parameters to see which options have been selected
-      if question.question_type == 'checkbox'  then
-      
-        # delete any existing responses, as we will be recreating them based on the new input
-        participation.responses.find_all_by_question_id(question.id).each do |response| Response.destroy(response) end
-        
-        question.options.each_with_index do |option, index|
-          if !params[:responses]["#{question.id.to_s}_#{index}"].blank? then
-          
-            response = participation.responses.find_or_create_by_question_id(question.id)
-            response.numerical_response = params[:responses]["#{question.id.to_s}_#{index}"]
-            response.qualifications = params[:responses]["#{question.id.to_s}_#{index}_qualifications"]
-            
-            responses << response
-          
-          end
-        end
-      else
-      
-        response = participation.responses.find_or_create_by_question_id(question.id)
-        
-        if question.numerical_response? 
-          response.numerical_response = params[:responses][question.id.to_s]
-          response.qualifications = params[:responses][question.id.to_s+"_qualifications"]
-        else
-          response.textual_response = params[:responses][question.id.to_s]
-        end
-        
-        responses << response
-        
-      end
-      
-      responses
-    end
-  
+
+  def logged_in_or_invited_layout
+    logged_in? ? "logged_in" : "survey_invitation_logged_in"
+  end
 end

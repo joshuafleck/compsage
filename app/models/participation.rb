@@ -5,6 +5,7 @@ class Participation < ActiveRecord::Base
   has_many :responses
   
   validates_presence_of :participant, :survey
+  validates_associated :responses
   
   after_create :create_participant_subscription
   
@@ -14,7 +15,23 @@ class Participation < ActiveRecord::Base
       'Invitation', 
       'Organization', 
       'Organization']  
-    
+  
+  # sets up the response for this participation.
+  def response=(question_response_params)
+    new_responses = []
+    question_response_params.each do |question_id, attributes|
+      next if attributes.values.join.empty?
+      question_response = response[question_id] || responses.new(:question_id => question_id)
+      question_response.attributes = attributes
+      new_responses << question_response
+    end
+    self.responses = new_responses
+  end
+  
+  def response
+    responses.group_by(&:question_id)
+  end
+  
   protected
   
   def create_participant_subscription

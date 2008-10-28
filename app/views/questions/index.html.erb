@@ -1,24 +1,20 @@
-<% title "Responding to Survey #{@survey.job_title}" %>
-<% if logged_in? then breadcrumbs(link_to("Surveys", surveys_path()), link_to(@survey.job_title, survey_path(@survey))) end
-  #Don't show breadcrumbs when logged in as survey invitation (there is no concept of dashboard) %>
-<% if logged_in? then highlight_tab "surveys" else highlight_tab "survey" end %>
-<h2>Responding to Survey <%=@survey.job_title%></h2>
-<p>You are responding to a survey commissioned by
-  <%=link_to_organization(@survey.sponsor)%>.  
-  Report data as of <%=(Time.now - 90.days).strftime("%B %d, %Y")%>.
-</p>
+<% title "Responding to #{@survey.job_title}" %>
+<% logged_in? ? highlight_tab("surveys") : highlight_tab("survey") %>
+<h2>Responding to <%=@survey.job_title%>
+	<span class="sponsor">sponsored by <%=link_to @survey.sponsor.name, organization_path(@survey.sponsor)%></span>
+</h2>
+<p>Report data as of <%=90.days.ago.to_date.to_s(:long_ordinal)%>.</p>
 <%=flash_messages%>
-<% form_for :response, :url => respond_survey_path(@survey), :html => {:method => :post, :multipart => true} do |f|%>
 <div id="questions">
-	<%
-	  @survey.questions.each do |question|%>
-	    <%=print_question(question, { 
-	      :responses => (@responses.nil? ? [] : @responses.find_all_by_question_id(question.id)),
-	      :invalid_response => @invalid_responses[question.id]
-	     })%><br />
-	<%
-	  end
-	%>
+	<% form_for @participation, :url => respond_survey_path(@survey) do |f|%>
+		<% @survey.questions.each do |question|
+			@response = *@participation.response[question.id] || question.responses.new %>
+			<% f.fields_for @response, :index => question.id, :builder => QuestionFormBuilder do |q| %>
+				<%=q.form_field%>
+			<% end %>
+		<% end %>
+		<p><input type="submit" value="Submit Responses" /> or <%=link_to "Cancel", survey_path(@survey) %></p>
+	<% end %>
 </div>
-<p><input type="submit" value="Submit Responses" /> or <%=link_to "Cancel", survey_path(@survey) %></p>
-<% end %>
+
+
