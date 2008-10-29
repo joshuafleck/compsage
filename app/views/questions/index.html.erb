@@ -6,11 +6,15 @@
 <p>Report data as of <%=90.days.ago.to_date.to_s(:long_ordinal)%>.</p>
 <%=flash_messages%>
 <div id="questions">
-	<% form_for @participation, :url => respond_survey_path(@survey) do |f|%>
+	<% form_for @participation, :url => respond_survey_path(@survey), :builder => QuestionFormBuilder do |f|%>
 		<% @survey.questions.each do |question|
-			@response = *@participation.response[question.id] || question.responses.new %>
+			@response = *@participation.response[question.id] || question.responses.new
+			p @response.inspect %>
 			<% f.fields_for @response, :index => question.id, :builder => QuestionFormBuilder do |q| %>
 				<%=q.form_field%>
+				<% if question.numerical_response? then %>
+					Qualifications: <%=q.text_field(:qualifications)%>
+				<% end %>
 			<% end %>
 		<% end %>
 		<p><input type="submit" value="Submit Responses" /> or <%=link_to "Cancel", survey_path(@survey) %></p>
