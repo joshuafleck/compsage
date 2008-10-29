@@ -16,7 +16,7 @@ class Response < ActiveRecord::Base
   
   #Depending on the type of question, this will return the textual or numerical response
   def get_response 
-  	if self.question.numerical_response? == :true
+  	if self.question.numerical_response? == true
   		self.numerical_response
   	else
   		self.textual_response

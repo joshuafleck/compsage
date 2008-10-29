@@ -4,6 +4,7 @@ class Question < ActiveRecord::Base
   acts_as_list :scope => :survey_id
   
   serialize :options
+  serialize :textual_response
   
   validates_presence_of :survey
   validates_presence_of :question_type
@@ -23,7 +24,7 @@ class Question < ActiveRecord::Base
                                 'text_area' => false,
                                 'numerical_field' => true,
                                 'radio' => true,
-                                'checkbox' => true,
+                                'checkbox' => false,
                                 'text' => false
                         }
   DEFAULT_HTML_ATTRIBUTES = { 'text_field' => {:size => 30},
@@ -49,15 +50,15 @@ class Question < ActiveRecord::Base
     '7 Point Agreement' => ['7 - Highest Agreement', '6', '5', '4', '3','2','1 - Lowest Agreement']
   }
   
-  def answerable?()
+  def answerable?
     return !(self[:question_type] == 'text')
   end
   
-  def has_options?()
+  def has_options?
     return TYPES_WITH_OPTIONS.include?(self[:question_type])
   end
   
-  def numerical_response?()
+  def numerical_response?
     return NUMERICAL_RESPONSES[self[:question_type]]
   end
   

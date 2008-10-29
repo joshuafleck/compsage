@@ -8,11 +8,10 @@
 <div id="questions">
 	<% form_for @participation, :url => respond_survey_path(@survey), :builder => QuestionFormBuilder do |f|%>
 		<% @survey.questions.each do |question|
-			@response = *@participation.response[question.id] || question.responses.new
-			p @response.inspect %>
+			@response = *@participation.response[question.id] || question.responses.new %>
 			<% f.fields_for @response, :index => question.id, :builder => QuestionFormBuilder do |q| %>
 				<%=q.form_field%>
-				<% if question.numerical_response? then %>
+				<% if question.numerical_response? || question.question_type == "checkbox" then %>
 					Qualifications: <%=q.text_field(:qualifications)%>
 				<% end %>
 			<% end %>
