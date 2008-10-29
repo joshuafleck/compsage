@@ -27,28 +27,7 @@ class Question < ActiveRecord::Base
                                 'checkbox' => false,
                                 'text' => false
                         }
-  DEFAULT_HTML_ATTRIBUTES = { 'text_field' => {:size => 30},
-                              'numerical_field' => {:size => 6},
-                              'text_area' => {  :rows => 3,
-                                                :cols => 40},
-                              'radio' => {},
-                              'checkbox' => {},
-                              'text' => {}
-                            }
-  DEFAULT_QUESTION_ATTRIBUTES = { 'text_field' => {},
-                                  'numerical_field' => {},
-                                  'text_area' => {},
-                                  'radio' => {:style => "vertical"},
-                                  'checkbox' => {:style => "vertical"},
-                                  'text' => {}
-                                }
-  DEFAULT_OPTIONS = {
-    'Yes/No' => ['Yes', 'No'],
-    'True/False' => ['True', 'False'],
-    '5 Point Agreement' => ['Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree'],
-    'Extent Observed' => ['Always Observe', 'Often Observe', 'Sometimes Observe', 'Seldom Observe', 'Never Observe'],
-    '7 Point Agreement' => ['7 - Highest Agreement', '6', '5', '4', '3','2','1 - Lowest Agreement']
-  }
+                        
   
   def answerable?
     return !(self[:question_type] == 'text')
