@@ -19,7 +19,9 @@ class Question < ActiveRecord::Base
                       ["Multiple Choice - Any Answer", 'checkbox'],
                       ["Textual Comments or Instructions", 'text']
                     ]
+                    
   TYPES_WITH_OPTIONS = ['radio', 'checkbox']
+  
   NUMERICAL_RESPONSES = { 'text_field' => false,
                                 'text_area' => false,
                                 'numerical_field' => true,
@@ -27,6 +29,14 @@ class Question < ActiveRecord::Base
                                 'checkbox' => false,
                                 'text' => false
                         }
+                        
+  CUSTOM_QUESTION_TYPES = {'Free response' => 'text_area',
+                           'Numeric response' => 'numerical_field', 
+                           'Yes/No' => 'radio', 
+                           'Agreement Scale' => 'radio'}
+                           
+  CUSTOM_QUESTION_OPTIONS = { 'Yes/No' => ['Yes', 'No'],
+                              'Agreement Scale' => ['Strongly Agree','Agree','Neutral','Disagree','Strongly Disagree']}
                         
   
   def answerable?
@@ -43,6 +53,12 @@ class Question < ActiveRecord::Base
   
   def needs_chart?
     return ['radio', 'checkbox'].include?(self[:question_type])
+  end
+  
+  # This will take a custom question type as input and set the relevant question fields based on the custom question type
+  def custom_question_setter(question_type)
+     self[:question_type] = CUSTOM_QUESTION_TYPES[question_type]
+     self[:options] = CUSTOM_QUESTION_OPTIONS[question_type]
   end
   
   def grouped_responses

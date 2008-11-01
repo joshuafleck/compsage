@@ -3,7 +3,7 @@
 <% highlight_tab("surveys") %>
 <h2>New Survey</h2>
 <%=flash_messages%>
-<% form_for :survey, @survey, :url => surveys_path, :html => {:id => 'new_survey'} do |f| %>
+<% form_for :survey, @survey, :url => surveys_path, :html => {:id => 'new_survey', :onSubmit => 'return addCustomQuestionsToResponse();'} do |f| %>
   <%=error_messages_for :survey %>
   <%=f.label :job_title%>
 	<%=f.text_field :job_title, :size => 40 %>
@@ -41,19 +41,11 @@
 			</div>
 			<div class="box">
 				<label>&nbsp;</label>
-				<input type="button" value="Add Question" id="question_submit">
+				<input type="button" value="Add Question" id="question_submit" onClick="createQuestion();">
 			</div>
 		</div>
 		<p>
-		<ul>
-      <li><%=check_box_tag 'included' %>
-				<span class="name">Do you allow your workers to get out of the basement?</span>
-				<span class="description">Yes/No</span>
-			</li>
-			<li><%=check_box_tag 'included' %>
-				<span class="name">Do you only hire ugly people?</span>
-				<span class="description">Yes/No</span>
-			</li>
+		<ul id="custom_question_list">
 		</ul>
 		</p>
 	</div>
@@ -63,3 +55,102 @@
   <% end %>
   <p><input type="submit" value="Create Survey" /> or <%=link_to "Cancel", surveys_path %></p>
 <% end %>
+<script type="text/javascript">
+
+/* This is a hash of questions the user has selected */
+var included_questions;
+/* This is a hash of questions the user has created */
+var all_questions;
+/* This sequence is used to give each question a unique identifier */
+var question_sequence;
+
+function initialize() {
+  included_questions = $H();
+  all_questions = $H();
+  question_sequence = 0;
+}
+
+/*
+ * This will write the custom questions as a hash in the response
+ */
+function addCustomQuestionsToResponse() {
+  new_survey_form = $('new_survey');
+  custom_questions = new Element('input', 
+    {type: 'hidden', 
+    value : included_questions.values().toJSON(), 
+    id: 'custom_questions_array', 
+    name: 'custom_questions_array'});
+  new_survey_form.insert(custom_questions);
+  return validateForm();
+}
+
+/*
+ * Validating the form will prevent the user from inputting an invalid form and losing any custom questions
+ */
+function validateForm() {
+  if ($F('survey_job_title') == '') {
+    alert('Job title may not be blank');
+    return false;
+  }
+  return true;
+}
+
+/*
+ * If the question is already included in the hash of included questions, remove it.
+ * If the question is not included in the hash of included questions, add it.
+ */
+function addOrRemoveQuestion(question_id) {
+  if (included_questions.keys().indexOf(question_id+'') < 0) {
+    included_questions.set(question_id,all_questions.get(question_id));
+  } else {
+    included_questions.unset(question_id);
+  }
+};
+
+/*
+ * This will validate the question, create a question object, store the question object, and render it in the DOM.
+ */
+function createQuestion() {
+
+  var Question = Class.create({
+    initialize: function(text,question_type) {
+      this.text = text;
+      this.question_type = question_type;
+      this.question_id = question_sequence++;
+    },  
+    toJSON: function() {
+      return $H({'text' : this.text, 'question_type' : this.question_type}).toJSON();
+    },
+    toHTML: function() {
+      var question_id = this.question_id;
+      question_item = new Element('li', {id:"custom_question_" + this.question_id});
+			checkbox = new Element('input', {type: 'checkbox', checked : 'yes'});
+			checkbox.onclick = function() {
+				addOrRemoveQuestion(question_id);
+			}
+			question_item.update(checkbox);
+			question_item.insert("<span class=\"name\">"+this.text+"</span> <span class=\"description\">"+this.question_type+"</span>");
+			return question_item;
+    }
+  });
+
+  var text = $F('question_text');
+  var type = $F('response_type');
+  var custom_question_list = $('custom_question_list');
+  
+    if (text == '') {
+      return alert('Question text may not be blank');
+    }
+      
+  var question = new Question(text,type);
+  all_questions.set(question.question_id,question);
+  included_questions.set(question.question_id,question);
+  
+  new Insertion.Top(custom_question_list,question.toHTML());
+  $('question_text').clear();
+}
+
+
+</script>
+
+<% content_for :initialize_js, "initialize();"%>

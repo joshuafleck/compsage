@@ -13,7 +13,7 @@ class QuestionFormBuilder < ActionView::Helpers::FormBuilder
       question.options.to_enum(:each_with_index).collect { |option, index|
         @template.content_tag(:div, radio_button(:numerical_response, index.to_f) + " " + option)
       }.join("")
-    when "textarea"
+    when "text_area"
       label(:textual_response, question.text) + text_area(:textual_response, :rows => 5, :cols => 50)
     when "checkbox"
       @template.content_tag(:label, question.text) +

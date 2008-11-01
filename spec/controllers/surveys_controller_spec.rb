@@ -428,8 +428,8 @@ describe SurveysController, " handling POST /surveys" do
     @params = {:survey => {:job_title => 'That guy who yells "Scalpel, STAT!"' ,
                  :end_date => Time.now + 1.week
                  },
-               :predefined_question => {"1" => {'included' => "1"}, "2" => {'included' => "0"}, "3" => {'included' => "1"}}
-               }
+               :predefined_question => {"1" => {'included' => "1"}, "2" => {'included' => "0"}, "3" => {'included' => "1"}},
+               :custom_questions_array => '[]' }
     @survey = mock_model(Survey, :id => 1, :save => true, :errors => [], :new_record? => true, :job_title => "test")
     @surveys = []
     @questions = []
@@ -477,7 +477,8 @@ describe SurveysController, " handling POST /surveys from a 'survey network' lin
     @params = {:survey => {:job_title => 'That guy who yells "Scalpel, STAT!"' ,
                  :end_date => Time.now + 1.week
                  },
-               :predefined_question => {"1" => {'included' => "1"}, "2" => {'included' => "0"}, "3" => {'included' => "1"}}, :invite_network => "1"
+               :predefined_question => {"1" => {'included' => "1"}, "2" => {'included' => "0"}, "3" => {'included' => "1"}}, :invite_network => "1",
+               :custom_questions_array => '[]'
                }
     @survey = mock_model(Survey, :id => 1, :save => true, :errors => [], :new_record? => true, :job_title => "test")
     @surveys = []
@@ -516,7 +517,8 @@ describe SurveysController, " handling POST /surveys, upon failure" do
     login_as(@current_organization)
     @params = {:job_title => 'That guy who yells "Scalpel, STAT!"' ,
                :end_date => Time.now + 1.week ,
-               :sponsor => mock_model(Organization)}
+               :sponsor => mock_model(Organization),
+               :custom_questions_array => '[]'}
     @survey = mock_model(Survey, :id => 1, :save => false, :errors => ["asdfadsfdsa"], :job_title => "test")
     @surveys = []
     

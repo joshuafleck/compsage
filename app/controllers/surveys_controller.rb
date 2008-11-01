@@ -1,3 +1,5 @@
+require 'yaml'
+    
 class SurveysController < ApplicationController
   layout :logged_in_or_invited_layout 
   #we require a valid login if you are creating or editing a survey.
@@ -109,6 +111,8 @@ class SurveysController < ApplicationController
     @survey = current_organization.sponsored_surveys.new(params[:survey])
     @predefined_questions = PredefinedQuestion.all
     
+    custom_questions_array = YAML.load(params[:custom_questions_array])
+    
     if @survey.save
       # iterate through predefined questions and each group
       @predefined_questions.each do |predefined_question_group|
@@ -118,10 +122,19 @@ class SurveysController < ApplicationController
             @question = @survey.questions.new(predefined_question.except("id", :id))
             @question.predefined_question_id = predefined_question_group.id
             @question.survey = @survey
-            @question.save
+            @question.save!
           end
         end
       end
+      
+      # iterate through the custom questions
+      custom_questions_array.each do |question_hash|
+        question_type = question_hash['question_type']
+        text = question_hash['text']
+        question = @survey.questions.new(:text => text)
+        question.custom_question_setter(question_type)
+        question.save!
+      end 
       
       respond_to do |wants|
         wants.html do
