@@ -30,7 +30,7 @@ describe QuestionsController, "handling GET /questions" do
     
     @participation = mock_model(Participation, :responses => [])
     @participations = []
-    @participations.stub!(:find_by_survey_id).and_return(@participation)
+    @participations.stub!(:find_or_initialize_by_survey_id).and_return(@participation)
 
     @current_organization.stub!(:participations).and_return(@participations)
     Survey.stub!(:find).and_return(@survey)
@@ -71,7 +71,7 @@ describe QuestionsController, "handling GET /questions.xml" do
     
     @participation = mock_model(Participation, :responses => [])
     @participations = []
-    @participations.stub!(:find_by_survey_id).and_return(@participation)
+    @participations.stub!(:find_or_initialize_by_survey_id).and_return(@participation)
 
     @current_organization.stub!(:participations).and_return(@participations)
     
@@ -103,25 +103,8 @@ end
 
 
 describe QuestionsController, "handling GET /questions, when survey is closed" do
-  before(:each) do
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
-
-    Survey.stub!(:find).and_raise(ActiveRecord::RecordNotFound)
-  end
-  
-  def do_get
-    get :index, :survey_id => 1
-  end
-  
-  it "should redirect to the report for the survey" do
-    do_get
-    response.should redirect_to(survey_report_path("1"))
-  end
-  it "should flash a message clarifying that the survey is closed" do
-    do_get
-    flash[:notice].should eql("The report you are trying to access is closed.")
-  end
+  it "should redirect to the report for the survey"
+  it "should flash a message clarifying that the survey is closed"
 end
 
 

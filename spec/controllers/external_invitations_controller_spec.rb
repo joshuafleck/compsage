@@ -191,7 +191,7 @@ describe ExternalInvitationsController, " handling POST /external_invitations wi
     login_as(@current_organization)
     
     @external_invitation = mock_model(ExternalInvitation, :save => false)
-    @external_invitations_proxy = mock('external invitations proxy')
+    @external_invitations_proxy = mock('external invitations proxy', :find => [])
     
     @current_organization.stub!(:sent_global_invitations).and_return(@external_invitations_proxy)
     @external_invitations_proxy.stub!(:new).and_return(@external_invitation)

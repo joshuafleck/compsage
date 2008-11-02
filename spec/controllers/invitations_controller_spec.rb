@@ -18,12 +18,17 @@ describe InvitationsController, " handling GET /invitations" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
+    @running_survey_invitations = []
     @survey_invitations = [mock_model(SurveyInvitation)]
     @network_invitations = [mock_model(NetworkInvitation)]
     
-    @current_organization.stub!(:survey_invitations).and_return(@survey_invitations)
+    @current_organization.stub!(:survey_invitations).and_return(@running_survey_invitations)
     @current_organization.stub!(:network_invitations).and_return(@network_invitations)
     
+    @running_survey_invitations.stub!(:running).and_return(@survey_invitations)
+    
+    @survey_invitations.should_receive(:find).and_return([])
+    @network_invitations.should_receive(:find).and_return([])
   end
   
   def do_get
@@ -46,7 +51,8 @@ describe InvitationsController, " handling GET /invitations" do
   end
   
   it "should find all non-accepted invitations" do
-    @current_organization.should_receive(:survey_invitations).and_return(@survey_invitations)
+    @current_organization.should_receive(:survey_invitations).and_return(@running_survey_invitations)
+    @running_survey_invitations.should_receive(:running).and_return(@survey_invitations)
     @current_organization.should_receive(:network_invitations).and_return(@network_invitations)
     do_get
   end

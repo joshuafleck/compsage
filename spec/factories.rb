@@ -28,6 +28,7 @@ Factory.define :organization do |o|
   o.contact_name 'David Peterson'
 end
 
+#definition and set up for survey
 Factory.define :survey do |s|
   s.job_title 'Trailer Park Supervisor'
   s.description 'Assist in matter pertinent to the saftey of the citizens of a trailer park.'
@@ -35,3 +36,35 @@ Factory.define :survey do |s|
   s.end_date (Time.now + 5.days).to_s(:db)
   s.sponsor {|a| a.association(:organization)}
 end
+
+#definition and setup for discussion
+Factory.define :discussion do |d|
+
+end
+
+#definition and setup for invitation
+Factory.define :invitation do |i|
+  
+end
+
+#definition and setup for network
+Factory.define :network do |n|
+  
+end
+
+#definition and setup for participation
+Factory.define :participation do |p|
+  p.survey {|a| a.association(:survey)}
+  p.participant {|a| a.association(:organization)}
+end
+
+#definition and setup for question
+Factory.define :question do |p|
+  
+end
+
+#definition and setup for response
+Factory.define :response do |p|
+  
+end
+

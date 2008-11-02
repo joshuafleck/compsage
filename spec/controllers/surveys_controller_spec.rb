@@ -42,7 +42,7 @@ end
 describe SurveysController, " handling GET /surveys" do
   
   before(:each) do
-    @current_organization = mock_model(Organization)
+    @current_organization = Factory.create(:organization) #mock_model(Organization)
     login_as(@current_organization)
     
     @survey_invitations_proxy = mock('survey invitations proxy')
@@ -701,15 +701,13 @@ end
 #NOTE: Test spec to move to factory_girl
 describe SurveysController, "handling GET /surveys/search.xml" do
   before(:each) do
-    @current_organization = Factory.create(:organization) #mock_model(Organization, :industry => 'Fun', :latitude => 12, :longitude => 12)
-    #raise @current_organization.email.to_s
+    @current_organization = Factory.create(:organization)
     login_as(@current_organization)
         
-    @survey = Factory.create(:survey) #mock_model(Survey, :id => 1, :title => "My Survey")
+    @survey = Factory.create(:survey)
     @surveys = [@survey]    
-    #@surveys.stub!(:to_xml).and_return("XML")
-    Survey.stub!(:search).and_return(@surveys)
-        
+
+    Survey.stub!(:search).and_return(@surveys)        
     @params = {:search_text => "josh"}
     
   end
@@ -745,9 +743,9 @@ describe SurveysController, "handling POST /surveys/1/respond, as invitee that i
     
     #participations stub
     @participations = []
-    @participations = mock_model(Participation)
+    @participation = Factory.create(:participation)
     @current_invitation.stub!(:participations).and_return(@participations)
-    @participations.stub!(:find_or_create_by_survey_id).and_return(@participation)
+    @participations.stub!(:find_or_initialize_by_survey_id).and_return(@participation)
   end
   
   def do_respond
@@ -761,7 +759,7 @@ describe SurveysController, "handling POST /surveys/1/respond, as invitee that i
   
   it "should flash a success message" do
     do_respond
-    flash[:notice].should eql("Survey was successfully completed!")
+    flash[:notice].should eql("Thank you for your participation!")
   end
 end
 
@@ -776,9 +774,9 @@ describe SurveysController, "handling POST /surveys/1/respond, as organization b
     
     #participations stub
     @participations = []
-    @participations = mock_model(Participation)
+    @participation = Factory.create(:participation)
     @current_organization.stub!(:participations).and_return(@participations)
-    @participations.stub!(:find_or_create_by_survey_id).and_return(@participation)
+    @participations.stub!(:find_or_initialize_by_survey_id).and_return(@participation)
   end
   
   def do_respond
@@ -792,7 +790,7 @@ describe SurveysController, "handling POST /surveys/1/respond, as organization b
   
   it "should flash a success message" do
     do_respond
-    flash[:notice].should eql("Survey was successfully completed!")
+    flash[:notice].should eql("Thank you for your participation!")
   end
 end
 
@@ -817,10 +815,9 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
     
     #participations stub
     @participations = []
-    @participation = mock_model(Participation, :responses => @responses)
+    @participation = mock_model(Participation, :responses => @responses, :attributes= => [], :save => :false)
     @current_organization.stub!(:participations).and_return(@participations)
-    @participations.stub!(:find_by_survey_id).and_return(@participation)
-    @participations.stub!(:find_or_create_by_survey_id).and_return(@participation)
+    @participations.stub!(:find_or_initialize_by_survey_id).and_return(@participation)
   end
   
   def do_respond
