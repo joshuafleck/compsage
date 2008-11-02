@@ -62,8 +62,8 @@ describe Question, "with options", :shared => true do
     @question.should have(1).error_on(:options)
   end
   
-  it "should save a numerical response" do
-    @question.should be_numerical_response
+  it "should not save a numerical response" do
+    @question.should_not be_numerical_response
   end
   
   it "should be answerable" do

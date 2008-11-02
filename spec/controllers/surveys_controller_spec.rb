@@ -438,7 +438,7 @@ describe SurveysController, " handling POST /surveys" do
     @pdq1 = mock_model(PredefinedQuestion, :id => 1, :question_hash => @question_hash)
     @pdq2 = mock_model(PredefinedQuestion, :id => 2, :question_hash => @question_hash)
     @pdq3 = mock_model(PredefinedQuestion, :id => 3, :question_hash => @question_hash)
-    @question = mock_model(Question, :save => :true, :predefined_question_id= => 1, :survey= => @survey)
+    @question = mock_model(Question, :save! => :true, :predefined_question_id= => 1, :survey= => @survey)
     
     PredefinedQuestion.stub!(:all).and_return([@pdq1, @pdq2, @pdq3])
     @current_organization.stub!(:sponsored_surveys).and_return(@surveys)
@@ -458,7 +458,7 @@ describe SurveysController, " handling POST /surveys" do
   
   it "should add predefined questions to the survey" do
     @questions.should_receive(:new).at_least(:once).and_return(@question)
-    @question.should_receive(:save).at_least(:twice).and_return(true)
+    @question.should_receive(:save!).at_least(:twice).and_return(true)
     
     do_post
   end
@@ -488,7 +488,7 @@ describe SurveysController, " handling POST /surveys from a 'survey network' lin
     @pdq1 = mock_model(PredefinedQuestion, :id => 1, :question_hash => @question_hash)
     @pdq2 = mock_model(PredefinedQuestion, :id => 2, :question_hash => @question_hash)
     @pdq3 = mock_model(PredefinedQuestion, :id => 3, :question_hash => @question_hash)
-    @question = mock_model(Question, :save => :true, :predefined_question_id= => 1, :survey= => @survey)
+    @question = mock_model(Question, :save! => :true, :predefined_question_id= => 1, :survey= => @survey)
     
     PredefinedQuestion.stub!(:all).and_return([@pdq1, @pdq2, @pdq3])
     @current_organization.stub!(:sponsored_surveys).and_return(@surveys)
@@ -815,7 +815,7 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
     
     #participations stub
     @participations = []
-    @participation = mock_model(Participation, :responses => @responses, :attributes= => [], :save => :false)
+    @participation = mock_model(Participation, :responses => @responses, :attributes= => [], :save => false)
     @current_organization.stub!(:participations).and_return(@participations)
     @participations.stub!(:find_or_initialize_by_survey_id).and_return(@participation)
   end
@@ -824,16 +824,10 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
     post :respond, @params
   end
   
-  it "should flash error messages" do 
+  it "should re-render questions index" do 
     do_respond
-    flash[:notice].should eql("Please review and re-submit your responses.")
+    response.should render_template('questions/index')
   end
-  
-  it "should assign the invalid responses to the view " do
-    do_respond
-    assigns[:responses].should_not be_nil
-  end
-  
 end
 
 describe SurveysController, " handling GET /surveys/my.xml" do
