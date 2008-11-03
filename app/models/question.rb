@@ -6,10 +6,17 @@ class Question < ActiveRecord::Base
   serialize :options
   serialize :textual_response
   
+  attr_accessor :included
+  
   validates_presence_of :survey
   validates_presence_of :question_type
   validates_presence_of :options, :message => "You must include some options", :if => Proc.new { |question| question.has_options? }
   validates_length_of :text, :within => 1..1000, :message => "A question is required to have associated text."
+  
+  def before_validation_on_create 
+     self[:question_type] = CUSTOM_QUESTION_TYPES[self[:custom_question_type]] if attribute_present?("custom_question_type")
+     self[:options] = CUSTOM_QUESTION_OPTIONS[self[:custom_question_type]] if attribute_present?("custom_question_type")
+  end
   
   
   QUESTION_TYPES = [  ["Single-line Text Box", 'text_field'],
@@ -53,12 +60,6 @@ class Question < ActiveRecord::Base
   
   def needs_chart?
     return ['radio', 'checkbox'].include?(self[:question_type])
-  end
-  
-  # This will take a custom question type as input and set the relevant question fields based on the custom question type
-  def custom_question_setter(question_type)
-     self[:question_type] = CUSTOM_QUESTION_TYPES[question_type]
-     self[:options] = CUSTOM_QUESTION_OPTIONS[question_type]
   end
   
   def grouped_responses

@@ -1,7 +1,7 @@
 require 'enumerator'
 class QuestionFormBuilder < ActionView::Helpers::FormBuilder
   
-  # builds  a form field for a survey question.
+  # builds a form field for a survey question.
   def form_field
     case question.question_type
     when "text_field"

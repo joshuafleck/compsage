@@ -1,5 +1,3 @@
-require 'yaml'
-    
 class SurveysController < ApplicationController
   layout :logged_in_or_invited_layout 
   #we require a valid login if you are creating or editing a survey.
@@ -54,11 +52,35 @@ class SurveysController < ApplicationController
         pq.predefined_question_id == q.id
       end
     end
+        
+    @questions = {}
+    
+    #Find any custom questions and make sure they have the 'included' flag populated
+    # Build a hash to pass to the view, so that we can intermix new questions and existing questions
+    @picked_questions.each do |question|
+      if !question.custom_question_type.blank? then
+        question.included = "1"
+        @questions[question.id.to_s] = question
+      end
+    end
+    
   end
   
   def update
     @survey = current_organization.sponsored_surveys.running.find(params[:id])
-    
+        
+    #update custom question selection, add any new custom questions
+    params[:question].each do |id,question|
+      question_exists = @survey.questions.exists?(question[:id])
+      if question[:included] == "1" && !question_exists then
+        @question = @survey.questions.new(question)
+        @question[:survey_id] = @survey.id
+        @question.save! 
+      elsif question[:included] == "0" && question_exists
+        @survey.questions.find_by_id(id).destroy
+      end
+    end unless params[:question].blank?
+         
     #update predefined question selection
     @predefined_questions = PredefinedQuestion.all
     @predefined_questions.each do |predefined_question_group|
@@ -81,6 +103,7 @@ class SurveysController < ApplicationController
         end
       end
     end
+    
     #update the attributes for the survey
     if @survey.update_attributes(params[:survey])
        respond_to do |wants|  
@@ -100,6 +123,7 @@ class SurveysController < ApplicationController
   
   def new
     @predefined_questions = PredefinedQuestion.all
+    @questions = {}
 
     # Check to see if we arrived here from a 'survey network' link. If so, send the network along.
     if !params[:network_id].blank? then
@@ -110,30 +134,39 @@ class SurveysController < ApplicationController
   def create
     @survey = current_organization.sponsored_surveys.new(params[:survey])
     @predefined_questions = PredefinedQuestion.all
+    @questions = {}
     
-    custom_questions_array = YAML.load(params[:custom_questions_array])
+    #Create actual questions here in case the survey validation fails,
+    # the view needs question models in order to create the question form.
+    params[:question].each do |id,question|
+      @questions[id] = @survey.questions.new(question)
+    end unless params[:question].blank?
+      
+    #Set the 'included' flag to 1 in case the survey validation fails,
+    # this will ensure any selections are preserved.
+    @predefined_questions.each do |predefined_question_group|
+      predefined_question_group.included = params[:predefined_question][predefined_question_group.id.to_s][:included]
+    end unless params[:predefined_question].blank?      
     
     if @survey.save
-      # iterate through predefined questions and each group
+    
+      # iterate through only the selected predefined questions to save
       @predefined_questions.each do |predefined_question_group|
-        @predefined_question_hash = predefined_question_group.question_hash
-        if params[:predefined_question][predefined_question_group.id.to_s][:included] == "1"
-          @predefined_question_hash.each do |predefined_question|
+        if predefined_question_group.included == "1" then
+          predefined_question_group.question_hash.each do |predefined_question|
             @question = @survey.questions.new(predefined_question.except("id", :id))
             @question.predefined_question_id = predefined_question_group.id
-            @question.survey = @survey
             @question.save!
           end
         end
-      end
+      end 
       
-      # iterate through the custom questions
-      custom_questions_array.each do |question_hash|
-        question_type = question_hash['question_type']
-        text = question_hash['text']
-        question = @survey.questions.new(:text => text)
-        question.custom_question_setter(question_type)
-        question.save!
+      # iterate through only the selected custom questions to save
+      @questions.values.each do |question|
+        if question.included == "1" then
+          question[:survey_id] = @survey.id
+          question.save!
+        end
       end 
       
       respond_to do |wants|

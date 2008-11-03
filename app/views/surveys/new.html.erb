@@ -3,7 +3,7 @@
 <% highlight_tab("surveys") %>
 <h2>New Survey</h2>
 <%=flash_messages%>
-<% form_for :survey, @survey, :url => surveys_path, :html => {:id => 'new_survey', :onSubmit => 'return addCustomQuestionsToResponse();'} do |f| %>
+<% form_for :survey, @survey, :url => surveys_path, :html => {:id => 'new_survey'} do |f| %>
   <%=error_messages_for :survey %>
   <%=f.label :job_title%>
 	<%=f.text_field :job_title, :size => 40 %>
@@ -14,10 +14,11 @@
 	<h3>Standard questions</h3>
 	<div id="standard_questions">
 		<ul>
-		  <% @predefined_questions.each do |question| %>
-		    <% fields_for "predefined_question", :index => question.id do |question_form| %>
-		      <li><%=question_form.check_box :included%>
-						<span class="name"><%=question.name%></span>
+		  <% @predefined_questions.each do |predefined_question| %>
+		    <% fields_for predefined_question, :index => predefined_question.id do |predefined_question_form| %>
+		      <li>
+		        <%=predefined_question_form.check_box :included%>
+						<span class="name"><%=predefined_question.name%></span>
 					</li>
 		    <% end %>
 		  <% end %>
@@ -25,6 +26,20 @@
 	</div>
 	<h3>Custom questions</h4>
 	<div id="custom_questions">
+	  <p>
+	  <ul id="custom_question_list">
+		  <% @questions.each do |id, question| %>
+		    <% fields_for question, :index => id do |question_form| %>
+		      <li>
+		        <%=question_form.check_box :included %>
+		        <%=question_form.hidden_field :custom_question_type %>
+		        <%=question_form.hidden_field :text %>
+						<span class="name"><%=question[:text]%></span> <span class="description"><%=question[:custom_question_type]%></span>
+					</li>
+		    <% end %>
+		  <% end %>
+	  </ul>
+	  </p>
 		<div class="box_container">
 			<div class="box">
 				<label>Question Text</label>
@@ -41,13 +56,9 @@
 			</div>
 			<div class="box">
 				<label>&nbsp;</label>
-				<input type="button" value="Add Question" id="question_submit" onClick="createQuestion();">
+				<input type="button" value="Add Question" id="question_submit">
 			</div>
 		</div>
-		<p>
-		<ul id="custom_question_list">
-		</ul>
-		</p>
 	</div>
 	<br clear="both" />
   <% if !@network.nil? then %>
@@ -57,100 +68,48 @@
 <% end %>
 <script type="text/javascript">
 
-/* This is a hash of questions the user has selected */
-var included_questions;
-/* This is a hash of questions the user has created */
-var all_questions;
-/* This sequence is used to give each question a unique identifier */
-var question_sequence;
-
-function initialize() {
-  included_questions = $H();
-  all_questions = $H();
-  question_sequence = 0;
+function observeCustomQuestion() {
+  $('question_submit').observe('click', createQuestion);
 }
-
-/*
- * This will write the custom questions as a hash in the response
- */
-function addCustomQuestionsToResponse() {
-  new_survey_form = $('new_survey');
-  custom_questions = new Element('input', 
-    {type: 'hidden', 
-    value : included_questions.values().toJSON(), 
-    id: 'custom_questions_array', 
-    name: 'custom_questions_array'});
-  new_survey_form.insert(custom_questions);
-  return validateForm();
-}
-
-/*
- * Validating the form will prevent the user from inputting an invalid form and losing any custom questions
- */
-function validateForm() {
-  if ($F('survey_job_title') == '') {
-    alert('Job title may not be blank');
-    return false;
-  }
-  return true;
-}
-
-/*
- * If the question is already included in the hash of included questions, remove it.
- * If the question is not included in the hash of included questions, add it.
- */
-function addOrRemoveQuestion(question_id) {
-  if (included_questions.keys().indexOf(question_id+'') < 0) {
-    included_questions.set(question_id,all_questions.get(question_id));
-  } else {
-    included_questions.unset(question_id);
-  }
-};
 
 /*
  * This will validate the question, create a question object, store the question object, and render it in the DOM.
  */
 function createQuestion() {
 
-  var Question = Class.create({
-    initialize: function(text,question_type) {
-      this.text = text;
-      this.question_type = question_type;
-      this.question_id = question_sequence++;
-    },  
-    toJSON: function() {
-      return $H({'text' : this.text, 'question_type' : this.question_type}).toJSON();
-    },
-    toHTML: function() {
-      var question_id = this.question_id;
-      question_item = new Element('li', {id:"custom_question_" + this.question_id});
-			checkbox = new Element('input', {type: 'checkbox', checked : 'yes'});
-			checkbox.onclick = function() {
-				addOrRemoveQuestion(question_id);
-			}
-			question_item.update(checkbox);
-			question_item.insert("<span class=\"name\">"+this.text+"</span> <span class=\"description\">"+this.question_type+"</span>");
-			return question_item;
-    }
-  });
-
-  var text = $F('question_text');
-  var type = $F('response_type');
+  var question_text = $F('question_text');
+  var response_type = $F('response_type');
   var custom_question_list = $('custom_question_list');
   
-    if (text == '') {
-      return alert('Question text may not be blank');
-    }
-      
-  var question = new Question(text,type);
-  all_questions.set(question.question_id,question);
-  included_questions.set(question.question_id,question);
-  
-  new Insertion.Top(custom_question_list,question.toHTML());
+  if (question_text == '') {
+    return alert('Question text may not be blank');
+  }
+    
+  var question_id = (new Date()).getTime();
+
+  question_item = new Element('li');
+	checkbox = new Element('input', {type: 'checkbox', value: "1", checked: 'checked', name: 'question[' + question_id + '][included]'});
+	text = new Element('input', {type: 'hidden', value: question_text, name: 'question[' + question_id + '][text]'});
+	type = new Element('input', {type: 'hidden', value: response_type, name: 'question[' + question_id + '][custom_question_type]'});
+	
+	question_item.update(checkbox);
+	question_item.insert(text);
+	question_item.insert(type);
+	question_item.insert("<span class=\"name\">" + question_text + "</span> <span class=\"description\">" + response_type + "</span>");    
+
+  custom_question_list.insert(question_item, { position: 'bottom' });
   $('question_text').clear();
 }
 
 
 </script>
 
-<% content_for :initialize_js, "initialize();"%>
+<% content_for :initialize_js, "observeCustomQuestion();"%>
+
+<% 
+  #render(:partial => "survey_form", :locals => { 
+  # :predefined_questions => @predefined_questions, 
+  # :custom_questions => @custom_questions
+  #}) 
+%>
+  

@@ -3,21 +3,114 @@
 <% highlight_tab("surveys") %>
 <h2>Edit Survey</h2>
 <%=flash_messages%>
-<% form_for :survey, @survey, :url => survey_path(@survey),
-   :html => {:method => :put} do |f| %>
+<% form_for :survey, @survey, :url => survey_path(@survey), :html => {:id => 'new_survey', :method => :put} do |f| %>
   <%=error_messages_for :survey %>
-  <p>Job Title: <%=f.text_field :job_title %></p>
-  <p>Job Description:<br />
-  <%=f.text_area :description, :rows => 4, :cols => 60 %></p>
-  <p>
-    Select the questions you wish to ask:
-    <ul>
-      <% @predefined_questions.each do |predefined_question| %>
-        <% fields_for predefined_question, :index => predefined_question.id do |question_form| %>
-          <li><%=question_form.check_box :included%> <%=predefined_question.name%> - <%=predefined_question.description%></li>
-        <% end %>
-      <% end %>
-    </ul>
-  </p>
-  <p><input type="submit" value="Update" /> <%=link_to "Cancel", surveys_path %></p>
+  <%=f.label :job_title%>
+	<%=f.text_field :job_title, :size => 40 %>
+  <%=f.label :job_description%>
+  <%=f.text_area :description, :rows => 4, :cols => 40 %>
+	<%=f.label :days_running, "Run length" %>
+	<%=f.select :days_running, (3..7).to_a.collect {|i| ["#{i} days", i]} %>
+	<h3>Standard questions</h3>
+	<div id="standard_questions">
+		<ul>
+		  <% @predefined_questions.each do |predefined_question| %>
+		    <% fields_for predefined_question, :index => predefined_question.id do |predefined_question_form| %>
+		      <li>
+		        <%=predefined_question_form.check_box :included%>
+						<span class="name"><%=predefined_question.name%></span>
+					</li>
+		    <% end %>
+		  <% end %>
+		</ul>
+	</div>
+	<h3>Custom questions</h4>
+	<div id="custom_questions">
+	  <p>
+	  <ul id="custom_question_list">
+		  <% @questions.each do |id, question| %>
+		    <% fields_for question, :index => id do |question_form| %>
+		      <li>
+		        <%=question_form.check_box :included %>
+		        <%=question_form.hidden_field :custom_question_type %>
+		        <%=question_form.hidden_field :text %>
+		        <%=question_form.hidden_field :id %>
+						<span class="name"><%=question[:text]%></span> <span class="description"><%=question[:custom_question_type]%></span>
+					</li>
+		    <% end %>
+		  <% end %>
+	  </ul>
+	  </p>
+		<div class="box_container">
+			<div class="box">
+				<label>Question Text</label>
+				<input type="text" size="30" id="question_text" />
+			</div>
+			<div class="box">
+				<label>Response Type</label>
+				<select id="response_type">
+					<option>Free response</option>
+					<option>Numeric response</option>
+					<option>Yes/No</option>
+					<option>Agreement Scale</option>
+				</select>
+			</div>
+			<div class="box">
+				<label>&nbsp;</label>
+				<input type="button" value="Add Question" id="question_submit">
+			</div>
+		</div>
+	</div>
+	<br clear="both" />
+  <% if !@network.nil? then %>
+    <%=hidden_field_tag(:invite_network, @network.id ) %>
+  <% end %>
+  <p><input type="submit" value="Update" /> or <%=link_to "Cancel", surveys_path %></p>
 <% end %>
+<script type="text/javascript">
+
+function observeCustomQuestion() {
+  $('question_submit').observe('click', createQuestion);
+}
+
+/*
+ * This will validate the question, create a question object, store the question object, and render it in the DOM.
+ */
+function createQuestion() {
+
+  var question_text = $F('question_text');
+  var response_type = $F('response_type');
+  var custom_question_list = $('custom_question_list');
+  
+  if (question_text == '') {
+    return alert('Question text may not be blank');
+  }
+    
+  var question_id = (new Date()).getTime();
+
+  question_item = new Element('li');
+	checkbox = new Element('input', {type: 'checkbox', value: "1", checked: 'checked', name: 'question[' + question_id + '][included]'});
+	text = new Element('input', {type: 'hidden', value: question_text, name: 'question[' + question_id + '][text]'});
+	type = new Element('input', {type: 'hidden', value: response_type, name: 'question[' + question_id + '][custom_question_type]'});
+	
+	question_item.update(checkbox);
+	question_item.insert(text);
+	question_item.insert(type);
+	question_item.insert("<span class=\"name\">" + question_text + "</span> <span class=\"description\">" + response_type + "</span>");    
+
+  custom_question_list.insert(question_item, { position: 'bottom' });
+  $('question_text').clear();
+}
+
+
+</script>
+
+<% content_for :initialize_js, "observeCustomQuestion();"%>
+
+<% 
+  #render(:partial => "survey_form", :locals => { 
+  # :predefined_questions => @predefined_questions, 
+  # :custom_questions => @custom_questions
+  #}) 
+%>
+ 
