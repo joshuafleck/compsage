@@ -1,5 +1,5 @@
 <%=flash_messages%>
-<% form_for @survey, :html => {:method => request_type} do |f| %>
+<% form_for @survey do |f| %>
   <%=error_messages_for :survey %>
   <%=f.label :job_title%>
 	<%=f.text_field :job_title, :size => 40 %>
@@ -61,7 +61,7 @@
   <% if !@network.nil? then %>
     <%=hidden_field_tag(:invite_network, @network.id ) %>
   <% end %>
-  <p><input type="submit" value="<%=action == 'create' ? 'Create Survey' : 'Update' %>" /> or <%=link_to "Cancel", surveys_path %></p>
+  <p><input type="submit" value="<%=@survey.new_record? ? 'Create Survey' : 'Update' %>" /> or <%=link_to "Cancel", surveys_path %></p>
 <% end %>
 <script type="text/javascript">
 

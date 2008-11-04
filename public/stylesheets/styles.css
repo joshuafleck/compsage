@@ -303,11 +303,11 @@ span.sponsor a {
 	color: #666;
 }
 
-form#new_survey input {
+form.new_survey input, form.edit_survey input {
 	font-size: .9em;
 }
 
-form#new_survey input#survey_job_title {
+form.new_survey input#survey_job_title, form.edit_survey input#survey_job_title {
 	width: 500px;
 	border: 1px solid #3f3f3e;
 	background-color: #fffefc;
@@ -315,7 +315,7 @@ form#new_survey input#survey_job_title {
 	font-size: 1em;
 }
 
-form#new_survey textarea {
+form.new_survey textarea, form.edit_survey textarea {
 	font-size: 1.25em;
 	width: 500px;
 	border: 1px solid #3f3f3e;
