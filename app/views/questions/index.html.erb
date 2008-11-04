@@ -3,21 +3,52 @@
 <h2>Responding to <%=@survey.job_title%>
 	<span class="sponsor">sponsored by <%=link_to @survey.sponsor.name, organization_path(@survey.sponsor)%></span>
 </h2>
+<h3>Job Description</h3>
+<p class="description_box"><%=@survey.description%></p>
 <p>Report data as of <%=90.days.ago.to_date.to_s(:long_ordinal)%>.</p>
 <%=flash_messages%>
-<div id="questions">
-	<% form_for @participation, :url => respond_survey_path(@survey), :builder => QuestionFormBuilder do |f|%>
+
+<% form_for @participation, :url => respond_survey_path(@survey), :builder => QuestionFormBuilder do |f|%>
+	<ol id="questions">
 		<% @survey.questions.each do |question|
 			@response = *@participation.response[question.id] || question.responses.new %>
 			<% f.fields_for @response, :index => question.id, :builder => QuestionFormBuilder do |q| %>
-				<%=q.form_field%>
-				<% if question.numerical_response? || question.question_type == "checkbox" then %>
-					Qualifications: <%=q.text_field(:qualifications)%>
+				<li>
+					<%=q.form_field%>
+					<% if question.qualify? then %>
+						<div class="qualifications">
+							<% if @response.qualifications.blank? %>
+								<div class="field" style="display: none;">
+									Qualification: <%=q.text_field :qualifications %>
+								</div>
+								<span class="label"><a href="#">Qualify Answer</a></span>
+							<% else %>
+								<div class="field">
+									Qualification: <%=q.text_field :qualifications %>
+								</div>
+								<span class="label"><a href="#">Cancel</a></span>
+							<% end %>
+						</div>
+					<% end %>
 				<% end %>
-			<% end %>
+			</li>
 		<% end %>
-		<p><input type="submit" value="Submit Responses" /> or <%=link_to "Cancel", survey_path(@survey) %></p>
-	<% end %>
-</div>
+		</ol>		
+	<div class="response_submit"><input type="submit" value="Submit My Responses" /> or <%=link_to "Cancel", survey_path(@survey) %></div>
+<% end %>
 
 
+<script type="text/javascript">
+function observeQualificationLinks() {
+	$$('div.qualifications').each(function(elem) {
+		links = elem.select('a')
+		links.invoke('observe', 'click', function(e) {
+			field = elem.select('div.field').first().toggle();
+			e.target.innerHTML = e.target.innerHTML == 'Cancel' ? 'Qualify Answer' : 'Cancel';
+			elem.select('input').first().value = "";
+			e.stop();
+		});
+	});
+}
+</script>
+<% content_for :initialize_js, "observeQualificationLinks();"%>

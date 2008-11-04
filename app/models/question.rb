@@ -40,10 +40,10 @@ class Question < ActiveRecord::Base
   CUSTOM_QUESTION_TYPES = {'Free response' => 'text_area',
                            'Numeric response' => 'numerical_field', 
                            'Yes/No' => 'radio', 
-                           'Agreement Scale' => 'radio'}
+                           'Agreement scale' => 'radio'}
                            
   CUSTOM_QUESTION_OPTIONS = { 'Yes/No' => ['Yes', 'No'],
-                              'Agreement Scale' => ['Strongly Agree','Agree','Neutral','Disagree','Strongly Disagree']}
+                              'Agreement scale' => ['Strongly Agree','Agree','Neutral','Disagree','Strongly Disagree']}
                         
   
   def answerable?
@@ -64,6 +64,11 @@ class Question < ActiveRecord::Base
   
   def grouped_responses
     @grouped_responses ||= responses.group_by(&:numerical_response)
+  end
+  
+  # whether or not the question allows qualification
+  def qualify?
+    numerical_response? || question_type == "checkbox"
   end
   
   # responses belonging to invitees of the survey

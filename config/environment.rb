@@ -11,7 +11,7 @@ Rails::Initializer.run do |config|
   config.active_record.observers = :invitation_observer
   
   config.action_mailer.default_url_options = {:host => "localhost", :port => 3000}
-
+  config.action_mailer.perform_deliveries = false
   # config.gem 'fiveruns_tuneup', :version => '>=0.8.10'
   config.gem 'rubyist-aasm', :version => '>=2.0.1', :lib => 'aasm', :source => 'http://gems.github.com'
   config.gem 'thoughtbot-factory_girl', :lib => 'factory_girl', :source => 'http://gems.github.com'

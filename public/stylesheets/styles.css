@@ -1,3 +1,4 @@
+/* Generic Element Styles */
 body {
 	background: #faf6f0 url('../images/header_background.gif') repeat-x;
 	margin: 0;
@@ -7,9 +8,61 @@ body {
 	color: #333;
 }
 
+p {
+	margin-top: 0;
+}
+
+h2 {
+	font-size: 1.4em;
+	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
+	color: #455349;
+	font-weight: normal;
+}
+
+h3 {
+	margin-bottom: 0;
+	font-size: 1.142857em;
+	line-height: .875;
+	font-weight: normal;
+	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
+/*	'Adobe Garamond Pro', 'Adobe Garamond', 'AGaramond', 'Hoefler Text', 'Baskerville', 'Times New Roman', serif; */
+}
+
+h4 {
+  font-size: 1.07142857em;
+	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
+	font-weight: normal;
+}
+
+a {
+	color: #0c4572;
+}
+
+a:hover {
+	color: #11609f;
+}
+
+a img {
+	vertical-align: middle;
+}
+table th {
+	text-align: left;	
+}
+
 img {
 	border: 0;
 }
+
+input[type=text] {
+	padding: 5px;
+	font-size: 1em;
+	border: 1px solid #3f3f3e;
+	background-color: #fefdfb;
+}
+/* Specific element styles */
+
+
+/* Header stuff*/
 #header, #container, #container_cap {
 	width: 818px;
 	margin-left: auto;
@@ -81,6 +134,8 @@ img {
 #header #account_settings a:hover {
 	color: #f1fdf5;
 }
+
+/* Body stuff */
 #container {
 	background: #fbfaf8 url('../images/main_background.gif') repeat-y;
 	padding: 0px 8px 0px 11px;
@@ -93,6 +148,16 @@ img {
 	height: 17px;
 }
 
+#main_content {
+	padding: 5px;
+}
+
+#main_content.with_side_bar {
+	width: 512px;
+	margin-left: 266px;
+}
+
+/* My Surveys */
 #my_surveys {
 	width: 246px;
 	padding: 0 10px;
@@ -113,20 +178,13 @@ img {
 	padding-bottom: 1ex;
 }
 
-#main_content {
-	padding: 5px;
-}
-
-#main_content.with_side_bar {
-	width: 512px;
-	margin-left: 266px;
-}
-
+/* Search box */
 #search_box {
 	float: right;
 	width: 246px;
 }
 
+/* Survey show page invitation list */
 #invitation_list {
 	float: right;
 	width: 256px;
@@ -160,6 +218,7 @@ div.link_bar a {
 	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;;
 	padding: 0 1em 0 0;
 }
+
 #end_break {
 	clear: both;
 }
@@ -378,46 +437,24 @@ form#new_survey textarea {
   font-size: 1.4em;
   font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
 }
-/* Generic Element Styles */
-p {
-	margin-top: 0;
+
+/* Survey Questions Page */
+div.qualifications {
+	display: inline;
+}
+div.qualifications a {
+	font-size: 0.9em;
+	color: #666;
+	outline: none;
 }
 
-h2 {
-	font-size: 1.4em;
-	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
-	color: #455349;
-	font-weight: normal;
+div.qualifications .field {
+	display: inline;
 }
 
-h3 {
-	margin-bottom: 0;
-	font-size: 1.142857em;
-	line-height: .875;
-	font-weight: normal;
-	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
-/*	'Adobe Garamond Pro', 'Adobe Garamond', 'AGaramond', 'Hoefler Text', 'Baskerville', 'Times New Roman', serif; */
-}
-
-h4 {
-  font-size: 1.07142857em;
-	font-family: 'Franklin Gothic', 'Franklin Gothic Medium', 'Franklin Gothic Std', 'ITC Franklin Gothic Std', 'ITCFranklin Gothic', Helvetica, Arial, sans-serif;
-	font-weight: normal;
-}
-
-a {
-	color: #0c4572;
-}
-
-a:hover {
-	color: #11609f;
-}
-
-a img {
-	vertical-align: middle;
-}
-table th {
-	text-align: left;	
+ol#questions {
+	padding-left: 1.5em;
+	
 }
 
 /* Custom Elements */
@@ -441,4 +478,23 @@ div.separator {
   margin-top: 1em;
   margin-bottom: 1em;
   text-align: center;
+}
+
+div.fieldWithErrors label {
+	color: #900;
+}
+
+div.fieldWithErrors {
+	display: inline;
+}
+
+div.fieldWithErrors input {
+	background-color: #fcc;
+}
+
+div.error_description {
+	display: inline;
+	font-style: italic;
+	padding: 0 0.5em 0 1em;
+	font-weight: bold;
 }
