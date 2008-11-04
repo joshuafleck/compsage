@@ -124,6 +124,7 @@ class SurveysController < ApplicationController
   def new
     @predefined_questions = PredefinedQuestion.all
     @questions = {}
+    @survey = Survey.new
 
     # Check to see if we arrived here from a 'survey network' link. If so, send the network along.
     if !params[:network_id].blank? then
