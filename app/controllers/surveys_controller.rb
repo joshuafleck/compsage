@@ -93,7 +93,7 @@ class SurveysController < ApplicationController
            #assign the attributes
            @question.attributes = predefined_question.except("id", :id)
            @question.predefined_question_id = predefined_question_group.id
-           @question.save
+           @question.save!
          end
       #destroy if the question was previously selected.
       else
