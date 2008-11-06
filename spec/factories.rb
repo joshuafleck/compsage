@@ -63,6 +63,14 @@ Factory.define :question do |p|
   
 end
 
+#definition and setup for predefined question
+Factory.define :predefined_question do |p|
+  p.position 1
+  p.description "Questions regarding pay for a positions"
+  p.name "Pay Questions"
+  p.question_hash [{:question_type => "numerical_field", :text => "What is this position's average base wage/salary?"}]
+end
+
 #definition and setup for response
 Factory.define :response do |p|
   
