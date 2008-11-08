@@ -22,10 +22,13 @@
 		<h3>Invite Your Networks</h3>
 		<ul>
 			<% current_organization.networks.each do |network| %>
-				<li><%=check_box_tag 'network'%>
-					<span class="name"><%=network.name%></span>:
-					<span class="description"><%=network.description%></span>
-				</li>
+		    <% fields_for network, :index => network.id do |network_form| %>
+		      <li>
+  		        <%=network_form.check_box :included%>
+  		        <%=network_form.label :included, network.name%>:
+					    <span class="description"><%=network.description%></span>
+					</li>
+		    <% end %>			
 			<% end %>
 	 	</ul>
 	  <h3>Invite Individual Organizations</h3>
@@ -53,7 +56,7 @@
 						</div>
 						<div class="box">
 							<label>&nbsp;</label>
-							<input type="submit" value="Add Invitation" />
+							<input id="external_invitation_submit" type="button" value="Add Invitation" />
 						</div>
 					</div>
 			</div>
@@ -72,8 +75,12 @@
 <script type="text/javascript">
 function observeSearchBox() {
 	$('search').observe('keyup', liveOrganizationSearch);
+	$('external_invitation_submit').observe('click', addExternalInvite);
 }
 
+/*
+ * This will send an ajax request to the server with the search text
+ */
 function liveOrganizationSearch() {
 	if($F('search').length == 0) return;
 	
@@ -87,6 +94,11 @@ function liveOrganizationSearch() {
 	});
 }
 
+/*
+ * This will display the search results, or bring up the
+ *  external invitation box if no organizations were returned
+ *  by the search
+ */
 function showResults(organizations) {
 	search_results = $('search_results')
 	$('search_instructions').hide();
@@ -103,12 +115,20 @@ function showResults(organizations) {
 		org_list = new Element('ul', {id: "search_results_list"})
 		organizations.each(function(organization) {
 			org_item = new Element('li', {id:"invite_organization_" + organization.id});
-			checkbox = new Element('input', {type: 'checkbox'});
+			checkbox = new Element('input', {
+			    type: 'checkbox', 
+			    id: "invite_organization_"+organization.id+"_included", 
+			    name: "invite_organization["+organization.id+"][included]"
+			  });
 			checkbox.onclick = function() {
 				addOrganizationToInvite(organization);
 			}
+	    label = new Element('label', {
+	        for: "invite_organization_"+organization.id+"_included"
+	      }).update(organization.name_and_location);
 			org_item.update(checkbox);
-			org_item.insert(" " + organization.name_and_location + " <span class='contact'>" + "Contact: " + organization.contact_name + "</span>");
+			org_item.insert(label)
+			org_item.insert(" <span class='contact'>" + "Contact: " + organization.contact_name + "</span>");
 			organization.list_item = org_item;
 			org_list.insert(org_item);
 		});
@@ -116,9 +136,17 @@ function showResults(organizations) {
 	}
 }
 
+/*
+ * When a search result is checked, this will add that 
+ *  organization to the included organizations list
+ */
 function addOrganizationToInvite(organization) {
 	invite_list = $('organizations_to_invite');
 	item = organization.list_item.remove()
+	
+	//This will ensure once the item is added to the included list that this function can not be called on the item
+	item.select("#invite_organization_"+organization.id+"_included")[0].onclick = null
+	
 	if(invite_list.select('#invite_organization_' + organization.id).length == 0)
 		invite_list.insert(item);
 }
@@ -133,6 +161,59 @@ function showExternalInvitationForm(email, org_name) {
 function hideExternalInvitationForm() {
 	$('search_results').show();
 	$('external_invitation_form').hide();
+}
+
+/*
+ * This will add the external invitation to the invite list and reset the search form
+ */
+function addExternalInvite() {
+
+	var email = $F('external_invitation_email');
+	var name = $F('external_invitation_organization_name');
+  var invite_list = $('organizations_to_invite');
+  
+  if (email == '') {
+    return alert('Email address may not be blank');
+  } else if (name == '') {
+    return alert("Organization name may not be blank");
+  }
+    
+  var invite_id = (new Date()).getTime();
+
+  invite_item = new Element('li');
+	checkbox = new Element('input', {
+  	  id: 'external_invite_' + invite_id + '_included', 
+  	  type: 'checkbox', 
+  	  value: "1", 
+  	  checked: 'checked', 
+  	  name: 'external_invite[' + invite_id + '][included]'
+	  });
+	label = new Element('label', {for: 'external_invite_' + invite_id + '_included'}).update(name+" ("+email+")");
+	external_invite_email = new Element('input', {
+	    type: 'hidden', 
+	    value: email, 
+	    name: 'external_invite[' + invite_id + '][email]'
+	  });
+	external_invite_name = new Element('input', {
+	    type: 'hidden', 
+	    value: name, 
+	    name: 'external_invite[' + invite_id + '][name]'
+	  });	
+	
+	invite_item.update(checkbox); 
+	invite_item.insert(label);  
+	invite_item.insert(external_invite_email);   
+	invite_item.insert(external_invite_name); 
+
+  invite_list.insert(invite_item, { position: 'bottom' });
+    
+  $('external_invitation_email').clear();
+  $('external_invitation_organization_name').clear();
+  $('search').clear();
+  $('search').select();
+  $('search_results').update('');
+  
+  hideExternalInvitationForm();
 }
 </script>
 

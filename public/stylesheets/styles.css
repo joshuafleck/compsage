@@ -411,6 +411,10 @@ form.new_survey textarea, form.edit_survey textarea {
   display: block;
 }
 
+#send_invitations li label {
+  display: inline;
+}
+
 #send_invitations input#search {
   width: 350px;
 }

@@ -12,6 +12,8 @@ class Network < ActiveRecord::Base
   
   after_create :set_owner_member
   
+  attr_accessor :included
+  
   # returns a sorted list of all (network and external_network) invitations
   def all_invitations(include_owner = false)
     invitations = self.invitations.find(:all, :include => :invitee)
