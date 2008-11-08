@@ -3,7 +3,7 @@
   <%=error_messages_for :survey %>
   <%=f.label :job_title%>
 	<%=f.text_field :job_title, :size => 40 %>
-  <%=f.label :job_description%>
+  <%=f.label :description, "Job description"%>
   <%=f.text_area :description, :rows => 4, :cols => 40 %>
 	<%=f.label :days_running, "Run length" %>
 	<%=f.select :days_running, (3..7).to_a.collect {|i| ["#{i} days", i]} %>
@@ -13,8 +13,8 @@
 		  <% @predefined_questions.each do |predefined_question| %>
 		    <% fields_for predefined_question, :index => predefined_question.id do |predefined_question_form| %>
 		      <li>
-		        <%=predefined_question_form.check_box :included%>
-						<span class="name"><%=predefined_question.name%></span>
+  		        <%=predefined_question_form.check_box :included%>
+  		        <%=predefined_question_form.label :included, predefined_question.name%>
 					</li>
 		    <% end %>
 		  <% end %>
@@ -27,11 +27,12 @@
 		  <% @questions.each do |id, question| %>
 		    <% fields_for question, :index => id do |question_form| %>
 		      <li>
-		        <%=question_form.check_box :included %>
+	          <%=question_form.check_box :included %>
+					  <%=question_form.label :included, question[:text]%>
+					  <span class="description"><%=question[:custom_question_type]%></span>
 		        <%=question_form.hidden_field :custom_question_type %>
 		        <%=question_form.hidden_field :text %>
 		        <%=question_form.hidden_field :id %>
-						<span class="name"><%=question[:text]%></span> <span class="description"><%=question[:custom_question_type]%></span>
 					</li>
 		    <% end %>
 		  <% end %>
@@ -39,11 +40,11 @@
 	  </p>
 		<div class="box_container">
 			<div class="box">
-				<label>Question Text</label>
+				<label for="question_text">Question Text</label>
 				<input type="text" size="30" id="question_text" />
 			</div>
 			<div class="box">
-				<label>Response Type</label>
+				<label for="response_type">Response Type</label>
 				<select id="response_type">
 					<option>Free response</option>
 					<option>Numeric response</option>
@@ -85,14 +86,26 @@ function createQuestion() {
   var question_id = (new Date()).getTime();
 
   question_item = new Element('li');
-	checkbox = new Element('input', {type: 'checkbox', value: "1", checked: 'checked', name: 'question[' + question_id + '][included]'});
+	checkbox = new Element('input', {
+  	  id: 'question_' + question_id + '_included', 
+  	  type: 'checkbox', value: "1", 
+  	  checked: 'checked', 
+  	  name: 'question[' + question_id + '][included]'
+	  });
+	label = new Element('label', {for: 'question_' + question_id + '_included'}).update(question_text);
+	descr = new Element('span', { class: "description" }).update(response_type);
 	text = new Element('input', {type: 'hidden', value: question_text, name: 'question[' + question_id + '][text]'});
-	type = new Element('input', {type: 'hidden', value: response_type, name: 'question[' + question_id + '][custom_question_type]'});
+	type = new Element('input', {
+	    type: 'hidden', 
+	    value: response_type, 
+	    name: 'question[' + question_id + '][custom_question_type]'
+	  });	
 	
-	question_item.update(checkbox);
+	question_item.update(checkbox); 
+	question_item.insert(label);  
+	question_item.insert(descr); 
 	question_item.insert(text);
-	question_item.insert(type);
-	question_item.insert("<span class=\"name\">" + question_text + "</span> <span class=\"description\">" + response_type + "</span>");    
+	question_item.insert(type);    
 
   custom_question_list.insert(question_item, { position: 'bottom' });
   $('question_text').clear();

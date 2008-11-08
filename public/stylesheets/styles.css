@@ -340,6 +340,10 @@ form.new_survey textarea, form.edit_survey textarea {
   list-style-type: none;
 }
 
+#standard_questions ul li label, #custom_questions ul li label {
+  display: inline;
+}
+
 #custom_questions ul span.description {
   color: #666;
   font-style: italic;

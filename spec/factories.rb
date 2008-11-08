@@ -12,6 +12,10 @@ Factory.sequence :email do |n|
   "joe.somebody#{n}@fake.com"
 end
 
+Factory.sequence :question do |n|
+  "Question #{n}"
+end
+
 #defining an organization.
 Factory.define :organization do |o|
   o.name 'Iced Inc'
@@ -60,15 +64,17 @@ end
 
 #definition and setup for question
 Factory.define :question do |p|
-  
+  p.position { |a| a.object_id }
+  p.text { Factory.next(:question) }
+  p.question_type "numerical_field"
 end
 
 #definition and setup for predefined question
 Factory.define :predefined_question do |p|
-  p.position 1
-  p.description "Questions regarding pay for a positions"
-  p.name "Pay Questions"
-  p.question_hash [{:question_type => "numerical_field", :text => "What is this position's average base wage/salary?"}]
+  p.position { |a| a.object_id }
+  p.description {|a| "#{a.name} Description" }
+  p.name { Factory.next(:question) }
+  p.question_hash {|a| [{:question_type => "numerical_field", :text =>  "#{a.name} text" }] }
 end
 
 #definition and setup for response
