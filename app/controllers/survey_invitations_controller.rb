@@ -5,6 +5,7 @@ class SurveyInvitationsController < ApplicationController
   def index
     @survey = current_organization.sponsored_surveys.find(params[:survey_id])
     @invitations = @survey.all_invitations
+    @invalid_external_invites = []
     
     respond_to do |wants|
       wants.html {} # render the template
@@ -16,94 +17,60 @@ class SurveyInvitationsController < ApplicationController
     # render the new template
   end
   
-  # Creates the new survey invitation.  If the organization is not found in the database (by
-  # email), it will send an external invitation out.
-  # 
-  # Raises AlreadyInvited if the user is already invited to the survey.
-  
   def create
-    @survey = current_organization.sponsored_surveys.running.find(params[:survey_id])
-    
-    # If there is an organization ID in the params great (this request likely came from the Memebrs page), otherwise use the email
-    if !params[:organization_id].blank? then
-      invited_organization = Organization.find_by_id(params[:organization_id]) 
-    else
-      invited_organization = Organization.find_by_email(params[:invitation][:email])
-    end
-    
-    if invited_organization.nil? then
-      # create an external invitation
-      @invitation = @survey.external_invitations.new(params[:invitation])
-      @invitation.inviter = current_organization
-    else
-      # Check for duplicate invite.
-      raise AlreadyInvited if invited_organization.survey_invitations.collect(&:survey_id).include?(@survey.id)
-      # Check for sponsor inviting themself. This is not allowed
-      raise SelfInvitation if invited_organization == @survey.sponsor
-      # create an internal invitation.
-      @invitation = @survey.invitations.new(:invitee => invited_organization, :inviter => current_organization)
-    end
-    
-    if @invitation.save then
-      if invited_organization.nil? then
-        flash[:message] = "Invitation sent to external email address #{params[:invitation][:email]}."
-      else
-        flash[:message] = "Invitation sent to #{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)}."
+    @survey = current_organization.sponsored_surveys.running.find(params[:survey_id])    
+    @invalid_external_invites = []     
+    invite_organizations = []
+       
+    # find all of the individual invited organizations    
+    params[:invite_organization].each do |id, invite|
+      if !invite[:included].blank? then
+        invite_organizations << Organization.find_by_id(id) 
       end
-      respond_to do |wants|
-        wants.html { redirect_to survey_invitations_path(params[:survey_id]) }
-        wants.xml { head :status => :created }
-        wants.js { render :text => "Invitation to #{@survey.job_title} sent to #{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)}."}
-      end
-    else
-      respond_to do |wants|
-        wants.html do
-          # prepare to render the index template again
-          @invitations = @survey.all_invitations
-          render :action => 'index'
-        end
-        wants.xml { render :xml => @invitation.errors.to_xml, :status => 422 }
-        wants.js { render :text => "Error creating invitation for #{@survey.job_title}"}
-      end
-    end
+    end unless params[:invite_organization].blank?
     
-  rescue AlreadyInvited
-    flash[:notice] = "#{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)} has already been invited."
-    respond_to do |wants|
-      wants.html { redirect_to survey_invitations_path(params[:survey_id]) }
-      wants.xml { head :status => 422 }
-      wants.js { render :text => "#{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)} has already been invited to #{@survey.job_title}."}
-    end
-  rescue SelfInvitation
-    flash[:notice] = "As the survey sponsor, you cannot be an invitee to your own survey."
-    respond_to do |wants|
-      wants.html { redirect_to survey_invitations_path(params[:survey_id]) }
-      wants.xml { head :status => 422 }
-      wants.js { render :text => flash[:notice]}
-    end
-  end
-  
-  #This method is for inviting a network to participate in a survey
-  def create_with_network
-    @survey = current_organization.sponsored_surveys.running.find(params[:survey_id])
-    @network = current_organization.networks.find(params[:invitation][:network_id])
+    # find all of the organizations belonging to invited networks 
+    params[:network].each do |id, invite|
+      if !invite[:included].blank? then
+        network = current_organization.networks.find(id)
+        invite_organizations += network.organizations
+      end
+    end unless params[:network].blank?
     
-    #Create an invitation for each network member
-    @network.organizations.each do |member| 
-      #Do not invite members already invited or the survey sponsor
-      if !member.survey_invitations.collect(&:survey_id).include?(@survey.id) && member != @survey.sponsor then
-        invitation = @survey.invitations.new(:invitee => member, :inviter => current_organization)
+    # create invitations for all invited organizations not already invited
+    invite_organizations.uniq.each do |invite_organization|
+      if !invite_organization.invited_surveys.include?(@survey) && invite_organization != @survey.sponsor then
+        invitation = @survey.invitations.new(:invitee => invite_organization, :inviter => current_organization)
         invitation.save!
       end
     end
-
-    flash[:message] = "Invitation sent to all members of #{@network.name}."
-    respond_to do |wants|
-      wants.html { redirect_to survey_invitations_path(params[:survey_id]) }
-      wants.xml { head :status => :created }
+    
+    # create the external invitations
+    params[:external_invite].each do |id, invite|
+      invitation = @survey.external_invitations.new(invite)
+      invitation.inviter = current_organization
+      if !invitation.save then
+        @invalid_external_invites << invitation
+      end
+    end unless params[:external_invite].blank?
+    
+    # if there was a problem creating any external invitations, re-render the index page
+    if @invalid_external_invites.size > 0 then
+      respond_to do |wants|
+        @invitations = @survey.all_invitations
+        wants.html do
+          render :action => "index"
+        end
+      end 
+    else
+      respond_to do |wants|
+        wants.html do
+          redirect_to survey_url(@survey)
+        end
+      end     
     end
   end
-  
+    
   def destroy
     survey = current_organization.sponsored_surveys.find(params[:survey_id])
     invitation = survey.invitations.find(params[:id])

@@ -527,3 +527,11 @@ div.error_description {
 	padding: 0 0.5em 0 1em;
 	font-weight: bold;
 }
+
+span.label {
+	font-weight: bold;
+}
+
+span.message {
+	font-style: italic;
+}

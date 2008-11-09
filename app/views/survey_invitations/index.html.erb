@@ -2,6 +2,18 @@
 <% highlight_tab("surveys") %>
 <h2>Invitations to <%=@survey.job_title%></h2>
 <%=flash_messages%>
+<% if @invalid_external_invites.size > 0 then %>
+  <span>There was a problem sending the following invitations:</span>
+  <ol>
+  <%@invalid_external_invites.each do |invite| %>
+    <li>
+      <span class='label'>Email: </span><%=invite.email%><br/>
+      <span class='label'>Organization Name: </span><%=invite.organization_name%><br/>
+      <span class='message'><%=invite.errors.full_messages.join(" &amp; ")%></span>
+    </li>
+  <% end %>
+  </ol>
+<% end %>
 <div id="current_invitation_list">
 	<h3>Current Invitation List</h3>
 	<ol id="invitations">
@@ -9,7 +21,7 @@
 		<% @invitations.each do |invitation| %>
 			<li>
 			  <%if invitation.is_a?(SurveyInvitation) then%>
-			    <%=link_to_organization(invitation.invitee) %></div>
+			    <%=link_to_organization(invitation.invitee) %>
 			  <%else%>      
 			    <%=invitation.organization_name%> (<%=invitation.email%>)
 			  <%end%>
@@ -47,11 +59,11 @@
 				<p>No organizations found.  Enter contact details below.</p>
 					<div class="box_container">
 						<div class="box">
-							<label>Email Address</label>
+							<label for="external_invitation_email">Email Address</label>
 							<input type="text" id="external_invitation_email" size="30" />
 						</div>
 						<div class="box">
-							<label>Organization Name</label>
+							<label for="external_invitation_organization_name">Organization Name</label>
 							<input type="text" id="external_invitation_organization_name" size="25" />
 						</div>
 						<div class="box">
@@ -73,9 +85,24 @@
 	<% end %>
 </div>
 <script type="text/javascript">
-function observeSearchBox() {
+
+function initializeObservers() {
 	$('search').observe('keyup', liveOrganizationSearch);
+	
 	$('external_invitation_submit').observe('click', addExternalInvite);
+	
+	$('external_invitation_submit').observe(
+	  'keydown', 
+	  callFunctionOnEnter.curry(addExternalInvite)
+	);	
+	$('external_invitation_organization_name').observe(
+	  'keydown', 
+	  callFunctionOnEnter.curry(addExternalInvite)
+	);
+	$('external_invitation_email').observe(
+	  'keydown', 
+	  callFunctionOnEnter.curry(addExternalInvite)
+	);
 }
 
 /*
@@ -197,7 +224,7 @@ function addExternalInvite() {
 	external_invite_name = new Element('input', {
 	    type: 'hidden', 
 	    value: name, 
-	    name: 'external_invite[' + invite_id + '][name]'
+	    name: 'external_invite[' + invite_id + '][organization_name]'
 	  });	
 	
 	invite_item.update(checkbox); 
@@ -217,4 +244,4 @@ function addExternalInvite() {
 }
 </script>
 
-<% content_for :initialize_js, "observeSearchBox();"%>
+<% content_for :initialize_js, "initializeObservers();"%>

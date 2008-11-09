@@ -68,6 +68,19 @@
 
 function observeCustomQuestion() {
   $('question_submit').observe('click', createQuestion);
+  
+  $('question_submit').observe(
+	  'keydown', 
+	  callFunctionOnEnter.curry(createQuestion)
+	);	  
+  $('question_text').observe(
+	  'keydown', 
+	  callFunctionOnEnter.curry(createQuestion)
+	);	
+  $('response_type').observe(
+	  'keydown', 
+	  callFunctionOnEnter.curry(createQuestion)
+	);
 }
 
 /*
