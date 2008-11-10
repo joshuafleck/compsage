@@ -226,7 +226,7 @@ class SurveysController < ApplicationController
     @participation = current_organization_or_survey_invitation.participations.find_or_initialize_by_survey_id(@survey.id)
     @participation.attributes = params[:participation]
     if @participation.save then
-      flash[:notice] = "Thank you for your participation!"
+      flash[:notice] = "Thank you for participating in the survey!  You will be notified when results are available."
       #current user is an organization, redirect to the show page
       if current_organization_or_survey_invitation.is_a?(Organization)
         respond_to do |wants|
