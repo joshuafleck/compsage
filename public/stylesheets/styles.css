@@ -97,7 +97,7 @@ input[type=text] {
 	height: 28px;
 }
 
-#header #nav.surveys li#surveys {
+#header #nav.surveys_nav li#surveys {
 	background: url('../images/selected_menu_item.gif') bottom center no-repeat;
 }
 
@@ -240,7 +240,7 @@ ul.surveys h3 a {
 }
 
 ul.surveys li {
-	padding-bottom: 1.2857em;
+	margin-bottom: 1.2857em;
 }
 
 ul.surveys li.odd {
