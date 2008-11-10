@@ -2,6 +2,18 @@
 // This file is automatically included by javascript_include_tag :defaults
 
 /*
+ * This will add observers to all form inputs that will call the specified method when enter is pushed
+ * @form the form
+ * @toCall the function that will be called
+ */
+function callFunctionOnEnterForm(f,toCall) {
+  var inputs = f.select('input');
+  inputs.each(function(s) {
+    s.observe('keydown', callFunctionOnEnter.curry(toCall));
+  });
+}
+
+/*
  * This will capture the enter key and call the provided function
  * @toCall the function to call
  * @e the event
@@ -9,9 +21,7 @@
 function callFunctionOnEnter(toCall,e) {
   if (!e) var e = window.event;
   if(e.keyCode==13){
-    e.returnValue=false;
-    e.preventDefault();
-    e.stopPropagation();
+    e.stop();
     toCall();
   }
   return false;

@@ -7,7 +7,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :surveys, :collection => {:search => :any, :my => :get }, :member => {:respond => :any, :rerun => :any} do |survey|
     survey.resources :questions
     survey.resources :discussions, :member => {:report => :any}
-    survey.resources :invitations, :controller => :survey_invitations, :collection => { :create_with_network => :any }
+    survey.resources :invitations, :controller => :survey_invitations
     survey.resource :report, :member => {:chart => :get}
   end
   

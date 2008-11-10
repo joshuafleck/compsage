@@ -91,18 +91,8 @@ function initializeObservers() {
 	
 	$('external_invitation_submit').observe('click', addExternalInvite);
 	
-	$('external_invitation_submit').observe(
-	  'keydown', 
-	  callFunctionOnEnter.curry(addExternalInvite)
-	);	
-	$('external_invitation_organization_name').observe(
-	  'keydown', 
-	  callFunctionOnEnter.curry(addExternalInvite)
-	);
-	$('external_invitation_email').observe(
-	  'keydown', 
-	  callFunctionOnEnter.curry(addExternalInvite)
-	);
+	callFunctionOnEnterForm($('external_invitation_form'),addExternalInvite);
+
 }
 
 /*

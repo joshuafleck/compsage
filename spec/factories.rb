@@ -16,6 +16,10 @@ Factory.sequence :question do |n|
   "Question #{n}"
 end
 
+Factory.sequence :network do |n|
+  "Network #{n}"
+end
+
 #defining an organization.
 Factory.define :organization do |o|
   o.name 'Iced Inc'
@@ -53,7 +57,9 @@ end
 
 #definition and setup for network
 Factory.define :network do |n|
-  
+  n.name { Factory.next(:network) }
+  n.description {|a| "#{a.name} description"}
+  n.owner {|a| a.association(:organization)}
 end
 
 #definition and setup for participation

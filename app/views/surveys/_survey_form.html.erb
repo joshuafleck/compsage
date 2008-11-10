@@ -38,7 +38,7 @@
 		  <% end %>
 	  </ul>
 	  </p>
-		<div class="box_container">
+		<div class="box_container" id="custom_question_form">
 			<div class="box">
 				<label for="question_text">Question Text</label>
 				<input type="text" size="30" id="question_text" />
@@ -69,18 +69,8 @@
 function observeCustomQuestion() {
   $('question_submit').observe('click', createQuestion);
   
-  $('question_submit').observe(
-	  'keydown', 
-	  callFunctionOnEnter.curry(createQuestion)
-	);	  
-  $('question_text').observe(
-	  'keydown', 
-	  callFunctionOnEnter.curry(createQuestion)
-	);	
-  $('response_type').observe(
-	  'keydown', 
-	  callFunctionOnEnter.curry(createQuestion)
-	);
+  callFunctionOnEnterForm($('custom_question_form'),createQuestion);
+
 }
 
 /*

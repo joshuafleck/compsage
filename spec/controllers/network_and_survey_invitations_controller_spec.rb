@@ -15,9 +15,6 @@ describe SurveyInvitationsController, " #route for" do
       route_for(:controller => "survey_invitations", :action => "destroy", :id => 1, :survey_id => 1).should == "/surveys/1/invitations/1"
     end
     
-    it "should map { :controller => 'invitations', :action => 'create_with_network', :survey_id => 1} to /surveys/1/invitations/create_with_network" do
-      route_for(:controller => "survey_invitations", :action => "create_with_network", :survey_id => 1).should == "/surveys/1/invitations/create_with_network"
-    end
 end
 
 describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
@@ -118,171 +115,181 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations.xml"
    
 end
 
-describe SurveyInvitationsController, " handling POST /surveys/1/invitations with internal invitation" do
+describe SurveyInvitationsController, " handling POST /surveys/1/invitations" do
 
  before do
-    @current_organization = mock_model(Organization, :name => "test")
+    @current_organization = mock_model(Organization, :object_id => "1")
     login_as(@current_organization)
     
-    @invitation = mock_model(SurveyInvitation, :id => 1, :inviter => @current_organization, :to_xml => 'XML', :save => true)
-    @invitations_proxy = mock('invitations proxy')
-    @invitations_proxy.stub!(:find).and_return(@invitation)
+    @survey = mock_model(Survey, :sponsor => @current_organization, :object_id => "1")
+       
+    @network1 = mock_model(Network, :owner => @current_organization, :object_id => "1")
+    @network2 = mock_model(Network, :owner => @current_organization, :object_id => "2")
+    @network3 = mock_model(Network, :owner => @current_organization, :object_id => "3")
     
-    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :invitations => @invitations_proxy)
-    @surveys_proxy = mock('surveys proxy')
-    @surveys_proxy.stub!(:find).and_return(@survey)
+    @external_invitation = mock_model(
+      ExternalSurveyInvitation, 
+      :inviter => @current_organization, 
+      :inviter= => true, 
+      :object_id => "1", 
+      :save => true
+    )
     
-    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
-    @current_organization.stub!(:survey_invitations).and_return([])
-    Organization.stub!(:find_by_email).and_return(@current_organization)
+    @invitation = mock_model(SurveyInvitation, :object_id => "1", :save! => true)
     
-    @surveys_proxy.stub!(:running).and_return(@surveys_proxy)
-    @invitations_proxy.stub!(:new).and_return(@invitation)
+    @organization1 = mock_model(Organization, :object_id => "2")
+    @organization2 = mock_model(Organization, :object_id => "3")
+    @organization3 = mock_model(Organization, :object_id => "4")
+    @organization4 = mock_model(Organization, :object_id => "5")
+    @organization5 = mock_model(Organization, :object_id => "6")
+    @organization6 = mock_model(Organization, :object_id => "7")
     
-    @params = {:survey_id => 1, :invitation => {:email => "test", :name => "test"}}
-  end
- 
-  def do_post
-    post :create, @params
-  end
-  
-  it "should require being logged in" do
-    controller.should_receive(:login_required)
-    do_post
-  end
-  
-  it "should check to see if the invitee exists" do
-    Organization.should_receive(:find_by_email).with(@params[:invitation][:email]).and_return(@current_organization)
-    do_post
-  end
-   
-  it "should create a new survey_invitation if the invitee exists" do
-    @invitations_proxy.should_receive(:new).with(:invitee => @current_organization, :inviter => @current_organization).and_return(@invitation)
-    do_post
-  end
-     
-  it "should require the organization is the sponsor of the survey" do
-    @current_organization.should_receive(:sponsored_surveys).and_return(@surveys_proxy)
-    do_post
-  end
-   
-  it "should redirect to the invitation index page and flash a message regarding the success of the action" do
-    do_post
-    flash[:message].should eql("Invitation sent to #{@current_organization.name}.")
-    response.should redirect_to('surveys/1/invitations')
-  end
-   
-end
-
-describe SurveyInvitationsController, " handling GET /surveys/1/create_with_network" do
-
- before do
-    @current_organization = mock_model(Organization, :name => "test")
-    login_as(@current_organization)
-      
-    @invitations_proxy = mock('invitations proxy')
+    @networks_proxy = mock('networks_proxy')
+    @sponsored_surveys_proxy = mock('sponsored_surveys_proxy', :find => @survey)
+    @external_invitations_proxy = mock('external_invitations_proxy', :new => @external_invitation)
+    @invited_surveys_proxy_incl = mock('invited_surveys_proxy_incl', :include? => true)
+    @invited_surveys_proxy_excl = mock('invited_surveys_proxy_incl', :include? => false)
+    @invitations_proxy = mock('invitations_proxy')
     
-    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :invitations => @invitations_proxy)
-    @surveys_proxy = mock('surveys proxy')
-    @surveys_proxy.stub!(:find).and_return(@survey)
-    
-    @invitation = mock_model(SurveyInvitation, :id => 1, :inviter => @current_organization, :to_xml => 'XML', :save! => true)
-    @invitation.stub!(:survey_id).and_return(@survey.id)
-    @invitations_proxy.stub!(:find).and_return(@invitation)
-    
-    @organization_1 = mock_model(Organization, :survey_invitations => [mock_model(SurveyInvitation, :survey_id => @survey.id)])
-    @organizations = [@current_organization,@organization_1]
-    
-    @network = mock_model(Network, :id => '1', :name => "test")  
-    @network.stub!(:organizations).and_return(@organizations)  
-    @networks_proxy = mock('networks proxy')
-    @networks_proxy.stub!(:find).and_return(@network)
-    
-    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
-    @current_organization.stub!(:survey_invitations).and_return([])
+    @current_organization.stub!(:sponsored_surveys).and_return(@sponsored_surveys_proxy)
     @current_organization.stub!(:networks).and_return(@networks_proxy)
-    Organization.stub!(:find_by_email).and_return(@current_organization)
+    @sponsored_surveys_proxy.stub!(:running).and_return(@sponsored_surveys_proxy)
     
-    @surveys_proxy.stub!(:running).and_return(@surveys_proxy)
-    @invitations_proxy.stub!(:new).and_return(@invitation)
+    Organization.stub!(:find_by_id).with(@organization1.object_id).and_return(@organization1)
+    Organization.stub!(:find_by_id).with(@organization2.object_id).and_return(@organization2)
+    Organization.stub!(:find_by_id).with(@organization3.object_id).and_return(@organization3)
+    @networks_proxy.stub!(:find).with(@network1.object_id).and_return(@network1)
+    @networks_proxy.stub!(:find).with(@network2.object_id).and_return(@network2)
+    @networks_proxy.stub!(:find).with(@network3.object_id).and_return(@network3)
+    @network1.stub!(:organizations).and_return([@organization4])
+    @network2.stub!(:organizations).and_return([@organization5])
+    @network3.stub!(:organizations).and_return([@organization6])
+    @organization1.stub!(:invited_surveys).and_return(@invited_surveys_proxy_excl)
+    @organization2.stub!(:invited_surveys).and_return(@invited_surveys_proxy_incl)
+    @organization3.stub!(:invited_surveys).and_return(@invited_surveys_proxy_incl)
+    @organization4.stub!(:invited_surveys).and_return(@invited_surveys_proxy_excl)
+    @organization5.stub!(:invited_surveys).and_return(@invited_surveys_proxy_incl)
+    @organization6.stub!(:invited_surveys).and_return(@invited_surveys_proxy_incl)
+    @survey.stub!(:external_invitations).and_return(@external_invitations_proxy)
+    @survey.stub!(:invitations).and_return(@invitations_proxy)
+    @invitations_proxy.stub!(:new).with(:invitee => @organization1, :inviter => @current_organization).and_return(@invitation)
+    @invitations_proxy.stub!(:new).with(:invitee => @organization4, :inviter => @current_organization).and_return(@invitation)
     
-    @params = {:survey_id => 1, :invitation => {:network_id => '1'}}
+    @params = {
+          :survey_id => @survey.object_id.to_s, 
+          :invite_organization => { 
+            @organization1.object_id.to_s => {:included => '1'}, 
+            @organization2.object_id.to_s => {:included => '1'}, 
+            @organization3.object_id.to_s => {}
+          },
+          :network => { 
+            @network1.object_id.to_s => {:included => '1'}, 
+            @network2.object_id.to_s => {:included => '1'}, 
+            @network3.object_id.to_s => {}
+          },
+          :external_invite => {
+            '1' => {"included" => '1', "organization_name" => 'ext1', "email" => 'ext1@ext1.com'}
+          }
+        }
+        
   end
  
-  def do_get
-    post :create_with_network, @params
+  def do_post
+    post :create, @params
   end
   
   it "should require being logged in" do
     controller.should_receive(:login_required)
-    do_get
+    do_post
   end
   
-  it "should find all members of the network" do
-    @network.should_receive(:organizations).and_return(@organizations)
-    do_get
+  it "should find all of the invited organizations" do
+    Organization.should_receive(:find_by_id).with(@organization1.object_id).and_return(@organization1)
+    Organization.should_receive(:find_by_id).with(@organization2.object_id).and_return(@organization2)
+    do_post
   end
-   
-  it "should create a new survey_invitation if the invitee has not already been invited" do
-    @invitations_proxy.should_receive(:new).with(:invitee => @current_organization, :inviter => @current_organization).and_return(@invitation)
-    do_get
+  
+  it "should find all of the invited networks" do
+    @networks_proxy.should_receive(:find).with(@network1.object_id).and_return(@network1)
+    @networks_proxy.should_receive(:find).with(@network2.object_id).and_return(@network2)
+    do_post
   end
-     
-  it "should require the organization is the sponsor of the survey" do
-    @current_organization.should_receive(:sponsored_surveys).and_return(@surveys_proxy)
-    do_get
+  
+  it "should find all of the invited networks members" do
+    @network1.should_receive(:organizations).and_return([@organization4])
+    @network2.should_receive(:organizations).and_return([@organization5])
+    do_post
+  end  
+  
+  it "should create an invitation for each invited organization" do
+    @invitations_proxy.should_receive(:new).with(:invitee => @organization1, :inviter => @current_organization).and_return(@invitation)
+    @invitations_proxy.should_receive(:new).with(:invitee => @organization4, :inviter => @current_organization).and_return(@invitation)
+    do_post
   end
-   
-  it "should redirect to the invitation index page and flash a message regarding the success of the action" do
-    do_get
-    flash[:message].should eql("Invitation sent to all members of #{@network.name}.")
-    response.should redirect_to('surveys/1/invitations')
+  
+  it "should not create invitations for previously invited organizations" do
+    @invitations_proxy.should_not_receive(:new).with(:invitee => @organization2, :inviter => @current_organization)
+    @invitations_proxy.should_not_receive(:new).with(:invitee => @organization5, :inviter => @current_organization)
+    do_post
   end
-   
+  
+  it "should not create invitations for unselected organizations" do
+    Organization.should_not_receive(:find_by_id).with(@organization3.object_id)
+    do_post
+  end  
+  
+  it "should create an invitation for each external invitation" do
+    @external_invitations_proxy.should_receive(:new).with(@params[:external_invite]['1'])
+    do_post
+  end
+  
 end
 
-
-describe SurveyInvitationsController, " handling POST /surveys/1/invitations with external invitation" do
+describe SurveyInvitationsController, " handling POST /surveys/1/invitations with bad external invitation" do
 
  before do
-    @current_organization = mock_model(Organization, :name => "test")
+    @current_organization = mock_model(Organization, :object_id => "1")
     login_as(@current_organization)
     
-    @invitation = mock_model(ExternalSurveyInvitation, :id => 1, :inviter => @current_organization, :to_xml => 'XML', :save => true, :inviter= => @current_organization)
-    @invitations_proxy = mock('invitations proxy')
-    @invitations_proxy.stub!(:find).and_return(@invitation)
+    @survey = mock_model(Survey, :sponsor => @current_organization, :object_id => "1", :all_invitations => [])
+
+    @external_invitation = mock_model(
+      ExternalSurveyInvitation, 
+      :inviter => @current_organization, 
+      :inviter= => true, 
+      :object_id => "1", 
+      :save => false
+    )
+
+    @sponsored_surveys_proxy = mock('sponsored_surveys_proxy', :find => @survey)
+    @external_invitations_proxy = mock('external_invitations_proxy', :new => @external_invitation)
     
-    @external_invitations_proxy = mock('external invitations proxy')
-    @external_invitations_proxy.stub!(:new).and_return(@invitation)
+    @current_organization.stub!(:sponsored_surveys).and_return(@sponsored_surveys_proxy)
+    @sponsored_surveys_proxy.stub!(:running).and_return(@sponsored_surveys_proxy)
     
-    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :invitations => @invitations_proxy)
-    @surveys_proxy = mock('surveys proxy')
-    @surveys_proxy.stub!(:find).and_return(@survey)
-    
-    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
-    @current_organization.stub!(:survey_invitations).and_return([])
-    Organization.stub!(:find_by_email).and_return(nil)
-    
-    @surveys_proxy.stub!(:running).and_return(@surveys_proxy)
-    @invitations_proxy.stub!(:new).and_return(@invitation)
     @survey.stub!(:external_invitations).and_return(@external_invitations_proxy)
-        
-    @params = {:survey_id => 1, :invitation => {:email => "test", :name => "test"}}
+    
+    @params = {
+          :survey_id => @survey.object_id.to_s,
+          :external_invite => {
+            '1' => {"included" => '1', "organization_name" => 'ext1', "email" => 'ext1@ext1.com'}
+          }
+        }
+       
   end
  
   def do_post
     post :create, @params
   end
    
-  it "should create a new external_survey_invitation if the invitee does not exist" do
-    @external_invitations_proxy.should_receive(:new).and_return(@invitation)
+  it "should assign the invalid invitations to the view" do
     do_post
+    assigns(:invalid_external_invites).should eql([@external_invitation])
   end
-   
-  it "should redirect to the invitation index page and flash a message regarding the success of the action" do
+  
+  it "should render the index template" do
     do_post
-    flash[:message].should eql("Invitation sent to external email address #{@params[:invitation][:email]}.")
-    response.should redirect_to('surveys/1/invitations')
+    response.should render_template 'index'
   end
    
 end

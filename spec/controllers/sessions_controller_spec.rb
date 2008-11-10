@@ -7,7 +7,13 @@ describe SessionsController do
     @brian = Organization.new(valid_organization_attributes)
     @brian.save
     
-    @invitation = ExternalSurveyInvitation.new(:inviter => organization_mock, :survey => survey_mock, :name => 'TEST', :key => '1234', :email => '111@1.com')
+    @invitation = ExternalSurveyInvitation.new(
+      :inviter => organization_mock, 
+      :survey => survey_mock, 
+      :name => 'TEST', 
+      :key => '1234', 
+      :email => '111@1.com')
+      
     @invitation.save
   end
   
