@@ -853,7 +853,7 @@ describe SurveysController, "handling POST /surveys/1/respond, as invitee that i
   
   it "should flash a success message" do
     do_respond
-    flash[:notice].should eql("Thank you for your participation!")
+    flash[:notice].should eql("Thank you for participating in the survey!  You will be notified when results are available.")
   end
 end
 
@@ -884,7 +884,7 @@ describe SurveysController, "handling POST /surveys/1/respond, as organization b
   
   it "should flash a success message" do
     do_respond
-    flash[:notice].should eql("Thank you for your participation!")
+    flash[:notice].should eql("Thank you for participating in the survey!  You will be notified when results are available.")
   end
 end
 

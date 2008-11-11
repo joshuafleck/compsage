@@ -135,7 +135,8 @@ function showResults(organizations) {
 			checkbox = new Element('input', {
 			    type: 'checkbox', 
 			    id: "invite_organization_"+organization.id+"_included", 
-			    name: "invite_organization["+organization.id+"][included]"
+			    name: "invite_organization["+organization.id+"][included]",
+			    value: "1"
 			  });
 			checkbox.onclick = function() {
 				addOrganizationToInvite(organization);

@@ -24,14 +24,14 @@ class SurveyInvitationsController < ApplicationController
        
     # find all of the individual invited organizations    
     params[:invite_organization].each do |id, invite|
-      if !invite[:included].blank? then
+      if invite[:included] == "1" then
         invite_organizations << Organization.find_by_id(id) 
       end
     end unless params[:invite_organization].blank?
     
     # find all of the organizations belonging to invited networks 
     params[:network].each do |id, invite|
-      if !invite[:included].blank? then
+      if invite[:included] == "1" then
         network = current_organization.networks.find(id)
         invite_organizations += network.organizations
       end
@@ -47,10 +47,12 @@ class SurveyInvitationsController < ApplicationController
     
     # create the external invitations
     params[:external_invite].each do |id, invite|
-      invitation = @survey.external_invitations.new(invite)
-      invitation.inviter = current_organization
-      if !invitation.save then
-        @invalid_external_invites << invitation
+      if !invite[:included].blank? then
+        invitation = @survey.external_invitations.new(invite)
+        invitation.inviter = current_organization
+        if !invitation.save then
+          @invalid_external_invites << invitation
+        end
       end
     end unless params[:external_invite].blank?
     
