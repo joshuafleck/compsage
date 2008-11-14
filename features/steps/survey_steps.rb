@@ -37,3 +37,18 @@ Given /I am on the edit survey page/ do
   visits edit_survey_url(@survey)
 end
 
+Given /I am on the survey invitations page/ do
+  @survey = Factory.create(:survey, :sponsor => @current_organization)
+  @organization1 = Factory.create(:organization, :name => "Organization 1")
+  @organization2 = Factory.create(:organization, :name => "Organization 2", :email => "org2@org2.com")
+  @organization3 = Factory.create(:organization, :name => "Organization 3", :contact_name => "Organization 3")
+  @network1 = Factory.create(:network, :name => "Network 1")
+  @network2 = Factory.create(:network, :name => "Network 2")
+  @network1.organizations << @organization1
+  @network1.organizations << @organization2
+  @network2.organizations << @organization3
+  @current_organization.owned_networks << @network1
+  @current_organization.owned_networks << @network2
+  visits survey_invitations_url(@survey)
+end
+

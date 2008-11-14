@@ -42,4 +42,13 @@ Feature: Manage surveys
     And I should see "Custom Question 1 text"
     And I should not see "Predefined Question selected text"
     And I should not see "Custom Question 2 text"
+    
+  Scenario: Manage Invitations
+    Given I am logged in
+    And I am on the survey invitations page
+    And I check "Network 1"
+    And I press "Send Invitations"
+    Then I should see "Organization 1"
+    And I should see "Organization 2"
+    And I should not see "Organization 3"
 
