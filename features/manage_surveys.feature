@@ -51,4 +51,13 @@ Feature: Manage surveys
     Then I should see "Organization 1"
     And I should see "Organization 2"
     And I should not see "Organization 3"
+    
+  Scenario: Manage Discussions
+    Given I am logged in
+    And I am on the survey show page
+    When I fill in "Subject" with "Discussion Subject"
+    And I fill in "Body" with "Discussion Body"
+    And I press "Post"
+    Then I should see "Discussion Subject"
+    And I should see "Discussion Body"
 

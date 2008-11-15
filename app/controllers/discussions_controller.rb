@@ -2,6 +2,16 @@ class DiscussionsController < ApplicationController
 	before_filter :login_or_survey_invitation_required, :find_survey
 	layout 'logged_in'
 	
+  def index
+    @discussions = @survey.discussions.all
+    respond_to do |wants|
+      wants.xml do
+        render :xml => @discussions.to_xml 
+      end
+    end
+  end
+	
+	
   def create
     @discussion = current_organization_or_survey_invitation.discussions.new(params[:discussion])
     @discussion.survey = @survey
@@ -34,9 +44,6 @@ class DiscussionsController < ApplicationController
     
     if @discussion.update_attributes(params[:discussion]) then    
       respond_to do |wants|
-        wants.html do
-          redirect_to survey_path(@survey)
-        end
         wants.xml do
           render :status => :ok
         end
@@ -46,9 +53,6 @@ class DiscussionsController < ApplicationController
       end
     else
       respond_to do |wants|
-        wants.html do
-          render :action => 'edit'
-        end
         wants.xml do
           render :xml => @discussion.errors.to_xml, :status => 422
         end
@@ -74,7 +78,7 @@ class DiscussionsController < ApplicationController
     else
       respond_to do |wants|
         wants.html do
-          render :action => 'index'
+          redirect_to survey_path(@survey)
         end
         wants.xml do
           render :xml => @discussion.errors.to_xml, :status => 422

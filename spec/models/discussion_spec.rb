@@ -6,7 +6,8 @@ module DiscussionSpecHelper
     {
       :survey => survey_mock,
       :responder => organization_mock,
-      :subject => 'Discussion Title'
+      :subject => 'Discussion Title',
+      :body => 'Discussion Body'
     }
   end
   
@@ -59,11 +60,16 @@ describe Discussion do
     @discussion.should have(1).errors_on(:responder)
   end
   
-  it "should be invalid without one of the following: subject, body" do  	
+  it "should be invalid without a subject if it is the discussion root" do  	
   	@discussion.attributes = valid_discussion_attributes.except(:subject,:body)
     @discussion.should have(1).errors_on(:subject)
-    @discussion.should have(1).errors_on(:body)
   end
+  
+  it "should be invalid without a body if it is a child" do  	
+    @discussion_parent = Discussion.create!(valid_discussion_attributes)
+  	@discussion.attributes = valid_discussion_attributes.except(:body).with(:parent_discussion_id => @discussion_parent.id)
+    @discussion.should have(1).errors_on(:body)
+  end  
     
   it "should assign discussion to the parent if this is a reply" do
     @discussion_parent = Discussion.create!(valid_discussion_attributes)

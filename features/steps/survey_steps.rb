@@ -52,3 +52,8 @@ Given /I am on the survey invitations page/ do
   visits survey_invitations_url(@survey)
 end
 
+Given /I am on the survey show page/ do
+  @survey = Factory.create(:survey, :sponsor => @current_organization) 
+  visits survey_url(@survey)   
+end
+

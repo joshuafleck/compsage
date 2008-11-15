@@ -133,6 +133,7 @@ describe SurveysController, " handling GET /surveys/1" do
     @discussions = [@discussion]
     @discussions.stub!(:roots).and_return(@discussions)
     @discussions.stub!(:within_abuse_threshold).and_return(@discussions)
+    @discussions.stub!(:new).and_return(@discussion)
     @survey.stub!(:discussions).and_return(@discussions)
     
     #participations stub
@@ -195,6 +196,7 @@ describe SurveysController, " handling GET /surveys/1 when survey is closed" do
     @discussions = [@discussion]
     @discussions.stub!(:within_abuse_threshold).and_return(@discussions)
     @discussions.stub!(:roots).and_return(@discussions)
+    @discussions.stub!(:new).and_return(@discussion)
     @survey.stub!(:discussions).and_return(@discussions)
     
     #participations stub
@@ -225,6 +227,7 @@ describe SurveysController, " handling GET /surveys/1.xml" do
     @discussions = [@discussion]
     @discussions.stub!(:within_abuse_threshold).and_return(@discussions)
     @discussions.stub!(:roots).and_return(@discussions)
+    @discussions.stub!(:new).and_return(@discussion)
     @survey.stub!(:discussions).and_return(@discussions)
     
     #participations stub
@@ -269,6 +272,7 @@ describe SurveysController, " handling GET /surveys/1.xml when survey is closed"
     @discussions = [@discussion]
     @discussions.stub!(:within_abuse_threshold).and_return(@discussions)
     @discussions.stub!(:roots).and_return(@discussions)
+    @discussions.stub!(:new).and_return(@discussion)
     @survey.stub!(:discussions).and_return(@discussions)
     
     #participations stub
