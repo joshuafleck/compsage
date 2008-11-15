@@ -3,9 +3,12 @@
 	  <span id="discussion_subject_<%=discussion_topic.id%>"><%= discussion_topic.subject %></span>
 	</p>
 	<p class="body">
+  	<% if discussion_topic.responder.eql?(@survey.sponsor) && !discussion_topic.body.blank? then %>
+	    <span class="sponsor">Sponsor: </span>
+	  <% end %>
 	  <span id="discussion_body_<%=discussion_topic.id%>"><%= discussion_topic.body %></span>
   	<% if !current_organization_or_survey_invitation.eql?(discussion_topic.responder) then %>
-			<%=link_to "Report Abuse", report_survey_discussion_path(@survey,discussion_topic) %>  
+			<%=link_to "Report Abuse", report_survey_discussion_path(@survey,discussion_topic), :class => "abuse" %>  
 	  <% end %>
 	</p>	
   <ul id="discussion_<%=discussion_topic.id%>_replies">

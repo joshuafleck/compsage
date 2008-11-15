@@ -289,6 +289,11 @@ span.sponsor {
 	font-size: .9em	;
 }
 
+a.abuse {
+	color: #888;
+	font-size: .8em	;
+}
+
 span.sponsor a {
 	color: #4e728b;
 }
