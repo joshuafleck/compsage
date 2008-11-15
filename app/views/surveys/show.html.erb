@@ -48,13 +48,85 @@
 	<p class="description_box"><%=@survey.description%></p>
 	<h3>Discussion</h3>
 	<% if @discussions.any? then %>
-		<p><%=link_to "New Discussion Subject", new_survey_discussion_path(@survey) %></p>
-		<ul id="discussions">
-		  <%=render :partial => 'discussions/discussion', :collection => @discussions.sort %>
-		</ul>
+		<p><a id="new_discussion_link">Start new discussion</a></p>
 	<% else %>
-		There are currently no discussion topics.  You may <%=link_to "start one now", new_survey_discussion_path(@survey)%>.
+		There are currently no discussion topics.  You may <a id="new_discussion_link">start one now</a>.
 	<% end %>
+	<div id="new_discussion_form" style="<%='display: none;' unless @discussion.errors.size > 0%>">
+  	<%=render :partial => 'discussions/discussion_form', :locals => { :discussion => @discussion } %>
+	</div>
+	<ul id="discussions">
+	  <%=render :partial => 'discussions/discussion_topic', :collection => @discussions.sort %>
+	</ul>
 	<p class="discussion_warning">You must preserve your anonymity and the anonymity of the other participants. The posting of
 		compensation information is unlawful.</p>
 <% end %>
+<script type="text/javascript">
+
+function observeDiscussions() {
+
+  /* Show/hide the new discussion form */
+  $('new_discussion_link').observe('click', startNewDiscussion.curry($('new_discussion_form')));
+  $('new_discussion_link_cancel').observe('click', cancelNewDiscussion.curry($('new_discussion_form')));
+  
+  <% @discussions.each do | discussion_topic | %>
+  
+    <% if current_organization_or_survey_invitation.eql?(discussion_topic.responder) then %>
+     /* Scriptaculous in-place editing of discussion topic subject/body */
+      new Ajax.InPlaceEditor(
+        'discussion_body_<%=discussion_topic.id%>', 
+        '<%=survey_discussion_path(@survey.id,discussion_topic.id)%>',
+        {
+          rows:4, 
+          cols:30, 
+          callback: function(form, value) { return '_method=put&id=<%=discussion_topic.id%>&discussion[body]='+escape(value) }
+        }
+      );
+      new Ajax.InPlaceEditor(
+        'discussion_subject_<%=discussion_topic.id%>', 
+        '<%=survey_discussion_path(@survey.id,discussion_topic.id)%>',
+        {callback: function(form, value) { return '_method=put&id=<%=discussion_topic.id%>&discussion[subject]='+escape(value)}}
+      );
+    <% end %>
+    
+     /* Show/hide the reply form */
+    $('discussion_reply_<%=discussion_topic.id%>').observe(
+      'click', 
+      startNewDiscussion.curry($('discussion_reply_box_<%=discussion_topic.id%>'))
+    );
+    $('discussion_reply_<%=discussion_topic.id%>_cancel').observe(
+      'click', 
+      cancelNewDiscussion.curry($('discussion_reply_box_<%=discussion_topic.id%>'))
+    );
+    
+    <% discussion_topic.all_children.each do | discussion | %>
+    
+      <% if current_organization_or_survey_invitation.eql?(discussion.responder) then %>
+        /* Scriptaculous in-place editing of discussion body */
+        new Ajax.InPlaceEditor(
+          'discussion_body_<%=discussion.id%>', 
+          '<%=survey_discussion_path(@survey.id,discussion.id)%>',
+          {
+            rows:4, 
+            cols:30, 
+            callback: function(form, value) { return '_method=put&id=<%=discussion.id%>&discussion[body]='+escape(value) }
+          }
+        );
+      <% end %>
+    <% end %>   
+     
+  <% end %>  
+  
+}
+
+function startNewDiscussion(elem) {
+  elem.show()
+}
+
+function cancelNewDiscussion(elem) {
+  elem.hide()
+}
+
+</script>
+
+<% content_for :initialize_js, "observeDiscussions();"%>

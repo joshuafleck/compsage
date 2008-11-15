@@ -1,0 +1,38 @@
+<li>
+	<p class="subject">
+	  <span id="discussion_subject_<%=discussion_topic.id%>"><%= discussion_topic.subject %></span>
+	</p>
+	<p class="body">
+	  <span id="discussion_body_<%=discussion_topic.id%>"><%= discussion_topic.body %></span>
+  	<% if !current_organization_or_survey_invitation.eql?(discussion_topic.responder) then %>
+			<%=link_to "Report Abuse", report_survey_discussion_path(@survey,discussion_topic) %>  
+	  <% end %>
+	</p>	
+  <ul id="discussion_<%=discussion_topic.id%>_replies">
+      <%= render :partial => "discussions/discussion", 
+                 :collection => discussion_topic.all_children.find_all{|discussion| discussion.is_not_abuse}.sort 
+      %>
+      <li>
+        <a id="discussion_reply_<%=discussion_topic.id%>">Reply</a>
+        <div id="discussion_reply_box_<%=discussion_topic.id%>" style='display: none;'>
+          <% form_tag survey_discussions_url(@survey), :method => :post do %>
+            <%=text_area_tag(
+              'discussion[body]',
+              '', 
+              :id => "discussion_reply_#{discussion_topic.id}_body", 
+              :rows => 4, 
+              :cols => 30)
+            %>
+            <%=hidden_field_tag(
+              'discussion[parent_discussion_id]',
+              discussion_topic.id, 
+              :id => "discussion_reply_#{discussion_topic.id}_parent_id")
+             %>
+            <p>
+              <%= submit_tag 'Post' %> or <a id="discussion_reply_<%=discussion_topic.id%>_cancel">Cancel</a>
+            </p>
+          <% end %>
+        </div>
+      </li>
+  </ul>
+</li>

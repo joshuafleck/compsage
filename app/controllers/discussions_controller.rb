@@ -2,37 +2,9 @@ class DiscussionsController < ApplicationController
 	before_filter :login_or_survey_invitation_required, :find_survey
 	layout 'logged_in'
 	
-	def index
-       
-	  @discussions = @survey.discussions.within_abuse_threshold.roots
-	  
-		respond_to do |wants|
-      wants.html
-      wants.xml do
-      	render :xml => @discussions.to_xml 
-      end
-    end
-  end
-  
-  def new
-    
-    #Create a new disussion and set its survey
-    @discussion = Discussion.new
-    @discussion.survey = @survey
-    
-    #If this is a reply, there will be a parent discussion. 
-    #This will set the parent discussion id in the new discussion,
-    #and also prepopulate the subject field.
-    if !params[:parent_discussion_id].blank? then
-      @parent_discussion = @survey.discussions.find(params[:parent_discussion_id])
-      @discussion.parent_discussion_id = @parent_discussion.id
-      @discussion.subject = "RE: " + @parent_discussion.subject
-    end
-    
-  end
-
   def create
     @discussion = current_organization_or_survey_invitation.discussions.new(params[:discussion])
+    @discussion.survey = @survey
     
     if @discussion.save then
       respond_to do |wants|
@@ -45,17 +17,16 @@ class DiscussionsController < ApplicationController
     else
       respond_to do |wants|
         wants.html do
-          render :action => 'new'
+          @invitations = @survey.all_invitations(true) 
+      	  @discussions = @survey.discussions.within_abuse_threshold.roots
+      	  @participation = current_organization_or_survey_invitation.participations.find_by_survey_id(@survey)          
+          render :template => "surveys/show"
         end
         wants.xml do
           render :xml => @discussion.errors.to_xml, :status => 422
         end
       end
     end
-  end
-  
-  def edit
-    @discussion = current_organization_or_survey_invitation.discussions.find(params[:id])
   end
   
   def update
@@ -69,6 +40,9 @@ class DiscussionsController < ApplicationController
         wants.xml do
           render :status => :ok
         end
+        wants.js do
+          render :text => params[:discussion][:body].blank? ? @discussion.subject : @discussion.body
+        end
       end
     else
       respond_to do |wants|
@@ -77,6 +51,9 @@ class DiscussionsController < ApplicationController
         end
         wants.xml do
           render :xml => @discussion.errors.to_xml, :status => 422
+        end
+        wants.js do
+          render :text => @discussion.errors.full_messages.join(" &amp; ")
         end
       end
     end

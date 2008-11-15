@@ -8,8 +8,8 @@ class Discussion < ActiveRecord::Base
   
   validates_length_of :subject, :allow_nil => true, :maximum => 128
   validates_length_of :body, :allow_nil => true, :maximum => 1024
-  validates_presence_of :subject, :if => Proc.new { |discussion| discussion.body.blank?}
-  validates_presence_of :body, :if => Proc.new { |discussion| discussion.subject.blank?}
+  validates_presence_of :subject, :if => :is_topic?
+  validates_presence_of :body, :if => :is_not_topic?
   validates_presence_of :responder
   validates_presence_of :survey
   
@@ -30,6 +30,17 @@ class Discussion < ActiveRecord::Base
     return self.created_at <=> o.created_at
   end
   
+  protected
+  
+  def is_topic?
+    self.parent_id.blank? && self.parent_discussion_id.blank?
+  end
+  
+  def is_not_topic?
+    !self.is_topic?
+  end
+  
+  
   private
   
   #After the creation of a discussion, this will assign the discussion to its parent in the case of a reply
@@ -39,4 +50,5 @@ class Discussion < ActiveRecord::Base
       self.move_to_child_of parent_discussion
     end    
   end
+  
 end
