@@ -184,6 +184,18 @@ input[type=text] {
 	width: 246px;
 }
 
+#search_box input#search_text {
+	width: 125px;
+}
+
+#my_search_box {
+	float: right;
+}
+
+#my_search_box input#search_text {
+  width: 200px;
+}
+
 /* Survey show page invitation list */
 #invitation_list {
 	float: right;
@@ -199,14 +211,6 @@ input[type=text] {
 	padding-left: 1.5em;
 	margin-top: 0;
 	padding-top: 0;
-}
-
-#search_box input#search_text {
-	width: 125px;
-	padding: 5px;
-	font-size: 1em;
-	border: 1px solid #3f3f3e;
-	background-color: #fefdfb;
 }
 
 div.link_bar {
