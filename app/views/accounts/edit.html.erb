@@ -2,13 +2,4 @@
 <% breadcrumbs(link_to("My Account", account_path)) %>
 <% highlight_tab "account" %>
 <h2>Edit My Account</h2>
-<%=error_messages_for :organization%>
-<%=flash_messages%>
-<% form_for :organization, @organization, :url => account_path, :html => {:method => :put, :multipart => true} do |f|%>
-  <%= render :partial => "accounts/account_form", 
-                   :locals => { :f => f } %>
-  <p>
-    <input type="submit" value="Edit" /> 
-    <%=link_to "Cancel", account_path %>
-  </p>
-<% end %>
+<%= render :partial => "accounts/account_form" %>

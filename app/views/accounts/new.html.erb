@@ -1,18 +1,4 @@
 <% title "New Account" %>
 <% highlight_tab "join" %>
 <h2>New Account</h2>
-<%=flash_messages%>
-<%=error_messages_for :organization%>
-<% form_for :organization, @organization, :html => {:multipart => true}, :url => account_path do |f| %>
-  <%= hidden_field_tag 'key', @external_invitation.key %>
-  <%= render :partial => "accounts/account_form", 
-                   :locals => { :f => f } %>
-  <p>
-    <input type="submit" value="Create" /> 
-    <% if logged_in_from_survey_invitation? then %>
-      <%=link_to "Cancel", survey_path(current_survey_invitation.survey.id) %>
-    <% else %>
-      <%=link_to "Cancel", new_session_path %>
-    <% end %>
-  </p>
-<% end %>
+<%= render :partial => "accounts/account_form", :locals => { :external_invitation => @external_invitation } %>

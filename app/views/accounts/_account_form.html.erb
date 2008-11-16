@@ -1,25 +1,20 @@
-<p>
-  <label>Name of Your Organization:</label><br />
+<%=flash_messages%>
+<%=error_messages_for :organization%>
+<% form_for @organization, :url => account_path, :html => {:multipart => true} do |f| %>
+  <% if @organization.new_record? %>
+   <%= hidden_field_tag 'key', external_invitation.key %>
+  <% end %>
+  <%=f.label :name, 'Name of Your Organization' %>
   <%=f.text_field :name %>
-</p>
-<p>
-  <label>Your Name:</label> <br />
+  <%=f.label :contact_name, 'Your Name' %>  
   <%=f.text_field :contact_name %>
-</p>
-<p>
-  <label>Your Email Address:</label> <br />
+  <%=f.label :email %> 
   <%=f.text_field :email %>
-</p>
-<p>
-  <label>Your Location:</label> <br />
+  <%=f.label :location, 'Name of Office or Branch' %> 
   <%=f.text_field :location %>
-</p>
-<p>
-  <label>City:</label> <br />
+  <%=f.label :city %> 
   <%=f.text_field :city %>
-</p>
-<p>
-  <label>State:</label> <br />
+  <%=f.label :state %> 
   <%= f.select :state, ['AK',
 		'AL',
 		'AR',
@@ -72,13 +67,9 @@
 		'WV',
 		'WY'], 
 		:include_blank => true %>
-</p>
-<p>
-  <label>Zip Code:</label> <br />
+  <%=f.label :zip_code %> 
   <%=f.text_field :zip_code %>
-</p>
-<p>
-  <label>Industry:</label> <br />
+  <%=f.label :industry %> 
   <%=f.select :industry, ['Advertising',
     'Aerospace & Defense',
     'Agribusiness',
@@ -135,19 +126,23 @@
     'Wholesaling',
     'Wood Products'], 
 		:include_blank => true %>
-</p>
-<p>
   <% if !@organization.logo.nil? then %>
     <p><%=image_tag @organization.logo.public_filename(:standard_thumbnail) %></p>
   <% end %>
-  <label>Your Logo:</label><br/>
+  <%=f.label :logo %> 
   <%= file_field 'logo','uploaded_data' %>
-</p>
-<p>
-  <label>Password:</label> <br />
+  <%=f.label :password %> 
   <%=f.password_field :password %>
-</p>
-<p>
-  <label>Confirm Password:</label> <br />
+  <%=f.label :password_confirmation %> 
   <%=f.password_field :password_confirmation %>
-</p>
+  <p>
+    <input type="submit" value='<%=@organization.new_record? ? "Create" : "Update"%>' /> 
+    <% if @organization.new_record? && logged_in_from_survey_invitation? then %>
+      <%=link_to "Cancel", survey_path(current_survey_invitation.survey.id) %>
+    <% elsif @organization.new_record? %>
+      <%=link_to "Cancel", new_session_path %>
+    <% else %>
+      <%=link_to "Cancel", account_path %>
+    <% end %>
+  </p>
+<% end %>

@@ -87,7 +87,7 @@ class Organization < ActiveRecord::Base
   #Sets the organizations logo, replaces any existing logo
   def set_logo(logo_params)
   
-    if !logo_params[:uploaded_data].blank? then
+    if !logo_params.nil? && !logo_params[:uploaded_data].blank? then
     
       if self.logo then
         self.logo.destroy

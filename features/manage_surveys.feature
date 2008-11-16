@@ -60,4 +60,12 @@ Feature: Manage surveys
     And I press "Post"
     Then I should see "Discussion Subject"
     And I should see "Discussion Body"
+    
+  Scenario: Manage Discussions As Invitee
+    Given I am invited to the survey
+    When I fill in "Subject" with "Discussion Subject"
+    And I fill in "Body" with "Discussion Body"
+    And I press "Post"
+    Then I should see "Discussion Subject"
+    And I should see "Discussion Body"    
 

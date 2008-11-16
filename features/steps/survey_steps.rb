@@ -6,6 +6,18 @@ Given /I am logged in/ do
   clicks_button "Log in"
   response.body.should_not =~ /Password/m
 end
+
+Given /I am invited to the survey/ do
+  @current_organization = Factory.create(:organization)
+  visits new_session_url
+  fills_in("Email", :with => @current_organization.email)
+  fills_in("Password", :with => "test12")
+  clicks_button "Log in"
+  clicks_link("Log Out")
+  @survey = Factory.create(:survey, :sponsor => @current_organization) 
+  @invitation = Factory.create(:external_survey_invitation, :survey => @survey)
+  visits survey_login_url(:key => @invitation.key, :survey_id => @survey.id)   
+end
  
 Given /I am on the new survey page/ do
   @predefined_question = Factory.create(:predefined_question, :name => "Question 1")
@@ -56,4 +68,5 @@ Given /I am on the survey show page/ do
   @survey = Factory.create(:survey, :sponsor => @current_organization) 
   visits survey_url(@survey)   
 end
+
 

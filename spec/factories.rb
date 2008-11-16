@@ -20,6 +20,10 @@ Factory.sequence :network do |n|
   "Network #{n}"
 end
 
+Factory.sequence :organization_name do |n|
+  "Organization #{n}"
+end
+
 #defining an organization.
 Factory.define :organization do |o|
   o.name 'Iced Inc'
@@ -53,6 +57,14 @@ end
 #definition and setup for invitation
 Factory.define :invitation do |i|
   
+end
+
+#definition and setup for external survey invitation
+Factory.define :external_survey_invitation do |i|
+  i.survey {|a| a.association(:survey)}
+  i.inviter {|a| a.association(:organization)}
+  i.organization_name { Factory.next(:organization_name) }
+  i.email { Factory.next(:email) }
 end
 
 #definition and setup for network

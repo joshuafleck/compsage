@@ -12,9 +12,10 @@ describe SessionsController do
       :survey => survey_mock, 
       :name => 'TEST', 
       :key => '1234', 
-      :email => '111@1.com')
+      :email => '111@1.com',
+      :organization_name => "test org name")
       
-    @invitation.save
+    @invitation.save!
   end
   
   after(:all) do
@@ -29,7 +30,7 @@ describe SessionsController do
   end
   
   it 'logins and redirects when there is a valid survey invitation' do
-    get :create_survey_session, :key => @invitation.key
+    get :create_survey_session, :key => @invitation.key, :survey_id => @invitation.survey.id
     session[:external_survey_invitation_id].should eql(@invitation.id)
     response.should be_redirect
   end
