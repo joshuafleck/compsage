@@ -53,4 +53,13 @@ class Notifier < ActionMailer::Base
     
     body :survey => survey, :participant => participant
   end
+  
+  #sent when a user requests a key for resetting their password
+  def reset_password_key_notification(organization)
+    recipients organization.email
+    from        "system@huminsight.com"
+    subject     "CompSage Password Reset Form"
+    
+    body :organization => organization
+  end
 end

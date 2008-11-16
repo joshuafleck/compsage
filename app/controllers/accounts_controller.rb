@@ -1,5 +1,5 @@
 class AccountsController < ApplicationController
-  before_filter :login_required, :except => [ :new , :create ]
+  before_filter :login_required, :except => [ :new , :create, :forgot, :reset ]
   layout :logged_in_or_invited_layout 
 	
 	def show
@@ -115,12 +115,42 @@ class AccountsController < ApplicationController
       end
     end
 	end
+	
+	#forgot password functionality
+	def forgot
+	  @organization = Organization.find_by_email(params[:email])
+	  if !@organization.nil? then
+      @organization.reset_password_key = create_key
+      @organization.reset_password_key_expires_at = Time.now + 5.days
+      
+      @organization.save!
+      
+      Notifier.deliver_reset_password_key_notification(@organization)
+      
+      respond_to do |wants|
+        wants.html do
+          flash[:notice] = "Email successfully sent."
+        end
+      end
+    else
+      flash[:notice] = "There was no organization found for the requested email."
+    end
+  end
+  
+  #allow user to update password if key is valid
+  def reset
+    
+  end
 
   private
   
   #Use a different layout depending on how the user has entered the application
   def logged_in_or_invited_layout
     logged_in_from_survey_invitation? ? "survey_invitation_logged_in" : (logged_in? ? "logged_in" : "front_with_invitation")
+  end
+  
+  def create_key
+     [Digest::SHA1.digest(Time.now.to_f.to_s + Array.new(){rand(256)}.pack('c*'))].pack("m")[0..19]
   end
       
 end

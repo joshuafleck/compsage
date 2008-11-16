@@ -397,7 +397,8 @@ describe AccountsController, " handling PUT /account" do
   end
   
 end
-describe AccountsController, " handling PUT /account with validation error" do
+
+describe AccountsController, " handling PUT /account with validation error" do
   
   before(:each) do
     @current_organization = mock_model(Organization)
@@ -415,5 +416,9 @@ end
     do_put
     response.should render_template('edit')
   end
+  
+end
+
+describe AccountsController, "handing" do
   
 end
