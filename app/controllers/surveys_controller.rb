@@ -228,15 +228,14 @@ class SurveysController < ApplicationController
     @participation.attributes = params[:participation]
     if @participation.save then
       flash[:notice] = "Thank you for participating in the survey!  You will be notified when results are available."
-      #current user is an organization, redirect to the show page
-      if current_organization_or_survey_invitation.is_a?(Organization)
-        respond_to do |wants|
-          wants.html{ redirect_to survey_path(@survey) }
-        end
-      #invite based user, redirect to sign-up page   
-      else
-        respond_to do |wants|
-          wants.html{ redirect_to new_account_path }
+      
+      respond_to do |wants|
+        wants.html do
+          if current_organization_or_survey_invitation.is_a?(Organization) then
+            redirect_to survey_path(@survey) # is a member
+          else
+            redirect_to new_account_path # came via invite, so give them a chance to sign up
+          end
         end
       end
     else
@@ -254,7 +253,8 @@ class SurveysController < ApplicationController
     respond_to do |wants|
       wants.html {
         @filter_by_subscription = "true" # need this flag to designate any searches should be against subscribed surveys
-        @surveys = current_organization.surveys.paginate(:page => params[:page], :order => 'job_title')  
+        @running_surveys = current_organization.surveys.running.paginate(:page => params[:page], :order => 'job_title')
+        @finished_surveys = current_organization.surveys
       }
       wants.xml {
         @surveys = current_organization.surveys
