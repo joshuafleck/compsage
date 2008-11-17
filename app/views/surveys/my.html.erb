@@ -1,16 +1,18 @@
 <% title "My Surveys" %>
-<% breadcrumbs(link_to("Surveys",surveys_path)) %>
 <% highlight_tab("surveys") %>
 <h2>My Surveys</h2>
-<p>
-These are the surveys you have sponsored or participated
-</p>
 <%=flash_messages%>
-<p><%=link_to "Sponsor a Survey", new_survey_path()%></p>
-<p><%=link_to "All Surveys", surveys_path()%></p>
-<h3>Search My Surveys</h3>
-<%= render :partial => "search_form", :locals => { :search_subscribed_only => true } %>
+<div id="my_search_box">
+	<% form_tag search_surveys_path, :method => :get do %>
+	  <%= hidden_field_tag 'filter_by_subscription', @filter_by_subscription %>
+	  <%= text_field_tag 'search_text', @search_text %>
+		<input type="submit" id="search_submit" value="Find Survey Results">
+	<% end %>
+</div>
+<%=link_to image_tag("sponsor_a_survey_button.gif"), new_survey_path%>
+<h3>Running Surveys</h3>
+<h3>Survey Results</h3>
 <ul id="surveys">
-<%= render :partial => "survey", :collection => @surveys %>
+	<%= render :partial => "survey", :collection => @surveys %>
 </ul>
 <%= will_paginate @surveys %>
