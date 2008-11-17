@@ -59,6 +59,17 @@ input[type=text] {
 	border: 1px solid #3f3f3e;
 	background-color: #fefdfb;
 }
+
+textarea {
+  font-size: 1.25em;
+	padding: 5px;
+	font-family: helvetica;
+	letter-spacing: .05em;
+	font-weight: normal;
+	font-size: 1em;
+	border: 1px solid #3f3f3e;
+	background-color: #fffefc;
+}
 /* Specific element styles */
 
 
@@ -320,22 +331,10 @@ form.new_survey input, form.edit_survey input {
 
 form.new_survey input#survey_job_title, form.edit_survey input#survey_job_title {
 	width: 500px;
-	border: 1px solid #3f3f3e;
-	background-color: #fffefc;
-	padding: 5px;
-	font-size: 1em;
 }
 
 form.new_survey textarea, form.edit_survey textarea {
-	font-size: 1.25em;
 	width: 500px;
-	border: 1px solid #3f3f3e;
-	background-color: #fffefc;
-	padding: 5px;
-	font-family: helvetica;
-	letter-spacing: .05em;
-	font-weight: normal;
-	font-size: 1em;
 }
 
 #standard_questions h4, #custom_questions h4 {
@@ -530,6 +529,15 @@ div.fieldWithErrors input {
 	background-color: #fcc;
 }
 
+div.errorExplanation {
+ font-size: 1.1em; 
+}
+
+div.errorExplanation h2 {
+  font-size: 1.1em;
+  color: #900;
+}
+/* inline error description for survey fields eg. */
 div.error_description {
 	display: inline;
 	font-style: italic;
