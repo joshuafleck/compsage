@@ -38,7 +38,7 @@ class Survey < ActiveRecord::Base
   validates_presence_of :sponsor
   
   named_scope :recent, :order => 'surveys.created_at DESC', :limit => 10
-  
+  named_scope :closed, :conditions => ['aasm_state = ? OR aasm_state = ?', 'finished', 'stalled']
   after_create :add_sponsor_subscription
   
   aasm_initial_state :running
