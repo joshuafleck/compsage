@@ -91,7 +91,7 @@ describe NetworkInvitation, ".accept!" do
                                         :name => "invitee",
                                         :contact_name => "Brian")
     @networks = []
-    @network = mock_model(Network, :name => "Network")
+    @network = mock_model(Network, :name => "Network", :description => "Descr", :owner => mock_model(Organization, :name => "Owner", :contact_name => "Bill"))
     @invitee.stub!(:networks).and_return(@networks)
     
     @network_invitation = NetworkInvitation.create(
@@ -299,7 +299,7 @@ module ExternalSurveyInvitationSpecHelper
       :organization_name => 'David E. Peteron',
       :email => 'pete2786@umn.edu',
       :inviter => organization_mock,
-      :survey => mock_model(Survey, :job_title => 'test', :end_date => Time.now + 2.days, :sponsor => organization_mock)
+      :survey => mock_model(Survey, :job_title => 'test', :end_date => Time.now + 2.days, :sponsor => organization_mock, :description => "Descr")
     }
   end
   

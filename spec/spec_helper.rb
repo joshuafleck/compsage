@@ -93,7 +93,8 @@ def valid_survey_attributes
     :end_date => Time.now + 1.day,
     :job_title => 'TEST',
     :sponsor => organization_mock,
-    :id => '1'
+    :id => '1',
+    :description => 'Descr'
   }
 end
 
