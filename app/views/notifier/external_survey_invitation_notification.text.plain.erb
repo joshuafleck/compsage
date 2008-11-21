@@ -1,27 +1,23 @@
-Dear <%=@invitation.name%>,
+Dear Sir or Madam,
 
-Your organization been invited by <%=@invitation.inviter.contact_name%> of <%=@invitation.inviter.name%> to
-participate in a [product name here] compensation survey. By taking a few minutes to respond to this survey,
-you will be allowed to view the results of the survey for free. There is no signup required. Just click on this
-link to get started: <%=url_for(link_to('Take Survey', survey_login_path(:survey_id => @survey.id, :key => @invitation.key, :only_path => false)))%>
+Your organization been invited by <%=@invitation.inviter.name%> to participate in a CompSage compensory survey. By taking a few minutes to respond to this survey, you will be allowed to view the results of the survey for free. There is no signup required. Just click on the link below to get started: 
+<%=url_for(survey_login_path(:survey_id => @survey.id, :key => @invitation.key, :only_path => false))%>
 
-<% if !@invitation.message.blank? then %>
-  Here is a personalized message from <%=@invitation.inviter.contact_name%>:
-  <span>
-    <%=@invitation.message%>
-  </span>
-  
-<% end %>
-Here are the details of the survey:
+The details of the survey are as follows:
 Job Title: <%=@survey.job_title%>
+Description: <%=@survey.description%>
 Response deadline: <%=time_ago_in_words(@survey.end_date)%>
 Sponsor: <%=@survey.sponsor.name%>
 
-[product name here] is a website for HR professionals that want compensation information at the touch
-of their fingertips. [product name here] allows HR professionals to send quick compensory surveys to 
-organizations of their choosing. [product name here] is a reliable and legal means to gauge competitor's
-compensation practices.
+CompSage allows HR professionals to send quick compensory surveys to organizations of their choosing. 
 
-Best regards,
-The [product name here] team
+With CompSage you can:
+  * Design surveys using our standard questions or add questions of your own desgin.
+  * Participate in a survey and get results for free. Sponsor a survey for $100 and get great data that won't put you over-budget.
+  * Have a survey turnaround in as little as 3 days.
+  * Get enough data to satify your needs, or you will not pay a cent.
+  * Access compensation data in use right now by the companies of your choosing.
+
+Thanks,
+The CompSage Team
 

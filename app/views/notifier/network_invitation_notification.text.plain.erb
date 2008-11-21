@@ -1,6 +1,13 @@
-<%=@invitation.invitee.contact_name%>,
+Dear <%=@invitation.invitee.contact_name%>,
 
-You have been invited by <%=@invitation.inviter.name%> to join the network named <%=@invitation.network.name%>.
-If you would like to join, click the link below.
+You have been invited by <%=@invitation.inviter.name%> to join the network "<%=@invitation.network.name%>".
 
+If you would like to join this network, please follow the link below:
 <%=url_for(join_network_path(@invitation.network, :only_path => false))%>
+
+Network: <%=@invitation.network.name%>
+Description: <%=@invitation.network.description%>
+Owner: <%=@invitation.network.owner.name%>
+
+Thanks,
+The CompSage Team

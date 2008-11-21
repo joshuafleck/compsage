@@ -8,6 +8,8 @@ class InvitationObserver < ActiveRecord::Observer
       Notifier.deliver_external_survey_invitation_notification(invitation)
     elsif  invitation.is_a?(NetworkInvitation)
       Notifier.deliver_network_invitation_notification(invitation)
+    elsif  invitation.is_a?(SurveyInvitation)
+      Notifier.deliver_survey_invitation_notification(invitation)
     elsif invitation.is_a?(ExternalInvitation)
       Notifier.deliver_external_invitation_notification(invitation)
     end

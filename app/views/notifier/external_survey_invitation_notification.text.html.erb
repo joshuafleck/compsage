@@ -1,30 +1,39 @@
 <html>
 <body>
-<p>Dear <%=@invitation.name%>,</p>
-<p>Your organization been invited by <%=@invitation.inviter.contact_name%> of <%=@invitation.inviter.name%> to
-participate in a [product name here] compensation survey for <%=pluralize(2, @survey.job_title)%>. By taking a few minutes to respond to this survey,
-you will be allowed to view the results for free when available. There is no signup required. 
-<%=link_to 'Take the survey now', survey_login_path(:survey_id => @survey.id, :key => @invitation.key, :only_path => false)%>!</p>
-<% if !@invitation.message.blank? then %>
-  <p>
-  Here is a personalized message from <%=@invitation.inviter.contact_name%>: <%=@invitation.message%>
-  </p>
-<% end %>
 <p>
-Here are the details of the survey:
-<br />
-<b>Job Title: </b><%=@survey.job_title%>
-<br />
-<b>Response deadline: </b><%=time_ago_in_words(@survey.end_date)%>
-<br />
-<b>Sponsor: </b><%=@survey.sponsor.name%>
+  Dear Sir or Madam,
 </p>
-<p>[product name here] is a website for HR professionals that want compensation information at the touch
-of their fingertips. [product name here] allows HR professionals to send quick compensory surveys to 
-organizations of their choosing. [product name here] is a reliable and legal means to gauge competitor's
-compensation practices.</p>
-
-<p>Best regards,<br />
-The [product name here] Team</p>
+<p>
+  Your organization been invited by <%=@invitation.inviter.name%> to participate in a CompSage compensory survey. By taking a few minutes to respond to this survey, you will be allowed to view the results for free when available.  There is no signup required. <%=link_to 'Take the survey now', survey_login_path(:survey_id => @survey.id, :key => @invitation.key, :only_path => false)%>!
+</p>
+<p>
+  The details of the survey are as follows:
+  <br />
+  <b>Job Title: </b><%=@survey.job_title%>
+  <br />
+  <b>Description: </b><%=@survey.description%>
+  <br />
+  <b>Sponsor: </b><%=@survey.sponsor.name%>
+  <br />
+  <b>Response deadline: </b><%=time_ago_in_words(@survey.end_date)%>
+</p>
+<p>
+  CompSage allows HR professionals to send quick compensory surveys to organizations of their choosing. 
+</p>
+<p>
+  With CompSage you can:
+  <ul>  
+    <li>Design surveys using our standard questions or add questions of your own desgin.</li>
+    <li>Participate in a survey and get results for free. Sponsor a survey for $100 and get great data that won't put you over-budget.</li>
+    <li>Have a survey turnaround in as little as 3 days.</li>
+    <li>Get enough data to satify your needs, or you will not pay a cent.</li>
+    <li>Access compensation data in use right now by the companies of your choosing.</li>
+  </ul>  
+</p>
+<p>
+  Thanks,
+  <br />
+  The CompSage Team
+</p>
 </body>
 </html>

@@ -83,10 +83,14 @@ class Survey < ActiveRecord::Base
     invitations.sort    
   end
   
+  def required_number_of_participations
+    5
+  end
+  
   private
   
   def enough_responses?
-    participations.count >= 5
+    participations.count >= required_number_of_participations
   end
   
   # TODO: Figure out who to email...

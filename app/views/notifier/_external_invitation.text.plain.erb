@@ -1,24 +1,22 @@
-Dear <%=@invitation.name%>,
+Dear Sir or Madam,
 
-Your organization been invited by <%=@invitation.inviter.contact_name%> of <%=@invitation.inviter.name%> to
-become part of an expanding network of organizations that utilize [product name here].
+Your organization been invited by <%=@invitation.inviter.name%> to join CompSage.
 
-<% if !@invitation.message.blank? then %>
-Here is a personalized message from <%=@invitation.inviter.contact_name%>:
-"<%=@invitation.message%>"
-<% end %>
+CompSage allows HR professionals to send quick compensory surveys to organizations of their choosing. 
 
-[product name here] is a website for HR professionals that want compensation information at the touch
-of their fingertips. [product name here] allows HR professionals to send quick compensory surveys to
- organizations of their choosing. <product name here> is a reliable and legal means to gauge competitor's
-compensation practices.
+With CompSage you can:
+  * Design surveys using our standard questions or add questions of your own desgin.
+  * Participate in a survey and get results for free. Sponsor a survey for $100 and get great data that won't put you over-budget.
+  * Have a survey turnaround in as little as 3 days.
+  * Get enough data to satify your needs, or you will not pay a cent.
+  * Access compensation data in use right now by the companies of your choosing.
 
-To become a member of [product name here], please click the link below:
+Becoming a member of CompSage is easy and free! Please click the link below to get sign up:
 <% if @network.nil? then %>
   <%=url_for(new_account_path(:key => @invitation.key, :only_path => false))%>.
 <% else %>
   <%=url_for(new_account_path(:key => @invitation.key, :network_id => @network.id, :only_path => false))%>.
 <% end %>
 
-Best regards,
-The [product name here] team
+Thanks,
+The CompSage Team
