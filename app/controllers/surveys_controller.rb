@@ -197,9 +197,7 @@ class SurveysController < ApplicationController
   
     @search_text = params[:search_text]
     
-     # tack the industry on to the search query to ensure matches with same industry float to the top
-    @search_text_with_industry = @search_text + 
-      (current_organization.industry.blank? ? "" : " | \"" + current_organization.industry + "\"")
+    @search_query = "#{@search_text} #{@search_text} | @industry \"#{current_organization.industry}\""      
     
     @filter_by_subscription = params[:filter_by_subscription]
     
@@ -214,7 +212,7 @@ class SurveysController < ApplicationController
     # filters by subscription (my surveys)
     @search_params[:conditions][:subscribed_by] = current_organization.id unless @filter_by_subscription.blank?
         
-    @surveys = Survey.search @search_text_with_industry, @search_params
+    @surveys = Survey.search @search_query, @search_params
          
     respond_to do |wants|
       wants.html {}
