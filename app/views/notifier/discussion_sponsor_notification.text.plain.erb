@@ -1,0 +1,12 @@
+Dear <%=@discussion.survey.sponsor.contact_name%>,
+
+An discussion for your survey "<%=@discussion.survey.job_title%>" has been posted.
+
+Subject: "<%=@discussion.root.subject%>"
+Message: "<%=@discussion.body%>"
+
+To respond to this discussion, please follow the link below:
+<%=url_for(survey_path(@discussion.survey, :only_path => false))%>
+
+Thanks,
+The CompSage Team

@@ -69,4 +69,22 @@ class Notifier < ActionMailer::Base
     subject    "You have requested a password reset"
     body       :organization => organization
   end
+  
+  #sent when a survey sponsor posts a new discussion
+  def discussion_thread_notification(discussion, recipient)
+    recipients recipient.email
+    from       "CompSage <do-not-reply@compsage.com>"
+    reply_to   "support@compsage.com"
+    subject    "#{discussion.survey.sponsor.name} has responded to the discussion \"#{discussion.root.subject}\""
+    body       :discussion => discussion, :recipient => recipient
+  end  
+  
+  #sent when a survey invitee posts a new discussion
+  def discussion_sponsor_notification(discussion)
+    recipients discussion.survey.sponsor.email
+    from       "CompSage <do-not-reply@compsage.com>"
+    reply_to   "support@compsage.com"
+    subject    "A discussion has been posted for \"#{discussion.survey.job_title}\""
+    body       :discussion => discussion
+  end  
 end

@@ -72,8 +72,9 @@ describe Discussion do
   end  
     
   it "should assign discussion to the parent if this is a reply" do
-    @discussion_parent = Discussion.create!(valid_discussion_attributes)
-    @discussion = Discussion.create!(valid_discussion_attributes.with(:parent_discussion_id => @discussion_parent.id, :survey => @discussion_parent.survey ))
+    @survey = Factory.create(:survey)
+    @discussion_parent = Discussion.create!(valid_discussion_attributes.with(:survey => @survey))
+    @discussion = Discussion.create!(valid_discussion_attributes.with(:parent_discussion_id => @discussion_parent.id, :survey => @survey))
     @discussion_parent.children_count.should equal(1)
   end
   
