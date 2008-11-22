@@ -19,10 +19,6 @@ class Organization < ActiveRecord::Base
     set_property :latitude_attr   => "latitude"
     set_property :longitude_attr  => "longitude"
     
-    # because we are adding the industry to the query itself, we need to 
-    # weight the other fields to ensure relevant matches still float to the top
-    set_property :field_weights => {"name" => 6, "email" => 10, "contact_name" => 3, "@geodist" => 2}
-    
     # this will cause any changes to surveys between index rebuilds to be stored in a delta index until the next rebuild
     set_property :delta => true
   end

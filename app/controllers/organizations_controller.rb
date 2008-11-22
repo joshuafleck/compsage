@@ -29,14 +29,11 @@ class OrganizationsController < ApplicationController
   
   def search   
   
-    @search_text = params[:search_text]    
+    @search_text = params[:search_text]  
     
-    # tack the industry on to the search query to ensure matches with same industry float to the top
-    # TODO: Implement more intelligently so queries for non-existant industries, organizations, or contacts don't return results
-    # anyway due to industry simularity.
-    
-    @search_text_with_industry = @search_text + "*" # + 
-      # (current_organization.industry.blank? ? "" : " | \"" + current_organization.industry + "\"")
+    # this basically says, find everything that matches the query, and everything that matches the query and industry
+    # this will give a higher score to organizations with the same industry, but will not allow irrelevant matches
+    @search_query = "#{@search_text} #{@search_text} | @industry \"#{current_organization.industry}\""    
     
     @search_params = {
       :geo => [current_organization.latitude, current_organization.longitude],
@@ -46,7 +43,7 @@ class OrganizationsController < ApplicationController
       :order => '@weight desc, @geodist asc' # sort by relevance, then distance
     }
         
-    @organizations = Organization.search @search_text_with_industry, @search_params
+    @organizations = Organization.search @search_query, @search_params
        
     respond_to do |wants|
       wants.html # render template
