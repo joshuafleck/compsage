@@ -25,7 +25,7 @@ h3 {
 	line-height: 1em;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	letter-spacing: -0.05em;
-	color: #444;
+	color: #333;
 }
 
 h4 {
@@ -168,24 +168,24 @@ textarea {
 	margin-left: 266px;
 }
 
-/* My Surveys */
-#my_surveys {
+/* Survey Sidebar */
+#surveys_sidebar {
 	width: 246px;
 	padding: 0 10px;
 	float: left;
 }
 
-#my_surveys h2 {
+#surveys_sidebar h2 {
 	margin-top: .5em;
 }
 
-#my_surveys ul {
+#surveys_sidebar ul {
 	margin: 0;
 	padding: 0;
 	list-style-type: none;
 }
 
-#my_surveys li {
+#surveys_sidebar li {
 	padding-bottom: 1ex;
 }
 
@@ -207,6 +207,18 @@ textarea {
   width: 200px;
 }
 
+/* My Surveys */
+div#my_surveys ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0 0 .5em 0;
+	margin-bottom: 1.5em;
+	background: url('../images/embellish.gif') bottom center no-repeat;
+}
+
+div#my_surveys li {
+  margin-bottom:1.2857em;
+}
 /* Survey show page invitation list */
 #invitation_list {
 	float: right;
@@ -256,10 +268,6 @@ ul.surveys h3 a {
 
 ul.surveys li {
 	margin-bottom: 1.2857em;
-}
-
-ul.surveys li.odd {
-	border-top: none;
 }
 
 div#invitations ul{
@@ -499,7 +507,7 @@ label, div.label {
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	letter-spacing: -0.05em;
 	font-size: 1.14286em;
-	color: #444;
+	color: #333;
 }
 
 form div.box_container {

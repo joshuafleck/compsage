@@ -11,7 +11,9 @@ class SurveysController < ApplicationController
       wants.html {
         @surveys = Survey.running.paginate(:page => params[:page], :order => 'job_title')  
         @invited_surveys = current_organization.survey_invitations.running.find(:all,:order => 'invitations.created_at desc')
-        @my_surveys = current_organization.surveys.recent
+        @my_surveys = current_organization.surveys.running
+        @my_stalled = current_organization.surveys.stalled.recent
+        @my_results = current_organization.surveys.finished.recent
       }
       wants.xml {
         @surveys = Survey.running
@@ -245,8 +247,8 @@ class SurveysController < ApplicationController
     end
   end
   
-  #These are the surveys the user has sponsored or responded to
-  def my
+  # All the data the user has
+  def reports
   
     respond_to do |wants|
       wants.html {

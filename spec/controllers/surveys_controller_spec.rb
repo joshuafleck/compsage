@@ -30,8 +30,8 @@ describe SurveysController, "#route_for" do
     route_for(:controller => "surveys", :action => "respond", :id => 1).should == "/surveys/1/respond"
   end
   
-  it "should map { :controller => 'surveys', :action => 'my' } to /surveys/my" do
-    route_for(:controller => "surveys", :action => "my").should == "/surveys/my"
+  it "should map { :controller => 'surveys', :action => 'reports' } to /surveys/reports" do
+    route_for(:controller => "surveys", :action => "reports").should == "/surveys/reports"
   end 
   
   it "should map { :controller => 'surveys', :action => 'rerun' } to /surveys/1/rerun" do
@@ -929,38 +929,7 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
 end
 
 describe SurveysController, " handling GET /surveys/my.xml" do
-  
-  before(:each) do
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
-    
-    @surveys = []
-    @surveys.stub!(:to_xml).and_return("XML")
-    
-    @current_organization.stub!(:surveys).and_return(@surveys)
-
-  end
-  
-  def do_get
-    @request.env["HTTP_ACCEPT"] = "application/xml"
-    get :my
-  end
-  
-  it "should be successful" do
-    do_get
-    response.should be_success
-  end
-  
-  it "should find all surveys for which the user has been invited or participated" do
-    @current_organization.should_receive(:surveys).and_return(@surveys)
-    
-    do_get 
-  end
-  
-  it "should render the found surveys as XML" do
-    @surveys.should_receive(:to_xml).and_return("XML")
-    do_get
-  end
+  #pending
 end
 
  describe SurveysController, " handling GET /surveys/1/rerun" do
