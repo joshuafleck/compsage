@@ -65,9 +65,10 @@ class SurveyInvitationsController < ApplicationController
         end
       end 
     else
+      flash[:notice] = "Invitations sent!"
       respond_to do |wants|
         wants.html do
-          redirect_to survey_url(@survey)
+          redirect_to :action => "index"
         end
       end     
     end
