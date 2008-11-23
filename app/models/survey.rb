@@ -33,6 +33,7 @@ class Survey < ActiveRecord::Base
   validates_presence_of :end_date, :on => :create
   validates_presence_of :sponsor
   
+  named_scope :since_last_week, Proc.new { {:conditions => ['end_date > ?', Time.now]} }
   named_scope :recent, :order => 'surveys.created_at DESC', :limit => 10
   named_scope :closed, :conditions => ['aasm_state = ? OR aasm_state = ?', 'finished', 'stalled']
   after_create :add_sponsor_subscription
@@ -60,7 +61,6 @@ class Survey < ActiveRecord::Base
   def days_running=(days)
     @days_running = days
     self[:end_date] = Time.now.at_beginning_of_day + days.to_i.days
-    p end_date
   end
   
   def closed?
@@ -81,6 +81,10 @@ class Survey < ActiveRecord::Base
   
   def required_number_of_participations
     5
+  end
+  
+  def to_s
+    job_title
   end
   
   private
