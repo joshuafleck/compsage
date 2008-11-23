@@ -116,6 +116,19 @@ class Organization < ActiveRecord::Base
     u = find_by_email(email) # need to get the salt
     u && u.authenticated?(password) ? u : nil
   end
+  
+  #code for reset password
+   def create_reset_key
+     self.reset_password_key = [Digest::SHA1.digest(Time.now.to_f.to_s + Array.new(){rand(256)}.pack('c*'))].pack("m")[0..19]
+     self.reset_password_key_expires_at = Time.now + 5.days
+     self.save!
+   end
+  
+  def delete_reset_key
+    self.reset_password_key = nil
+    self.reset_password_key_expires_at = nil
+    self.save!
+  end
 
   protected
   
@@ -159,5 +172,4 @@ class Organization < ActiveRecord::Base
       self[:longitude] = zip.longitude * (Math::PI / 180)
     end
   end
-  
 end
