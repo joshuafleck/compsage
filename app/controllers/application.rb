@@ -4,6 +4,7 @@
 class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include Exceptions
+  include ExceptionNotifiable
   
   before_filter :make_breadcrumbs
   
