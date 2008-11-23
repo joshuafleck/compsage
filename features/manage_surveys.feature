@@ -36,7 +36,7 @@ Feature: Manage surveys
     And I uncheck "Predefined Question selected"
     And I uncheck "Custom Question 2 text"
     And I press "Update"    
-    Then I should see "Survey was successfully updated."
+    Then I should see "Survey updated"
     When I follow "Respond_button"
     Then I should see "Predefined Question unselected text"
     And I should see "Custom Question 1 text"

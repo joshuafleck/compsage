@@ -1,6 +1,6 @@
 class SurveysController < ApplicationController
   layout :logged_in_or_invited_layout 
-  #we require a valid login if you are creating or editing a survey.
+  # we require a valid login if you are creating or editing a survey.
   before_filter :login_required, :only => [ :edit, :update, :create, :new, :index ]
   before_filter :login_or_survey_invitation_required, :except => [ :edit, :update, :create, :new, :index ]
   
@@ -108,7 +108,7 @@ class SurveysController < ApplicationController
     #update the attributes for the survey
     if @survey.update_attributes(params[:survey])
        respond_to do |wants|  
-         flash[:notice] = 'Survey was successfully updated.'
+         flash[:notice] = 'Survey updated.'
          wants.html{
            redirect_to survey_path(@survey) 
            }
@@ -268,7 +268,7 @@ class SurveysController < ApplicationController
     #Set the new end date, attempt to reset the state of the survey
     if @survey.update_attributes(params[:survey]) && @survey.rerun!
        respond_to do |wants|  
-         flash[:notice] = 'Survey was successfully updated.'
+         flash[:notice] = 'Survey updated.'
          wants.html do
            redirect_to survey_invitations_path(@survey) 
          end
