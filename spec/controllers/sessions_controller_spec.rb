@@ -10,8 +10,7 @@ describe SessionsController do
     @invitation = ExternalSurveyInvitation.new(
       :inviter => organization_mock, 
       :survey => survey_mock, 
-      :name => 'TEST', 
-      :key => '1234', 
+      :name => 'TEST',
       :email => '111@1.com',
       :organization_name => "test org name")
       
