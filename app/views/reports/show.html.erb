@@ -18,5 +18,14 @@
     </ul>
 </div>
 <%@survey.questions.each do |question| %>
-	<%=render :partial => question.question_type, :locals => {:question => question, :survey => @survey}%>
+  <% if question.send(@adequate_responses_method) then %>
+	  <%=render :partial => question.question_type, :locals => {:question => question, :survey => @survey}%>
+	<% else %>
+	  <div>
+    	<div class="report_question"><%=question.text%>:</div>
+    	<p>
+    	  Question received <%=question.send(@responses_method).size%> of <%=@survey.required_number_of_participations%> required responses to display results.
+    	</p>
+    </div>
+	<% end %>
 <% end %>

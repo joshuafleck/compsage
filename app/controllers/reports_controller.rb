@@ -46,9 +46,9 @@ class ReportsController < ApplicationController
     invitee_participations = @participations.belongs_to_invitee
             
     #If the current organization was invited to the survey and 
-    # there were more than 5 participations from invited users,     
+    # there were more than X participations from invited users,     
     # then we will filter out any responses from uninvited participants
-    show_only_invitee_responses = invitee_participations.size >= 5 &&   
+    show_only_invitee_responses = invitee_participations.size >= @survey.required_number_of_participations &&   
       invitee_participations.include?(current_organization_or_invitation_participation)
     
     #Determine the number of participations based on the scope  
@@ -62,9 +62,11 @@ class ReportsController < ApplicationController
     if show_only_invitee_responses then
       @responses_method = 'invitee_responses'
       @grouped_responses_method = 'grouped_invitee_responses'
+      @adequate_responses_method = 'adequate_invitee_responses?'
     else
       @responses_method = 'responses'
       @grouped_responses_method = 'grouped_responses'
+      @adequate_responses_method = 'adequate_responses?'
     end 
     
   

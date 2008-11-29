@@ -81,4 +81,14 @@ class Question < ActiveRecord::Base
     @grouped_responses ||= invitee_responses.group_by(&:numerical_response)
   end
   
+  # returns true if the question received enough responses to be displayed in the report
+  def adequate_responses?
+    self.responses.size >= self.survey.required_number_of_participations
+  end
+  
+  # returns true if the question received enough responses from invitees to be displayed in the report
+  def adequate_invitee_responses?
+    self.responses.from_invitee.size >= self.survey.required_number_of_participations
+  end
+  
 end

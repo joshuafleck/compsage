@@ -57,7 +57,7 @@
 				<li>
 					<h3><%=survey%></h3>
 					<div class="details"><%=distance_of_time_in_words_to_now(survey.end_date)%> left with
-					<%=survey.participations.count%> out of <%=survey.invitations.count + 1%> invitees participating.</div>
+					<%=survey.participations.count%> out of <%=survey.all_invitations(true).size%> invitees participating.</div>
 					<div class="actions"><%=link_to "Survey Details", survey %></div>
 				</li>
 			<% end %>
