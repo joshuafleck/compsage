@@ -3,10 +3,10 @@
 <% breadcrumbs() %>
 <h2>Reset your password</h2>
 <p>Reset your password instructions.</p>
-<% form_tag reset_account_path do -%>
+<% form_tag reset_account_path( :key =>  @organization.reset_password_key) do -%>
 <p><label for="password">Password</label>
 <%= password_field_tag 'password' %></p>
-<p><label for="confirm_password">Confirm Password</label>
-<%= password_field_tag 'confirm_password' %></p>
+<p><label for="password_confirmation">Confirm Password</label>
+<%= password_field_tag 'password_confirmation' %></p>
 <p><%= submit_tag 'Reset Password' %></p>
 <% end -%>
