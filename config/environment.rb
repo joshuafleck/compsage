@@ -19,8 +19,6 @@ Rails::Initializer.run do |config|
   config.gem 'will_paginate', :version => '>=2.2.2'
   config.gem 'activemerchant', :version => '>=1.4.0', :lib => 'active_merchant'  
   config.load_paths += ["app/workers", "app/builders"]
-  
-  ExceptionNotifier.exception_recipients = %w(eazydp@gmail.com brian.terlson@gmail.com flec0025@umn.edu)
-  #uncomment if you want to receive exception emails
-  #local_addresses.clear
 end
+
+
