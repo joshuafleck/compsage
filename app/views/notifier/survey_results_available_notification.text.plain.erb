@@ -1,9 +1,7 @@
-Dear <%=@participant.is_a?(Organization) ? @participant.contact_name : "Sir or Madam"%>,
-
 Results for the survey "<%=@survey.job_title%>" are now available!
 
 To view the survey results, please follow the link below:
 <%=url_for(survey_report_path(@survey, :only_path => false))%>
 
 Thanks,
-The CompSage Team
+CompSage.com

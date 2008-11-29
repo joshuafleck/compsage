@@ -1,5 +1,3 @@
-Dear <%=@recipient.is_a?(Organization) ? @recipient.contact_name : "Sir or Madam"%>,
-
 <%=@discussion.survey.sponsor.name%> has responded to the discussion "<%=@discussion.root.subject%>" for the survey "<%=@discussion.survey.job_title%>".
 
 Message: "<%=@discussion.body%>"
@@ -8,4 +6,4 @@ To respond to this discussion, please follow the link below:
 <%=url_for(survey_path(@discussion.survey, :only_path => false))%>
 
 Thanks,
-The CompSage Team
+CompSage.com

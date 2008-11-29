@@ -1,5 +1,3 @@
-Dear <%=@invitation.invitee.contact_name%>,
-
 You have been invited by <%=@invitation.inviter.name%> to participate in the survey "<%=@survey.job_title%>".
 
 If you would like to participate in this survey, please follow the link below:
@@ -11,4 +9,4 @@ Sponsor: <%=@survey.sponsor.name%>
 Response deadline: <%=time_ago_in_words(@survey.end_date)%>
 
 Thanks,
-The CompSage Team
+CompSage.com
