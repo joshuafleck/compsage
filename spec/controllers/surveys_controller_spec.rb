@@ -466,7 +466,7 @@ describe SurveysController, " handling POST /surveys" do
                     "2" => {'included' => "0", 'text' => 'question_2', 'custom_question_type' => 'Yes/No'}
                  }
                }
-    @survey = mock_model(Survey, :id => 1, :save => true, :errors => [], :new_record? => true, :job_title => "test")
+    @survey = mock_model(Survey, :id => 1, :billing_info_received! => true, :save => true, :errors => [], :new_record? => true, :job_title => "test")
     @surveys = []
     @questions = []
     @question_hash = [{'id' => 1, 'another' => 2, 'text' => 'asdf'}, {'id' => 2, 'another' => 2, 'text' => 'asdf'}]

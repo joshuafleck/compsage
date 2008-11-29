@@ -1,5 +1,4 @@
 class Survey < ActiveRecord::Base
-
   include AASM
 
   define_index do
@@ -36,16 +35,24 @@ class Survey < ActiveRecord::Base
   named_scope :since_last_week, Proc.new { {:conditions => ['end_date > ?', Time.now]} }
   named_scope :recent, :order => 'surveys.created_at DESC', :limit => 10
   named_scope :closed, :conditions => ['aasm_state = ? OR aasm_state = ?', 'finished', 'stalled']
+  
   after_create :add_sponsor_subscription
   
-  aasm_initial_state :running
-  
+  aasm_initial_state :pending
+  aasm_state :pending
   aasm_state :running
   aasm_state :stalled, :enter => :email_failed_message
+  aasm_state :billing_error, :enter => :email_billing_error
   aasm_state :finished, :enter => :email_results_available
   
+  aasm_event :billing_info_received do
+    transitions :to => :running, :from => :pending
+  end
+
   aasm_event :finish do
-    transitions :to => :finished, :from => :running, :guard => :enough_responses?
+    # AASM currently doesn't support more than one guard, hence this absurd method here.
+    transitions :to => :finished, :from => :running, :guard => :enough_responses_and_billing_successful? 
+    transitions :to => :billing_error, :from => :running, :guard => :enough_responses?
     transitions :to => :stalled, :from => :running
   end
   
@@ -53,7 +60,12 @@ class Survey < ActiveRecord::Base
     #TODO: send a notification to invitees that survey is being rerun
     transitions :to => :running, :from => :stalled, :guard => :open?
   end
+
+  aasm_event :billing_error_resolved do
+    transitions :to => :finished, :from => :billing
+  end
   
+
   def days_running
     @days_running
   end
@@ -87,6 +99,11 @@ class Survey < ActiveRecord::Base
     job_title
   end
   
+  # Same price for all surveys for now.  This is in cents.
+  def price
+    10000
+  end
+
   private
   
   def enough_responses?
@@ -110,9 +127,34 @@ class Survey < ActiveRecord::Base
     Notifier.deliver_survey_results_available_notification(self, sponsor) unless participants.include?(sponsor)
   end
   
+  def email_billing_error
+    # TODO: Implement
+  end
+  
   # Creates a survey subscription for the survey sponsor.
   def add_sponsor_subscription
     s = subscriptions.create!(:organization => sponsor, :relationship => 'sponsor')
   end
-    
+ 
+  # returns whether or not there are enough responses, and if so, if billing was successful
+  def enough_responses_and_billing_successful?
+    enough_responses? && billing_successful?
+  end
+
+  # Calls the billing routine and returns whether or not billing was successful.
+  def billing_successful?
+    bill_sponsor
+  end
+
+  # Attempts to bill the survey sponsor.  Returns whether or not the operation succeeded.
+  def bill_sponsor
+    begin
+      Gateway.bill_survey_sponsor(self)
+      return true
+    rescue Exceptions::GatewayException => exception
+      self.billing_error_description = exception.message
+      return false
+    end
+  end
+
 end

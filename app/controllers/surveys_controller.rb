@@ -173,6 +173,9 @@ class SurveysController < ApplicationController
         end
       end 
       
+      # For now, pretend we've received billing information.
+      @survey.billing_info_received!
+      
       respond_to do |wants|
         wants.html do
 

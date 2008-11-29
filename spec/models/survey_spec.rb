@@ -92,3 +92,51 @@ describe Survey do
     @survey.destroy
   end
 end
+
+describe Survey, "that is pending" do
+  before do
+    @survey = Survey.new(valid_survey_attributes)
+  end
+  
+  it "should transition to running once billing information is received" do
+    @survey.billing_info_received!
+    @survey.should be_running
+  end
+end
+
+describe Survey, "that is ready to be billed" do
+  before do
+    @survey = Survey.new(valid_survey_attributes)
+    @survey.aasm_state = 'running'
+    @survey.save!
+    Gateway.stub!(:bill_survey_sponsor).and_return(true)
+  end
+  
+  it "should be finished if there are enough responses and billing is successful" do
+    @survey.stub!(:enough_responses?).and_return(true)
+    @survey.finish!
+    
+    @survey.should be_finished
+  end
+
+  it "should transition to billing error if there are enough responses but we couldn't bill the sponsor" do
+    @survey.stub!(:enough_responses?).and_return(true)
+    Gateway.stub!(:bill_survey_sponsor).and_raise(Exceptions::GatewayException.new("Billing fubar"))
+    @survey.finish!
+    
+    @survey.should be_billing_error
+  end
+
+  it "should transition to stalled if there are not enough responses" do
+    @survey.stub!(:enough_responses).and_return(false)
+    @survey.finish!
+
+    @survey.should be_stalled
+  end
+
+  it "should not attempt to bill the sponsor when there are not enough responses" do
+    @survey.stub!(:enough_responses).and_return(false)
+    Gateway.should_not_receive(:bill_survey_sponsor)
+    @survey.finish!
+  end
+end
