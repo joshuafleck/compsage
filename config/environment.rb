@@ -17,6 +17,6 @@ Rails::Initializer.run do |config|
   config.gem 'thoughtbot-factory_girl', :lib => 'factory_girl', :source => 'http://gems.github.com'
   config.gem 'beanstalk-client', :version => '>=1.0.2'
   config.gem 'will_paginate', :version => '>=2.2.2'
-  
+  config.gem 'activemerchant', :version => '>=1.4.0', :lib => 'active_merchant'  
   config.load_paths += ["app/workers", "app/builders"]
 end
