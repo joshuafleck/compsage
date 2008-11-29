@@ -8,3 +8,4 @@ test
 tmp/*
 db/sphinx
 config/development.sphinx.conf
+*.swp
