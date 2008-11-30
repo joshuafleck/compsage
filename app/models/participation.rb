@@ -7,7 +7,7 @@ class Participation < ActiveRecord::Base
   validates_presence_of :participant, :survey
   validates_associated :responses
   
-  after_create :create_participant_subscription, :fufill_invitation
+  after_create :create_participant_subscription, :fulfill_invitation
   
   named_scope :belongs_to_invitee, 
     :include => [{:survey => [:invitations]}], 
@@ -47,10 +47,10 @@ class Participation < ActiveRecord::Base
     end
   end
   
-  def fufill_invitation
+  def fulfill_invitation
     if participant.is_a?(Organization) then
       invitation = self.participant.survey_invitations.find_by_survey_id(self.survey.id)
-      invitation.fufill! unless invitation.nil?
+      invitation.fulfill! unless invitation.nil?
     end
   end
   

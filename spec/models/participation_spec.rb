@@ -47,13 +47,13 @@ describe Participation do
     @participation.destroy
   end
   
-  it "should fufill the invitation when an invited organization has responded" do
+  it "should fulfill the invitation when an invited organization has responded" do
     @participation = Factory.build(:participation) 
     invitation = SurveyInvitation.new(:inviter => @participation.survey.sponsor, :invitee => @participation.participant, :survey => @participation.survey)
     invitation.save!
     @participation.save!
     invitation = SurveyInvitation.find_by_id(invitation.id)
-    invitation.aasm_state.should == "fufilled"
+    invitation.aasm_state.should == "fulfilled"
     @participation.destroy
     invitation.destroy
   end
