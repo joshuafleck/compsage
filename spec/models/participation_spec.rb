@@ -40,12 +40,22 @@ describe Participation do
   end
   
   it "should create a survey subscription when created by an organization" do
-    @participation.attributes = valid_participation_attributes
-    @participation.save!
-    sub = SurveySubscription.find_by_survey_id_and_organization_id(1, 1)
+    @participation = Factory.create(:participation) 
+    sub = SurveySubscription.find_by_survey_id_and_organization_id(@participation.survey.id, @participation.participant.id)
     sub.should_not be_nil
     sub.relationship.should == "participant"
     @participation.destroy
+  end
+  
+  it "should fufill the invitation when an invited organization has responded" do
+    @participation = Factory.build(:participation) 
+    invitation = SurveyInvitation.new(:inviter => @participation.survey.sponsor, :invitee => @participation.participant, :survey => @participation.survey)
+    invitation.save!
+    @participation.save!
+    invitation = SurveyInvitation.find_by_id(invitation.id)
+    invitation.aasm_state.should == "fufilled"
+    @participation.destroy
+    invitation.destroy
   end
   
 end

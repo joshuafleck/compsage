@@ -15,6 +15,10 @@ describe SurveyInvitationsController, " #route for" do
       route_for(:controller => "survey_invitations", :action => "destroy", :id => 1, :survey_id => 1).should == "/surveys/1/invitations/1"
     end
     
+    it "should map { :controller => 'invitations', :action => 'decline', :id => 1, :survey_id => 1} to /surveys/1/invitations/1/decline" do
+      route_for(:controller => "survey_invitations", :action => "decline", :id => 1, :survey_id => 1).should == "/surveys/1/invitations/1/decline"
+    end    
+    
 end
 
 describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
@@ -347,6 +351,43 @@ describe SurveyInvitationsController, " handling DELETE /surveys/1/invitations/1
     response.should redirect_to('/surveys/1/invitations')
   end
    
+end
+
+describe SurveyInvitationsController,  "handling PUT /surveys/1/invitations/1/decline" do
+  before do
+    @survey = Factory.create(:survey)    
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    
+    @invitation = mock_model(
+      SurveyInvitation, 
+      :survey => @survey, 
+      :inviter => @survey.sponsor, 
+      :invitee => @current_organization, 
+      :id => "1",
+      :decline! => true)
+      
+    @survey_invitations_proxy = mock('surveys proxy', :find => @invitation)
+    
+    @current_organization.stub!(:survey_invitations).and_return(@survey_invitations_proxy)
+    
+    @params = {:survey_id => @survey.id, :id => @invitation.id}
+  end
+  
+  def do_put
+    put :decline, @params
+  end
+  
+  it "should be successful" do
+  	do_put
+  	response.should redirect_to(surveys_path)
+  end  
+  
+  it "should change the status of the invitation to 'declined'" do
+    @invitation.should_receive(:decline!)
+    do_put
+  end
+  
 end
 
   

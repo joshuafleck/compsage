@@ -54,6 +54,7 @@ describe SurveysController, " handling GET /surveys" do
     @surveys.stub!(:find).and_return([])
     Survey.stub!(:running).and_return(@surveys)
     @survey_invitations_proxy.stub!(:running).and_return(@surveys)
+    @survey_invitations_proxy.stub!(:pending).and_return(@survey_invitations_proxy)
   end
   
   def do_get
@@ -69,9 +70,10 @@ describe SurveysController, " handling GET /surveys" do
     response.should render_template('index')
   end
   
-  it "should find all surveys for which the user has been invited or participated" do
+  it "should find all surveys for which the user has been invited or participated where the invitation is pending" do
     Survey.should_receive(:running).and_return(@surveys)
     @survey_invitations_proxy.should_receive(:running).and_return(@surveys)
+    @survey_invitations_proxy.should_receive(:pending)
     @surveys.should_receive(:find)
     do_get 
   end

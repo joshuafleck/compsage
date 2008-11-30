@@ -69,4 +69,11 @@ Given /I am on the survey show page/ do
   visits survey_url(@survey)   
 end
 
+Given /I am on the survey respond page/ do
+  @survey = Factory.create(:survey, :job_title => "Survey 1") 
+  @question = Factory.create(:question, :survey => @survey, :text => 'Question 1')
+  @invitation = Factory.create(:survey_invitation, :survey => @survey, :invitee => @current_organization)
+  visits survey_questions_url(:survey_id => @survey.id)
+end
+
 

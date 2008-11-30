@@ -60,6 +60,13 @@ Factory.define :invitation do |i|
   
 end
 
+#definition and setup for invitation
+Factory.define :survey_invitation do |i|
+  i.survey {|a| a.association(:survey)}
+  i.inviter {|a| a.association(:organization)} 
+  i.invitee {|a| a.association(:organization)}
+end
+
 #definition and setup for external survey invitation
 Factory.define :external_survey_invitation do |i|
   i.survey {|a| a.association(:survey)}

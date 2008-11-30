@@ -10,7 +10,7 @@ class SurveysController < ApplicationController
     respond_to do |wants|
       wants.html {
         @surveys = Survey.running.paginate(:page => params[:page], :order => 'job_title')  
-        @invited_surveys = current_organization.survey_invitations.running.find(:all,:order => 'invitations.created_at desc')
+        @invited_surveys = current_organization.survey_invitations.pending.running.find(:all,:order => 'invitations.created_at desc')
         @my_surveys = current_organization.sponsored_surveys.running
         @my_stalled = current_organization.surveys.stalled.recent
         @my_results = current_organization.surveys.finished.recent

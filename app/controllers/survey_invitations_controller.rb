@@ -84,4 +84,14 @@ class SurveyInvitationsController < ApplicationController
       wants.xml { head :status => :ok }
     end
   end
+  
+  def decline
+    invitation = current_organization.survey_invitations.find(params[:id])
+    invitation.decline!
+    
+    respond_to do |wants|
+      wants.html { redirect_to surveys_path() }
+      wants.xml { head :status => :ok }
+    end    
+  end
 end

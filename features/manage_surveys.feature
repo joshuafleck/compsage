@@ -68,4 +68,14 @@ Feature: Manage surveys
     And I press "Post"
     Then I should see "Discussion Subject"
     And I should see "Discussion Body"    
+    
+  Scenario: Respond to survey
+    Given I am logged in
+    And I am on the survey respond page
+    When I fill in "Question 1" with "1"
+    And I press "Submit My Responses"
+    Then I should see "Thank you for participating in the survey!"
+    And I should see "1 participant so far."
+    When I follow "Surveys &amp; Results"
+    Then I should not see "Decline"
 
