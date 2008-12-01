@@ -4,14 +4,22 @@
 	<span class="sponsor">sponsored by <%=link_to_organization(@survey.sponsor)%></span></h2>
 <% if @survey.stalled? then %>
   <% if logged_in? && @survey.sponsor.id == current_organization.id then %>
-    <% form_for(:survey, @survey, :url => rerun_survey_path(@survey), :html => { :method => :get }) do |f| %>  
-      <%=error_messages_for :survey%>
-      <p>Unfortunately, you did not get the required number of participants for results to be available.  You may
-					re-run the survey and send out some additional invitations.</p>
-      <p>Re-run for <%=f.select :days_running, (3..7).to_a %> days.
-        <input type="submit" value="Re-Run" />
+    <% if @survey.can_be_rerun? then %>
+      <% form_for(:survey, @survey, :url => rerun_survey_path(@survey), :html => { :method => :get }) do |f| %>  
+        <%=error_messages_for :survey%>
+        <p>
+          Unfortunately, you did not get the required number of participants for results to be available.  You may re-run the survey and send out some additional invitations.
+			  </p>
+        <p>
+          Re-run for <%=f.select :days_running, ((@survey.minimum_days_to_rerun)..(@survey.maximum_days_to_rerun)).to_a %> days.
+          <input type="submit" value="Re-Run" />
+        </p>
+      <% end %>    
+    <% else %>
+      <p>
+        Unfortunately, you did not get the required number of participants for results to be available. This survey is more than <%=(@survey.maximum_days_to_run - @survey.minimum_days_to_rerun)%> days old and may no longer be rerun.
       </p>
-    <% end %>      
+    <% end %>  
   <% else %>
     <p>Survey results are unavailable due to insufficient data.  The
       survey sponsor may choose to re-run the survey in an effort to get increased participation.  If this is

@@ -58,7 +58,7 @@ class Survey < ActiveRecord::Base
   
   aasm_event :rerun do
     #TODO: send a notification to invitees that survey is being rerun
-    transitions :to => :running, :from => :stalled, :guard => :open?
+    transitions :to => :running, :from => :stalled, :guard => :open_and_can_be_rerun?
   end
 
   aasm_event :billing_error_resolved do
@@ -93,6 +93,29 @@ class Survey < ActiveRecord::Base
   
   def required_number_of_participations
     5
+  end
+  
+  # a survey can be rerun if it was created within the last X days 
+  # we need to leave at least a Y day buffer for the final rerun
+  def can_be_rerun?
+    (Time.now - self.created_at) < ((self.maximum_days_to_run).days - (self.minimum_days_to_rerun).days)
+  end
+  
+  # this will determine the maximum number of days the survey can be rerun for
+  # 7 days if default, but it may be less if nearing the X day limit
+  def maximum_days_to_rerun
+    max_days = (((self.created_at + (self.maximum_days_to_run).days)-Time.now) / (60*60*24)).floor
+    return max_days < 7 ? max_days : 7
+  end
+  
+  # the minumum number of days a survey can be rerun
+  def minimum_days_to_rerun
+    3
+  end
+  
+  # the maximum number of days a survey can be running for
+  def maximum_days_to_run
+    21
   end
   
   def to_s
@@ -155,6 +178,11 @@ class Survey < ActiveRecord::Base
       self.billing_error_description = exception.message
       return false
     end
+  end
+  
+  # determine whether the survey is open, and can be rerun
+  def open_and_can_be_rerun?
+    self.open? && self.can_be_rerun?
   end
 
 end

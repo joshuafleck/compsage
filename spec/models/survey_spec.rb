@@ -104,6 +104,41 @@ describe Survey, "that is pending" do
   end
 end
 
+describe Survey, "that is stalled" do
+  before do
+    @survey = Survey.new(valid_survey_attributes.with(:end_date => Time.now - 1.day))
+    @survey.billing_info_received!
+    @survey.finish!
+  end
+  
+  it "should transition to stalled once the survey in finished" do
+    @survey.should be_stalled
+  end
+  
+  it "should not rerun if the end date is in the past" do
+    @survey.rerun!
+    @survey.should be_stalled
+  end
+  
+  it "should rerun if end date is in the future" do
+    @survey.days_running = 3
+    @survey.rerun!
+    @survey.should be_running
+  end
+  
+  it "should not rerun if the survey has been around for over X days" do
+    @survey.created_at = Time.now - (((@survey.maximum_days_to_run).days - (@survey.minimum_days_to_rerun).days) + 1.day)
+    @survey.days_running = 3
+    @survey.rerun!
+    @survey.should be_stalled
+  end
+  
+  it "should adjust the maximum number of days available to rerun based on the number of days available left to rerun" do
+    @survey.created_at = Time.now - (((@survey.maximum_days_to_run).days - (@survey.minimum_days_to_rerun).days) - 3.days)
+    @survey.maximum_days_to_rerun.should == (2 + @survey.minimum_days_to_rerun)
+  end
+end
+
 describe Survey, "that is ready to be billed" do
   before do
     @survey = Survey.new(valid_survey_attributes)

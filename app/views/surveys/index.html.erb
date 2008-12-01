@@ -6,7 +6,7 @@
 			<h2>Stalled Surveys</h2>
 			<ul>
 				<% @my_stalled.each do |survey| %>
-					<li><%=link_to survey, survey%> – <%=link_to "Re-run", survey%></li>
+					<li><%=link_to survey, survey%><%if survey.can_be_rerun? then%> – <%=link_to "Re-run", survey%><%end%></li>
 				<% end %>
 			</ul>
 		<% end %>
