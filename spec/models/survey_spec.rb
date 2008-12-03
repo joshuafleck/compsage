@@ -91,6 +91,16 @@ describe Survey do
     sub.relationship.should == "sponsor"
     @survey.destroy
   end
+
+  it "should have a rerun deadline of 21 days after it is created" do
+    @survey.created_at = Time.now
+    @survey.rerun_deadline.should == @survey.created_at + 21.days
+  end
+
+  it "should determine the number of days until the rerun deadline" do
+    @survey.created_at = Time.now
+    @survey.days_until_rerun_deadline.should == 21
+  end
 end
 
 describe Survey, "that is pending" do
@@ -126,16 +136,27 @@ describe Survey, "that is stalled" do
     @survey.should be_running
   end
   
-  it "should not rerun if the survey has been around for over X days" do
-    @survey.created_at = Time.now - (((@survey.maximum_days_to_run).days - (@survey.minimum_days_to_rerun).days) + 1.day)
+  it "should not rerun if the survey if the end date would be beyond 21 days from creation" do
+    @survey.created_at = @survey.end_date - 18.days
     @survey.days_running = 3
     @survey.rerun!
     @survey.should be_stalled
   end
+end
+
+describe Survey, "maximum days to rerun" do
+  before do
+    @survey = Survey.new(valid_survey_attributes.with(:end_date => Time.now + 1.day, :created_at => Time.now))
+  end
   
-  it "should adjust the maximum number of days available to rerun based on the number of days available left to rerun" do
-    @survey.created_at = Time.now - (((@survey.maximum_days_to_run).days - (@survey.minimum_days_to_rerun).days) - 3.days)
-    @survey.maximum_days_to_rerun.should == (2 + @survey.minimum_days_to_rerun)
+  it "should not exceed 7 days even when more days are available" do
+    @survey.created_at = Time.now
+    @survey.maximum_days_to_rerun.should == 7 
+  end
+
+  it "should be the number of days before the run limit if the run limit is imminent" do
+    @survey.created_at = Time.now - 20.days
+    @survey.maximum_days_to_rerun.should == 1
   end
 end
 

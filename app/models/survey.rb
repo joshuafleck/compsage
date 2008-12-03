@@ -64,7 +64,11 @@ class Survey < ActiveRecord::Base
   aasm_event :billing_error_resolved do
     transitions :to => :finished, :from => :billing
   end
-  
+   
+  # the minumum number of days a survey can be rerun
+  MINIMUM_DAYS_TO_RERUN = 3
+  # the maximum number of days a survey can be running for
+  MAXIMUM_DAYS_TO_RUN = 21
 
   def days_running
     @days_running
@@ -95,29 +99,26 @@ class Survey < ActiveRecord::Base
     5
   end
   
-  # a survey can be rerun if it was created within the last X days 
-  # we need to leave at least a Y day buffer for the final rerun
+  # a survey can be rerun if there are enough days left to accomidate the minimum run
+  # length
   def can_be_rerun?
-    (Time.now - self.created_at) < ((self.maximum_days_to_run).days - (self.minimum_days_to_rerun).days)
+    days_until_rerun_deadline >= MINIMUM_DAYS_TO_RERUN 
   end
   
   # this will determine the maximum number of days the survey can be rerun for
-  # 7 days if default, but it may be less if nearing the X day limit
+  # 7 days if default, but it may be less if nearing the rerun deadline
   def maximum_days_to_rerun
-    max_days = (((self.created_at + (self.maximum_days_to_run).days)-Time.now) / (60*60*24)).floor
-    return max_days < 7 ? max_days : 7
+    [days_until_rerun_deadline, 7].min
   end
   
-  # the minumum number of days a survey can be rerun
-  def minimum_days_to_rerun
-    3
+  def rerun_deadline
+    self.created_at + MAXIMUM_DAYS_TO_RUN.days
   end
-  
-  # the maximum number of days a survey can be running for
-  def maximum_days_to_run
-    21
+
+  def days_until_rerun_deadline
+    rerun_deadline.to_date - Date.today
   end
-  
+
   def to_s
     job_title
   end
