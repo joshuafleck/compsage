@@ -567,6 +567,33 @@ describe SurveysController, " handling POST /surveys from a 'survey network' lin
   
 end
 
+describe SurveysController, " handling POST /surveys, without questions" do
+  before(:each) do
+    @current_organization = mock_model(Organization)
+    login_as(@current_organization)
+    @params = {:job_title => 'That guy who yells "Scalpel, STAT!"' ,
+               :end_date => Time.now + 1.week ,
+               :sponsor => mock_model(Organization),
+               :question =>  {}}
+    @survey = mock_model(Survey, :id => 1, :save => false, :errors => ["asdfadsfdsa"], :job_title => "test")
+    @surveys = []
+    
+    @survey.stub!(:new_record?).and_return(true)
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys)
+    @surveys.stub!(:new).and_return(@survey)
+  end
+  
+  def do_post
+    post :create, :survey => @params
+  end  
+  
+  it "should render the new action and flash a message if there are no questions" do
+    do_post
+    response.should render_template('new')
+    flash[:notice].should eql("A survey must have at least one question")
+  end
+end
+
 describe SurveysController, " handling POST /surveys, upon failure" do
   before(:each) do
     @current_organization = mock_model(Organization)
@@ -720,7 +747,7 @@ end
       @current_organization = mock_model(Organization)
       login_as(@current_organization)
 
-      @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test")
+      @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :questions => [])
       @surveys_proxy = mock('surveys proxy')
       @open_surveys = []
       @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
@@ -734,7 +761,7 @@ end
     
     it "should render edit template upon failure" do
       do_update
-      response.should redirect_to(edit_survey_path(@survey))
+      response.should render_template('edit')
     end
   end
 

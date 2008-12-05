@@ -31,6 +31,7 @@ class Survey < ActiveRecord::Base
   validates_length_of :job_title, :maximum => 128
   validates_presence_of :end_date, :on => :create
   validates_presence_of :sponsor
+  validates_presence_of :questions, :on => :update
   
   named_scope :since_last_week, Proc.new { {:conditions => ['end_date > ?', Time.now]} }
   named_scope :recent, :order => 'surveys.created_at DESC', :limit => 10
@@ -41,7 +42,7 @@ class Survey < ActiveRecord::Base
   aasm_initial_state :pending
   aasm_state :pending
   aasm_state :running
-  aasm_state :stalled, :enter => :email_failed_message
+  aasm_state :stalled, :enter => :email_failed_message, :exit => :email_rerun_message
   aasm_state :billing_error, :enter => :email_billing_error
   aasm_state :finished, :enter => :email_results_available
   
@@ -57,7 +58,6 @@ class Survey < ActiveRecord::Base
   end
   
   aasm_event :rerun do
-    #TODO: send a notification to invitees that survey is being rerun
     transitions :to => :running, :from => :stalled, :guard => :open_and_can_be_rerun?
   end
 
@@ -138,6 +138,16 @@ class Survey < ActiveRecord::Base
   def email_failed_message
     logger.info("Sending failed email message for survey #{self.id}")
     Notifier.deliver_survey_stalled_notification(self)
+  end
+  
+  def email_rerun_message
+    #email all participants (so they know they may be receiving results), all pending invitees, external invitees
+    distribution_list = participations.collect { |p| p.participant } + 
+      invitations.pending.collect { |p| p.invitee } + 
+      external_invitations
+    distribution_list.uniq.each do |notify|
+      Notifier.deliver_survey_rerun_notification(self,notify)
+    end
   end
   
   # Send email informing respondants that the results are available.

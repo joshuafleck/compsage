@@ -101,6 +101,12 @@ describe Survey do
     @survey.created_at = Time.now
     @survey.days_until_rerun_deadline.should == 21
   end
+  
+  it "should be invalid on update without questions" do
+    @survey = Survey.create(valid_survey_attributes)
+    @survey.update_attributes(nil)
+    @survey.should have_at_least(1).error_on(:questions)
+  end
 end
 
 describe Survey, "that is pending" do

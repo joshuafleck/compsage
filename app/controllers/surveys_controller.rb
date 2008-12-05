@@ -45,27 +45,7 @@ class SurveysController < ApplicationController
 
     @survey = current_organization.sponsored_surveys.running.find(params[:id])
 
-    #iterate through the survey questions to determine which predefined questions have been selected
-    @predefined_questions = PredefinedQuestion.all
-    @picked_questions = @survey.questions
-    
-    #check which pdqs are to be included on the edit form
-    @predefined_questions.each do |q| 
-      q.included = @picked_questions.any? do |pq| 
-        pq.predefined_question_id == q.id
-      end
-    end
-        
-    @questions = {}
-    
-    #Find any custom questions and make sure they have the 'included' flag populated
-    # Build a hash to pass to the view, so that we can intermix new questions and existing questions
-    @picked_questions.each do |question|
-      if !question.custom_question_type.blank? then
-        question.included = "1"
-        @questions[question.id.to_s] = question
-      end
-    end
+    build_question_edit
     
   end
   
@@ -118,7 +98,8 @@ class SurveysController < ApplicationController
      else
        respond_to do |wants|
          wants.html{ 
-           redirect_to edit_survey_path(@survey)
+           build_question_edit
+           render :action => :edit
          }
        end
      end
@@ -140,6 +121,8 @@ class SurveysController < ApplicationController
     @predefined_questions = PredefinedQuestion.all
     @questions = {}
     
+    has_questions = !params[:question].blank?
+    
     #Create actual questions here in case the survey validation fails,
     # the view needs question models in order to create the question form.
     params[:question].each do |id,question|
@@ -150,9 +133,10 @@ class SurveysController < ApplicationController
     # this will ensure any selections are preserved.
     @predefined_questions.each do |predefined_question_group|
       predefined_question_group.included = params[:predefined_question][predefined_question_group.id.to_s][:included]
+      has_questions = true if predefined_question_group.included == "1"
     end unless params[:predefined_question].blank?      
     
-    if @survey.save
+    if has_questions && @survey.save
     
       # iterate through only the selected predefined questions to save
       @predefined_questions.each do |predefined_question_group|
@@ -190,8 +174,10 @@ class SurveysController < ApplicationController
           end
         end
       end
+      
     else
       respond_to do |wants|
+        flash[:notice] = "A survey must have at least one question" unless has_questions
         wants.html { render :action => "new" }
       end
     end
@@ -290,6 +276,32 @@ class SurveysController < ApplicationController
  
     
   private
+  
+  def build_question_edit
+
+    #iterate through the survey questions to determine which predefined questions have been selected
+    @predefined_questions = PredefinedQuestion.all
+    @picked_questions = @survey.questions
+    
+    #check which pdqs are to be included on the edit form
+    @predefined_questions.each do |q| 
+      q.included = @picked_questions.any? do |pq| 
+        pq.predefined_question_id == q.id
+      end
+    end
+        
+    @questions = {}
+    
+    #Find any custom questions and make sure they have the 'included' flag populated
+    # Build a hash to pass to the view, so that we can intermix new questions and existing questions
+    @picked_questions.each do |question|
+      if !question.custom_question_type.blank? then
+        question.included = "1"
+        @questions[question.id.to_s] = question
+      end
+    end  
+  
+  end
 
   def logged_in_or_invited_layout
     logged_in? ? "logged_in" : "survey_invitation_logged_in"

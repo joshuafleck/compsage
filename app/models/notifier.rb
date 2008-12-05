@@ -87,4 +87,12 @@ class Notifier < ActionMailer::Base
     subject    "A discussion has been posted for \"#{discussion.survey.job_title}\""
     body       :discussion => discussion
   end  
+  
+  def survey_rerun_notification(survey,recipient)
+    recipients recipient.email
+    from       "CompSage <do-not-reply@compsage.com>"
+    reply_to   "support@compsage.com"
+    subject    "The response deadline has been extended for the survey \"#{survey.job_title}\""
+    body       :survey => survey
+  end
 end

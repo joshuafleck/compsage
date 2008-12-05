@@ -1,0 +1,12 @@
+The response deadline has been extended for the survey "<%=@survey.job_title%>"
+
+If you would like to participate in this survey, please follow the link below:
+<%=url_for(survey_path(@survey, :only_path => false))%>
+
+Survey: <%=@survey.job_title%>
+Description: <%=@survey.description%>
+Sponsor: <%=@survey.sponsor.name%>
+Response deadline: <%=time_ago_in_words(@survey.end_date)%>
+
+Thanks,
+CompSage.com
