@@ -25,8 +25,8 @@ ActionMailer::Base.perform_deliveries = true
 ActionMailer::Base.raise_delivery_errors = true
 ActionMailer::Base.delivery_method = :smtp
 ActionMailer::Base.smtp_settings = {
-  :domain => "dev.huminsight.com",
-  :address => "localhost",
+  :domain => "josh-laptop",
+  :address => "josh-laptop",
   :port => 25
 }
 
