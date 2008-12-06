@@ -19,8 +19,8 @@ config.action_controller.perform_caching             = true
 
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
-config.action_mailer.smtp_settings = {:port => 25, :address => "localhost", :domain => 'huminsight' }
-config.action_mailer.default_url_options = {:host => "dev.huminsight.com", :port => 81}
+  config.action_mailer.default_url_options = {:host => "dev.huminsight.com", :port => 81}
+  
 ActionMailer::Base.perform_deliveries = true
 ActionMailer::Base.raise_delivery_errors = true
 ActionMailer::Base.delivery_method = :smtp
@@ -30,7 +30,6 @@ ActionMailer::Base.smtp_settings = {
   :port => 25
 }
 
-config.gem 'fiveruns_tuneup', :version => '>=0.8.10'
 
 
 
