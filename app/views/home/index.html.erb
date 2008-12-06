@@ -1,0 +1,17 @@
+<% title "Welcome to Compsage!" %>
+<% breadcrumbs() %>
+<%=flash_messages%>
+<h1>Welcome</h1>
+<p>Thank you for visiting CompSage, your HR needs specialist. This is the jump page to find more information or to login. More content coming ASAP.</p>
+<% if !logged_in? %>
+<% form_tag session_path do -%>
+<p><label for="email">Email</label><br />
+<%= text_field_tag 'email' %></p>
+<p><label for="password">Password</label><br />
+<%= password_field_tag 'password' %></p>
+<p><label for="remember_me">Remember me:</label>
+<%= check_box_tag 'remember_me' %></p>
+<p><%= submit_tag 'Log in' %></p>
+<% end -%>
+<p><%=link_to "Forgot your password?", forgot_account_path%></p>
+<% end %>
