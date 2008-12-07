@@ -5,7 +5,7 @@ class Response < ActiveRecord::Base
   validates_presence_of :question
   validates_presence_of :textual_response, :if => Proc.new { |response| response.numerical_response.blank?}
   validates_presence_of :numerical_response, :if => Proc.new { |response| response.textual_response.blank? }
-  validates_numericality_of :numerical_response, :allow_nil => true, :message => "Only submit numbers."
+  validates_numericality_of :numerical_response, :allow_nil => true, :message => "Only numbers are valid."
   HUMANIZED_ATTRIBUTES = {
     :numerical_response => "",
     :textual_response => "Response"

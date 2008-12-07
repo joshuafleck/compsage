@@ -10,8 +10,8 @@ class Question < ActiveRecord::Base
   
   validates_presence_of :survey
   validates_presence_of :question_type
-  validates_presence_of :options, :message => "You must include some options", :if => Proc.new { |question| question.has_options? }
-  validates_length_of :text, :within => 1..1000, :message => "A question is required to have associated text."
+  validates_presence_of :options, :message => " are required multiple response question", :if => Proc.new { |question| question.has_options? }
+  validates_length_of :text, :within => 1..1000, :message => " is required for a question."
   
   def before_validation_on_create 
      self[:question_type] = CUSTOM_QUESTION_TYPES[self[:custom_question_type]] if attribute_present?("custom_question_type")

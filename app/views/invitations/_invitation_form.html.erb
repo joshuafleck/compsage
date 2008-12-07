@@ -25,7 +25,7 @@
 </div>
 <div id="unknown_organization_div" <%=@invitation.nil? || @invitation.errors.size == 0 ? "style='display:none;'" : ""%>>
 <% form_for :invitation, @invitation, :url => url do |f| %>  
-  <%=error_messages_for :invitation%>
+  <%=error_messages_for :invitation, :header_message => $DEFAULT_MESSAGE_HEADER, :message => $DEFAULT_MESSAGE_SECONDARY%>%>
   <p>  
     <label>Email:</label>
     <%=f.text_field :email %>

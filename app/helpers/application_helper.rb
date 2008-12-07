@@ -28,4 +28,8 @@ module ApplicationHelper
     link_to(organization.name_and_location, organization_path(organization),
       :title => "Contact: #{organization.contact_name} #{organization.city + ", " + organization.state unless organization.city.blank?}")
   end
+  
+  $DEFAULT_MESSAGE_HEADER = "Please try again!"
+  $DEFAULT_MESSAGE_SECONDARY = "Resolve the following problems:"
+  $DEFAULT_MESSAGE_REQUIRED = "is required."
 end

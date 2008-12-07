@@ -55,16 +55,16 @@ class Organization < ActiveRecord::Base
   
   has_one :logo
 
-  validates_presence_of     :name,     :message => " is required."
+  validates_presence_of     :name,     :message => $DEFAULT_MESSAGE_REQUIRED
   validates_format_of       :name,     :with => RE_NAME_OK,  :message => MSG_NAME_BAD, :allow_nil => true
   validates_length_of       :name,     :within => 3..100
 
-  validates_presence_of     :email,    :message => " is required."
+  validates_presence_of     :email,    :message => $DEFAULT_MESSAGE_REQUIRED
   validates_length_of       :email,    :within => 6..100 #r@a.wk
   validates_uniqueness_of   :email,    :case_sensitive => false
   validates_format_of       :email,    :with => RE_EMAIL_OK, :message => MSG_EMAIL_BAD
 
-  validates_presence_of     :zip_code, :message => " is required."
+  validates_presence_of     :zip_code, :message => $DEFAULT_MESSAGE_REQUIRED
   validates_length_of       :zip_code, :is => 5
   validates_length_of       :location, :maximum => 60, :allow_nil => :true
   validates_length_of       :industry, :maximum => 100, :allow_nil => :true

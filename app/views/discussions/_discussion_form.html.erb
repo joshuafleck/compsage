@@ -1,4 +1,4 @@
-<%=error_messages_for :discussion%>
+<%=error_messages_for :discussion, :header_message => "Please try again!", :message => "Resolve the following problems:"%>%>
 <% form_for [@survey, discussion] do |f| %>
     <%=f.label :subject %>
     <%=f.text_field :subject %>

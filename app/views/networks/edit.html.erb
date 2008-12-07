@@ -3,7 +3,7 @@
 <% highlight_tab "networks" %>
 
 <h2>Editing <%=@network.name%></h2>
-<%=error_messages_for :network%>
+<%=error_messages_for :network, :header_message => "Please try again!", :message => "Resolve the following problems:"%>%>
 <%=flash_messages%>
 <% form_for :network, @network, :url => network_path(@network), :html => {:method => :put} do |f|%>
   <p><label>Network Name:</label><br />
