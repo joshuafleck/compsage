@@ -5,7 +5,11 @@ class Response < ActiveRecord::Base
   validates_presence_of :question
   validates_presence_of :textual_response, :if => Proc.new { |response| response.numerical_response.blank?}
   validates_presence_of :numerical_response, :if => Proc.new { |response| response.textual_response.blank? }
-  validates_numericality_of :numerical_response, :allow_nil => true
+  validates_numericality_of :numerical_response, :allow_nil => true, :message => "Only submit numbers."
+  HUMANIZED_ATTRIBUTES = {
+    :numerical_response => "",
+    :textual_response => "Response"
+  }
   
   named_scope :from_invitee,
     :include => {:participation => [{:survey => [:invitations]}]}, 
@@ -21,5 +25,11 @@ class Response < ActiveRecord::Base
   	else
   		self.textual_response
   	end
+  end
+  
+
+
+  def self.human_attribute_name(attr)
+    HUMANIZED_ATTRIBUTES[attr.to_sym] || super
   end
 end

@@ -66,6 +66,10 @@
 <% end %>
 <h2>Browse Current Surveys</h2>
 <ul class="surveys">
-	<%=render :partial => 'survey', :collection => @surveys %>
+	<% if @surveys.any? then %>
+	  <%=render :partial => 'survey', :collection => @surveys %>
+	<% else %>
+		<p>There are currently no running surveys in your area. If you'd like to find surveys, try browsing other <a href="#">regions.</a></p>
+	<% end %>
 </ul>
 <%=will_paginate @surveys%>

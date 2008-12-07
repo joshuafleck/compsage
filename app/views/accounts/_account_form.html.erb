@@ -1,5 +1,5 @@
 <%=flash_messages%>
-<%=error_messages_for :organization%>
+<%=error_messages_for :organization, :header_message => "We were not able to save your account."%>
 <% form_for @organization, :url => account_path, :html => {:multipart => true} do |f| %>
   <% if @organization.new_record? %>
    <%= hidden_field_tag 'key', external_invitation.key %>
