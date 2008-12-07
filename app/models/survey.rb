@@ -29,7 +29,7 @@ class Survey < ActiveRecord::Base
   
   validates_presence_of :job_title, :message => $DEFAULT_MESSAGE_REQUIRED
   validates_length_of :job_title, :maximum => 128
-  validates_presence_of :end_date, :on => :create, :message => :message => $DEFAULT_MESSAGE_REQUIRED
+  validates_presence_of :end_date, :on => :create, :message => $DEFAULT_MESSAGE_REQUIRED
   validates_presence_of :sponsor
   validates_presence_of :questions, :on => :update
   
