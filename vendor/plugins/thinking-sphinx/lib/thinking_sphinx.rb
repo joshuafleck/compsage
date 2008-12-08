@@ -1,5 +1,10 @@
+Dir[File.join(File.dirname(__FILE__), '../vendor/*/lib')].each do |path|
+  $LOAD_PATH.unshift path
+end
+
 require 'active_record'
 require 'riddle'
+require 'after_commit'
 
 require 'thinking_sphinx/active_record'
 require 'thinking_sphinx/association'
@@ -11,6 +16,10 @@ require 'thinking_sphinx/index'
 require 'thinking_sphinx/rails_additions'
 require 'thinking_sphinx/search'
 
+require 'thinking_sphinx/adapters/abstract_adapter'
+require 'thinking_sphinx/adapters/mysql_adapter'
+require 'thinking_sphinx/adapters/postgresql_adapter'
+
 ActiveRecord::Base.send(:include, ThinkingSphinx::ActiveRecord)
 
 Merb::Plugins.add_rakefiles(
@@ -21,7 +30,7 @@ module ThinkingSphinx
   module Version #:nodoc:
     Major = 0
     Minor = 9
-    Tiny  = 9
+    Tiny  = 12
     
     String = [Major, Minor, Tiny].join('.')
   end
@@ -29,6 +38,15 @@ module ThinkingSphinx
   # A ConnectionError will get thrown when a connection to Sphinx can't be
   # made.
   class ConnectionError < StandardError
+  end
+  
+  # A StaleIdsException is thrown by Collection.instances_from_matches if there
+  # are records in Sphinx but not in the database, so the search can be retried.
+  class StaleIdsException < StandardError
+    attr_accessor :ids
+    def initialize(ids)
+      self.ids = ids
+    end
   end
   
   # The collection of indexed models. Keep in mind that Rails lazily loads
@@ -99,5 +117,16 @@ module ThinkingSphinx
     ::ActiveRecord::Base.connection.select_all(
       "SELECT @@global.sql_mode, @@session.sql_mode;"
     ).all? { |key,value| value.nil? || value[/ONLY_FULL_GROUP_BY/].nil? }
+  end
+  
+  def self.sphinx_running?
+    pid_file = ThinkingSphinx::Configuration.instance.pid_file
+    
+    if File.exists?(pid_file)
+      pid = `cat #{pid_file}`[/\d+/]
+      `ps -p #{pid} | wc -l`.to_i > 1
+    else
+      false
+    end
   end
 end

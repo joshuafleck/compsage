@@ -6,16 +6,15 @@ describe ThinkingSphinx::Configuration do
       ThinkingSphinx::Configuration.send(:class_variable_set, :@@environment, nil)
       
       ENV["RAILS_ENV"]  = nil
-      ENV["MERB_ENV"]   = nil
     end
     
     it "should use the Merb environment value if set" do
       unless defined?(Merb)
         module Merb; end
       end
-      
+            
       ThinkingSphinx::Configuration.stub_method(:defined? => true)
-      ENV["MERB_ENV"] = "merb_production"
+      Merb.stub_method(:environment => "merb_production")
       ThinkingSphinx::Configuration.environment.should == "merb_production"
       
       Object.send(:remove_const, :Merb)
@@ -34,21 +33,20 @@ describe ThinkingSphinx::Configuration do
   describe "environment instance method" do
     it "should return the class method" do
       ThinkingSphinx::Configuration.stub_method(:environment => "spec")
-      ThinkingSphinx::Configuration.new.environment.should == "spec"
+      ThinkingSphinx::Configuration.instance.environment.should == "spec"
       ThinkingSphinx::Configuration.should have_received(:environment)
     end    
   end
   
   describe "build method" do
     before :each do
-      @config = ThinkingSphinx::Configuration.new
+      @config = ThinkingSphinx::Configuration.instance
       
       @config.stub_methods(
         :load_models                  => "",
         :core_index_for_model         => "",
         :delta_index_for_model        => "",
-        :distributed_index_for_model  => "",
-        :create_array_accum           => true
+        :distributed_index_for_model  => ""
       )
       
       ThinkingSphinx.stub_method :indexed_models => ["Person", "Friendship"]
@@ -58,21 +56,25 @@ describe ThinkingSphinx::Configuration do
         }
       })
       
+      @adapter = ThinkingSphinx::MysqlAdapter.stub_instance(
+        :setup => true
+      )
+      
       @person_index_a = ThinkingSphinx::Index.stub_instance(
         :to_config => "",   :adapter => :mysql, :delta? => false,
-        :name => "person",  :model => Person
+        :name => "person",  :model => Person,   :adapter_object => @adapter
       )
       @person_index_b = ThinkingSphinx::Index.stub_instance(
         :to_config => "",   :adapter => :mysql, :delta? => false,
-        :name => "person",  :model => Person
+        :name => "person",  :model => Person,   :adapter_object => @adapter
       )
       @friendship_index_a = ThinkingSphinx::Index.stub_instance(
-        :to_config => "",       :adapter => :mysql, :delta? => false,
-        :name => "friendship",  :model => Friendship
+        :to_config => "",       :adapter => :mysql,   :delta? => false,
+        :name => "friendship",  :model => Friendship, :adapter_object => @adapter
       )
       
-      Person.stub_method(:indexes => [@person_index_a, @person_index_b])
-      Friendship.stub_method(:indexes => [@friendship_index_a])
+      Person.stub_method(:sphinx_indexes => [@person_index_a, @person_index_b])
+      Friendship.stub_method(:sphinx_indexes => [@friendship_index_a])
       
       FileUtils.mkdir_p "#{@config.app_root}/config"
       FileUtils.touch   "#{@config.app_root}/config/database.yml"
@@ -82,29 +84,22 @@ describe ThinkingSphinx::Configuration do
       ThinkingSphinx.unstub_method :indexed_models
       YAML.unstub_method :load
       
-      Person.unstub_method      :indexes
-      Friendship.unstub_method  :indexes
+      Person.unstub_method      :sphinx_indexes
+      Friendship.unstub_method  :sphinx_indexes
       # 
       # FileUtils.rm_rf "#{@config.app_root}/config"
     end
     
-    # it "should load the models" do
-    #   @config.build
-    #   
-    #   @config.should have_received(:load_models)
-    # end
+    it "should load the models" do
+      @config.build
+      
+      @config.should have_received(:load_models)
+    end
     
     it "should load in the database YAML configuration" do
       @config.build
       
       YAML.should have_received(:load)
-    end
-    
-    it "should set the mem limit based on the configuration" do
-      @config.build
-      
-      file = open(@config.config_file) { |f| f.read }
-      file.should match(/mem_limit\s+= #{@config.mem_limit}/)
     end
     
     it "should use the configuration port" do
@@ -129,39 +124,18 @@ describe ThinkingSphinx::Configuration do
       file.should match(/pid_file\s+= #{@config.pid_file}/)
     end
     
-    it "should set max matches from configuration" do
-      @config.build
-      
-      file = open(@config.config_file) { |f| f.read }
-      file.should match(/max_matches\s+= #{@config.max_matches}/)
-    end
-    
     it "should request configuration for each index for each model" do
       @config.build
       
       @person_index_a.should have_received(:to_config).with(
-        Person, 0, {:option => "value"}, @config.charset_type, 0
+        Person, 0, {:option => "value"}, 0
       )
       @person_index_b.should have_received(:to_config).with(
-        Person, 1, {:option => "value"}, @config.charset_type, 0
+        Person, 1, {:option => "value"}, 0
       )
       @friendship_index_a.should have_received(:to_config).with(
-        Friendship, 0, {:option => "value"}, @config.charset_type, 1
+        Friendship, 0, {:option => "value"}, 1
       )
-    end
-    
-    it "should call create_array_accum if any index uses postgres" do
-      @person_index_a.stub_method(:adapter => :postgres)
-      
-      @config.build
-      
-      @config.should have_received(:create_array_accum)
-    end
-    
-    it "should not call create_array_accum if no index uses postgres" do
-      @config.build
-      
-      @config.should_not have_received(:create_array_accum)
     end
     
     it "should call core_index_for_model for each model" do
@@ -214,7 +188,6 @@ describe ThinkingSphinx::Configuration do
           "searchd_file_path" => "searchd/file/path",
           "address"           => "127.0.0.1",
           "port"              => 3333,
-          "allow_star"        => true,
           "min_prefix_len"    => 2,
           "min_infix_len"     => 3,
           "mem_limit"         => "128M",
@@ -232,9 +205,12 @@ describe ThinkingSphinx::Configuration do
     end
     
     it "should use the accessors to set the configuration values" do
-      config = ThinkingSphinx::Configuration.new
-      @settings["development"].each do |key, value|
-        config.send(key).should == value
+      config = ThinkingSphinx::Configuration.instance
+      config.send(:parse_config)
+      
+      %w(config_file searchd_log_file query_log_file pid_file searchd_file_path
+        address port).each do |key|
+        config.send(key).should == @settings["development"][key]
       end
     end
     
@@ -245,7 +221,7 @@ describe ThinkingSphinx::Configuration do
   
   describe "core_index_for_model method" do
     before :each do
-      @config = ThinkingSphinx::Configuration.new
+      @config = ThinkingSphinx::Configuration.instance
       @model  = Person
     end
     
@@ -263,90 +239,61 @@ describe ThinkingSphinx::Configuration do
     end
     
     it "should include the charset type setting" do
-      @config.charset_type = "specchars"
+      @config.index_options[:charset_type] = "specchars"
       @config.send(:core_index_for_model, @model, "my sources").should match(
         /charset_type = specchars/
       )
     end
     
     it "should include the morphology setting if it isn't blank" do
-      @config.morphology = "morph"
+      @config.index_options[:morphology] = "morph"
       @config.send(:core_index_for_model, @model, "my sources").should match(
         /morphology\s+= morph/
       )
     end
     
     it "should not include the morphology setting if it is blank" do
-      @config.morphology = nil
+      @config.index_options[:morphology] = nil
       @config.send(:core_index_for_model, @model, "my sources").should_not match(
         /morphology\s+=/
       )
       
-      @config.morphology = ""
+      @config.index_options[:morphology] = ""
       @config.send(:core_index_for_model, @model, "my sources").should_not match(
         /morphology\s+=/
       )
     end
     
     it "should include the charset_table value if it isn't nil" do
-      @config.charset_table = "table_chars"
+      @config.index_options[:charset_table] = "table_chars"
       @config.send(:core_index_for_model, @model, "my sources").should match(
         /charset_table\s+= table_chars/
       )
     end
     
     it "should not set the charset_table value if it is nil" do
-      @config.charset_table = nil
+      @config.index_options[:charset_table] = nil
       @config.send(:core_index_for_model, @model, "my sources").should_not match(
         /charset_table\s+=/
       )      
     end
     
     it "should set the ignore_chars value if it isn't nil" do
-      @config.ignore_chars = "ignorable"
+      @config.index_options[:ignore_chars] = "ignorable"
       @config.send(:core_index_for_model, @model, "my sources").should match(
         /ignore_chars\s+= ignorable/
       )
     end
     
     it "should not set the ignore_chars value if it is nil" do
-      @config.ignore_chars = nil
+      @config.index_options[:ignore_chars] = nil
       @config.send(:core_index_for_model, @model, "my sources").should_not match(
         /ignore_chars\s+=/
       )
     end
     
-    it "should include the star-related settings when allow_star is true" do
-      @config.allow_star      = true
-      @config.min_prefix_len  = 1
-      text =  @config.send(:core_index_for_model, @model, "my sources")
-      
-      text.should match(/enable_star\s+= 1/)
-      text.should match(/min_prefix_len\s+= 1/)
-      # text.should match(/min_infix_len\s+= 1/)
-    end
-    
-    it "should use the configuration's infix and prefix length values if set" do
-      @config.allow_star     = true
-      @config.min_prefix_len = 3
-      @config.min_infix_len  = 2
-      text =  @config.send(:core_index_for_model, @model, "my sources")
-      
-      text.should match(/min_prefix_len\s+= 3/)
-      # text.should match(/min_infix_len\s+= 2/)
-    end
-    
-    it "should not include the star-related settings when allow_star is false" do
-      @config.allow_star = false
-      text =  @config.send(:core_index_for_model, @model, "my sources")
-      
-      text.should_not match(/enable_star\s+=/)
-      text.should_not match(/min_prefix_len\s+=/)
-      text.should_not match(/min_infix_len\s+=/)
-    end
-    
     it "should set prefix_fields if any fields are flagged explicitly" do
-      @model.indexes.first.stub_methods(
+      @model.sphinx_indexes.first.stub_methods(
         :prefix_fields => [
           ThinkingSphinx::Field.stub_instance(:unique_name => "a"),
           ThinkingSphinx::Field.stub_instance(:unique_name => "b"),
@@ -371,7 +318,7 @@ describe ThinkingSphinx::Configuration do
     end
     
     it "should set infix_fields if any fields are flagged explicitly" do
-      @model.indexes.first.stub_methods(
+      @model.sphinx_indexes.first.stub_methods(
         :prefix_fields => [
           ThinkingSphinx::Field.stub_instance(:unique_name => "a"),
           ThinkingSphinx::Field.stub_instance(:unique_name => "b"),
@@ -396,23 +343,25 @@ describe ThinkingSphinx::Configuration do
     end
 
     it "should include html_strip if value is set" do
-      @config.html_strip = 1
+      @config.index_options[:html_strip] = 1
       text = @config.send(:core_index_for_model, @model, "my sources")
       text.should match(/html_strip\s+= 1/)
     end
 
     it "shouldn't include html_strip if value is not set" do
+      @config.index_options.delete :html_strip
       text = @config.send(:core_index_for_model, @model, "my sources")
       text.should_not match(/html_strip/)
     end
 
     it "should include html_remove_elements if values are set" do
-      @config.html_remove_elements = 'script'
+      @config.index_options[:html_remove_elements] = 'script'
       text = @config.send(:core_index_for_model, @model, "my sources")
       text.should match(/html_remove_elements\s+= script/)
     end
 
     it "shouldn't include html_remove_elements if no values are set" do
+      @config.index_options.delete :html_remove_elements
       text = @config.send(:core_index_for_model, @model, "my sources")
       text.should_not match(/html_remove_elements/)
     end
@@ -420,7 +369,7 @@ describe ThinkingSphinx::Configuration do
   
   describe "delta_index_for_model method" do
     before :each do
-      @config = ThinkingSphinx::Configuration.new
+      @config = ThinkingSphinx::Configuration.instance
       @model  = Person
     end
     
@@ -446,7 +395,7 @@ describe ThinkingSphinx::Configuration do
   
   describe "distributed_index_for_model method" do
     before :each do
-      @config = ThinkingSphinx::Configuration.new
+      @config = ThinkingSphinx::Configuration.instance
       @model  = Person
     end
     
@@ -473,7 +422,7 @@ describe ThinkingSphinx::Configuration do
         /local = person_delta/
       )
       
-      @model.indexes.first.stub_method(:delta? => true)
+      @model.sphinx_indexes.first.stub_method(:delta? => true)
       @config.send(:distributed_index_for_model, @model).should match(
         /local = person_delta/
       )
@@ -487,8 +436,77 @@ describe ThinkingSphinx::Configuration do
       )
     end
   end
-  
-  describe "create_array_accum method" do
-    it "should create the array_accum method on PostgreSQL"
+    
+  describe "initialisation" do
+    it "should have a default bin_path of nothing" do
+      ThinkingSphinx::Configuration.instance.bin_path.should == ""
+    end
+    
+    it "should append a / to bin_path if one is supplied" do
+      @settings = {
+        "development" => {
+          "bin_path" => "path/to/somewhere"
+        }
+      }
+      
+      open("#{RAILS_ROOT}/config/sphinx.yml", "w") do |f|
+        f.write  YAML.dump(@settings)
+      end
+      
+      ThinkingSphinx::Configuration.instance.send(:parse_config)
+      ThinkingSphinx::Configuration.instance.bin_path.should match(/\/$/)
+    end
   end
+  
+  it "should insert set searchd options into the configuration file" do
+    config = ThinkingSphinx::Configuration.instance
+    ThinkingSphinx::Configuration::SearchdOptions.each do |option|
+      config.searchd_options[option.to_sym] = "something"
+      config.build
+      
+      file = open(config.config_file) { |f| f.read }
+      file.should match(/#{option}\s+= something/)
+      
+      config.searchd_options[option.to_sym] = nil
+    end
+  end
+  
+  it "should insert set indexer options into the configuration file" do
+    config = ThinkingSphinx::Configuration.instance
+    ThinkingSphinx::Configuration::IndexerOptions.each do |option|
+      config.indexer_options[option.to_sym] = "something"
+      config.build
+      
+      file = open(config.config_file) { |f| f.read }
+      file.should match(/#{option}\s+= something/)
+      
+      config.indexer_options[option.to_sym] = nil
+    end
+  end
+  
+  it "should insert set index options into the configuration file" do
+    config = ThinkingSphinx::Configuration.instance
+    ThinkingSphinx::Configuration::IndexOptions.each do |option|
+      config.index_options[option.to_sym] = "something"
+      config.build
+      
+      file = open(config.config_file) { |f| f.read }
+      file.should match(/#{option}\s+= something/)
+      
+      config.index_options[option.to_sym] = nil
+    end
+  end
+  
+  it "should insert set source options into the configuration file" do
+    config = ThinkingSphinx::Configuration.instance
+    ThinkingSphinx::Configuration::SourceOptions.each do |option|
+      config.source_options[option.to_sym] = "something"
+      config.build
+      
+      file = open(config.config_file) { |f| f.read }
+      file.should match(/#{option}\s+= something/)
+      
+      config.source_options[option.to_sym] = nil
+    end
+  end  
 end

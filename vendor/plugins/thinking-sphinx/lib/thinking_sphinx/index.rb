@@ -48,11 +48,11 @@ module ThinkingSphinx
     end
     
     def empty?(part = :core)
-      config = ThinkingSphinx::Configuration.new
+      config = ThinkingSphinx::Configuration.instance
       File.size?("#{config.searchd_file_path}/#{self.name}_#{part}.spa").nil?
     end
     
-    def to_config(model, index, database_conf, charset_type, offset)
+    def to_config(model, index, database_conf, offset)
       # Set up associations and joins
       add_internal_attributes
       link!
@@ -79,15 +79,17 @@ sql_host = #{database_conf[:host] || "localhost"}
 sql_user = #{database_conf[:username] || database_conf[:user]}
 sql_pass = #{(database_conf[:password] || "").gsub('#', '\#')}
 sql_db   = #{database_conf[:database]}
+#{"sql_port = #{database_conf[:port]}" unless database_conf[:port].blank? }
 #{"sql_sock = #{database_conf[:socket]}" unless database_conf[:socket].blank? }
 
-sql_query_pre    = #{charset_type == "utf-8" && adapter == :mysql ? "SET NAMES utf8" : ""}
+sql_query_pre    = #{utf8? && adapter == :mysql ? "SET NAMES utf8" : ""}
 #{"sql_query_pre    = SET SESSION group_concat_max_len = #{@options[:group_concat_max_len]}" if @options[:group_concat_max_len]}
 sql_query_pre    = #{to_sql_query_pre}
 sql_query        = #{to_sql(:offset => offset).gsub(/\n/, ' ')}
 sql_query_range  = #{to_sql_query_range}
 sql_query_info   = #{to_sql_query_info(offset)}
 #{attr_sources}
+#{ThinkingSphinx::Configuration.instance.hash_to_config(self.source_options)}
 }
       SOURCE
       
@@ -97,7 +99,7 @@ sql_query_info   = #{to_sql_query_info(offset)}
 source #{self.class.name(model)}_#{index}_delta : #{self.class.name(model)}_#{index}_core
 {
 sql_query_pre    = 
-sql_query_pre    = #{charset_type == "utf-8" && adapter == :mysql ? "SET NAMES utf8" : ""}
+sql_query_pre    = #{utf8? && adapter == :mysql ? "SET NAMES utf8" : ""}
 #{"sql_query_pre    = SET SESSION group_concat_max_len = #{@options[:group_concat_max_len]}" if @options[:group_concat_max_len]}
 sql_query        = #{to_sql(:delta => true, :offset => offset).gsub(/\n/, ' ')}
 sql_query_range  = #{to_sql_query_range :delta => true}
@@ -157,6 +159,11 @@ sql_query_range  = #{to_sql_query_range :delta => true}
         where_clause << " AND " << @conditions.join(" AND ")
       end
       
+      internal_groupings = []
+      if @model.column_names.include?(@model.inheritance_column)
+         internal_groupings << "#{@model.quoted_table_name}.#{quote_column(@model.inheritance_column)}"
+      end
+      
       unique_id_expr = "* #{ThinkingSphinx.indexed_models.size} + #{options[:offset] || 0}"
       
       sql = <<-SQL
@@ -174,7 +181,7 @@ GROUP BY #{ (
   ["#{@model.quoted_table_name}.#{quote_column(@model.primary_key)}"] + 
   @fields.collect { |field| field.to_group_sql }.compact +
   @attributes.collect { |attribute| attribute.to_group_sql }.compact +
-  @groupings
+  @groupings + internal_groupings
 ).join(", ") }
       SQL
       
@@ -239,6 +246,10 @@ GROUP BY #{ (
       end
     end
     
+    def adapter_object
+      @adapter_object ||= ThinkingSphinx::AbstractAdapter.detect(@model)
+    end
+    
     def prefix_fields
       @fields.select { |field| field.prefixes }
     end
@@ -247,7 +258,36 @@ GROUP BY #{ (
       @fields.select { |field| field.infixes }
     end
     
+    def local_index_options
+      @options.keys.inject({}) do |local_options, key|
+        if ThinkingSphinx::Configuration::IndexOptions.include?(key.to_s)
+          local_options[key.to_sym] = @options[key]
+        end
+        local_options
+      end
+    end
+    
+    def index_options
+      all_index_options = ThinkingSphinx::Configuration.instance.index_options.clone
+      @options.keys.select { |key|
+        ThinkingSphinx::Configuration::IndexOptions.include?(key.to_s)
+      }.each { |key| all_index_options[key.to_sym] = @options[key] }
+      all_index_options
+    end
+    
+    def source_options
+      all_source_options = ThinkingSphinx::Configuration.instance.source_options.clone
+      @options.keys.select { |key|
+        ThinkingSphinx::Configuration::SourceOptions.include?(key.to_s)
+      }.each { |key| all_source_options[key.to_sym] = @options[key] }
+      all_source_options
+    end
+    
     private
+    
+    def utf8?
+      self.index_options[:charset_type] == "utf-8"
+    end
     
     def quote_column(column)
       @model.connection.quote_column_name(column)
@@ -277,6 +317,17 @@ GROUP BY #{ (
       @groupings  = builder.groupings
       @delta      = builder.properties[:delta]
       @options    = builder.properties.except(:delta)
+      
+      # We want to make sure that if the database doesn't exist, then Thinking
+      # Sphinx doesn't mind when running non-TS tasks (like db:create, db:drop
+      # and db:migrate). It's a bit hacky, but I can't think of a better way.
+    rescue StandardError => err
+      case err.class.name
+      when "Mysql::Error", "ActiveRecord::StatementInvalid"
+        return
+      else
+        raise err
+      end
     end
     
     # Returns all associations used amongst all the fields and attributes.
@@ -338,10 +389,13 @@ GROUP BY #{ (
     end
     
     def crc_column
-      if adapter == :postgres
-        @model.to_crc32.to_s
-      elsif @model.column_names.include?(@model.inheritance_column)
-        "IFNULL(CRC32(#{@model.quoted_table_name}.#{quote_column(@model.inheritance_column)}), #{@model.to_crc32.to_s})"
+      if @model.column_names.include?(@model.inheritance_column)
+        case adapter
+        when :postgres
+          "COALESCE(crc32(#{@model.quoted_table_name}.#{quote_column(@model.inheritance_column)}), #{@model.to_crc32.to_s})"
+        when :mysql
+          "CAST(IFNULL(CRC32(#{@model.quoted_table_name}.#{quote_column(@model.inheritance_column)}), #{@model.to_crc32.to_s}) AS UNSIGNED)"
+        end
       else
         @model.to_crc32.to_s
       end
@@ -349,7 +403,7 @@ GROUP BY #{ (
     
     def add_internal_attributes
       @attributes << Attribute.new(
-        FauxColumn.new(:id),
+        FauxColumn.new(@model.primary_key.to_sym),
         :type => :integer,
         :as   => :sphinx_internal_id
       ) unless @attributes.detect { |attr| attr.alias == :sphinx_internal_id }

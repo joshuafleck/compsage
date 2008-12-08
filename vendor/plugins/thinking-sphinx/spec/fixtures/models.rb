@@ -49,9 +49,35 @@ end
 
 class Friendship < ActiveRecord::Base
   belongs_to :person
-  belongs_to :friend, :class_name => "Person"
+  belongs_to :friend, :class_name => "Person", :foreign_key => :friend_id
   
   define_index do
     has person_id, friend_id
   end
+end
+
+class Alpha < ActiveRecord::Base
+  define_index do
+    indexes :name, :sortable => true
+    
+    set_property :field_weights => {"name" => 10}
+  end
+end
+
+class Beta < ActiveRecord::Base
+  define_index do
+    indexes :name, :sortable => true
+    
+    set_property :delta => true
+  end
+end
+
+class Animal < ActiveRecord::Base
+  define_index do
+    indexes name, :sortable => true
+  end
+end
+
+class Cat < Animal
+  #
 end

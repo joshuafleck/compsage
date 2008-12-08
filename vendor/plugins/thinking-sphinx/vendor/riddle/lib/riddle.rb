@@ -18,9 +18,13 @@ module Riddle #:nodoc:
     Rev     = 1371
     # Release number to mark my own fixes, beyond feature parity with
     # Sphinx itself.
-    Release = 0
+    Release = 2
     
     String      = [Major, Minor, Tiny].join('.')
     GemVersion  = [Major, Minor, Tiny, Rev, Release].join('.')
+  end
+  
+  def self.escape(string)
+    string.gsub(/[\(\)\|\-!@~"&\/]/) { |char| "\\#{char}" }
   end
 end

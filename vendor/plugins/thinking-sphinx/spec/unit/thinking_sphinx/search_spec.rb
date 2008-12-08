@@ -2,6 +2,64 @@ require 'spec/spec_helper'
 require 'will_paginate/collection'
 
 describe ThinkingSphinx::Search do
+  before :all do
+    @sphinx.setup_sphinx
+    @sphinx.start
+  end
+  
+  after :all do
+    @sphinx.stop
+  end
+  
+  describe "search method" do
+    before :each do
+      @client = Riddle::Client.stub_instance(
+        :filters    => [],
+        :filters=   => true,
+        :id_range=  => true,
+        :sort_mode  => :asc,
+        :limit      => 5,
+        :offset=    => 0,
+        :sort_mode= => true,
+        :query      => {
+          :matches  => [],
+          :total    => 50
+        }
+      )
+      
+      ThinkingSphinx::Search.stub_methods(
+        :client_from_options => @client,
+        :search_conditions   => ["", []]
+      )
+    end
+    
+    describe ":star option" do
+      
+      it "should not apply by default" do
+        ThinkingSphinx::Search.search "foo bar"
+        @client.should have_received(:query).with("foo bar")
+      end
+
+      it "should apply when passed, and handle full extended syntax" do
+        input    = %{a b* c (d | e) 123 5&6 (f_f g) !h "i j" "k l"~10 "m n"/3 @o p -(q|r)}
+        expected = %{*a* b* *c* (*d* | *e*) *123* *5*&*6* (*f_f* *g*) !*h* "i j" "k l"~10 "m n"/3 @o *p* -(*q*|*r*)}
+        ThinkingSphinx::Search.search input, :star => true
+        @client.should have_received(:query).with(expected)
+      end
+
+      it "should default to /\w+/ as token" do
+        ThinkingSphinx::Search.search "foo@bar.com", :star => true
+        @client.should have_received(:query).with("*foo*@*bar*.*com*")
+      end
+
+      it "should honour custom token" do
+        ThinkingSphinx::Search.search "foo@bar.com -foo-bar", :star => /[\w@.-]+/u
+        @client.should have_received(:query).with("*foo@bar.com* -*foo-bar*")
+      end
+
+    end
+  end
+  
   describe "search_for_id method" do
     before :each do
       @client = Riddle::Client.stub_instance(
@@ -164,4 +222,67 @@ describe ThinkingSphinx::Search do
       @results.should be_kind_of(Array)
     end
   end
+  
+  it "should not return results that have been deleted" do
+    Alpha.search("one").should_not be_empty
+    
+    alpha = Alpha.find(:first, :conditions => {:name => "one"})
+    alpha.destroy
+    
+    Alpha.search("one").should be_empty
+  end
+  
+  it "should still return edited results using old data if there's no delta" do
+    Alpha.search("two").should_not be_empty
+    
+    alpha = Alpha.find(:first, :conditions => {:name => "two"})
+    alpha.update_attributes(:name => "twelve")
+    
+    Alpha.search("two").should_not be_empty
+  end
+  
+  it "should not return edited results using old data if there's a delta" do
+    Beta.search("two").should_not be_empty
+    
+    beta = Beta.find(:first, :conditions => {:name => "two"})
+    beta.update_attributes(:name => "twelve")
+    
+    Beta.search("two").should be_empty
+  end
+end
+
+
+# We'll be removing stuff, so best to set up things afresh.
+describe ThinkingSphinx::Search, "handling stale index" do
+  before :all do
+    @sphinx.setup_mysql
+    @sphinx.setup_sphinx
+    @sphinx.start
+  end
+  
+  after :all do
+    @sphinx.stop
+  end
+  
+  it "should work" do
+    Alpha.search().should_not be_empty
+    
+    two   = Alpha.find(:first, :conditions => {:name => "two"})
+    three = Alpha.find(:first, :conditions => {:name => "three"})
+    
+    defaults = { :per_page => 1, :order => 'sphinx_internal_id ASC' }
+    
+    Alpha.delete(1)  # remove without callbacks
+    # If the first record has gone missing, you should get a nil back.
+    Alpha.search(defaults.merge(:retry_stale => false)).should == [nil]
+    # If you retry once, you find the second item which still exists.
+    Alpha.search(defaults.merge(:retry_stale => 1)).should == [two]
+    
+    Alpha.delete(2)  # remove without callbacks
+    # If the second item has gone as well, you get a nil there too.
+    Alpha.search(defaults.merge(:retry_stale => 1)).should == [nil]
+    # But :retry_stale => true (three retries) overcomes that as well.
+    Alpha.search(defaults.merge(:retry_stale => true)).should == [three]
+  end
+
 end

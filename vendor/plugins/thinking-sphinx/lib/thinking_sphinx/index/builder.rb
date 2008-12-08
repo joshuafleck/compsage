@@ -18,7 +18,11 @@ module ThinkingSphinx
         # rails documentation. It's not needed though, so it gets undef'd.
         # Hopefully the list of methods that get in the way doesn't get too
         # long.
-        undef_method :parent
+        HiddenMethods = [:parent, :name, :id, :type].each { |method|
+          define_method(method) {
+            caller.grep(/irb.completion/).empty? ? method_missing(method) : super
+          }
+        }
         
         attr_accessor :fields, :attributes, :properties, :conditions,
           :groupings
@@ -130,7 +134,7 @@ module ThinkingSphinx
         # when you would like to index a calculated value. Don't forget to set
         # the type of the attribute though:
         #
-        #   indexes "age < 18", :as => :minor, :type => :boolean
+        #   has "age < 18", :as => :minor, :type => :boolean
         # 
         # If you're creating attributes for latitude and longitude, don't
         # forget that Sphinx expects these values to be in radians.
@@ -172,6 +176,9 @@ module ThinkingSphinx
         # 
         #   set_property :delta => true
         #   set_property :field_weights => {"name" => 100}
+        #   set_property :order => "name ASC"
+        #   set_property :include => :picture
+        #   set_property :select => 'name'
         # 
         # Also, the following two properties are particularly relevant for
         # geo-location searching - latitude_attr and longitude_attr. If your
@@ -180,7 +187,7 @@ module ThinkingSphinx
         # when defining the index, so you don't need to specify them for every
         # geo-related search.
         #
-        #   set_property :latitude_attr => "lt", :longitude => "lg"
+        #   set_property :latitude_attr => "lt", :longitude_attr => "lg"
         # 
         # Please don't forget to add a boolean field named 'delta' to your
         # model's database table if enabling the delta index for it.
@@ -200,6 +207,16 @@ module ThinkingSphinx
         # 
         def method_missing(method, *args)
           FauxColumn.new(method, *args)
+        end
+        
+        # A method to allow adding fields from associations which have names
+        # that clash with method names in the Builder class (ie: properties,
+        # fields, attributes).
+        # 
+        # Example: indexes assoc(:properties).column
+        # 
+        def assoc(assoc)
+          FauxColumn.new(method)
         end
       end
     end
