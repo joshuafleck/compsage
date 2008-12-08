@@ -11,13 +11,13 @@
           Unfortunately, you did not get the required number of participants for results to be available.  You may re-run the survey and send out some additional invitations.
 			  </p>
         <p>
-          Re-run for <%=f.select :days_running, (3..(@survey.maximum_days_to_rerun)).to_a %> days.
+          Re-run for <%=f.select :days_running, (Survey::MINIMUM_DAYS_TO_RERUN..(@survey.maximum_days_to_rerun)).to_a %> days.
           <input type="submit" value="Re-Run" />
         </p>
       <% end %>    
     <% else %>
       <p>
-        Unfortunately, you did not get the required number of participants for results to be available. This survey is more than <%=(@survey.maximum_days_to_run - 3)%> days old and may no longer be rerun.
+        Unfortunately, you did not get the required number of participants for results to be available. This survey is more than <%=(Survey::MAXIMUM_DAYS_TO_RUN - Survey::MINIMUM_DAYS_TO_RERUN)%> days old and may no longer be rerun.
       </p>
     <% end %> 
       <p>
