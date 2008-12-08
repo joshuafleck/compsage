@@ -19,7 +19,10 @@
       <p>
         Unfortunately, you did not get the required number of participants for results to be available. This survey is more than <%=(@survey.maximum_days_to_run - 3)%> days old and may no longer be rerun.
       </p>
-    <% end %>  
+    <% end %> 
+      <p>
+        If you do not wish to rerun the survey please click <%=link_to "here", survey_path(@survey), :method => :delete %> to notify the participants and remove the survey.
+      </p> 
   <% else %>
     <p>Survey results are unavailable due to insufficient data.  The
       survey sponsor may choose to re-run the survey in an effort to get increased participation.  If this is

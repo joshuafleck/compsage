@@ -76,4 +76,13 @@ Given /I am on the survey respond page/ do
   visits survey_questions_url(:survey_id => @survey.id)
 end
 
+Given /I am on the survey stalled page/ do
+  @survey = Factory.create(:survey, :sponsor => @current_organization) 
+  @question = Factory.create(:question, :survey => @survey, :text => 'Question 1')
+  @survey.end_date = Date.today - 1.day
+  @survey.save!
+  @survey.finish!
+  visits survey_url(@survey)   
+end
+
 

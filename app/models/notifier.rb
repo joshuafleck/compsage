@@ -95,4 +95,12 @@ class Notifier < ActionMailer::Base
     subject    "The response deadline has been extended for the survey \"#{survey.job_title}\""
     body       :survey => survey
   end
+  
+  def survey_not_rerunning_notification(survey,recipient)
+    recipients recipient.email
+    from       "CompSage <do-not-reply@compsage.com>"
+    reply_to   "support@compsage.com"
+    subject    "The survey \"#{survey.job_title}\" did not receive enough responses"
+    body       :survey => survey
+  end  
 end

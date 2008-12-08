@@ -273,6 +273,20 @@ class SurveysController < ApplicationController
        end
      end
   end
+  
+  def destroy
+    @survey = current_organization.sponsored_surveys.stalled.find(params[:id])
+
+    @survey.destroy
+    
+    respond_to do |wants|
+      wants.html {         
+        redirect_to surveys_path() }      
+      wants.xml do
+        render :status => :ok
+      end
+    end
+  end  
  
     
   private

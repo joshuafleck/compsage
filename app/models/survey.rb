@@ -21,9 +21,9 @@ class Survey < ActiveRecord::Base
   has_many :discussions, :dependent => :destroy
   has_many :invitations, :class_name => 'SurveyInvitation', :dependent => :destroy
   has_many :external_invitations, :class_name => 'ExternalSurveyInvitation', :dependent => :destroy
-  has_many :questions
+  has_many :questions, :dependent => :destroy
   has_many :responses, :through => :questions
-  has_many :participations
+  has_many :participations, :dependent => :destroy
   has_many :subscriptions, :class_name => 'SurveySubscription', :dependent => :destroy
   has_many :subscribed_organizations, :through => :survey_subscriptions, :source => :organization
   
@@ -38,6 +38,7 @@ class Survey < ActiveRecord::Base
   named_scope :closed, :conditions => ['aasm_state = ? OR aasm_state = ?', 'finished', 'stalled']
   
   after_create :add_sponsor_subscription
+  before_destroy :email_not_rerunning_message
   
   aasm_initial_state :pending
   aasm_state :pending
@@ -159,6 +160,17 @@ class Survey < ActiveRecord::Base
     end
 
     Notifier.deliver_survey_results_available_notification(self, sponsor) unless participants.include?(sponsor)
+  end
+  
+  # notify the participants that the sponsor is not rerunning the survey
+  def email_not_rerunning_message  
+  
+    participants = participations.collect { |p| p.participant } # because has_many :through doesn't work backwards w/ polymorphism :/
+    
+    participants.each do |participant|
+      Notifier.deliver_survey_not_rerunning_notification(self, participant)
+    end
+      
   end
   
   def email_billing_error

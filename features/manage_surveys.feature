@@ -78,4 +78,16 @@ Feature: Manage surveys
     And I should see "1 participant so far."
     When I follow "Surveys &amp; Results"
     Then I should not see "Decline"
+    
+  Scenario: Rerun survey
+    Given I am logged in
+    And I am on the survey stalled page
+    When I press "Re-Run"
+    Then I should see "Survey updated"
+  
+  Scenario: Not rerun survey
+    Given I am logged in
+    And I am on the survey stalled page
+    When I follow "here"
+    Then I should see "You currently don't have any survey results."  
 
