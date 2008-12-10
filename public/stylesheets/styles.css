@@ -217,7 +217,11 @@ div#my_surveys ul {
 }
 
 div#my_surveys li {
-  margin-bottom:1.2857em;
+  margin-bottom: 0.64285em;
+}
+
+div#my_surveys li h3 {
+  margin-top: 0;
 }
 /* Survey show page invitation list */
 #invitation_list {

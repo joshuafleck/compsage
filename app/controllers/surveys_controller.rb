@@ -11,8 +11,9 @@ class SurveysController < ApplicationController
       wants.html {
         @surveys = Survey.running.paginate(:page => params[:page], :order => 'job_title')  
         @invited_surveys = current_organization.survey_invitations.pending.running.find(:all,:order => 'invitations.created_at desc')
-        @my_surveys = current_organization.sponsored_surveys.running
-        @my_stalled = current_organization.surveys.stalled.recent
+        @my_surveys = current_organization.sponsored_surveys.not_finished.find(:all, :order => 'end_date DESC');
+        @participated_surveys = current_organization.participated_surveys.find(:all, :order => 'end_date DESC',
+                                                                              :conditions => ['sponsor_id <> ?', current_organization.id]);
         @my_results = current_organization.surveys.finished.recent
       }
       wants.xml {

@@ -36,6 +36,7 @@ class Survey < ActiveRecord::Base
   named_scope :since_last_week, Proc.new { {:conditions => ['end_date > ?', Time.now]} }
   named_scope :recent, :order => 'surveys.created_at DESC', :limit => 10
   named_scope :closed, :conditions => ['aasm_state = ? OR aasm_state = ?', 'finished', 'stalled']
+  named_scope :not_finished, :conditions => "aasm_state <> 'finished'"
   
   after_create :add_sponsor_subscription
   before_destroy :email_not_rerunning_message
