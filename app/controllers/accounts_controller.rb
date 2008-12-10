@@ -125,11 +125,11 @@ class AccountsController < ApplicationController
         Notifier.deliver_reset_password_key_notification(@organization)
         respond_to do |wants|
           wants.html do
-            flash[:notice] = "Email successfully sent to #{@organization.email}."
+            flash[:notice] = "Password reset email successfully sent to #{@organization.email}."
           end
         end
       else
-        flash[:notice] = "There was no organization found for #{params[:email]}."
+        flash[:notice] = "There was no account found for #{params[:email]}."
       end
     end
   end
@@ -162,14 +162,14 @@ class AccountsController < ApplicationController
       if @organization.nil?
         respond_to do |wants|
           wants.html do
-            flash[:notice] = "Your request is invalid."
+            flash[:notice] = "We were not able to access this page."
             redirect_back_or_default('/')
           end
         end
       elsif @organization.reset_password_key_expires_at < Time.now
         respond_to do |wants|
           wants.html do
-            flash[:notice] = "The requested key is no longer valid."
+            flash[:notice] = "Your key has expired - please request a new key."
             @organization.delete_reset_key
             redirect_back_or_default('/')
           end
