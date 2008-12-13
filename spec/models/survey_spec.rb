@@ -202,3 +202,30 @@ describe Survey, "that is ready to be billed" do
     @survey.finish!
   end
 end
+
+describe Survey, "that is being cancelled (destroyed)" do
+  before do 
+    @org_1 = Organization.create!(valid_organization_attributes.with(:email => "test@example.org"))
+    @org_2 = Organization.create!(valid_organization_attributes.with(:email => "test2@example.org"))
+    
+    @survey = Survey.new(valid_survey_attributes.with(:sponsor => @org_1))
+    @survey.aasm_state = 'stalled'
+    @survey.save!
+    
+    @inv_1 = @survey.external_invitations.create!(:email => "test2@example.org", :organization_name => "name", :inviter => @survey.sponsor)
+    
+    @participation_1 = @survey.participations.create!(:participant => @org_2)
+    @participation_2 = @survey.participations.create!(:participant => @inv_1)
+  end
+
+  it "should delete all the participations" do
+    @survey.destroy
+    @survey.participations.should be_empty
+  end
+
+  it "should delete all invitations" do
+    @survey.destroy
+    @survey.invitations.should be_empty
+    @survey.external_invitations.should be_empty
+  end
+end
