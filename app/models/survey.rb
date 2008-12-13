@@ -20,10 +20,10 @@ class Survey < ActiveRecord::Base
   belongs_to :sponsor, :class_name => "Organization"
   has_many :discussions, :dependent => :destroy
   has_many :invitations, :class_name => 'SurveyInvitation', :dependent => :destroy
-  has_many :external_invitations, :class_name => 'ExternalSurveyInvitation', :dependent => :destroy
+  has_many :external_invitations, :class_name => 'ExternalSurveyInvitation'
   has_many :questions, :dependent => :destroy
   has_many :responses, :through => :questions
-  has_many :participations, :dependent => :destroy
+  has_many :participations
   has_many :subscriptions, :class_name => 'SurveySubscription', :dependent => :destroy
   has_many :subscribed_organizations, :through => :survey_subscriptions, :source => :organization
   
@@ -39,7 +39,7 @@ class Survey < ActiveRecord::Base
   named_scope :not_finished, :conditions => "aasm_state <> 'finished'"
   
   after_create :add_sponsor_subscription
-  before_destroy :email_not_rerunning_message
+  before_destroy :cancel_survey
   
   aasm_initial_state :pending
   aasm_state :pending
@@ -162,16 +162,24 @@ class Survey < ActiveRecord::Base
 
     Notifier.deliver_survey_results_available_notification(self, sponsor) unless participants.include?(sponsor)
   end
-  
+ 
+  # Handles what all needs to be done to cancel and then destroy a survey.
+  # Participations are deleted manually here because otherwise the participations will be
+  # destroyed before we actually enter this callback, so their dependent option cannot be
+  # set.
+
+  def cancel_survey
+    email_not_rerunning_message
+    participations.destroy_all
+    invitations.destroy_all
+    external_invitations.destroy_all
+  end
+
   # notify the participants that the sponsor is not rerunning the survey
-  def email_not_rerunning_message  
-  
-    participants = participations.collect { |p| p.participant } # because has_many :through doesn't work backwards w/ polymorphism :/
-    
-    participants.each do |participant|
+  def email_not_rerunning_message
+    participations.collect(&:participant).each do |participant|
       Notifier.deliver_survey_not_rerunning_notification(self, participant)
     end
-      
   end
   
   def email_billing_error
