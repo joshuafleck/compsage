@@ -5,7 +5,7 @@
 <p>Invite other organizations to join CompSage</p>
 <p>
   <%=flash_messages%>
-  <%=error_messages_for :invitation, :header_message => "Please try again!", :message => "Resolve the following problems:"%>%>
+  <%=error_messages_for :invitation, :header_message => ErrorMessages::Views::DEFAULT_MESSAGE_HEADER, :message => ErrorMessages::Views::DEFAULT_MESSAGE_SECONDARY%>
   <% form_for :invitation, @invitation, :url => external_invitations_path do |f| %>
     <p>
       <label>Name of Invitee:</label><br />

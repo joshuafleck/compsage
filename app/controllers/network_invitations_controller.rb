@@ -49,7 +49,7 @@ class NetworkInvitationsController < ApplicationController
     
     if @invitation.save then
       if invited_organization.nil? then
-        flash[:message] = "Invitation sent to external email address #{params[:invitation][:email]}."
+        flash[:message] = "Invitation sent to the following email address #{params[:invitation][:email]}."
       else
         flash[:message] = "Invitation sent to #{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)}."
       end
@@ -85,7 +85,7 @@ class NetworkInvitationsController < ApplicationController
       wants.js { render :text => "#{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)} is already a member of #{@network.name}."}
     end  
   rescue SelfInvitation
-    flash[:notice] = "As the network owner, you cannot be an invitee to your own network."
+    flash[:notice] = "As the network owner, you cannot be invited to your own network."
     respond_to do |wants|
       wants.html { redirect_to network_invitations_path(params[:network_id]) }
       wants.xml { head :status => 422 }

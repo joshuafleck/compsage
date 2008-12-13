@@ -6,7 +6,7 @@ class ExternalSurveyInvitation < ExternalInvitation
   has_many :responses, :through => :participations
   
   validates_presence_of :survey
-  validates_presence_of :organization_name, :message => $DEFAULT_MESSAGE_REQUIRED
+  validates_presence_of :organization_name, :message => PRESENCE_OF_ERROR_MESSAGE
   
   attr_accessible :survey, :disccusions, :responses
 end

@@ -79,6 +79,9 @@ end
 Given /I am on the survey stalled page/ do
   @survey = Factory.create(:survey, :sponsor => @current_organization) 
   @question = Factory.create(:question, :survey => @survey, :text => 'Question 1')
+  @external_survey_invitation = Factory.create(:external_survey_invitation, :survey => @survey);
+  @participation = Factory.create(:participation, :participant => @external_survey_invitation)
+  @response = Factory.create(:response,:question => @question,:participation => @participation);
   @survey.end_date = Date.today - 1.day
   @survey.save!
   @survey.finish!

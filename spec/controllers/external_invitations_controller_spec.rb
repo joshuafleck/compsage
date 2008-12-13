@@ -179,7 +179,7 @@ describe ExternalInvitationsController, " handling POST /external_invitations" d
   it "should redirect to the dashboard and flash a message regarding the success of the action when the request is HTML" do
   	do_post
   	response.should redirect_to(external_invitations_path)
-  	flash[:notice].should eql("Invitation sent to external email address: test@test.com.")
+  	flash[:notice].should eql("Invitation sent to the following email addresses: test@test.com.")
   end
   
 end

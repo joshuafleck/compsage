@@ -31,7 +31,7 @@ class ExternalInvitationsController < ApplicationController
     if @invitation.save then
       respond_to do |wants|
         wants.html do
-          flash[:notice] = "Invitation sent to external email address: #{params[:invitation][:email]}."
+          flash[:notice] = "Invitation sent to the following email addresses: #{params[:invitation][:email]}."
           redirect_to external_invitations_path
         end     
         wants.xml do

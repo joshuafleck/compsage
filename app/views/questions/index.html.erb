@@ -7,7 +7,7 @@
 <p class="description_box"><%=@survey.description%></p>
 <p>Report data as of <%=90.days.ago.to_date.to_s(:long_ordinal)%>.</p>
 <%=flash_messages%>
-
+<%=error_messages_for :participation%>
 <% form_for @participation, :url => respond_survey_path(@survey), :builder => QuestionFormBuilder do |f|%>
 	<ol id="questions">
 		<% @survey.questions.each do |question|

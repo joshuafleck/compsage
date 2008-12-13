@@ -23,7 +23,7 @@
       </p>
     <% end %> 
       <p>
-        If you do not wish to rerun the survey please click <%=link_to "here", survey_path(@survey), :method => :delete %> to notify the participants and remove the survey.
+        Click <%=link_to "here", survey_path(@survey), :method => :delete %> to delete the survey.
       </p> 
   <% else %>
     <p>Survey results are unavailable due to insufficient data.  The
@@ -56,6 +56,9 @@
 			<% end %>
 		</ol>
 		<p><%=pluralize(@survey.participations.count, 'participant')%> so far.</p>
+		<% if @survey.sponsor == current_organization && [@survey.all_invitations(true).size,@survey.participations.size].max < @survey.required_number_of_participations then %>
+		  <p>Warning: <%=@survey.required_number_of_participations%> responses are required to provide results. We recommend you invite at least <%=@survey.required_number_of_participations - [@survey.all_invitations(true).size,@survey.participations.size].max%> additional organizations.</p>
+		<% end %>
 	</div>
 	<h3>Job Description</h3>
 	<p class="description_box"><%=@survey.description%></p>

@@ -21,6 +21,7 @@ class SurveyInvitationsController < ApplicationController
     @survey = current_organization.sponsored_surveys.running.find(params[:survey_id])    
     @invalid_external_invites = []     
     invite_organizations = []
+    invitations_sent = false
        
     # find all of the individual invited organizations    
     params[:invite_organization].each do |id, invite|
@@ -42,6 +43,7 @@ class SurveyInvitationsController < ApplicationController
       if !invite_organization.invited_surveys.include?(@survey) && invite_organization != @survey.sponsor then
         invitation = @survey.invitations.new(:invitee => invite_organization, :inviter => current_organization)
         invitation.save!
+        invitations_sent = true
       end
     end
     
@@ -52,6 +54,8 @@ class SurveyInvitationsController < ApplicationController
         invitation.inviter = current_organization
         if !invitation.save then
           @invalid_external_invites << invitation
+        else
+          invitations_sent = true
         end
       end
     end unless params[:external_invite].blank?
@@ -65,7 +69,7 @@ class SurveyInvitationsController < ApplicationController
         end
       end 
     else
-      flash[:notice] = "Invitations sent!"
+      flash[:notice] = invitations_sent ? "Invitations sent!" : "No invitees were selected, or selected invitees were already invited."
       respond_to do |wants|
         wants.html do
           redirect_to :action => "index"
