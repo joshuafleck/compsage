@@ -24,6 +24,10 @@ Factory.sequence :organization_name do |n|
   "Organization #{n}"
 end
 
+Factory.sequence :counter do |n|
+  n
+end
+
 #defining an organization.
 Factory.define :organization do |o|
   o.name 'Iced Inc'
@@ -86,11 +90,13 @@ end
 Factory.define :participation do |p|
   p.survey {|a| a.association(:survey)}
   p.participant {|a| a.association(:organization)}
+  p.responses {|a| [a.association(:response, :participation_id => a.id)]}
 end
 
 #definition and setup for question
 Factory.define :question do |p|
   p.position { |a| a.object_id }
+  p.survey {|a| a.association(:survey)}
   p.text { Factory.next(:question) }
   p.question_type "numerical_field"
 end
@@ -105,6 +111,7 @@ end
 
 #definition and setup for response
 Factory.define :response do |p|
-  
+  p.question  {|a| a.association(:question)}
+  p.numerical_response { Factory.next(:counter) }
 end
 

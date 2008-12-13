@@ -3,7 +3,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 def valid_participation_attributes
   {
     :survey => mock_model(Survey, :id => 1, :sponsor => mock_model(Organization)),
-    :participant => mock_model(Organization, :id => 1)
+    :participant => mock_model(Organization, :id => 1),
+    :responses => [mock_model(Response, :valid? => true)]
   }
 end
 
@@ -49,7 +50,10 @@ describe Participation do
   
   it "should fulfill the invitation when an invited organization has responded" do
     @participation = Factory.build(:participation) 
-    invitation = SurveyInvitation.new(:inviter => @participation.survey.sponsor, :invitee => @participation.participant, :survey => @participation.survey)
+    invitation = SurveyInvitation.new(
+      :inviter => @participation.survey.sponsor, 
+      :invitee => @participation.participant, 
+      :survey => @participation.survey)
     invitation.save!
     @participation.save!
     invitation = SurveyInvitation.find_by_id(invitation.id)
