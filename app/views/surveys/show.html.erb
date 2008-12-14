@@ -56,8 +56,8 @@
 			<% end %>
 		</ol>
 		<p><%=pluralize(@survey.participations.count, 'participant')%> so far.</p>
-		<% if @survey.sponsor == current_organization && [@survey.all_invitations(true).size,@survey.participations.size].max < @survey.required_number_of_participations then %>
-		  <p>Warning: <%=@survey.required_number_of_participations%> responses are required to provide results. We recommend you invite at least <%=@survey.required_number_of_participations - [@survey.all_invitations(true).size,@survey.participations.size].max%> additional organizations.</p>
+		<% if @survey.sponsor == current_organization && !@survey.enough_invitations? then %>
+		  <p>Warning: <%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%> responses are required to provide results. We recommend you invite at least <%=@survey.recommended_number_of_invitations%> additional organizations.</p>
 		<% end %>
 	</div>
 	<h3>Job Description</h3>

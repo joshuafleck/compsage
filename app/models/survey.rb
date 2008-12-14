@@ -71,6 +71,8 @@ class Survey < ActiveRecord::Base
   MINIMUM_DAYS_TO_RERUN = 3
   # the maximum number of days a survey can be running for
   MAXIMUM_DAYS_TO_RUN = 21
+  # the number of participations required to provide results for each question
+  REQUIRED_NUMBER_OF_PARTICIPATIONS = 5
 
   def days_running
     @days_running
@@ -95,10 +97,6 @@ class Survey < ActiveRecord::Base
     invitations += self.external_invitations.find(:all)
     invitations << SurveyInvitation.new(:invitee => self.sponsor) if include_sponsor
     invitations.sort    
-  end
-  
-  def required_number_of_participations
-    5
   end
   
   # a survey can be rerun if there are enough days left to accomidate the minimum run
@@ -130,10 +128,20 @@ class Survey < ActiveRecord::Base
     10000
   end
 
+  # determine if the survey had adequate invitations for providing results
+  def enough_invitations?
+    [self.all_invitations(true).size,self.participations.size].max >= Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS
+  end
+  
+  # determine the recommended number of invitations necessary to provide results
+  def recommended_number_of_invitations
+    Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS - [self.all_invitations(true).size,self.participations.size].max
+  end
+  
   private
   
   def enough_responses?
-    participations.count >= required_number_of_participations
+    participations.count >= Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS
   end
   
   # TODO: Figure out who to email...

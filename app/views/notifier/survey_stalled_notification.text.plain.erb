@@ -1,4 +1,4 @@
-The survey "<%=@survey.job_title%>" has completed but only attained <%=@survey.participations.size%> of <%=@survey.required_number_of_participations%> required responses to provide results. You may leave the survey as it is at no cost, or re-run the survey with additional invitees.
+The survey "<%=@survey.job_title%>" has completed but only attained <%=@survey.participations.size%> of <%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%> required responses to provide results. You may leave the survey as it is at no cost, or re-run the survey with additional invitees.
 
 To view the survey, please follow the link below:
 <%=url_for(survey_path(@survey, :only_path => false))%>
