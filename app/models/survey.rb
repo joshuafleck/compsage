@@ -80,7 +80,7 @@ class Survey < ActiveRecord::Base
   
   def days_running=(days)
     @days_running = days
-    self[:end_date] = Time.now.at_beginning_of_day + days.to_i.days
+    self[:end_date] = Time.now + days.to_i.days
   end
   
   def closed?
