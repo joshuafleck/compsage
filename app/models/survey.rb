@@ -130,18 +130,18 @@ class Survey < ActiveRecord::Base
 
   # determine if the survey had adequate invitations for providing results
   def enough_invitations?
-    [self.all_invitations(true).size,self.participations.size].max >= Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS
+    [self.all_invitations(true).size,self.participations.size].max >= REQUIRED_NUMBER_OF_PARTICIPATIONS
   end
   
   # determine the recommended number of invitations necessary to provide results
   def recommended_number_of_invitations
-    Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS - [self.all_invitations(true).size,self.participations.size].max
+    REQUIRED_NUMBER_OF_PARTICIPATIONS - [self.all_invitations(true).size,self.participations.size].max
   end
   
   private
   
   def enough_responses?
-    participations.count >= Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS
+    participations.count >= REQUIRED_NUMBER_OF_PARTICIPATIONS
   end
   
   # TODO: Figure out who to email...

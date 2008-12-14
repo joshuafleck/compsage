@@ -1,6 +1,6 @@
 class ReportsController < ApplicationController
   layout 'logged_in'
-  before_filter :login_or_survey_invitation_required, :must_have_responded
+  before_filter :login_or_survey_invitation_required, :must_have_responded_or_sponsored
   
   def show
     @survey = Survey.find(params[:survey_id])
@@ -24,8 +24,11 @@ class ReportsController < ApplicationController
   
   protected
   
-  def must_have_responded
-    if current_organization_or_survey_invitation.participations.find_by_survey_id(params[:survey_id]).nil? then
+  def must_have_responded_or_sponsored
+    @survey = Survey.find(params[:survey_id])
+    if (current_organization_or_survey_invitation.participations.find_by_survey_id(@survey.id).nil? &&
+      current_organization != @survey.sponsor) 
+    then
        render :text => "You must first respond to the survey before getting results.", :status => :unauthorized
       return false
     end
@@ -48,7 +51,7 @@ class ReportsController < ApplicationController
     #If the current organization was invited to the survey and 
     # there were more than X participations from invited users,     
     # then we will filter out any responses from uninvited participants
-    show_only_invitee_responses = invitee_participations.size >= @survey.required_number_of_participations &&   
+    show_only_invitee_responses = invitee_participations.size >= Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS &&   
       invitee_participations.include?(current_organization_or_invitation_participation)
     
     #Determine the number of participations based on the scope  
