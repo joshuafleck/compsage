@@ -17,7 +17,13 @@ describe ReportsController, "handling GET /survey/1/report with current organiza
     @current_organization_or_survey_invitation = mock_model(Organization, :id => 1)
     login_as(@current_organization_or_survey_invitation)
     
-    @survey = mock_model(Survey, :all_invitations => [], :required_number_of_participations => 5)
+    @survey = mock_model(
+      Survey, 
+      :all_invitations => [], 
+      :required_number_of_participations => 5, 
+      :sponsor => mock_model(Organization),
+      :id => "1"
+    )
     @participation = mock_model(Participation)
     @participations = mock('participations proxy', :size => 5, :find_by_survey_id => @participation)
     
@@ -48,6 +54,11 @@ describe ReportsController, "handling GET /survey/1/report with current organiza
     @current_organization_or_survey_invitation.should_receive(:participations).and_return(@participations)
     do_get
   end
+  
+  it "should check if the organization participated" do
+    @participations.should_receive(:find_by_survey_id).and_return(@participation)
+    do_get
+  end  
     
   it "should find the participations from invited organizations" do
     @participations.should_receive(:belongs_to_invitee).and_return(@participations)
@@ -79,7 +90,8 @@ describe ReportsController, "handling GET /survey/1/report with current organiza
     @current_organization_or_survey_invitation = mock_model(Organization, :id => 1)
     login_as(@current_organization_or_survey_invitation)
     
-    @survey = mock_model(Survey, :all_invitations => [], :required_number_of_participations => 5)
+    @survey = mock_model(Survey, :all_invitations => [], :required_number_of_participations => 5, 
+      :sponsor => mock_model(Organization))
     @participation = mock_model(Participation)
     @participations = mock('participations proxy', :size => 5, :find_by_survey_id => @participation)
     
@@ -115,7 +127,8 @@ describe ReportsController, "handling GET /survey/1/report with inadequate parti
     @current_organization_or_survey_invitation = mock_model(Organization, :id => 1)
     login_as(@current_organization_or_survey_invitation)
     
-    @survey = mock_model(Survey, :all_invitations => [], :required_number_of_participations => 5)
+    @survey = mock_model(Survey, :all_invitations => [], :required_number_of_participations => 5, 
+      :sponsor => mock_model(Organization))
     @participation = mock_model(Participation)
     @participations = mock('participations proxy', :size => 1, :find_by_survey_id => @participation)
     
@@ -146,7 +159,8 @@ end
 
 describe ReportsController, "with access limits" do
   before do
-    @survey = mock_model(Survey, :required_number_of_participations => 5)
+    @survey = mock_model(Survey, :required_number_of_participations => 5, 
+      :sponsor => mock_model(Organization))
     @organization = mock_model( Organization,
       valid_organization_attributes.with(
         :participations => mock(
@@ -181,7 +195,8 @@ describe ReportsController, "handling GET /survey/1/chart.xml" do
     @current_organization_or_survey_invitation = mock_model(Organization, :id => 1)
     login_as(@current_organization_or_survey_invitation)
     
-    @survey = mock_model(Survey, :all_invitations => [], :required_number_of_participations => 5)
+    @survey = mock_model(Survey, :all_invitations => [], :required_number_of_participations => 5, 
+      :sponsor => mock_model(Organization))
     @participation = mock_model(Participation)
     @participations = mock('participations proxy', :size => 3, :find_by_survey_id => @participation)
     
