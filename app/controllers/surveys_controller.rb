@@ -12,8 +12,16 @@ class SurveysController < ApplicationController
         @surveys = Survey.running.paginate(:page => params[:page], :order => 'job_title')  
         @invited_surveys = current_organization.survey_invitations.pending.running.find(:all,:order => 'invitations.created_at desc')
         @my_surveys = current_organization.sponsored_surveys.not_finished.find(:all, :order => 'end_date DESC');
-        @participated_surveys = current_organization.participated_surveys.find(:all, :order => 'end_date DESC',
-                                                                              :conditions => ['sponsor_id <> ?', current_organization.id]);
+        # Include surveys that are running and those that are stalled within the last day
+        @survey_participations = current_organization.participations.find(:all,
+          :include => :survey,
+          :order => 'surveys.end_date DESC',
+          :conditions => ['surveys.sponsor_id <> ? AND (surveys.aasm_state = ? OR (surveys.aasm_state = ? AND surveys.end_date > ?))',
+            current_organization.id,
+            'running',
+            'stalled',
+            Time.now - 1.day]);
+
         @my_results = current_organization.surveys.finished.recent
       }
       wants.xml {

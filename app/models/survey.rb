@@ -102,7 +102,7 @@ class Survey < ActiveRecord::Base
   # a survey can be rerun if there are enough days left to accomidate the minimum run
   # length
   def can_be_rerun?
-    days_until_rerun_deadline >= MINIMUM_DAYS_TO_RERUN 
+    days_until_rerun_deadline >= MINIMUM_DAYS_TO_RERUN && stalled? 
   end
   
   # this will determine the maximum number of days the survey can be rerun for
