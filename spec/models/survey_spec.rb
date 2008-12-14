@@ -214,8 +214,12 @@ describe Survey, "that is being cancelled (destroyed)" do
     
     @inv_1 = @survey.external_invitations.create!(:email => "test2@example.org", :organization_name => "name", :inviter => @survey.sponsor)
     
-    @participation_1 = @survey.participations.create!(:participant => @org_2)
-    @participation_2 = @survey.participations.create!(:participant => @inv_1)
+    @participation_1 = @survey.participations.create!(
+      :participant => @org_2,
+      :responses => [mock_model(Response, :valid? => true, :[]= => true, :save => true)])
+    @participation_2 = @survey.participations.create!(
+      :participant => @inv_1, 
+      :responses => [mock_model(Response, :valid? => true, :[]= => true, :save => true)])
   end
 
   it "should delete all the participations" do
