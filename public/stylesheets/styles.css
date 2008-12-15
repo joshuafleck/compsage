@@ -17,6 +17,7 @@ h2 {
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	color: #455349;
 	letter-spacing: -0.05em;
+  margin-top: 0.5em;
 }
 
 h3 {
@@ -306,6 +307,17 @@ ul#discussions .actions {
 	margin-bottom: .25em;
 } 
 
+/* Survey Results Page */
+
+ul#survey_results {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+ul#survey_results li {
+
+}
 
 .abbrev {
 	font-variant: small-caps;

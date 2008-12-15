@@ -251,8 +251,7 @@ class SurveysController < ApplicationController
     respond_to do |wants|
       wants.html {
         @filter_by_subscription = "true" # need this flag to designate any searches should be against subscribed surveys
-        @running_surveys = current_organization.surveys.running.paginate(:page => params[:page], :order => 'job_title')
-        @finished_surveys = current_organization.surveys
+        @surveys = current_organization.surveys.finished.paginate(:page => params[:page])
       }
       wants.xml {
         @surveys = current_organization.surveys

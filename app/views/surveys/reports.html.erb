@@ -1,18 +1,14 @@
 <% title "My Surveys" %>
 <% highlight_tab("surveys") %>
-<h2>My Surveys</h2>
+<h2>My Survey Results</h2>
 <%=flash_messages%>
-<div id="my_search_box">
-	<% form_tag search_surveys_path, :method => :get do %>
-	  <%= hidden_field_tag 'filter_by_subscription', @filter_by_subscription %>
-	  <%= text_field_tag 'search_text', @search_text %>
-		<input type="submit" id="search_submit" value="Find Survey Results">
-	<% end %>
-</div>
-<%=link_to image_tag("sponsor_a_survey_button.gif"), new_survey_path%>
-<h3>Running Surveys</h3>
-<h3>Survey Results</h3>
-<ul id="surveys">
-	<%= render :partial => "survey", :collection => @surveys %>
+<ul id="survey_results">
+  <% @surveys.each do |survey| %>
+    <li>
+      <h3><%= link_to survey, survey %> <span class="sponsor">sponsored by <%= link_to_organization survey.sponsor %></span></h3>
+      <div class="description_box"><%= survey.description %></div>
+      <div>Results generated <%= survey.end_date.to_date.to_s(:long_ordinal) %></div>
+    </li>
+  <% end %>
 </ul>
 <%= will_paginate @surveys %>
