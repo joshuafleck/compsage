@@ -11,6 +11,12 @@ class QuestionsController < ApplicationController
       wants.xml { render :xml => @survey.questions.to_xml }
     end
   end
+  
+  def preview
+    @survey = Survey.find(params[:survey_id])
+    @questions = @survey.questions
+    @participation = Participation.new
+  end
     
   private
   
