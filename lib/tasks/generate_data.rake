@@ -55,7 +55,7 @@ namespace :data_generator do
         next if rand(5) == 0 # (80% chance of answering a question)
         
         case question.question_type
-        when 'numerical_response'
+        when 'numerical_field'
           response = Factory.build(:response, :question => question, :numerical_response => 20000 + rand(60000))
         when 'radio'
           response = Factory.build(:response, :question => question, :numerical_response => rand(4))
