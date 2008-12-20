@@ -1,12 +1,9 @@
-<%
-	total_responses = question.send(@responses_method).size
-%>
 <div>
 	<div class="report_question"><%=question.text%>:</div>
 	<dl>
 		<% question.options.each_with_index do |option, index| %>
 			<dt><%=option%></dt>
-			<dd><%=question.send(@grouped_responses_method)[index].nil? ? 0 : question.send(@grouped_responses_method)[index].size%> out of <%=total_responses%></dd>
+			<dd><%=question.send(@grouped_responses_method)[index].nil? ? 0 : question.send(@grouped_responses_method)[index].size%> out of <%=@total_participation_count%></dd>
 		<% end %>
 	</dl>
 </div>

@@ -27,8 +27,6 @@ class Response < ActiveRecord::Base
   	end
   end
   
-
-
   def self.human_attribute_name(attr)
     HUMANIZED_ATTRIBUTES[attr.to_sym] || super
   end
