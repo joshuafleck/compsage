@@ -1,10 +1,9 @@
 module StatisticsExtension
   def percentiles(field, *percentiles)
-    data = self.collect(&field)
-    
+    data = self.collect{|r| r.send(field) || 0 }
     return nil if data.empty?
     return Array.new(percentiles.size, data.first) if data.size == 1
-    
+    data.sort!
     size = data.size
     results = []
     
@@ -12,7 +11,7 @@ module StatisticsExtension
     # that position and find out what array index that corresponds to.  Next, we take the difference between the array
     # position and the actual position to determine a weight by which we must adjust the percentile to get a more
     # accurate representation of the data (assuming our chosen position isn't already the largest data element).
-    
+   
     percentiles.each do |percentile|
       pos = (size-1) * (percentile/100.0)
       index = pos.to_i
