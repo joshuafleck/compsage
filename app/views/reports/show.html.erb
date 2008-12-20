@@ -23,7 +23,7 @@
 	  <div>
     	<div class="report_question"><%=question.text%>:</div>
     	<p>
-    	  Question received <%=question.send(@responses_method).size%> of <%=@survey.required_number_of_participations%> required responses to display results.
+    	  Question received <%=question.send(@responses_method).size%> of <%= Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS %> required responses to display results.
     	</p>
     </div>
 	<% end %>
