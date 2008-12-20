@@ -21,19 +21,19 @@ namespace :data_generator do
       end
       
       if question_type == 'radio' then
-        options = ["option 1", "option 2", "option 3", "option 4"]
+        options = Array.new(rand(4) + 2) { Faker::Lorem.words(rand(3) + 1).join(" ") } 
       else
         options = nil
       end
 
-      question = Factory(:question, :survey => survey, :question_type => question_type, :options => options) 
+      question = Factory(:question, :survey => survey, :question_type => question_type, :options => options, :text => Faker::Lorem.sentence.gsub(/.$/, '?')) 
       questions << question
     end
 
     invitations = []
     current_org = 1
     # between 5 and 10 invitations  
-    (rand(5)+6).times do
+    (rand(100)+50).times do
       if current_org < Organization.count && rand(2) > 0 then
         invitee = Organization.all[current_org]
         invite = Factory(:survey_invitation, :inviter => sponsor, :invitee => invitee, :survey => survey)
@@ -58,7 +58,7 @@ namespace :data_generator do
         when 'numerical_field'
           response = Factory.build(:response, :question => question, :numerical_response => 20000 + rand(60000))
         when 'radio'
-          response = Factory.build(:response, :question => question, :numerical_response => rand(4))
+          response = Factory.build(:response, :question => question, :numerical_response => rand(question.options.size))
         else
           response = Factory.build(:response, :question => question, :textual_response => Faker::Lorem.sentence, :numerical_response => nil)
         end
