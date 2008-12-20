@@ -1,16 +1,25 @@
 <% title "Preview for #{@survey.job_title}" %>
 <% logged_in? ? highlight_tab("surveys") : highlight_tab("survey") %>
 <h2>Survey Preview</h2>
-<p>Please take a few moments to review the survey you are about to submit. Double check that the spelling, grammar and format of the survey match your expectations. If you are satisfied with your survey, please continue, if not return back to the previous page. You are only allowed to have one survey in this state, until you send invitations.
+<p>Please take a few moments to review the survey you are about to submit. Double check that the spelling, grammar and format of the survey match your expectations. If you are satisfied with your survey, please continue, if not return back to the previous page. You are only allowed to have one survey in this state, until you send invitations.</p>
 <div class="separator"><%=image_tag 'embellish.gif' %></div>
 <%= render :partial => "participation_form"%>
 <div class="separator"><%=image_tag 'embellish.gif' %></div>
+<p>
+
+<%= if @survey.invitations.size == 0 then
+   link_to "Continue", @invitation.nil? ? survey_invitations_path(@survey) : create_with_network_survey_invitations_path(@survey, :invitation => { :network_id => @invitation })
+   else
+    link_to "Finish", survey_path(@survey)
+end %>
+or 
+<%= link_to "Edit the Survey", edit_survey_path(@survey) %>
+</p>
 <script>
 function disableForm(){
   var f = document.getElementsByTagName('input');
   for(var i=0;i<f.length;i++){
-    //if(f[i].getAttribute('type')=='submit' || ){
-    f[i].setAttribute('disabled',true)
+      f[i].setAttribute('disabled',true)
   }
 }
 </script>

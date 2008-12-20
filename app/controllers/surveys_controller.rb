@@ -99,9 +99,9 @@ class SurveysController < ApplicationController
     #update the attributes for the survey
     if @survey.update_attributes(params[:survey])
        respond_to do |wants|  
-         flash[:notice] = 'Survey updated.'
+         #flash[:notice] = 'Survey updated.'
          wants.html{
-           redirect_to survey_path(@survey) 
+           redirect_to preview_survey_questions_path(@survey) 
            }
        end
      else
@@ -174,9 +174,9 @@ class SurveysController < ApplicationController
 
           #Check to see if the user created the survey from a 'survey network' link. If so, create the invitation.
           if params[:invite_network].blank? then
-            redirect_to survey_invitations_path(@survey)
+            redirect_to preview_survey_questions_path(@survey)
           else
-            redirect_to create_with_network_survey_invitations_path(@survey, :invitation => 
+            redirect_to preview_survey_questions_path(@survey, :invitation => 
             {
               :network_id => params[:invite_network]
             })
