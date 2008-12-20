@@ -33,7 +33,7 @@ namespace :data_generator do
     invitations = []
     current_org = 1
     # between 5 and 10 invitations  
-    (rand(100)+50).times do
+    (rand(6)+5).times do
       if current_org < Organization.count && rand(2) > 0 then
         invitee = Organization.all[current_org]
         invite = Factory(:survey_invitation, :inviter => sponsor, :invitee => invitee, :survey => survey)
