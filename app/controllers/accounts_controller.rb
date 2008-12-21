@@ -136,7 +136,7 @@ class AccountsController < ApplicationController
   
   #allow user to update password if key is valid
   def reset
-    @organization = Organization.find_by_reset_password_key(params[:key]) unless params[:key].nil?
+    @organization = Organization.find_by_reset_password_key(CGI::unescape(params[:key])) unless params[:key].nil?
     #if we have a post, attempt to reset the password    
     if request.post?
       if params[:password] == params[:password_confirmation]
