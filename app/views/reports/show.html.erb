@@ -1,9 +1,10 @@
 <% title("Report for #{@survey.job_title}") %>
-<% breadcrumbs(link_to(@survey.job_title, survey_path(@survey))) %>
-<% if logged_in? then highlight_tab "surveys" else highlight_tab "survey" end %>
-<p><%= link_to_function "Invitees (#{@invitations.size})", "new Effect.toggle('invitation_section', 'blind', {duration: .5});return false;" %></p>
+<% highlight_tab logged_in? ? "surveys" : "survey" %>
+<h2>Report on <%=@survey.job_title%></h2>
+<h4>Job Description</h4>
+<div class="description_box"><%=@survey.description%></div>
+<p><%= link_to_function "Show Invitation List (#{@invitations.size} invitees)", "new Effect.toggle('invitation_section', 'blind', {duration: .5});return false;" %></p>
 <div id="invitation_section" style="display:none;">
-  <p>The following companies have been invited to participate:</p>
   <ul id="invitations">
       <% @invitations.each do |invitation| %>
         <li>
@@ -20,11 +21,9 @@
   <% if question.send(@adequate_responses_method) then %>
 	  <%=render :partial => question.question_type, :locals => {:question => question, :survey => @survey}%>
 	<% else %>
-	  <div>
-    	<div class="report_question"><%=question.text%>:</div>
-    	<p>
-    	  Question received <%=question.send(@responses_method).size%> of <%= Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS %> required responses to display results.
-    	</p>
+	  <div class="report_item report_item_suppressed">
+      <h3><%=question.text%></h3>
+    	<p>Data hidden due to insufficient responses.</p>
     </div>
 	<% end %>
 <% end %>

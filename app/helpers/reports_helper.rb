@@ -3,8 +3,8 @@ module ReportsHelper
     options = {
       :classid => "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000",
       :codebase => "http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0",
-      :height => 200,
-      :width => 300,
+      :height => 300,
+      :width => 500,
       :id => 'chart',
       :dimensions => 2
     }.merge(options)

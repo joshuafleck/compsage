@@ -1,14 +1,14 @@
 <% percentiles = question.send(@responses_method).percentiles(:numerical_response, 25, 50, 75) %>
-<div>
-	<div class="report_question"><%=question.text%>:</div>
+<div class="report_item">
+	<h3><%= question.text %></h3>
 	<dl>
 		<dt>Average:</dt>
-		<dd><%=question.send(@responses_method).average(:numerical_response)%></dd>
+    <dd><%= number_with_precision(question.send(@responses_method).average(:numerical_response))%></dd>
 		<dt>25th Percentile</dt>
-		<dd><%=percentiles[0]%></dd>
+    <dd><%= number_with_precision(percentiles[0]) %></dd>
 		<dt>Median:</dt>
-		<dd><%=percentiles[1]%></dd>
+		<dd><%= number_with_precision(percentiles[1]) %></dd>
 		<dt>75th Percentile</dt>
-		<dd><%=percentiles[2]%></dd>
+		<dd><%= number_with_precision(percentiles[2]) %></dd>
 	</dl>
 </div>

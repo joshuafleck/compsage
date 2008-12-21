@@ -1,10 +1,4 @@
-<div>
-	<div class="report_question"><%=question.text%>:</div>
-	<dl>
-		<% question.options.each_with_index do |option, index| %>
-			<dt><%=option%></dt>
-			<dd><%=question.send(@grouped_responses_method)[index].nil? ? 0 : question.send(@grouped_responses_method)[index].size%> out of <%=@total_participation_count%></dd>
-		<% end %>
-	</dl>
+<div class="report_item">
+  <h3><%=question.text%></h3> 
+  <%=chart('bar', url_for(chart_survey_report_path(:question_id => question.id)))%>
 </div>
-<%=chart('bar', url_for(chart_survey_report_path(:question_id => question.id)))%>
