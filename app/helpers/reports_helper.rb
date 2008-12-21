@@ -26,4 +26,27 @@ module ReportsHelper
         :pluginspage => "http://www.macromedia.com/go/getflashplayer")
     end
   end
+
+  # Works similar to Rails' cycle, except it cycles through the steps of the defined gradient.
+  # Takes some options. Start color and end color are required and define the gradient you want
+  # to interpolate. You can optionally pass a count that defines how many steps in the gradient
+  # to cycle through, which defaults to 4.
+
+  def cycle_gradient(options)
+    raise ArgumentError unless options.include?(:start_color) && options.include?(:end_color)
+    count = options.delete(:count) || 4
+    steps = count - 1
+    @_current_step = 0 unless defined? @_current_step
+    
+    # First line splits the hex string into channels for each color and zips the two together,
+    # resulting in an array of ranges for each channel, eg [[0, 255], [0,255], [0,255]]. The
+    # second line then does the interpolation on each channel, formats the string into the
+    # proper hex, and joins it all together.
+
+    current_color = options.delete(:start_color).scan(/../).collect{|b| b.hex}.zip(options.delete(:end_color).scan(/../).collect{|b| b.hex}).
+      collect { |r| "%02x"%(r.first + ((r.last - r.first) / steps) * @_current_step) }.join
+    @_current_step = (@_current_step + 1) % count
+    
+    current_color
+  end
 end
