@@ -5,7 +5,7 @@ require 'faker'
 namespace :data_generator do
   task :finished_survey => :environment do
     sponsor = Organization.first
-    survey = Factory(:survey, :job_title => Faker::Company.catch_phrase, :sponsor => sponsor)
+    survey = Factory(:survey, :job_title => Faker::Company.catch_phrase, :sponsor => sponsor, :description => Faker::Lorem.paragraph)
     
     questions = []
     #anywhere between 3 and 8 questions
