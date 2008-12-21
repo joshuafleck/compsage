@@ -3,6 +3,7 @@ require 'factory_girl'
 require 'faker'
 
 namespace :data_generator do
+  desc "Generate a fake set of responses for a survey."
   task :finished_survey => :environment do
     sponsor = Organization.first
     survey = Factory(:survey, :job_title => Faker::Company.catch_phrase, :sponsor => sponsor, :description => Faker::Lorem.paragraph)
