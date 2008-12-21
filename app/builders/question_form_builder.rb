@@ -44,7 +44,7 @@ class QuestionFormBuilder < ActionView::Helpers::FormBuilder
   # pull out the errors to display if any exist
   def error_text
     if object.errors.count > 0 then
-      @template.content_tag(:div, object.errors.full_messages.join(" &amp; "), :class => 'error_description')
+      @template.content_tag(:div, object.errors.full_messages.uniq.join(" &amp; "), :class => 'error_description')
     else
       ""
     end

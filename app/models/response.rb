@@ -3,11 +3,12 @@ class Response < ActiveRecord::Base
   belongs_to :participation
   
   validates_presence_of :question
-  validates_presence_of :textual_response, :if => Proc.new { |response| response.numerical_response.blank?}
-  validates_presence_of :numerical_response, :if => Proc.new { |response| response.textual_response.blank? }
-  validates_numericality_of :numerical_response, :allow_nil => true, :message => "Only numbers are valid."
+  validate :qualification_requires_response
+  validates_presence_of :textual_response, :if => Proc.new { |response| response.numerical_response.blank? && response.qualifications.blank? }
+  validates_presence_of :numerical_response, :if => Proc.new { |response| response.textual_response.blank? && response.qualifications.blank? }
+  validates_numericality_of :numerical_response, :allow_nil => true, :message => ": Only numbers are valid."
   HUMANIZED_ATTRIBUTES = {
-    :numerical_response => "",
+    :numerical_response => "Response",
     :textual_response => "Response"
   }
   
@@ -29,5 +30,9 @@ class Response < ActiveRecord::Base
   
   def self.human_attribute_name(attr)
     HUMANIZED_ATTRIBUTES[attr.to_sym] || super
+  end
+  #require a response if qualification isn't blank
+  def qualification_requires_response
+    errors.add_to_base("You must enter a response to qualify!") unless self.qualifications.blank? || !self.numerical_response.blank? || !self.textual_response.blank?
   end
 end
