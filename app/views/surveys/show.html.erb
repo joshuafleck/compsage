@@ -18,12 +18,13 @@
     <% else %>
       <p>
         Unfortunately, you did not get the required number of participants for results to be
-        available. This survey has exceeded more than <%=(Survey::MAXIMUM_DAYS_TO_RUN - 3)%> days
+        available. This survey has exceeded more than <%=(Survey::MAXIMUM_DAYS_TO_RUN - Survey::MINIMUM_DAYS_TO_RERUN)%> days
         old and may no longer be rerun.
       </p>
     <% end %> 
+      <%=render :partial => 'questions/response_rates', :locals => { :survey => @survey } %>
       <p>
-        Click <%=link_to "here", survey_path(@survey), :method => :delete %> to delete the survey.
+        Click <%=link_to "here", survey_path(@survey), :method => :delete %> to cancel the survey.
       </p> 
   <% else %>
     <p>Survey results are unavailable due to insufficient data.  The
@@ -57,7 +58,7 @@
 		</ol>
 		<p><%=pluralize(@survey.participations.count, 'participant')%> so far.</p>
 		<% if @survey.sponsor == current_organization && !@survey.enough_invitations? then %>
-		  <p>Warning: <%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%> responses are required to provide results. We recommend you invite at least <%=@survey.recommended_number_of_invitations%> additional organizations.</p>
+		  <p>Warning: <%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%> participants are required to provide results. We recommend you invite at least <%=@survey.recommended_number_of_invitations%> additional organizations.</p>
 		<% end %>
 	</div>
 	<h3>Job Description</h3>

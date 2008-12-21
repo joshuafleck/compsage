@@ -532,6 +532,16 @@ div.report_item_suppressed {
   color: #666;
   font-size: .9em;
 }
+
+/* Survey stalled */
+span.adequate_responses {
+  color: green;
+}
+
+span.inadequate_responses {
+  color: red;
+}
+
 /* Flash Notices */
 div.flash_notice {
   border: 1px solid #6c8272;

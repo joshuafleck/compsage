@@ -1,0 +1,13 @@
+<h4>Question Response Rates:</h4>
+<ul>
+<% survey.questions.each do |question| %>
+  <li>
+    <span><%=question.text%></span>
+    <p>
+      <span class='<%=question.adequate_responses? ? "adequate_responses" : "inadequate_responses" %>'>
+        <%=question.response_count%> of <%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%>
+      </span>required responses
+    </p>
+  </li>
+<% end %>
+</ul>

@@ -1,4 +1,3 @@
-require 'yaml'
 class Question < ActiveRecord::Base
   belongs_to :survey
   has_many :responses, :dependent => :delete_all, :extend => StatisticsExtension
@@ -66,23 +65,11 @@ class Question < ActiveRecord::Base
   
   def grouped_responses
   
-    # because we store multiple responses in a single textual response, 
-    # we must extract those out to build the grouped response
     if self[:question_type] == 'checkbox' then    
-    
-      @grouped_responses = []
-      self.options.each_with_index do |option, index|
-        @grouped_responses[index] = []
-      end
-      
-      self.responses.each do |response|
-        checked_options = YAML::load(response.textual_response)
-        checked_options.each do |checked_option|
-          @grouped_responses[checked_option.to_i] << response
-        end
-      end
-      
-      @grouped_responses
+            
+    # because we store multiple responses in a single textual response, 
+    # we must extract those out to build the grouped response 
+    # TODO: support for checkbox
       
     else
     
@@ -104,26 +91,13 @@ class Question < ActiveRecord::Base
   
   # grouped responses belonging to invitees of the survey
   def grouped_invitee_responses
-  
-    # because we store multiple responses in a single textual response, 
-    # we must extract those out to build the grouped response 
-    # TODO: remove code duplication 
+
     if self[:question_type] == 'checkbox' then    
+  
+      # because we store multiple responses in a single textual response, 
+      # we must extract those out to build the grouped response 
+      # TODO: support for checkbox
     
-      @grouped_responses = []
-      self.options.each_with_index do |option, index|
-        @grouped_responses[index] = []
-      end
-      
-      self.invitee_responses.each do |response|
-        checked_options = YAML::load(response.textual_response)
-        checked_options.each do |checked_option|
-          @grouped_responses[checked_option.to_i] << response
-        end
-      end
-      
-      @grouped_responses
-      
     else
     
       @grouped_responses ||= invitee_responses.group_by(&:numerical_response)
