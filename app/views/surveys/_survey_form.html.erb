@@ -1,6 +1,6 @@
 <%=flash_messages%>
 <% form_for @survey do |f| %>
-  <%=error_messages_for :survey, :header_message => ErrorMessages::Views::DEFAULT_MESSAGE_HEADER, :message => ErrorMessages::Views::DEFAULT_MESSAGE_SECONDARY%>
+  <%=error_messages_for :survey%>
   <%=f.label :job_title%>
 	<%=f.text_field :job_title, :size => 40 %>
   <%=f.label :description, "Job description"%>

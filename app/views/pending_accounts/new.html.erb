@@ -6,7 +6,7 @@ In order to ensure the intregrity of our product, we must verify the identity of
 After signing up, you will be contacted within three business days. When your identity is verfied,
 you will be provided with a key that may be used to create an account
 </p>
-<%=error_messages_for :pending_account, :header_message => ErrorMessages::Views::DEFAULT_MESSAGE_HEADER, :message => ErrorMessages::Views::DEFAULT_MESSAGE_SECONDARY%>
+<%=error_messages_for :pending_account%>
 <%=flash_messages%>
 <% form_for @pending_account, :url => signup_path do |f| %>
   <%=f.label :organization_name, 'Name of Your Organization' %>    

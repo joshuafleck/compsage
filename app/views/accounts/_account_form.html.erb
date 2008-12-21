@@ -1,5 +1,5 @@
 <%=flash_messages%>
-<%=error_messages_for :organization, :header_message => ErrorMessages::Views::DEFAULT_MESSAGE_HEADER, :message => ErrorMessages::Views::DEFAULT_MESSAGE_SECONDARY%>
+<%=error_messages_for :organization%>
 <% form_for @organization, :url => account_path, :html => {:multipart => true} do |f| %>
   <% if @organization.new_record? %>
    <%= hidden_field_tag 'key', external_invitation.key %>
