@@ -10,6 +10,7 @@ en:
         precision: 2
   activerecord:
     errors:
+      validates_presence_of: "{{model}} is required."
       template:
         header: "Please try again."
         body: "Resolve the following issues:"

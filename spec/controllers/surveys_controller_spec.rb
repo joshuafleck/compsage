@@ -520,9 +520,9 @@ describe SurveysController, " handling POST /surveys" do
     do_post
   end  
   
-  it "should redirect to the invitation show page upon success" do
+  it "should redirect to the survey preview page upon success" do
     do_post
-    response.should redirect_to(survey_invitations_url(@survey))
+    response.should redirect_to(preview_survey_questions_path(@survey))
   end
   
   it "should assign the questions and predefined questions to the view" do
@@ -740,9 +740,9 @@ describe SurveysController, " handling PUT /surveys/1" do
     do_update
   end
 
-  it "should redirect to the show view page for this survey upon success" do
+  it "should redirect to the survey preview page for this survey upon success" do
     do_update
-    response.should redirect_to(survey_path(@survey))
+    response.should redirect_to(preview_survey_questions_path(@survey))
   end
 end
   
