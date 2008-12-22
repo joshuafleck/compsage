@@ -42,8 +42,12 @@ describe Response do
   
   it 'should be invalid without one of the following: textual_response, numerical_response'  do 	
   	@response.attributes = valid_response_attributes.except(:textual_response,:numerical_response)
-    @response.should have(1).errors_on(:textual_response)
-    @response.should have(1).errors_on(:numerical_response)
+  	@response.should_not be_valid
+  end
+  
+  it 'should be invalid with a qualification but no response' do
+    @response.attributes = valid_response_attributes.except(:textual_response, :numerical_response).with(:qualifications => 'something')
+    @response.should_not be_valid
   end
   
 end
