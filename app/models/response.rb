@@ -36,8 +36,4 @@ class Response < ActiveRecord::Base
       errors.add_to_base("You must enter a response to qualify!") unless self.qualifications.blank?
     end
   end
-  
-  def qualification_requires_response
-    errors.add_to_base("You must enter a response to qualify!") unless self.qualifications.blank? || !self.textual_response.blank? || !self.numerical_response.blank?
-  end
 end
