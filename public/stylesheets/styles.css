@@ -486,6 +486,11 @@ form.new_survey textarea, form.edit_survey textarea {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+#question_response_rates {
+  width: 512px;
+  margin-left: 266px;  
+}
+
 /* Survey Questions Page */
 div.qualifications {
 	display: inline;
