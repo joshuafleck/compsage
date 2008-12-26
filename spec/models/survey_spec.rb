@@ -1,24 +1,12 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-module SurveySpecHelper
-  def valid_survey_attributes
-    {
-      :job_title => 'That guy who yells "Scalpel, STAT!"',
-      :end_date => Time.now + 1.week,
-      :sponsor => mock_model(Organization)
-    }
-  end
-end
-
 describe Survey do
-  include SurveySpecHelper
   
   before do
-    @survey = Survey.new
+    @survey = valid_survey
   end
   
   it "should be valid" do
-    @survey.attributes = valid_survey_attributes
     @survey.should be_valid
   end
   
@@ -55,22 +43,22 @@ describe Survey do
   end
   
   it "should be invalid without an end date to be specified" do
-    @survey.attributes = valid_survey_attributes.except(:end_date)
+    @survey[:end_date] = nil
     @survey.should have(1).error_on(:end_date)
   end
   
   it "should be invalid with a job title longer then 128 characters" do
-    @survey.attributes = valid_survey_attributes.with(:job_title => 'a'*129)
+    @survey[:job_title] = 'a'*129
     @survey.should have(1).error_on(:job_title)
   end
   
   it "should be invalid without a job title" do
-    @survey.attributes = valid_survey_attributes.except(:job_title)
+    @survey[:job_title]= nil
     @survey.should have_at_least(1).error_on(:job_title)
   end
   
   it "should be invalid without a sponsor" do
-    @survey.attributes = valid_survey_attributes.except(:sponsor)
+    @survey.sponsor = nil
     @survey.should have(1).error_on(:sponsor)
   end
   
@@ -85,7 +73,7 @@ describe Survey do
   end
   
   it "should have a survey subscription for the survey sponsor after its created" do
-    @survey = Survey.create(valid_survey_attributes)
+    @survey.save!
     sub = @survey.subscriptions.detect { |s| s.organization_id = valid_survey_attributes[:sponsor].id} 
     sub.should_not be_nil
     sub.relationship.should == "sponsor"
@@ -102,16 +90,17 @@ describe Survey do
     @survey.days_until_rerun_deadline.should == 21
   end
   
-  it "should be invalid on update without questions" do
+  it "should be invalid without questions" do
     @survey = Survey.create(valid_survey_attributes)
-    @survey.update_attributes(nil)
     @survey.should have_at_least(1).error_on(:questions)
+    @survey.destroy
   end
+
 end
 
 describe Survey, "that is pending" do
   before do
-    @survey = Survey.new(valid_survey_attributes)
+    @survey = valid_survey
   end
   
   it "should transition to running once billing information is received" do
@@ -122,7 +111,7 @@ end
 
 describe Survey, "that is stalled" do
   before do
-    @survey = Survey.new(valid_survey_attributes.with(:end_date => Time.now - 1.day))
+    @survey = valid_survey(valid_survey_attributes.with(:end_date => Time.now - 1.day))
     @survey.billing_info_received!
     @survey.finish!
   end
@@ -148,11 +137,21 @@ describe Survey, "that is stalled" do
     @survey.rerun!
     @survey.should be_stalled
   end
+    
+  it "should set the included flag on selected predefined questions" do
+     predefined_question = Factory.create(:predefined_question) 
+     predefined_question2 = Factory.create(:predefined_question) 
+     predefined_question.build_questions(@survey)
+     @survey.save!
+     @survey.predefined_questions[0].included.should eql("1")
+     @survey.predefined_questions[1].included.should eql("0")
+     @survey.destroy
+  end
 end
 
 describe Survey, "maximum days to rerun" do
   before do
-    @survey = Survey.new(valid_survey_attributes.with(:end_date => Time.now + 1.day, :created_at => Time.now))
+    @survey = valid_survey(valid_survey_attributes.with(:end_date => Time.now + 1.day, :created_at => Time.now))
   end
   
   it "should not exceed 7 days even when more days are available" do
@@ -168,10 +167,14 @@ end
 
 describe Survey, "that is ready to be billed" do
   before do
-    @survey = Survey.new(valid_survey_attributes)
+    @survey = valid_survey
     @survey.aasm_state = 'running'
     @survey.save!
     Gateway.stub!(:bill_survey_sponsor).and_return(true)
+  end
+  
+  after do
+    @survey.destroy
   end
   
   it "should be finished if there are enough responses and billing is successful" do
@@ -208,7 +211,7 @@ describe Survey, "that is being cancelled (destroyed)" do
     @org_1 = Organization.create!(valid_organization_attributes.with(:email => "test@example.org"))
     @org_2 = Organization.create!(valid_organization_attributes.with(:email => "test2@example.org"))
     
-    @survey = Survey.new(valid_survey_attributes.with(:sponsor => @org_1))
+    @survey = valid_survey(valid_survey_attributes.with(:sponsor => @org_1))
     @survey.aasm_state = 'stalled'
     @survey.save!
     
@@ -220,6 +223,11 @@ describe Survey, "that is being cancelled (destroyed)" do
     @participation_2 = @survey.participations.create!(
       :participant => @inv_1, 
       :responses => [mock_model(Response, :valid? => true, :[]= => true, :save => true)])
+  end
+  
+  after do
+    @org_1.destroy
+    @org_2.destroy
   end
 
   it "should delete all the participations" do

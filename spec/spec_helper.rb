@@ -98,11 +98,24 @@ def valid_survey_attributes
   }
 end
 
+def valid_question_attributes
+  {
+    :position => 1,
+    :text => "question 1",
+    :question_type => "numerical_field"
+  }
+end
+
 def survey_mock 
   mock_model(
       Survey, 
       valid_survey_attributes)
+end
 
+def valid_survey(attributes = valid_survey_attributes)
+    survey = Survey.new(attributes)
+    survey.questions.build(valid_question_attributes)
+    survey
 end 
   
 module AuthenticationRequiredSpecHelper

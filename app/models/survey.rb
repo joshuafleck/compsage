@@ -31,7 +31,7 @@ class Survey < ActiveRecord::Base
   validates_length_of :job_title, :maximum => 128
   validates_presence_of :end_date, :on => :create
   validates_presence_of :sponsor
-  validates_presence_of :questions, :on => :update
+  validates_presence_of :questions
   
   named_scope :since_last_week, Proc.new { {:conditions => ['end_date > ?', Time.now]} }
   named_scope :recent, :order => 'surveys.created_at DESC', :limit => 10
@@ -136,6 +136,21 @@ class Survey < ActiveRecord::Base
   # determine the recommended number of invitations necessary to provide results
   def recommended_number_of_invitations
     REQUIRED_NUMBER_OF_PARTICIPATIONS - [self.all_invitations(true).size,self.participations.size].max
+  end
+  
+  # find all predefined questions, mark any questions this survey uses as 'included'
+  def predefined_questions
+    all_predefined = PredefinedQuestion.all
+    selected_predefined = self.questions.collect(&:predefined_question_id)
+    all_predefined.each do |predefined_question|
+      predefined_question.included = selected_predefined.include?(predefined_question.id) ? "1" : "0"
+    end
+    all_predefined
+  end
+  
+  # find all custom questions, mark all as 'included'
+  def custom_questions
+    self.questions.find_all{|q| !q.custom_question_type.blank?}.each{|q| q.included = "1"}
   end
   
   private

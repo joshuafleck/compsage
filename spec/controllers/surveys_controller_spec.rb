@@ -313,12 +313,7 @@ describe SurveysController, " handling GET /surveys/new" do
     do_get
     response.should be_success
   end
-  
-  it "should find a list of predefined questions" do
-    PredefinedQuestion.should_receive(:all)
-    do_get
-  end
-  
+    
   it "should render new template" do
     do_get
     response.should render_template('surveys/new')
@@ -398,36 +393,9 @@ describe SurveysController, " handling GET /surveys/1/edit" do
     do_get
   end
   
-  it "should find predefined questions for the survey" do
-    PredefinedQuestion.should_receive(:all).and_return(@predefined_questions)
-    do_get
-  end
-  
-  it "should determine if the predefined questions are chosen" do
-    @predefined_questions.should_receive(:each)
-    do_get
-  end
-  
-  it "should determine if there are any custom questions" do
-    @questions.should_receive(:each).twice
-    do_get
-  end  
-  
-  it "should set the included flag on the selected predefined questions" do
-    @predefined_question.should_receive(:included=).with(true)
-    do_get
-  end
-  
-  it "should set the included flag on the selected custom questions" do
-    @question.should_receive(:included=).with("1")
-    do_get
-  end    
-  
   it "should assign the found survey, custom questions, and predefined questions to the view" do
     do_get
     assigns[:survey].should_not be_nil
-    assigns[:predefined_questions].should_not be_nil
-    assigns[:questions].should_not be_nil
   end
 end
 
@@ -462,31 +430,37 @@ describe SurveysController, " handling POST /surveys" do
                    :job_title => 'That guy who yells "Scalpel, STAT!"',
                    :end_date => Time.now + 1.week
                  },
-                 :predefined_question => {
+                 :predefined_questions => {
                     "1" => {'included' => "1"}, 
                     "2" => {'included' => "0"}, 
                     "3" => {'included' => "1"}
                  },
-                 :question => {
+                 :questions => {
                     "1" => {'included' => "1", 'text' => 'question_1', 'custom_question_type' => 'Free Response'}, 
                     "2" => {'included' => "0", 'text' => 'question_2', 'custom_question_type' => 'Yes/No'}
                  }
                }
     @survey = mock_model(Survey, :id => 1, :billing_info_received! => true, :save => true, :errors => [], :new_record? => true, :job_title => "test")
     @surveys = []
-    @questions = []
+    @questions_proxy = mock('questions_proxy')
     @question_hash = [{'id' => 1, 'another' => 2, 'text' => 'asdf'}, {'id' => 2, 'another' => 2, 'text' => 'asdf'}]
     @excluded_question_hash = {'another' => 2, 'text' => 'asdf'}
-    @pdq1 = mock_model(PredefinedQuestion, :id => 1, :question_hash => @question_hash, :included= => "1", :included => "1")
+    @pdq1 = mock_model(
+      PredefinedQuestion, 
+      :id => 1, 
+      :question_hash => @question_hash, 
+      :included= => "1", 
+      :included => "1", 
+      :build_questions => [])
     @pdq2 = mock_model(PredefinedQuestion, :id => 2, :question_hash => @question_hash, :included= => "0", :included => "0")
     @pdq3 = mock_model(PredefinedQuestion, :id => 3, :question_hash => @question_hash, :included= => "1", :included => "1")
     @question = mock_model(Question, :save! => :true, :predefined_question_id= => 1, :survey= => @survey, :included => "1", :[]= => true)
     
-    PredefinedQuestion.stub!(:all).and_return([@pdq1, @pdq2, @pdq3])
+    PredefinedQuestion.stub!(:find).and_return(@pdq1)
     @current_organization.stub!(:sponsored_surveys).and_return(@surveys)
     @surveys.stub!(:new).and_return(@survey)
-    @survey.stub!(:questions).and_return(@questions)
-    @questions.stub!(:new).and_return(@question)
+    @survey.stub!(:questions).and_return(@questions_proxy)
+    @questions_proxy.stub!(:build).and_return(@question)
   end
   
   def do_post
@@ -498,25 +472,14 @@ describe SurveysController, " handling POST /surveys" do
     do_post
   end
   
-  it "should set the included flag for selected predefined questions" do
-    @pdq1.should_receive(:included=).with("1") 
-    @pdq2.should_receive(:included=).with("0") 
-    do_post
-  end  
-  
-  it "should add predefined questions to the survey" do
-    @questions.should_receive(:new).at_least(:once).and_return(@question)
-    @question.should_receive(:save!).at_least(:twice).and_return(true)    
+  it "should build any included custom questions" do
+    @questions_proxy.should_receive(:build).with(@params[:questions]["1"])
     do_post
   end
   
-  it "should check to see if any custom questions are included" do
-    @question.should_receive(:included)   
-    do_post
-  end  
-  
-  it "should set the survey id when saving the questions" do
-    @question.should_receive(:[]=).with(:survey_id,1)
+  it "should build any included predefined questions" do
+    PredefinedQuestion.should_receive(:find).with("1")
+    @pdq1.should_receive(:build_questions).with(@survey)
     do_post
   end  
   
@@ -528,8 +491,6 @@ describe SurveysController, " handling POST /surveys" do
   it "should assign the questions and predefined questions to the view" do
     do_post
     assigns[:survey].should_not be_nil
-    assigns[:predefined_questions].should_not be_nil
-    assigns[:questions].size.should eql(2)
   end  
   
 end
@@ -571,33 +532,6 @@ describe SurveysController, " handling POST /surveys from a 'survey network' lin
   
 end
 
-describe SurveysController, " handling POST /surveys, without questions" do
-  before(:each) do
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
-    @params = {:job_title => 'That guy who yells "Scalpel, STAT!"' ,
-               :end_date => Time.now + 1.week ,
-               :sponsor => mock_model(Organization),
-               :question =>  {}}
-    @survey = mock_model(Survey, :id => 1, :save => false, :errors => ["asdfadsfdsa"], :job_title => "test")
-    @surveys = []
-    
-    @survey.stub!(:new_record?).and_return(true)
-    @current_organization.stub!(:sponsored_surveys).and_return(@surveys)
-    @surveys.stub!(:new).and_return(@survey)
-  end
-  
-  def do_post
-    post :create, :survey => @params
-  end  
-  
-  it "should render the new action and flash a message if there are no questions" do
-    do_post
-    response.should render_template('new')
-    flash[:notice].should eql("A survey must have at least one question")
-  end
-end
-
 describe SurveysController, " handling POST /surveys, upon failure" do
   before(:each) do
     @current_organization = mock_model(Organization)
@@ -630,12 +564,6 @@ describe SurveysController, " handling POST /surveys, upon failure" do
      response.should render_template('surveys/new')
    end
    
-  it "should assign the questions and predefined questions to the view" do
-    do_post
-    assigns[:survey].should_not be_nil
-    assigns[:predefined_questions].should_not be_nil
-    assigns[:questions].should_not be_nil
-  end     
 end
 
 describe SurveysController, " handling PUT /surveys/1" do
@@ -650,20 +578,20 @@ describe SurveysController, " handling PUT /surveys/1" do
     @excluded_question_hash = {'another' => 2, 'text' => 'asdf'}
     @pdq1 = mock_model(PredefinedQuestion, :id => 1, :question_hash => @question_hash)
     @pdq2 = mock_model(PredefinedQuestion, :id => 2, :question_hash => @question_hash)
-    @pdq3 = mock_model(PredefinedQuestion, :id => 3, :question_hash => @question_hash)
     
     @params = {
-                :predefined_question => {
+                :predefined_questions => {
                   "1" => {'included' => "1"}, 
                   "2" => {'included' => "0"}, 
                   "3" => {'included' => "1"}},
                 :id => 1,
-                :question =>  {
+                :questions =>  {
                     "1" => {'included' => "1", 'text' => 'question_1', 'custom_question_type' => 'Free Response', :id => 1}, 
-                    "2" => {'included' => "0", 'text' => 'question_2', 'custom_question_type' => 'Yes/No', :id => 2}
+                    "2" => {'included' => "0", 'text' => 'question_2', 'custom_question_type' => 'Yes/No', :id => 2}, 
+                    "3" => {'included' => "1", 'text' => 'question_3', 'custom_question_type' => 'Yes/No'}
                  }
               }
-    @questions = []
+    @questions_proxy = mock('questions proxy')
     @question = mock_model(Question, :attributes= =>"", 
                                      :predefined_question_id= => 1,
                                      :save! => true,
@@ -672,19 +600,20 @@ describe SurveysController, " handling PUT /surveys/1" do
                                      :[]= => true,
                                      :included => "1")
     
-    @pdq_group = [@pdq1, @pdq2, @pdq3]
-    
-    PredefinedQuestion.stub!(:all).and_return(@pdq_group)
+    @pdq3 = mock_model(PredefinedQuestion, :id => 3, :question_hash => @question_hash, :build_questions => [@question])
+    PredefinedQuestion.stub!(:find).with("1").and_return(@pdq1)
+    PredefinedQuestion.stub!(:find).with("2").and_return(@pdq2)
+    PredefinedQuestion.stub!(:find).with("3").and_return(@pdq3)
     @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
     @surveys_proxy.stub!(:running).and_return(@open_surveys)
     @open_surveys.stub!(:find).and_return(@survey)
-    @survey.stub!(:questions).and_return(@questions)
-    @questions.stub!(:find_by_text).and_return(@question)
-    @questions.stub!(:find_or_create_by_text).and_return(@question)
-    @questions.stub!(:exists?).with(2).and_return(true)
-    @questions.stub!(:exists?).with(1).and_return(false)
-    @questions.stub!(:new).and_return(@question)
-    @questions.stub!(:find_by_id).and_return(@question)
+    @survey.stub!(:questions).and_return(@questions_proxy)
+    @questions_proxy.stub!(:find_by_id).and_return(@question)
+    @predefined_questions = [@question]
+    @questions_proxy.stub!(:find_all_by_predefined_question_id).with("1").and_return(@predefined_questions)
+    @questions_proxy.stub!(:find_all_by_predefined_question_id).with("2").and_return(@predefined_questions)
+    @questions_proxy.stub!(:find_all_by_predefined_question_id).with("3").and_return([])
+    @questions_proxy.stub!(:build).and_return(@question)
   end
   
   def do_update
@@ -703,43 +632,43 @@ describe SurveysController, " handling PUT /surveys/1" do
     do_update
     assigns(:survey).should equal(@survey)
   end
-  
+
+  it "should check to see if the questions already exist" do
+    @question.should_receive(:nil?)
+    do_update
+  end   
+     
   it "should destroy any unselected questions that exist" do
     @question.should_receive(:destroy)
     do_update
   end  
- 
-  it "should set the survey id when saving the questions" do
-    @question.should_receive(:[]=).with(:survey_id,1)
+  
+  it "should create any selected questions that do not exist" do
+    @questions_proxy.should_receive(:build).with(@params[:questions]["3"])
+    do_update
+  end 
+  
+  it "should check to see if the predefined questions already exist" do
+    @predefined_questions.should_receive(:size).at_least(:once)
+    do_update
+  end   
+     
+  it "should destroy any unselected predefined questions that exist" do
+    @question.should_receive(:destroy)
     do_update
   end  
   
-  it "should check to see if the questions already exist" do
-    @questions.should_receive(:exists?)
+  it "should create any selected predefined questions that do not exist" do
+    PredefinedQuestion.should_receive(:find).with("3")
+    @pdq3.should_receive(:build_questions).with(@survey)
     do_update
   end   
-   
+
   it "should assign the found survey to the view" do
     do_update
     assigns(:survey).should equal(@survey)
   end
   
-  it "should update the questions for the survey that are included in the params" do
-    @questions.should_receive(:find_or_create_by_text).at_least(:once).and_return(@question)
-    @question.should_receive(:attributes=).at_least(:once)
-    @question.should_receive(:save!).at_least(:once).and_return(true)
-    
-    do_update
-  end
-  
-  it "should delete questions that are not included in the params" do
-    @questions.should_receive(:find_by_text).at_least(:once).and_return(@question)
-    @question.should_receive(:nil?).at_least(:once).and_return(false)
-    @question.should_receive(:destroy).at_least(:once).and_return(true)
-    
-    do_update
-  end
-
   it "should redirect to the survey preview page for this survey upon success" do
     do_update
     response.should redirect_to(preview_survey_questions_path(@survey))

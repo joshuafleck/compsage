@@ -12,8 +12,8 @@
 	<h3>Standard questions</h3>
 	<div id="standard_questions">
 		<ul>
-		  <% @predefined_questions.each do |predefined_question| %>
-		    <% fields_for predefined_question, :index => predefined_question.id do |predefined_question_form| %>
+		  <% @survey.predefined_questions.each do |predefined_question| %>
+		    <% fields_for "predefined_questions[#{predefined_question.id}]", predefined_question do |predefined_question_form| %>
 		      <li>
   		        <%=predefined_question_form.check_box :included%>
   		        <%=predefined_question_form.label :included, predefined_question.name%>
@@ -26,8 +26,8 @@
 	<div id="custom_questions">
 	  <p>
 	  <ul id="custom_question_list">
-		  <% @questions.each do |id, question| %>
-		    <% fields_for question, :index => id do |question_form| %>
+		  <% @survey.custom_questions.each_with_index do |question, index| %>
+		    <% fields_for "questions[#{index}]", question do |question_form| %>
 		      <li>
 	          <%=question_form.check_box :included %>
 					  <%=question_form.label :included, question[:text]%>
@@ -92,18 +92,18 @@ function createQuestion() {
 
   question_item = new Element('li');
 	checkbox = new Element('input', {
-  	  id: 'question_' + question_id + '_included', 
+  	  id: 'questions_' + question_id + '_included', 
   	  type: 'checkbox', value: "1", 
   	  checked: 'checked', 
-  	  name: 'question[' + question_id + '][included]'
+  	  name: 'questions[' + question_id + '][included]'
 	  });
-	label = new Element('label', {for: 'question_' + question_id + '_included'}).update(question_text);
+	label = new Element('label', {for: 'questions_' + question_id + '_included'}).update(question_text);
 	descr = new Element('span', { class: "description" }).update(response_type);
-	text = new Element('input', {type: 'hidden', value: question_text, name: 'question[' + question_id + '][text]'});
+	text = new Element('input', {type: 'hidden', value: question_text, name: 'questions[' + question_id + '][text]'});
 	type = new Element('input', {
 	    type: 'hidden', 
 	    value: response_type, 
-	    name: 'question[' + question_id + '][custom_question_type]'
+	    name: 'questions[' + question_id + '][custom_question_type]'
 	  });	
 	
 	question_item.update(checkbox); 

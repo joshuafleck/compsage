@@ -9,7 +9,8 @@ class Question < ActiveRecord::Base
   
   attr_accessor :included
   
-  validates_presence_of :survey
+  #jf- commented out validation, as this was causing survey.save to fail
+  #validates_presence_of :survey
   validates_presence_of :question_type
   validates_presence_of :options, :message => " are required multiple response question", :if => Proc.new { |question| question.has_options? }
   validates_length_of :text, :within => 1..1000, :message => " is required for a question."
@@ -19,6 +20,8 @@ class Question < ActiveRecord::Base
      self[:options] = CUSTOM_QUESTION_OPTIONS[self[:custom_question_type]] if attribute_present?("custom_question_type")
   end
   
+  named_scope :predefined, :conditions => "predefined_question_id IS NOT NULL"
+  named_scope :custom, :conditions => "custom_question_type IS NOT NULL"
   
   QUESTION_TYPES = [  ["Single-line Text Box", 'text_field'],
                       ["Numerical Input", 'numerical_field'],

@@ -29,10 +29,11 @@ describe Question do
     @question.should be_valid
   end
   
-  it "should be invalid without a survey" do
-    @question.attributes = valid_question_attributes.except(:survey)
-    @question.should have(1).error_on(:survey)
-  end
+  #jf- commenting out, as removel of validation was necessary to allow saving of questions
+  #it "should be invalid without a survey" do
+  #  @question.attributes = valid_question_attributes.except(:survey)
+  #  @question.should have(1).error_on(:survey)
+  #end
   
   it "should have many responses" do
     Question.reflect_on_association(:responses).should_not be_nil
