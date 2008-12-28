@@ -4,7 +4,7 @@ class Response < ActiveRecord::Base
   
   validates_presence_of :question
   validates_presence_of :response
-  validates_numericality_of :response
+  validates_numericality_of :response, :if => Proc.new { |r| !r.question.nil? && r.question.numerical_response? }
 
   HUMANIZED_ATTRIBUTES = {
     :numerical_response => "Response",
@@ -19,8 +19,8 @@ class Response < ActiveRecord::Base
       'Organization']
   
   #Depending on the type of question, this will return the textual or numerical response
-  def response 
-  	question.numerical_response? ? numerical_response : textual_response
+  def response
+  	question.numerical_response? ? numerical_response : textual_response unless question.nil?
   end
   
   def response_before_type_cast
@@ -29,7 +29,7 @@ class Response < ActiveRecord::Base
 
   def response=(value)
     @response_before_type_cast = value
-    if question.numerical_response? then
+    if !question.nil? && question.numerical_response? then
       self.numerical_response = value
     else
       self.textual_response = value
