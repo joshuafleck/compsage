@@ -31,8 +31,8 @@ class Survey < ActiveRecord::Base
   validates_length_of :job_title, :maximum => 128
   validates_presence_of :end_date, :on => :create
   validates_presence_of :sponsor
-  validates_presence_of :questions
-  
+  validate :questions_exist
+
   named_scope :since_last_week, Proc.new { {:conditions => ['end_date > ?', Time.now]} }
   named_scope :recent, :order => 'surveys.created_at DESC', :limit => 10
   named_scope :closed, :conditions => ['aasm_state = ? OR aasm_state = ?', 'finished', 'stalled']
@@ -238,6 +238,13 @@ class Survey < ActiveRecord::Base
   # determine whether the survey is open, and can be rerun
   def open_and_can_be_rerun?
     self.open? && self.can_be_rerun?
+  end
+
+  private
+  
+  # Validates whether or not questions have been chosen.
+  def questions_exist
+    errors.add_to_base("You must choose at least one question to ask") if questions.empty?
   end
 
 end
