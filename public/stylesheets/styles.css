@@ -320,7 +320,7 @@ ul#survey_results li {
 	font-variant: small-caps;
 }
 
-span.sponsor {
+span.sponsor, span.manager {
 	color: #888;
 	font-size: .9em	;
 }
@@ -330,7 +330,7 @@ a.abuse {
 	font-size: .8em	;
 }
 
-span.sponsor a {
+span.sponsor a, span.manager a{
 	color: #4e728b;
 }
 
@@ -542,6 +542,23 @@ span.inadequate_responses {
   color: red;
 }
 
+/* Networks page */
+
+ul#networks {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Network form */
+form#new_network input#network_name, form#edit_network input#network_name {
+  width: 300px;
+}
+
+form#new_network textarea#network_description, form#edit_network textarea#network_description {
+  width: 300px;
+}
+
 /* Flash Notices */
 div.flash_notice {
   border: 1px solid #6c8272;
@@ -571,6 +588,10 @@ form div.box_container {
 form div.box {
   float: left;
   margin-right: 10px;
+}
+
+form div.submit {
+  margin-top: 1em;
 }
 
 div.separator {

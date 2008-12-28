@@ -1,12 +1,11 @@
 <% title "New Network" %>
-<% breadcrumbs(link_to("Your Networks", networks_path)) %>
 <% highlight_tab "networks" %>
-<h2>Create a New Network</h2>
+<h2>Create a Network</h2>
 <%=error_messages_for :network%>
-<% form_for :network, @network, :url => networks_path do |f| %>
-  <p><label>Network Name</label>
-    <%=f.text_field :name, :size => 30 %></p>
-  <p><label>Description</label>
-    <%=f.text_area :description, :rows => 4, :cols => 30 %></p>
-  <p><input type="submit" value="Create" /> or <%=link_to "Cancel", networks_path %></p>
+<% form_for @network do |f| %>
+  <%= f.label :name, "Network Name" %>
+  <%= f.text_field :name, :size => 30 %>
+  <%= f.label :description %>
+  <%= f.text_area :description, :rows => 4, :cols => 30 %>
+  <div class="submit"><input type="submit" value="Create" /> or <%=link_to "Cancel", networks_path %></div>
 <% end %>

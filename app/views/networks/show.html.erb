@@ -1,9 +1,7 @@
 <% title @network.name %>
-<% breadcrumbs(link_to("Your Networks", networks_path)) %>
 <% highlight_tab "networks" %>
-<h2><%=@network.name%></h2>
+<h2><%=@network.name%> <span class="manager">managed by <%=link_to_organization @network.owner%></span></h2>
 <%=flash_messages%>
-<div>Network Owner: <%=link_to @network.owner.name, organization_path(@network.owner)%></div>
 <div class="actions">
   <%=link_to "Survey Network", new_survey_path %>
   <% if @network.owner_id == current_organization.id then %>
@@ -20,9 +18,8 @@
 <ul id="organizations">
   <% @network.organizations.each do |organization| %>
     <li>
-      <%= render(:partial => "organizations/inline_organization", 
-                   :locals => { :organization => organization})%>
-      <% if @network.owner_id == current_organization.id && current_organization != organization then %>
+    <%= link_to_organization(organization) %>
+    <% if @network.owner_id == current_organization.id && current_organization != organization then %>
         <%=link_to "Remove", evict_network_path(@network, :organization_id => organization.id), :method => :put %>
       <% end %>
     </li>

@@ -1,36 +1,29 @@
-<% title "Your Networks" %>
-<% breadcrumbs() %>
+<% title "Your Contact Networks" %>
 <% highlight_tab "networks" %>
-<p>Networks give you quick access to a familiar group of people.  You can form and join as many networks as you
-  like.</p>
-<p><%=link_to "Create a Network", new_network_path %> and invite your peers!</p>
-<h2>Your Networks</h2>
-<% if @networks.size == 0 then %>
-  <p>You are currently not a part of any networks.  <%=link_to "Make one now", new_network_path %> to get started.</p>
+<h2>Find an Organization</h2>
+<p>Organization search will go here, with a link to browse as well.</p>
+<h2>Your Contact Networks</h2>
+<% if @networks.empty? then %>
+  <p>Contact Networks make it easy for you to send surveys to and receive surveys from a group of peers. When you join a
+  contact network, surveying that group of organizations is just a few clicks away. You can easily
+  <%= link_to "make your own contact network", new_network_path %> and invite your own group of organizations.
 <% else %>
   <ul id="networks" class="entity_list">
     <% @networks.each do |network| %>
-      <li class="entity <%=cycle("even", "odd")%>">
+      <li class="<%=cycle("even", "odd")%>">
+        <h3><%=link_to network.name, network_path(network)%> <span class="manager">managed by <%=link_to_organization(network.owner)%></span></h3>
+        <div class="description"><%=network.description%></div>
         <div class="actions">
-          <%=link_to "Survey Network", new_survey_path(:network_id => network.id) %>
+          <%=link_to "Survey #{pluralize(network.organizations.count, "member")}", new_survey_path(:network_id => network.id) %>
           <% if network.owner_id == current_organization.id then %>
-            <%=link_to "Invite Others", network_invitations_path(network) %>
+            <%=link_to "Manage Network", network_path(network) %>
           <% end %>
           <%=link_to "Leave Network", leave_network_path(network), :method => :put %>
-        </div>
-        <div class="title"><%=link_to network.name, network_path(network)%></div>
-        <div class="description"><%=network.description%></div>
-        <a href="#" onclick="new Effect.toggle('network_<%=network.id%>_members_div', 'blind', {duration: .5});return false;"><%=pluralize(network.organizations.count, "Member")%></a>
-        <div class="network_members" id="network_<%=network.id%>_members_div" style="display:none;">
-          <ul id="network_<%=network.id%>_members" class="sublist">
-            <% network.organizations.each do |organization| %>
-              <li><%= render(:partial => "organizations/inline_organization", 
-                   :locals => { :organization => organization})%></li>
-            <% end %>
-          </ul>
         </div>
       </li>
     <% end %>
   </ul>
   <%= will_paginate @networks %>  
 <% end %>
+
+<% %>
