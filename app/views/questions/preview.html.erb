@@ -1,10 +1,11 @@
 <% title "Preview for #{@survey.job_title}" %>
-<% logged_in? ? highlight_tab("surveys") : highlight_tab("survey") %>
+<% highlight_tab logged_in? ? "surveys" : "survey" %>
 <h2>Survey Preview</h2>
-<p>Please take a few moments to review the survey you are about to submit. Double check that the spelling, grammar and format of the survey match your expectations. If you are satisfied with your survey, please continue, if not return back to the previous page. You are only allowed to have one survey in this state, until you send invitations.</p>
-<div class="separator"><%=image_tag 'embellish.gif' %></div>
-<%= render :partial => "questions/participation_form"%>
-<div class="separator"><%=image_tag 'embellish.gif' %></div>
+<p>This is how your survey will look.  If you are not satisfied, you can make changes before the survey is published.
+  You may make changes to a survey at any time after the survey is published as well.</p>
+<div id="survey_preview_box">
+  <%= render :partial => "questions/participation_form"%>
+</div>
 <p>
 
 <%= if @survey.invitations.size == 0 then

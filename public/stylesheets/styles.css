@@ -404,6 +404,14 @@ form.new_survey textarea, form.edit_survey textarea {
   margin-top: 4px;
 }
 
+/* Survey preview */
+#survey_preview_box {
+  background-color: #fff;
+  border: 1px solid #000;
+  padding: 0 20px 20px 20px;
+  margin: 20px;
+}
+
 /* Invitations Page */
 
 #current_invitation_list {
