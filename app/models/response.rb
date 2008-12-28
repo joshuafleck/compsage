@@ -3,8 +3,9 @@ class Response < ActiveRecord::Base
   belongs_to :participation
   
   validates_presence_of :question
-  validate :validate_response
   validates_numericality_of :numerical_response, :allow_nil => true, :message => ": Only numbers are valid."
+  validates_presence_of :response
+
   HUMANIZED_ATTRIBUTES = {
     :numerical_response => "Response",
     :textual_response => "Response"
@@ -18,22 +19,12 @@ class Response < ActiveRecord::Base
       'Organization']
   
   #Depending on the type of question, this will return the textual or numerical response
-  def get_response 
-  	if self.question.numerical_response? == true
-  		self.numerical_response
-  	else
-  		self.textual_response
-  	end
+  def response 
+  	question.numerical_response? ? numerical_response : textual_response
   end
   
   def self.human_attribute_name(attr)
     HUMANIZED_ATTRIBUTES[attr.to_sym] || super
   end
-  #check if there this response has been fielded, and yield the proper error message.
-  def validate_response
-    if self.numerical_response.blank? && self.textual_response.blank? then
-      errors.add_to_base("A response is required") unless !self.qualifications.blank?
-      errors.add_to_base("You must enter a response to qualify!") unless self.qualifications.blank?
-    end
-  end
+
 end
