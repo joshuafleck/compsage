@@ -77,10 +77,6 @@
 	<% end %>
 </div>
 <div class="separator"><%=image_tag 'embellish.gif' %></div>
-<div id="question_response_rates">
-    <%=render :partial => 'questions/response_rates', :locals => { :survey => @survey } %>
-</div>
-<div class="separator"><%=image_tag 'embellish.gif' %></div>
 <div id="survey_finish_links">
 	<% unless @survey.participations.find_by_survey_id(@survey.id) then %>
 		<%=link_to "Respond Now", survey_questions_path(@survey)%> or <%=link_to "Maybe Later", survey_path(@survey)%>
