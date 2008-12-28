@@ -3,8 +3,8 @@ class Response < ActiveRecord::Base
   belongs_to :participation
   
   validates_presence_of :question
-  validates_numericality_of :numerical_response, :allow_nil => true, :message => ": Only numbers are valid."
   validates_presence_of :response
+  validates_numericality_of :response
 
   HUMANIZED_ATTRIBUTES = {
     :numerical_response => "Response",
@@ -23,6 +23,19 @@ class Response < ActiveRecord::Base
   	question.numerical_response? ? numerical_response : textual_response
   end
   
+  def response_before_type_cast
+    @response_before_type_cast
+  end
+
+  def response=(value)
+    @response_before_type_cast = value
+    if question.numerical_response? then
+      self.numerical_response = value
+    else
+      self.textual_response = value
+    end
+  end
+
   def self.human_attribute_name(attr)
     HUMANIZED_ATTRIBUTES[attr.to_sym] || super
   end
