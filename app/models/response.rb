@@ -4,7 +4,8 @@ class Response < ActiveRecord::Base
   
   validates_presence_of :question
   validates_presence_of :response
-  validates_numericality_of :response, :if => Proc.new { |r| !r.question.nil? && r.question.numerical_response? }
+  validates_numericality_of :response, :if => Proc.new { |r| !r.question.nil? && r.question.numerical_response? },
+    :message => "must be a number", :allow_nil => true
 
   HUMANIZED_ATTRIBUTES = {
     :numerical_response => "Response",
