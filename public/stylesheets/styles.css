@@ -268,11 +268,6 @@ div.description_box {
 	font-size: 1em;
 }
 
-ul.surveys h3 a {
-	text-decoration: none;
-	color: #333;
-}
-
 ul.surveys li {
 	margin-bottom: 1.2857em;
 }
@@ -603,6 +598,11 @@ div.errorExplanation {
 div.errorExplanation h2 {
   font-size: 1.1em;
   color: #900;
+}
+
+h3 a {
+	text-decoration: none;
+	color: #333;
 }
 
 /* inline error description for survey fields eg. */

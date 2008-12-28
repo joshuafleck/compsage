@@ -65,14 +65,14 @@
       <% @my_surveys.each do |survey| %>
         <% if survey.stalled? then %>
           <li>
-            <h3><%=survey%></h3>
+            <h3><%=link_to survey, survey%></h3>
             <div class="description_box">Stalled with <%=pluralize(survey.participations.count, 'participant')%>.
               <%=link_to "Re-Run", survey_path(survey)%> or <%=link_to "Cancel Survey", survey_path(survey)%>
             </div>
           </li>
         <% else %>
           <li>
-            <h3><%=survey%></h3>
+            <h3><%=link_to survey, survey%></h3>
             <div class="description_box"><%=distance_of_time_in_words_to_now(survey.end_date)%> left with
               <%=survey.participations.count%> out of <%=survey.all_invitations(true).size%> invitees participating.
               <%=link_to "Survey Details", survey %>
