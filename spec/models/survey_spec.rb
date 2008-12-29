@@ -92,7 +92,7 @@ describe Survey do
   
   it "should be invalid without questions" do
     @survey = Survey.create(valid_survey_attributes)
-    @survey.should have_at_least(1).error_on(:questions)
+    @survey.should_not be_valid
     @survey.destroy
   end
 
