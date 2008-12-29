@@ -16,7 +16,7 @@ config.action_controller.perform_caching             = false
 # Testing actionmailer using mailtrap. Find install and config info here:
 #http://matt.blogs.it/entries/00002655.html
   config.action_mailer.default_url_options = {:host => "localhost", :port => 3000}
-ActionMailer::Base.perform_deliveries = true
+ActionMailer::Base.perform_deliveries = false
 ActionMailer::Base.raise_delivery_errors = true
 ActionMailer::Base.delivery_method = :smtp
 ActionMailer::Base.smtp_settings = {

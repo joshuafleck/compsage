@@ -54,9 +54,9 @@ class Survey < ActiveRecord::Base
 
   aasm_event :finish do
     # AASM currently doesn't support more than one guard, hence this absurd method here.
-    transitions :to => :finished, :from => :running, :guard => :enough_responses_and_billing_successful? 
-    transitions :to => :billing_error, :from => :running, :guard => :enough_responses?
-    transitions :to => :stalled, :from => :running
+    transitions :to => :finished, :from => :running, :guard => :closed_and_enough_responses_and_billing_successful? 
+    transitions :to => :billing_error, :from => :running, :guard => :closed_and_enough_responses?
+    transitions :to => :stalled, :from => :running, :guard => :closed?
   end
   
   aasm_event :rerun do
@@ -213,10 +213,15 @@ class Survey < ActiveRecord::Base
   def add_sponsor_subscription
     s = subscriptions.create!(:organization => sponsor, :relationship => 'sponsor')
   end
+  
+  # returns whether or not there are enough responses and the survey is closed
+  def closed_and_enough_responses?
+    closed? && enough_responses?
+  end  
  
-  # returns whether or not there are enough responses, and if so, if billing was successful
-  def enough_responses_and_billing_successful?
-    enough_responses? && billing_successful?
+  # returns whether or not there are enough responses and the survey is closed, and if so, if billing was successful
+  def closed_and_enough_responses_and_billing_successful?
+    closed_and_enough_responses? && billing_successful?
   end
 
   # Calls the billing routine and returns whether or not billing was successful.

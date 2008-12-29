@@ -169,6 +169,7 @@ describe Survey, "that is ready to be billed" do
   before do
     @survey = valid_survey
     @survey.aasm_state = 'running'
+    @survey.end_date = Date.today - 1.day
     @survey.save!
     Gateway.stub!(:bill_survey_sponsor).and_return(true)
   end
