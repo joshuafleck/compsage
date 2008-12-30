@@ -92,7 +92,7 @@ describe Survey do
   
   it "should be invalid without questions" do
     @survey = Survey.create(valid_survey_attributes)
-    @survey.should have_at_least(1).error_on(:questions)
+    @survey.should_not be_valid
     @survey.destroy
   end
 
@@ -169,6 +169,7 @@ describe Survey, "that is ready to be billed" do
   before do
     @survey = valid_survey
     @survey.aasm_state = 'running'
+    @survey.end_date = Date.today - 1.day
     @survey.save!
     Gateway.stub!(:bill_survey_sponsor).and_return(true)
   end

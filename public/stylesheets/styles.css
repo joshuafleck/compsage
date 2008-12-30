@@ -56,7 +56,7 @@ img {
 	border: 0;
 }
 
-input[type=text] {
+input[type=text], input[type=password] {
 	padding: 5px;
 	font-size: 1em;
 	border: 1px solid #3f3f3e;
@@ -73,8 +73,8 @@ textarea {
 	border: 1px solid #3f3f3e;
 	background-color: #fffefc;
 }
-/* Specific element styles */
 
+/* Specific element styles */
 
 /* Header stuff*/
 #header, #container, #container_cap {
@@ -169,6 +169,35 @@ textarea {
 #main_content.with_side_bar {
 	width: 512px;
 	margin-left: 266px;
+}
+
+/* Footer stuff */
+
+#footer {
+  text-align: center;
+  color: #666;
+}
+
+#footer ul.links {
+  list-style-type: none;
+  margin: 0.5em 0 0.5em 0;
+  padding: 0;
+}
+
+#footer ul.links li {
+  display: inline;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+#copyright {
+  font-size: 0.9em;
+}
+
+#copyright a {
+  color: #43728b;
+  text-decoration: none;
+  border-bottom: 1px dotted #43728b;
 }
 
 /* Survey Sidebar */

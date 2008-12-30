@@ -3,6 +3,7 @@ require 'factory_girl'
 require 'faker'
 
 namespace :data_generator do
+
   desc "Generate a fake set of responses for a survey."
   task :finished_survey => :environment do
     sponsor = Organization.first
@@ -10,26 +11,7 @@ namespace :data_generator do
     
     questions = []
     #anywhere between 3 and 8 questions
-    (rand(5) + 3).times do
-      
-      question_type = case rand(3)
-      when 0 # create numerical response
-        'numerical_field'
-      when 1 # create textual response
-        'text_field'
-      when 2 # create multiple choice
-        'radio'
-      end
-      
-      if question_type == 'radio' then
-        options = Array.new(rand(4) + 2) { Faker::Lorem.words(rand(3) + 1).join(" ") } 
-      else
-        options = nil
-      end
-
-      question = Factory(:question, :survey => survey, :question_type => question_type, :options => options, :text => Faker::Lorem.sentence.gsub(/.$/, '?')) 
-      questions << question
-    end
+ 
 
     invitations = []
     current_org = 1
@@ -77,5 +59,433 @@ namespace :data_generator do
     end
     
     survey.finish!
+  end  
+
+  desc "Emtpy the database"
+  task :clear, :needs => [:environment] do |task|
+    clear_database
+    Rake::Task["ts:index"].invoke
   end
+
+  desc "Generate a fake set of data for all types."
+  task :load_all, :total, :needs => [:environment] do |task,args|
+    before
+    
+    total = (args[:total] || NUM_ORGANIZATIONS).to_i
+
+    generate_organizations(total)   
+          
+    generate_networks
+    generate_network_organizations
+    generate_network_invitations
+    
+    generate_surveys  
+    generate_discussions  
+    generate_survey_invitations
+    generate_responses_and_participations
+    close_surveys
+    
+    after
+  end
+  
+  # all of the tables for which we will be generating data
+  TABLES = [
+    'surveys',
+    'survey_subscriptions',
+    'participations',
+    'responses',
+    'invitations',
+    'pending_accounts',
+    'discussions',
+    'logos',
+    'networks',
+    'networks_organizations',
+    'organizations',
+    'questions']
+  
+  # defaults
+  NUM_ORGANIZATIONS = 5
+    
+  NETWORKS_PER_ORGANIZATION = 5
+  
+  SURVEYS_PER_ORGANIZATION = 7
+  
+  ORGANIZATIONS_PER_NETWORK = 5
+  
+  INVITATIONS_PER_NETWORK = 3
+  
+  EXTERNAL_INVITATIONS_PER_NETWORK = 3 
+  
+  INVITATIONS_PER_SURVEY = 7
+  
+  EXTERNAL_INVITATIONS_PER_SURVEY = 3
+  
+  QUESTIONS_PER_SURVEY = 5
+  
+  DISCUSSION_TOPICS_PER_SURVEY = 3
+  
+  DISCUSSIONS_PER_TOPIC = 3
+  
+  PARTICIPATION_RATE = 0.8
+  
+  CLOSE_RATE = 0.75 
+    
+  RESPONSE_RATE = 0.85 
+  
+
+  # prerequisites for loading data
+  def before
+    begin
+      Rake::Task["ts:stop"].invoke
+    rescue
+    end    
+    Rake::Task["beanstalk_dispatcher:stop"].invoke
+    clear_database
+  end
+  
+  # cleanup after loading data  
+  def after
+    optimize_database
+    Rake::Task["ts:start"].invoke
+    Rake::Task["ts:index"].invoke
+    Rake::Task["beanstalk_dispatcher:start"].invoke
+  end    
+  
+  def clear_database
+    TABLES.each do |table|
+      ActiveRecord::Base.connection.execute('TRUNCATE TABLE '+table)
+    end      
+  end
+  
+  def optimize_database
+    ActiveRecord::Base.connection.execute('ANALYZE TABLE '+TABLES.join(','))
+    ActiveRecord::Base.connection.execute('OPTIMIZE TABLE '+TABLES.join(','))
+  end  
+  
+  def generate_organizations(total)    
+    puts "generating #{total} organizations..."
+    
+    total.times do |index|
+      print_percent_complete(index,total)
+      Factory(
+        :organization, 
+        :password => 'test12', 
+        :password_confirmation => 'test12', 
+        :name => Faker::Company.name, 
+        :email => Faker::Internet.email,
+        :location => Faker::Address.city,
+        :contact_name => Faker::Name.name,
+        :city => Faker::Address.city,
+        :state => Faker::Address.us_state_abbr,
+        :zip_code => Faker::Address.zip_code.slice(0..4),
+        :industry => Organization::INDUSTRIES[rand(53)])
+    end
+    
+    puts "generating organizations complete"
+  end
+  
+  # generates networks for each organization
+  def generate_networks 
+    organizations = Organization.all
+    
+    puts "generating #{NETWORKS_PER_ORGANIZATION} networks per organization (about #{NETWORKS_PER_ORGANIZATION*organizations.size})..." 
+    
+    organizations.each_with_index do |owner,index|
+    
+      print_percent_complete(index,organizations.size)    
+      
+      (rand(NETWORKS_PER_ORGANIZATION)+3).times do |index|
+        Factory(
+          :network,
+          :name => Faker::Lorem.sentence,
+          :description => Faker::Lorem.paragraph,
+          :owner => owner)
+      end    
+    end
+
+    puts "generating networks complete"     
+  end
+  
+  # adds members to all networks
+  def generate_network_organizations      
+    networks = Network.all
+    
+    puts "generating #{ORGANIZATIONS_PER_NETWORK} organizations per network (about #{ORGANIZATIONS_PER_NETWORK*networks.size})..." 
+    
+    networks.each_with_index do |network,index|
+    
+      print_percent_complete(index,networks.size)    
+          
+      organizations = []
+      (rand(ORGANIZATIONS_PER_NETWORK)+3).times do |index|
+        organization = Organization.find :first, :offset => (Organization.count * rand).to_i
+        network.organizations << organization unless network.owner == organization || organizations.include?(organization)
+        organizations << organization
+      end
+    end
+    
+    puts "generating network organizations complete"    
+  end
+  
+  # creates invitations for all networks
+  def generate_network_invitations
+    networks = Network.all    
+    
+    puts "generating #{INVITATIONS_PER_NETWORK} invitations per network (about #{INVITATIONS_PER_NETWORK*networks.size})" 
+    puts "generating #{EXTERNAL_INVITATIONS_PER_NETWORK} external invitations per network (about #{EXTERNAL_INVITATIONS_PER_NETWORK*networks.size})..."     
+    
+    networks.each_with_index do |network,index|
+     
+      print_percent_complete(index,networks.size)    
+           
+      invitees = []
+      (rand(INVITATIONS_PER_NETWORK)+2).times do |index|
+        organization = Organization.find :first, :offset => (Organization.count * rand).to_i
+        Factory(
+          :network_invitation,
+          :network => network,
+          :inviter => network.owner,
+          :invitee => organization) unless network.owner == organization || network.organizations.include?(organization) || invitees.include?(organization)
+        invitees << organization
+      end
+      
+      (rand(EXTERNAL_INVITATIONS_PER_NETWORK)+2).times do |index|
+        Factory(
+          :external_network_invitation,
+          :network => network,
+          :inviter => network.owner,
+          :email => Faker::Internet.email,
+          :organization_name => Faker::Company.name)
+      end   
+         
+    end
+    
+    puts "generating network invitations complete"    
+  end 
+  
+  # creates surveys for all organizations
+  def generate_surveys  
+    organizations = Organization.all
+    
+    puts "generating #{SURVEYS_PER_ORGANIZATION} surveys per organization (about #{SURVEYS_PER_ORGANIZATION*organizations.size})..."     
+        
+    organizations.each_with_index do |sponsor,index|
+        
+      print_percent_complete(index,organizations.size)    
+        
+      (rand(SURVEYS_PER_ORGANIZATION)+4).times do |index|
+        Factory(
+          :survey, 
+          :job_title => Faker::Company.catch_phrase, 
+          :sponsor => sponsor, 
+          :description => Faker::Lorem.paragraph,
+          :questions => generate_questions)
+      end  
+         
+    end
+    
+    puts "generating surveys complete"     
+  end
+  
+  # creates discussions for all surveys
+  def generate_discussions
+    surveys = Survey.all
+        
+    puts "generating #{DISCUSSION_TOPICS_PER_SURVEY} discussion topics per survey (about #{DISCUSSION_TOPICS_PER_SURVEY*surveys.size})..."     
+            
+    surveys.each_with_index do |survey, index|
+    
+      print_percent_complete(index,surveys.size)    
+        
+      (rand(DISCUSSION_TOPICS_PER_SURVEY)+2).times do |index|
+        organization = Organization.find :first, :offset => (Organization.count * rand).to_i
+        Factory(
+          :discussion,
+          :survey => survey,
+          :subject => Faker::Lorem.sentence,
+          :body => Faker::Lorem.paragraph,
+          :responder => organization) 
+      end
+     
+    end
+    
+    puts "generating discussion topics complete"  
+         
+    discussions = Discussion.all
+
+    puts "generating #{DISCUSSIONS_PER_TOPIC} discussions per topic (about #{DISCUSSIONS_PER_TOPIC*discussions.size})..."     
+            
+    discussions.each_with_index do |discussion,index|
+
+      print_percent_complete(index,discussions.size)    
+            
+      (rand(DISCUSSIONS_PER_TOPIC)+2).times do |index|
+        organization = Organization.find :first, :offset => (Organization.count * rand).to_i
+        Factory(
+          :discussion,
+          :survey => discussion.survey,
+          :subject => Faker::Lorem.sentence,
+          :body => Faker::Lorem.paragraph,
+          :responder => organization,
+          :parent_discussion_id => discussion.id) 
+      end   
+         
+    end
+    
+    puts "generating discussions complete"  
+  end
+  
+  # creates invitations for all surveys
+  def generate_survey_invitations
+    surveys = Survey.all
+        
+    puts "generating #{INVITATIONS_PER_SURVEY} invitations per survey (about #{INVITATIONS_PER_SURVEY*surveys.size})" 
+    puts "generating #{EXTERNAL_INVITATIONS_PER_SURVEY} external invitations per survey (about #{EXTERNAL_INVITATIONS_PER_SURVEY*surveys.size})..."     
+            
+    surveys.each_with_index do |survey, index|
+    
+      print_percent_complete(index,surveys.size)    
+        
+      invitees = []
+      (rand(INVITATIONS_PER_SURVEY)+5).times do |index|
+        organization = Organization.find :first, :offset => (Organization.count * rand).to_i
+        Factory(
+          :survey_invitation,
+          :survey => survey,
+          :inviter => survey.sponsor,
+          :invitee => organization) unless survey.sponsor == organization || invitees.include?(organization)
+        invitees << organization
+      end
+      
+      (rand(EXTERNAL_INVITATIONS_PER_SURVEY)+2).times do |index|
+        Factory(
+          :external_survey_invitation,
+          :survey => survey,
+          :inviter => survey.sponsor,
+          :email => Faker::Internet.email,
+          :organization_name => Faker::Company.name)
+      end      
+    end
+    
+    puts "generating invitations complete"
+  end 
+  
+  # returns array of questions
+  def generate_questions     
+    
+    questions = []
+    (rand(QUESTIONS_PER_SURVEY) + 3).times do |index|
+      
+      question_type = case rand(3)
+      when 0 # create numerical response
+        'numerical_field'
+      when 1 # create textual response
+        'text_field'
+      when 2 # create multiple choice
+        'radio'
+      end
+      
+      if question_type == 'radio' then
+        options = Array.new(rand(4) + 2) { Faker::Lorem.words(rand(3) + 1).join(" ") } 
+      else
+        options = nil
+      end
+
+      question = Factory.build(
+        :question,
+        :question_type => question_type, 
+        :options => options, 
+        :text => Faker::Lorem.sentence.gsub(/.$/, '?'), 
+        :position => index)
+      
+      questions << question
+    end
+    
+    questions
+  end    
+  
+  # generates responses & participations for all surveys
+  def generate_responses_and_participations
+    invitations = SurveyInvitation.all + ExternalSurveyInvitation.all
+    
+    puts "generating responses (about #{(RESPONSE_RATE*invitations.size.to_f).floor})..."   
+    
+    invitations.each_with_index do |invitation,index|  
+    
+      next if rand > PARTICIPATION_RATE # ((PARTICIPATION_RATE*100)% chance of participation)
+      
+      print_percent_complete(index,invitations.size)    
+        
+      survey = invitation.survey
+      questions = survey.questions
+      
+      # build responses.
+      responses = []
+      questions.each do |question|
+        next if rand > RESPONSE_RATE # ((RESPONSE_RATE*100)% chance of answering a question)
+        
+        case question.question_type
+        when 'numerical_field'
+          response = Factory.build(
+            :response, 
+            :question => question, 
+            :numerical_response => 20000 + rand(60000))
+        when 'radio'
+          response = Factory.build(
+            :response, 
+            :question => question, 
+            :numerical_response => rand(question.options.size))
+        else
+          response = Factory.build(
+            :response, :question => question, 
+            :textual_response => Faker::Lorem.sentence,
+            :numerical_response => nil)
+        end
+
+        responses << response
+      end
+
+      if invitation.is_a?(SurveyInvitation)
+        participation = Factory(
+          :participation, 
+          :survey => survey, 
+          :participant => invitation.invitee, 
+          :responses => responses)
+      else
+        participation = Factory(
+          :participation, 
+          :survey => survey, 
+          :participant => invitation, 
+          :responses => responses)
+      end unless responses.size == 0
+    end  
+    
+    puts "generating responses complete" 
+  end
+  
+  # closes a portion of the surveys
+  def close_surveys
+    surveys = Survey.all
+    
+    puts "closing #{CLOSE_RATE*100.to_f}% of surveys (about #{(CLOSE_RATE*surveys.size.to_f).floor})..."      
+    
+    surveys.each_with_index do |survey, index|
+      next if rand > CLOSE_RATE # ((CLOSE_RATE*100)% chance of survey closed)
+      
+      Survey.transaction do
+        survey.end_date = Time.now - 1.minute
+        survey.save
+        survey.finish
+        survey.save
+      end
+      
+    end
+    
+    puts "closing surveys complete"
+  end
+  
+  def print_percent_complete(index,total)
+    puts "#{((index.to_f/total.to_f)*100).floor}% complete" if index % 10 == 0  
+  end
+
 end

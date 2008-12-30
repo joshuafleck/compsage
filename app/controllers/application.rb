@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   session :session_key => '_shawarma_session_id'
   
   def make_breadcrumbs
-    @breadcrumbs = Breadcrumbs.new(["Dashboard", url_for(dashboard_path)])
+    @breadcrumbs = Breadcrumbs.new(["Surveys", url_for(surveys_path)])
   end
   
 end

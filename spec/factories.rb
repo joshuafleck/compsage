@@ -65,9 +65,16 @@ Factory.define :invitation do |i|
   
 end
 
-#definition and setup for invitation
+#definition and setup for survey invitation
 Factory.define :survey_invitation do |i|
   i.survey {|a| a.association(:survey)}
+  i.inviter {|a| a.association(:organization)} 
+  i.invitee {|a| a.association(:organization)}
+end
+
+#definition and setup for network invitation
+Factory.define :network_invitation do |i|
+  i.network {|a| a.association(:network)}
   i.inviter {|a| a.association(:organization)} 
   i.invitee {|a| a.association(:organization)}
 end
@@ -75,6 +82,14 @@ end
 #definition and setup for external survey invitation
 Factory.define :external_survey_invitation do |i|
   i.survey {|a| a.association(:survey)}
+  i.inviter {|a| a.association(:organization)}
+  i.organization_name { Factory.next(:organization_name) }
+  i.email { Factory.next(:email) }
+end
+
+#definition and setup for external network invitation
+Factory.define :external_network_invitation do |i|
+  i.network {|a| a.association(:network)}
   i.inviter {|a| a.association(:organization)}
   i.organization_name { Factory.next(:organization_name) }
   i.email { Factory.next(:email) }
@@ -97,7 +112,7 @@ end
 #definition and setup for question
 Factory.define :question do |p|
   p.position { |a| a.object_id }
-  p.survey {|a| a.association(:survey)}
+  #p.survey {|a| a.association(:survey)}
   p.text { Factory.next(:question) }
   p.question_type "numerical_field"
 end
@@ -112,7 +127,7 @@ end
 
 #definition and setup for response
 Factory.define :response do |p|
-  p.question  {|a| a.association(:question)}
+  p.question  {|a| a.association(:question, :survey_id => -1)}
   p.numerical_response { Factory.next(:counter) }
 end
 
