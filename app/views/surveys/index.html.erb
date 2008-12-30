@@ -78,7 +78,7 @@
             <h3><%=link_to survey, survey%></h3>
             <div class="description_box"><%=distance_of_time_in_words_to_now(survey.end_date)%> left with
               <%=survey.participations.count%> out of <%=survey.all_invitations(true).size%> invitees participating.
-              <%=link_to "Survey Details", survey %>
+              <%=link_to "More details…", survey %>
             </div>
           </li>
         <% end %>
