@@ -4,7 +4,8 @@ class Participation < ActiveRecord::Base
   
   has_many :responses, :dependent => :destroy
   
-  validates_presence_of :participant, :survey, :responses
+  validates_presence_of :participant, :survey
+  validates_presence_of :responses, :message => "must be provided"
   validates_associated :responses
   
   after_create :create_participant_subscription, :fulfill_invitation
