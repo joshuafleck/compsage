@@ -3,16 +3,15 @@
 <h2>Invitations to <%=@survey.job_title%></h2>
 <%=flash_messages%>
 <% if @invalid_external_invites.size > 0 then %>
-  <span>There was a problem sending the following invitations:</span>
-  <ol>
-  <%@invalid_external_invites.each do |invite| %>
-    <li>
-      <span class='label'>Email: </span><%=invite.email%><br/>
-      <span class='label'>Organization Name: </span><%=invite.organization_name%><br/>
-      <span class='message'><%=invite.errors.full_messages.join(" &amp; ")%></span>
-    </li>
-  <% end %>
-  </ol>
+  <div class="errorExplanation">
+    <h2><%=t :header, :scope => [:activerecord, :errors, :template], :model => "invitation", :count => @invalid_external_invites.size %></h2>
+    <p><%=t :body, :scope => [:activerecord, :errors, :template] %></p>
+    <ul>
+      <% @invalid_external_invites.each do |invite| %>
+        <li><%= invite.organization_name %> (<%= invite.email %>): <%= invite.errors.full_messages.to_sentence %></li>
+      <% end %>
+    </ul>
+  </div>
 <% end %>
 <div id="current_invitation_list">
 	<h3>Current Invitation List</h3>
