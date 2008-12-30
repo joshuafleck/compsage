@@ -5,7 +5,7 @@
     <%=f.label :body %>
     <%=f.text_area :body, :rows => 4, :cols => 30 %>
     <%=f.hidden_field :parent_discussion_id %>
-    <p>
-      <input type="submit"  value="<%=discussion.new_record? ? 'Post' : 'Update' %>" /> or <a href="#" id='new_discussion_link_cancel'>Cancel</a>
-    </p>
+    <div class="submit">
+      <input type="submit"  value="<%=discussion.new_record? ? 'Post Discussion' : 'Update Discussion' %>" /> or <a href="#" id='new_discussion_link_cancel'>Cancel</a>
+    </div>
 <% end %>

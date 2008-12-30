@@ -14,4 +14,8 @@ en:
       template:
         header: "Please try again."
         body: "Resolve the following issues:"
+  time:
+    formats:
+      default: "%B %d %Y at %l:%M %p"
+      long: "%B %d %Y at %l:%M %p"
 

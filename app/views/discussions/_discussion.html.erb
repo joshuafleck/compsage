@@ -4,8 +4,8 @@
 	    <span class="sponsor">Sponsor: </span>
 	  <% end %>
 	  <span id="discussion_body_<%=discussion.id%>"><%= discussion.body %></span>
-  	<% if !current_organization_or_survey_invitation.eql?(discussion.responder) then %>
-			<%=link_to "Report Abuse", report_survey_discussion_path(@survey,discussion), :class => "abuse" %>  
-	  <% end %>
-	</p>	
+		<%= link_to_if !current_organization_or_survey_invitation.eql?(discussion.responder),
+          "Report Abuse", report_survey_discussion_path(@survey,discussion), :class => "abuse" %>  
+  </p>
+  <div class="date"><%= I18n.localize discussion.created_at %></div>
 </li>

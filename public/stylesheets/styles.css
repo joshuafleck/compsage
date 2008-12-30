@@ -298,12 +298,23 @@ ul#discussions ul {
 
 ul#discussions .subject {
 	font-weight: bold;
+  margin-bottom: 0;
 }
 
 ul#discussions .actions {
 	margin-bottom: .25em;
 } 
 
+ul#discussions .body {
+  margin-bottom: 0;
+}
+
+ul#discussions .date {
+  color: #444;
+  font-size: .9em;
+  letter-spacing: .05em;
+  margin-bottom: 0.5em;
+}
 /* Survey Results Page */
 
 ul#survey_results {
