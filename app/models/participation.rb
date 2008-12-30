@@ -6,7 +6,7 @@ class Participation < ActiveRecord::Base
   
   validates_presence_of :participant, :survey
   validates_presence_of :responses, :message => "must be provided"
-  validates_associated :responses
+  validates_associated :responses, :message => "may have errors. Check your responses for errors highlighted in red."
   
   after_create :create_participant_subscription, :fulfill_invitation
   

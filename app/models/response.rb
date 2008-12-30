@@ -25,7 +25,7 @@ class Response < ActiveRecord::Base
   end
   
   def response_before_type_cast
-    @response_before_type_cast
+    @response_before_type_cast || response
   end
 
   def response=(value)

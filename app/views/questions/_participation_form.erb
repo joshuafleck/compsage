@@ -10,7 +10,7 @@
 	<ol id="questions">
 		<% @survey.questions.each do |question|
 			@response = *@participation.response[question.id] || question.responses.new %>
-			<% f.fields_for @response, :index => question.id, :builder => QuestionFormBuilder do |q| %>
+      <% f.fields_for @response, :index => question.id, :builder => QuestionFormBuilder do |q| %>
 				<li>
 					<%=q.form_field%>
 					<% if question.qualify? then %>
