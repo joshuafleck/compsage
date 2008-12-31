@@ -1,7 +1,9 @@
 Feature: Manage accounts
   
   Scenario: Register new account as survey invitee
-    Given I am invited to the survey
+    Given there is a survey
+    And I am externally invited to the survey
+    And I am on the survey show page
     And I am on the new account page
     And I fill in "Email" with "test@test.com"
     And I fill in "Name of Your Organization" with "test organization"

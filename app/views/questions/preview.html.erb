@@ -9,7 +9,7 @@
 <p>
 
 <%= if @survey.invitations.size == 0 then
-   link_to "Continue", @invitation.nil? ? survey_invitations_path(@survey) : create_with_network_survey_invitations_path(@survey, :invitation => { :network_id => @invitation })
+   link_to "Continue", survey_invitations_path(@survey) 
    else
     link_to "Finish", survey_path(@survey)
 end %>

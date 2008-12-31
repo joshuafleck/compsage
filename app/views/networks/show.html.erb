@@ -3,7 +3,7 @@
 <h2><%=@network.name%> <span class="manager">managed by <%=link_to_organization @network.owner%></span></h2>
 <%=flash_messages%>
 <div class="actions">
-  <%=link_to "Survey Network", new_survey_path %>
+  <%=link_to "Survey #{pluralize(@network.organizations.count, "member")}", new_survey_path(:network_id => @network.id) %>
   <% if @network.owner_id == current_organization.id then %>
     <%=link_to "Invite Others", network_invitations_path(@network) %>
     <%=link_to "Edit Network", edit_network_path(@network) %>

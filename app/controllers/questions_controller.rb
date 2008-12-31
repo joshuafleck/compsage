@@ -13,7 +13,6 @@ class QuestionsController < ApplicationController
   end
   
   def preview
-    @invitation = params[:invitation]
     @survey = Survey.find(params[:survey_id])
     @questions = @survey.questions
     @participation = Participation.new

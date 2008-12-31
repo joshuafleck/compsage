@@ -13,10 +13,6 @@ class SurveyInvitationsController < ApplicationController
     end
   end
   
-  def new
-    # render the new template
-  end
-  
   def create
     @survey = current_organization.sponsored_surveys.running.find(params[:survey_id])    
     @invalid_external_invites = []     

@@ -607,6 +607,11 @@ form#new_network textarea#network_description, form#edit_network textarea#networ
   width: 300px;
 }
 
+form.edit_network ul li label {
+  display: inline;
+  font-weight: normal;
+}
+
 /* Flash Notices */
 div.flash_notice {
   border: 1px solid #6c8272;

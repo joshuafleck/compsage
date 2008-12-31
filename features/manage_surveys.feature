@@ -2,6 +2,7 @@ Feature: Manage surveys
   
   Scenario: Create new survey
     Given I am logged in
+    And there is a predefined question
     And I am on the new survey page
     When I fill in "Job title" with "Hard Worker"
     When I fill in "Job description" with "Works Hard"
@@ -10,6 +11,8 @@ Feature: Manage surveys
     And I fill in "Question Text" with "Custom question 1"
     #And I press "Add Question"
     And I press "Create Survey"
+    Then I should see "Survey Preview"
+    When I follow "Continue"
     Then I should see "Invitations to Hard Worker"
     When I follow "Respond Now"
     Then I should see "Responding to Hard Worker"
@@ -18,26 +21,31 @@ Feature: Manage surveys
     
   Scenario: Create new survey with failure
     Given I am logged in
+    And there is a predefined question
     And I am on the new survey page
-    And I check "Question 1"
     And I press "Create Survey"
     Then I should see "Job title can't be blank"
+    And I should see "You must choose at least one question to ask"
     When I fill in "Job title" with "Hard Worker"
+    And I check "Question 1"
     And I press "Create Survey"
+    When I follow "Continue"
     When I follow "Respond Now"
     Then I should see "Responding to Hard Worker"
     And I should see "Question 1 text"  
     
   Scenario: Edit a survey
     Given I am logged in
+    And there is a survey
+    And I am the sponsor
     And I am on the edit survey page
     When I fill in "Job title" with "Hard Worker"
     And I check "Predefined Question unselected"
     And I uncheck "Predefined Question selected"
     And I uncheck "Custom Question 2 text"
-    And I press "Update"    
-    Then I should see "Survey updated"
-    When I follow "Respond_button"
+    And I press "Update"   
+    When I follow "Continue"
+    When I follow "Respond Now"
     Then I should see "Predefined Question unselected text"
     And I should see "Custom Question 1 text"
     And I should not see "Predefined Question selected text"
@@ -45,6 +53,9 @@ Feature: Manage surveys
     
   Scenario: Manage Invitations
     Given I am logged in
+    And there is a survey
+    And I am the sponsor
+    And I own networks
     And I am on the survey invitations page
     And I check "Network 1"
     And I press "Send Invitations"
@@ -54,6 +65,7 @@ Feature: Manage surveys
     
   Scenario: Manage Discussions
     Given I am logged in
+    And there is a survey
     And I am on the survey show page
     When I fill in "Subject" with "Discussion Subject"
     And I fill in "Body" with "Discussion Body"
@@ -62,7 +74,9 @@ Feature: Manage surveys
     And I should see "Discussion Body"
     
   Scenario: Manage Discussions As Invitee
-    Given I am invited to the survey
+    Given there is a survey
+    And I am externally invited to the survey
+    And I am on the survey show page
     When I fill in "Subject" with "Discussion Subject"
     And I fill in "Body" with "Discussion Body"
     And I press "Post"
@@ -71,6 +85,7 @@ Feature: Manage surveys
     
   Scenario: Respond to survey
     Given I am logged in
+    And there is a survey
     And I am on the survey respond page
     When I fill in "Question 1" with "1"
     And I press "Submit My Responses"
@@ -79,15 +94,32 @@ Feature: Manage surveys
     When I follow "Surveys &amp; Results"
     Then I should not see "Decline"
     
+  Scenario: Edit survey response
+    Given I am logged in
+    And there is a survey
+    And I have responded to the survey
+    And I am on the survey respond page
+    Then I should see "1.4"
+    When I fill in "Question 1" with "1"
+    And I press "Submit My Responses"
+    And I am on the survey respond page
+    Then I should see "1.0"
+    
   Scenario: Rerun survey
     Given I am logged in
-    And I am on the survey stalled page
+    And there is a survey
+    And I am the sponsor
+    And the survey is stalled
+    And I am on the survey show page
     When I press "Re-Run"
     Then I should see "Survey updated"
   
   Scenario: Not rerun survey
     Given I am logged in
-    And I am on the survey stalled page
+    And there is a survey
+    And I am the sponsor
+    And the survey is stalled
+    And I am on the survey show page
     When I follow "here"
     Then I should see "You currently don't have any survey results."  
 

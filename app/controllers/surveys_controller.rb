@@ -105,12 +105,7 @@ class SurveysController < ApplicationController
   end
   
   def new
-    @survey = Survey.new
-
-    # Check to see if we arrived here from a 'survey network' link. If so, send the network along.
-    if !params[:network_id].blank? then
-      @network = current_organization.networks.find(params[:network_id])
-    end
+    @survey = Survey.new(:network_id => params[:network_id])
   end
   
   def create
@@ -129,18 +124,11 @@ class SurveysController < ApplicationController
       # For now, pretend we've received billing information.
       @survey.billing_info_received!
       
+      @survey.invite_network
+      
       respond_to do |wants|
         wants.html do
-
-          #Check to see if the user created the survey from a 'survey network' link. If so, create the invitation.
-          if params[:invite_network].blank? then
-            redirect_to preview_survey_questions_path(@survey)
-          else
-            redirect_to preview_survey_questions_path(@survey, :invitation => 
-            {
-              :network_id => params[:invite_network]
-            })
-          end
+          redirect_to preview_survey_questions_path(@survey)
         end
       end
       

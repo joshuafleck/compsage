@@ -1,0 +1,19 @@
+<%=error_messages_for :network%>
+<% form_for @network do |f| %>
+  <%= f.label :name, "Network Name" %>
+  <%= f.text_field :name, :size => 30 %>
+  <%= f.label :description %>
+  <%= f.text_area :description, :rows => 4, :cols => 30 %>
+  <% if !@network.new_record? && @network.organizations.count > 1 then %>
+    <%=f.label "Change Ownership" %>
+    <ul id="organizations">
+      <% @network.organizations.each do |organization| %>
+        <li>
+            <%=f.radio_button "owner_id", organization.id %>
+            <%=f.label "owner_id_#{organization.id}", organization.name%>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+  <div class="submit"><input type="submit" value="<%=@network.new_record? ? 'Create' : 'Update' %>" /> or <%=link_to "Cancel", networks_path %></div>
+<% end %>

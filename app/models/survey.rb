@@ -27,6 +27,8 @@ class Survey < ActiveRecord::Base
   has_many :subscriptions, :class_name => 'SurveySubscription', :dependent => :destroy
   has_many :subscribed_organizations, :through => :survey_subscriptions, :source => :organization
   
+  attr_accessor :network_id
+  
   validates_presence_of :job_title
   validates_length_of :job_title, :maximum => 128
   validates_presence_of :end_date, :on => :create
@@ -40,7 +42,7 @@ class Survey < ActiveRecord::Base
   
   after_create :add_sponsor_subscription
   before_destroy :cancel_survey
-  
+    
   aasm_initial_state :pending
   aasm_state :pending
   aasm_state :running
@@ -136,6 +138,15 @@ class Survey < ActiveRecord::Base
   # determine the recommended number of invitations necessary to provide results
   def recommended_number_of_invitations
     REQUIRED_NUMBER_OF_PARTICIPATIONS - [self.all_invitations(true).size,self.participations.size].max
+  end
+  
+  # this will invite the speicified network to the survey
+  def invite_network    
+    self.sponsor.networks.find(self.network_id).organizations.each do |organization|
+      self.invitations.create(
+        :invitee => organization, 
+        :inviter => self.sponsor) unless organization == self.sponsor
+    end unless self.network_id.blank?
   end
   
   # find all predefined questions, mark any questions this survey uses as 'included'

@@ -320,36 +320,6 @@ describe SurveysController, " handling GET /surveys/new" do
   end
 end
 
-describe SurveysController, " handling GET /surveys/new from a 'survey network' link" do
-  before(:each) do
-    @networks_proxy = mock('networks proxy')
-    @current_organization = mock_model(Organization, :networks => @networks_proxy)
-
-    @network = mock_model(Network, :id => "1")
-    @networks_proxy.stub!(:find).and_return(@network)
-
-    login_as(@current_organization)
-  end
-
-  def do_get
-    get :new, :network_id => @network.id
-  end
-  
-  it "should be successful" do
-    do_get
-    response.should be_success
-  end
-  
-  it "should find the network" do
-    @networks_proxy.should_receive(:find).and_return(@network)
-    do_get
-  end
-  
-  it "should assign the network to the view" do
-    do_get
-    assigns[:network].should_not be_nil
-  end
-end
 
 describe SurveysController, " handling GET /surveys/1/edit" do
   before(:each) do
@@ -440,7 +410,7 @@ describe SurveysController, " handling POST /surveys" do
                     "2" => {'included' => "0", 'text' => 'question_2', 'custom_question_type' => 'Yes/No'}
                  }
                }
-    @survey = mock_model(Survey, :id => 1, :billing_info_received! => true, :save => true, :errors => [], :new_record? => true, :job_title => "test")
+    @survey = mock_model(Survey, :id => 1, :billing_info_received! => true, :save => true, :errors => [], :new_record? => true, :job_title => "test", :invite_network => true)
     @surveys = []
     @questions_proxy = mock('questions_proxy')
     @question_hash = [{'id' => 1, 'another' => 2, 'text' => 'asdf'}, {'id' => 2, 'another' => 2, 'text' => 'asdf'}]
@@ -482,6 +452,11 @@ describe SurveysController, " handling POST /surveys" do
     @pdq1.should_receive(:build_questions).with(@survey)
     do_post
   end  
+  
+  it "should invite the network" do
+    @survey.should_receive(:invite_network)
+    do_post
+  end
   
   it "should redirect to the survey preview page upon success" do
     do_post
