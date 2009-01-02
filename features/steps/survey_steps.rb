@@ -102,6 +102,10 @@ Given /I am on the survey respond page/ do
   visits survey_questions_url(@survey)
 end
 
+Given /I am on the survey index page/ do
+  visits surveys_url
+end
+
 Given /the survey is stalled/ do
   @survey.end_date = Date.today - 1.day
   @survey.save!

@@ -5,6 +5,7 @@ class Survey < ActiveRecord::Base
     indexes job_title
     indexes description
     indexes sponsor.industry, :as => :industry
+    indexes aasm_state
     
     has subscriptions.organization_id, :as => :subscribed_by
     has sponsor.latitude, :as => :latitude, :type => :float

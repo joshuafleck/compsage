@@ -158,9 +158,10 @@ class SurveysController < ApplicationController
     
     # filters by subscription (my surveys)
     @search_params[:conditions][:subscribed_by] = current_organization.id unless @filter_by_subscription.blank?
+    @search_params[:conditions][:aasm_state] = "running" if @filter_by_subscription.blank?
         
     @surveys = Survey.search @search_query, @search_params
-         
+       
     respond_to do |wants|
       wants.html {}
       wants.xml {render :xml => @surveys.to_xml}

@@ -122,4 +122,12 @@ Feature: Manage surveys
     And I am on the survey show page
     When I follow "here"
     Then I should see "You currently don't have any survey results."  
+    
+  Scenario: Search for survey by title
+    Given I am logged in
+    And there is a survey
+    And I am on the survey index page
+    When I fill in "search_text" with "Survey 1"
+    And I press "Find a Survey"
+    Then I should see "Survey 1"
 
