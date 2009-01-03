@@ -32,7 +32,7 @@
 			</li>
 		<% end %>
 		</ol>		
-	<div class="response_submit"><input type="submit" value="Submit My Responses" /> or <%=link_to "Cancel", survey_path(@survey) %></div>
+	<div class="response_submit"><input type="submit" value="Submit My Responses" /><span  id='cancel_section'> or <%=link_to "Cancel", survey_path(@survey), :id => 'cancel_link' %></span></div>
 <% end %>
 <script type="text/javascript">
 function observeQualificationLinks() {

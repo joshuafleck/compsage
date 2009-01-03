@@ -65,13 +65,13 @@
   <% if !@network.nil? then %>
     <%=hidden_field_tag(:invite_network, @network.id ) %>
   <% end %>
-  <p><input type="submit" value="<%=@survey.new_record? ? 'Create Survey' : 'Update' %>" /> or <%=link_to "Cancel", surveys_path %></p>
+  <p><input id="form_submit" type="submit" value="<%=@survey.new_record? ? 'Create Survey' : 'Update' %>" /> or <%=link_to "Cancel", surveys_path %></p>
 <% end %>
 <script type="text/javascript">
 
 function observeCustomQuestion() {
   $('question_submit').observe('click', createQuestion);
-  
+  $('form_submit').observe('click', createQuestion);
   callFunctionOnEnterForm($('custom_question_form'),createQuestion);
 
 }
@@ -86,7 +86,7 @@ function createQuestion() {
   var custom_question_list = $('custom_question_list');
   
   if (question_text == '') {
-    return alert('Question text may not be blank');
+    return;
   }
     
   var question_id = (new Date()).getTime();

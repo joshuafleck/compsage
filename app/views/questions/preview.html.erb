@@ -18,9 +18,10 @@ or
 </p>
 <script>
 function disableForm(){
+  $('cancel_section').style.display = 'none';
   var f = document.getElementsByTagName('input');
   for(var i=0;i<f.length;i++){
-      f[i].setAttribute('disabled',true)
+      f[i].setAttribute('disabled',true);
   }
 }
 </script>

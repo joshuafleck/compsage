@@ -72,7 +72,7 @@
 					</div>
 			</div>
 		</div>
-		<p><input type="submit" value="Send Invitations" /></p>
+		<p><input id="invitation_form_submit" type="submit" value="Send Invitations" /></p>
 	<% end %>
 </div>
 <div class="separator"><%=image_tag 'embellish.gif' %></div>
@@ -89,6 +89,7 @@ function initializeObservers() {
 	$('search').observe('keyup', liveOrganizationSearch);
 	
 	$('external_invitation_submit').observe('click', addExternalInvite);
+	$('invitation_form_submit').observe('click', addExternalInvite);
 	
 	callFunctionOnEnterForm($('external_invitation_form'),addExternalInvite);
 
@@ -177,6 +178,8 @@ function showExternalInvitationForm(email, org_name) {
 
 function hideExternalInvitationForm() {
 	$('search_results').show();
+	$('external_invitation_email').value = '';
+	$('external_invitation_organization_name').value = '';
 	$('external_invitation_form').hide();
 }
 
@@ -189,10 +192,9 @@ function addExternalInvite() {
 	var name = $F('external_invitation_organization_name');
   var invite_list = $('organizations_to_invite');
   
-  if (email == '') {
-    return alert('Email address may not be blank');
-  } else if (name == '') {
-    return alert("Organization name may not be blank");
+  // Don't want to submit if either field is blank, as this form is autosubmitted when invites are sent
+  if (email == '' || name == '') {
+    return;
   }
     
   var invite_id = (new Date()).getTime();
