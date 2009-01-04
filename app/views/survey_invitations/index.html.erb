@@ -1,3 +1,4 @@
+
 <% title "Invitations to #{@survey.job_title}" %>
 <% highlight_tab("surveys") %>
 <h2>Invitations to <%=@survey.job_title%></h2>
@@ -102,10 +103,10 @@ function liveOrganizationSearch() {
 	if($F('search').length == 0) return;
 	
 	new Ajax.Request('<%=search_organizations_path%>', {
-		method: 'get',
-		parameters: $('search').serialize(),
-		requestHeaders: {accept:'application/json'},
-		onSuccess: function(transport) {
+		'method': 'get',
+		'parameters': $('search').serialize(),
+		'requestHeaders': {'accept':'application/json'},
+		'onSuccess': function(transport) {
 			showResults(transport.responseJSON);
 		}
 	});
@@ -119,6 +120,7 @@ function liveOrganizationSearch() {
 function showResults(organizations) {
 	search_results = $('search_results')
 	$('search_instructions').hide();
+	
 	if(organizations.length == 0) {
 		if($F('search').match(/\@/)) {
 			showExternalInvitationForm($F('search'), '');
@@ -129,26 +131,34 @@ function showResults(organizations) {
 	}
 	else {
 		hideExternalInvitationForm();
-		org_list = new Element('ul', {id: "search_results_list"})
+		
+		var org_list = new Element('ul', {'id': "search_results_list"})
+		
 		organizations.each(function(organization) {
-			org_item = new Element('li', {id:"invite_organization_" + organization.id});
-			checkbox = new Element('input', {
-			    type: 'checkbox', 
-			    id: "invite_organization_"+organization.id+"_included", 
-			    name: "invite_organization["+organization.id+"][included]",
-			    value: "1"
+		
+			var org_item = new Element('li', {'id':"invite_organization_" + organization.id});
+			
+			var checkbox = new Element('input', {
+			    'type': 'checkbox', 
+			    'id': "invite_organization_"+organization.id+"_included", 
+			    'name': "invite_organization["+organization.id+"][included]",
+			    'value': 1
 			  });
+			  
 			checkbox.onclick = function() {
 				addOrganizationToInvite(organization);
 			}
-	    label = new Element('label', {
-	        for: "invite_organization_"+organization.id+"_included"
+			
+	    var label = new Element('label', {
+	        'for': "invite_organization_"+organization.id+"_included"
 	      }).update(organization.name_and_location);
+	      
 			org_item.update(checkbox);
 			org_item.insert(label)
 			org_item.insert(" <span class='contact'>" + "Contact: " + organization.contact_name + "</span>");
 			organization.list_item = org_item;
 			org_list.insert(org_item);
+			
 		});
 		search_results.update(org_list);
 	}
@@ -159,8 +169,8 @@ function showResults(organizations) {
  *  organization to the included organizations list
  */
 function addOrganizationToInvite(organization) {
-	invite_list = $('organizations_to_invite');
-	item = organization.list_item.remove()
+	var invite_list = $('organizations_to_invite');
+	var item = organization.list_item.remove()
 	
 	//This will ensure once the item is added to the included list that this function can not be called on the item
 	item.select("#invite_organization_"+organization.id+"_included")[0].onclick = null
@@ -199,24 +209,29 @@ function addExternalInvite() {
     
   var invite_id = (new Date()).getTime();
 
-  invite_item = new Element('li');
-	checkbox = new Element('input', {
-  	  id: 'external_invite_' + invite_id + '_included', 
-  	  type: 'checkbox', 
-  	  value: "1", 
-  	  checked: 'checked', 
-  	  name: 'external_invite[' + invite_id + '][included]'
+  var invite_item = new Element('li');
+  
+	var checkbox = new Element('input', {
+  	  'id': 'external_invite_' + invite_id + '_included', 
+  	  'type': 'checkbox', 
+  	  'value': 1, 
+  	  'name': 'external_invite[' + invite_id + '][included]'
 	  });
-	label = new Element('label', {for: 'external_invite_' + invite_id + '_included'}).update(name+" ("+email+")");
-	external_invite_email = new Element('input', {
-	    type: 'hidden', 
-	    value: email, 
-	    name: 'external_invite[' + invite_id + '][email]'
+	  
+	var label = new Element('label', {
+	  'for': 'external_invite_' + invite_id + '_included'
+	  }).update(" "+name+" ("+email+")");
+	  
+	var external_invite_email = new Element('input', {
+	    'type': 'hidden', 
+	    'value': email, 
+	    'name': 'external_invite[' + invite_id + '][email]'
 	  });
-	external_invite_name = new Element('input', {
-	    type: 'hidden', 
-	    value: name, 
-	    name: 'external_invite[' + invite_id + '][organization_name]'
+	  
+	var external_invite_name = new Element('input', {
+	    'type': 'hidden', 
+	    'value': name, 
+	    'name': 'external_invite[' + invite_id + '][organization_name]'
 	  });	
 	
 	invite_item.update(checkbox); 
@@ -224,7 +239,10 @@ function addExternalInvite() {
 	invite_item.insert(external_invite_email);   
 	invite_item.insert(external_invite_name); 
 
-  invite_list.insert(invite_item, { position: 'bottom' });
+  invite_list.insert(invite_item, { 'position': 'bottom' });
+  
+  //IE6 hack - checkbox must be marked as checked after insertion into DOM
+  checkbox.checked = true;
     
   $('external_invitation_email').clear();
   $('external_invitation_organization_name').clear();

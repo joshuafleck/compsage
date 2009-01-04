@@ -91,20 +91,29 @@ function createQuestion() {
     
   var question_id = (new Date()).getTime();
 
-  question_item = new Element('li');
-	checkbox = new Element('input', {
-  	  id: 'questions_' + question_id + '_included', 
-  	  type: 'checkbox', value: "1", 
-  	  checked: 'checked', 
-  	  name: 'questions[' + question_id + '][included]'
+  var question_item = new Element('li');
+  
+	var checkbox = new Element('input', {
+  	  'id': 'questions_' + question_id + '_included', 
+  	  'type': 'checkbox', 
+  	  'value': 1, 
+  	  'name': 'questions[' + question_id + '][included]'
 	  });
-	label = new Element('label', {for: 'questions_' + question_id + '_included'}).update(question_text);
-	descr = new Element('span', { class: "description" }).update(response_type);
-	text = new Element('input', {type: 'hidden', value: question_text, name: 'questions[' + question_id + '][text]'});
-	type = new Element('input', {
-	    type: 'hidden', 
-	    value: response_type, 
-	    name: 'questions[' + question_id + '][custom_question_type]'
+	  
+	var label = new Element('label', {'for': 'questions_' + question_id + '_included'}).update(question_text);
+	
+	var descr = new Element('span', { 'class': "description" }).update(response_type);
+	
+	var text = new Element('input', {
+	  'type': 'hidden', 
+	  'value': question_text, 
+	  'name': 'questions[' + question_id + '][text]'
+	  });
+	
+	var type = new Element('input', {
+	    'type': 'hidden', 
+	    'value': response_type, 
+	    'name': 'questions[' + question_id + '][custom_question_type]'
 	  });	
 	
 	question_item.update(checkbox); 
@@ -112,8 +121,11 @@ function createQuestion() {
 	question_item.insert(descr); 
 	question_item.insert(text);
 	question_item.insert(type);    
-
-  custom_question_list.insert(question_item, { position: 'bottom' });
+  custom_question_list.insert(question_item, { 'position': 'bottom' });
+  
+  //IE6 hack - checkbox must be marked as checked after insertion into DOM
+  checkbox.checked = true;
+  
   $('question_text').clear();
 }
 
