@@ -2,16 +2,35 @@
 <% highlight_tab "networks" %>
 <h2>Find an Organization</h2>
 <p>Organization search will go here, with a link to browse as well.</p>
+<% if @network_invitations.any? then %>
+  <h2>Network Invitations</h2>
+  <ul id="network_invitations">
+    <% @network_invitations.each do |invitation| %>
+      <li>
+        <h3><%= invitation.network.name %>
+          <span class="manager">managed by <%= link_to_organization(invitation.network.owner) %></span>
+        </h3>
+        <div class="description_box"><%=h invitation.network.description %></div>
+        <div class="actions">
+          <%= link_to "Join Network", join_network_path(invitation.network), :method => :put %>
+          <%= link_to "Decline" %>
+        </div>
+      </li>
+    
+    <% end %>
+  </ul>
+<% end %>
 <h2>Your Contact Networks</h2>
 <% if @networks.empty? then %>
   <p>Contact Networks make it easy for you to send surveys to and receive surveys from a group of peers. When you join a
   contact network, surveying that group of organizations is just a few clicks away. You can easily
   <%= link_to "make your own contact network", new_network_path %> and invite your own group of organizations.
 <% else %>
-  <ul id="networks" class="entity_list">
+  <%= link_to "Create a New Network", new_network_path %>
+  <ul id="networks">
     <% @networks.each do |network| %>
       <li class="<%=cycle("even", "odd")%>">
-        <h3><%=link_to network.name, network_path(network)%> <span class="manager">managed by <%=link_to_organization(network.owner)%></span></h3>
+        <h3><%= link_to_network(network) %></h3>
         <div class="description"><%=network.description%></div>
         <div class="actions">
           <%=link_to "Survey #{pluralize(network.organizations.count, "member")}", new_survey_path(:network_id => network.id) %>

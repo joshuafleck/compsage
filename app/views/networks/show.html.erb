@@ -15,7 +15,7 @@
   <div><%=@network.description%></div>
 <% end %>
 <h3>Members</h3>
-<ul id="organizations">
+<ul id="network_members">
   <% @network.organizations.each do |organization| %>
     <li>
     <%= link_to_organization(organization) %>

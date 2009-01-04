@@ -592,10 +592,14 @@ span.inadequate_responses {
 
 /* Networks page */
 
-ul#networks {
+ul#networks, ul#network_invitations {
   list-style-type: none;
-  padding: 0;
-  margin: 0;
+  padding: 0 0 1em 0;
+  margin: 0 0 1em 0;
+}
+
+ul#network_invitations {
+	background: url('../images/embellish.gif') bottom center no-repeat;
 }
 
 /* Network form */

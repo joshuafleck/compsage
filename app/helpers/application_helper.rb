@@ -30,4 +30,10 @@ module ApplicationHelper
       :title => "Contact: #{organization.contact_name} #{organization.city + ", " + organization.state unless organization.city.blank?}")
   end
 
+  def link_to_network(network)
+    link_to(network.name, network_path(network)) + " " +
+      content_tag(:span, :class => "manager") do
+        "managed by " + link_to_organization(network.owner)
+      end
+  end
 end

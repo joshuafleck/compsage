@@ -1,11 +1,13 @@
 class NetworksController < ApplicationController
   before_filter :login_required
   layout 'logged_in'
+  
   # List all the networks.
   def index
         
     respond_to do |wants|
       wants.html do
+        @network_invitations = current_organization.network_invitations
         @networks = current_organization.networks.paginate(:page => params[:page], :order => "name")
       end
       wants.xml do
