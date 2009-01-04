@@ -105,9 +105,9 @@ function liveOrganizationSearch() {
 	new Ajax.Request('<%=search_organizations_path%>', {
 		'method': 'get',
 		'parameters': $('search').serialize(),
-		'requestHeaders': {'accept':'application/json'},
+		'requestHeaders': {'Accept':'application/json'},
 		'onSuccess': function(transport) {
-			showResults(transport.responseJSON);
+			showResults(transport.responseText.evalJSON());
 		}
 	});
 }
@@ -118,7 +118,7 @@ function liveOrganizationSearch() {
  *  by the search
  */
 function showResults(organizations) {
-	search_results = $('search_results')
+	var search_results = $('search_results');
 	$('search_instructions').hide();
 	
 	if(organizations.length == 0) {
@@ -155,7 +155,7 @@ function showResults(organizations) {
 	      
 			org_item.update(checkbox);
 			org_item.insert(label)
-			org_item.insert(" <span class='contact'>" + "Contact: " + organization.contact_name + "</span>");
+			org_item.insert("<span class='contact'>&nbsp;" + "Contact: " + organization.contact_name + "</span>");
 			organization.list_item = org_item;
 			org_list.insert(org_item);
 			
@@ -170,13 +170,17 @@ function showResults(organizations) {
  */
 function addOrganizationToInvite(organization) {
 	var invite_list = $('organizations_to_invite');
-	var item = organization.list_item.remove()
-	
+	var item = organization.list_item.remove();
+	  
 	//This will ensure once the item is added to the included list that this function can not be called on the item
-	item.select("#invite_organization_"+organization.id+"_included")[0].onclick = null
+	//Searching by ID was not working in IE6 - have to locate by child
+	item.childElements()[0].onclick = null;
 	
-	if(invite_list.select('#invite_organization_' + organization.id).length == 0)
+	if(invite_list.select('#invite_organization_' + organization.id).length == 0) {
 		invite_list.insert(item);
+		//Hack for IE6 - must explicitely set the checked flag after inserting element into DOM
+		item.childElements()[0].checked = true;
+  }
 }
 
 function showExternalInvitationForm(email, org_name) {
