@@ -446,7 +446,7 @@ form.new_survey textarea, form.edit_survey textarea {
 
 /* Survey preview */
 #survey_preview_box {
-  background-color: #fff;
+  background: #fff url('/images/preview_background.gif') right repeat-y;
   border: 1px solid #000;
   padding: 0 20px 20px 20px;
   margin: 20px;
