@@ -243,8 +243,8 @@ textarea {
 div#my_surveys ul {
   list-style-type: none;
   margin: 0;
-  padding: 0 0 .5em 0;
-	margin-bottom: 1.5em;
+  padding: 0 0 1em 0;
+	margin-bottom: 1em;
 	background: url('../images/embellish.gif') bottom center no-repeat;
 }
 
