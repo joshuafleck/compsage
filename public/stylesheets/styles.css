@@ -225,12 +225,36 @@ textarea {
 #search_box {
 	float: right;
 	width: 246px;
+  line-height: 20px;
 }
+
+#search_box img {
+  margin: 0 -10px 0 0;
+  padding: 0;
+  vertical-align: middle;
+}
+
 
 #search_box input#search_text {
-	width: 125px;
+  padding: 5px 5px 0 5px;
+	width: 114px;
+  border: 0;
+  margin: 0;
+  height: 25px;
+  background: transparent url('/images/search_surveys_textbox.gif');
+  float: left;
 }
 
+#search_box input#submit {
+  border: 0;
+  padding: 0;
+  width: 124px;
+  height: 30px;
+  background: transparent url('/images/search_surveys_submit.gif');
+  margin: 0 -5px 0 0;
+  float: left;
+  cursor: pointer;
+}
 #my_search_box {
 	float: right;
 }

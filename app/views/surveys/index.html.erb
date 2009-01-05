@@ -37,8 +37,7 @@
 <div id="search_box">
 	<% form_tag search_surveys_path, :method => :get do %>
 	  <%= hidden_field_tag 'filter_by_subscription', @filter_by_subscription %>
-	  <%= text_field_tag 'search_text', @search_text %>
-		<input type="submit" id="search_submit" value="Find a Survey">
+    <%= text_field_tag 'search_text', @search_text %><input type="submit" id="submit" value="" />
 	<% end %>
 </div>
 <%=link_to image_tag("sponsor_a_survey_button.gif"), new_survey_path%>
