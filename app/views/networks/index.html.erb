@@ -1,7 +1,13 @@
 <% title "Your Contact Networks" %>
 <% highlight_tab "networks" %>
 <h2>Find an Organization</h2>
-<p>Organization search will go here, with a link to browse as well.</p>
+<% form_tag search_organizations_path do %> 
+  <label for="search_text">Find CompSage Members</label>
+  <%= text_field_tag 'search_text', '', :size => 30 %>
+  <input type="submit" value="Search" />
+  or <%=link_to "Browse CompSage members in your area", organizations_path %>
+<% end %>
+
 <% if @network_invitations.any? then %>
   <h2>Network Invitations</h2>
   <ul id="network_invitations">

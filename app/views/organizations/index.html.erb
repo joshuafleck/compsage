@@ -1,13 +1,11 @@
 <% title "Members" %>
-<% breadcrumbs() %>
 <% highlight_tab "networks" %>
-<h2>Members</h2>
+<h2>CompSage Members</h2>
 <p>Explore the community. Invite members to join one of your networks or to take part in a survey you are sponsoring.</p>
 <%=flash_messages%>
-<h3>Search Members</h3>
+<h3>Search CompSage Members</h3>
 <%= render :partial => "search_form" %>
-<h3>Browse Members</h3>
-<ul id="organizations" class="entity_list">
+<ul id="organizations">
   <%= render :partial => "organization", :collection => @organizations %>
 </ul>
 <%= will_paginate @organizations %>

@@ -616,6 +616,28 @@ form.edit_network ul li label {
   font-weight: normal;
 }
 
+/* Organization Search / Browse */
+ul#organizations {
+  list-style-type: none;
+  padding: 0;
+  margin: 1em 0 0 0;
+}
+
+ul#organizations > li {
+  margin-bottom: 1em;
+}
+
+ul#organizations h3 {
+  margin-top: 0em;
+}
+
+ul#organizations div.organization_logo {
+  float: left;
+}
+
+ul#organizations form {
+  display: inline;
+}
 /* Flash Notices */
 div.flash_notice {
   border: 1px solid #6c8272;

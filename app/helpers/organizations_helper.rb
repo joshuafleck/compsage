@@ -18,41 +18,6 @@ module OrganizationsHelper
   end
 
   #
-  # Link to user's page ('organizations/1')
-  #
-  # By default, their login is used as link text and link title (tooltip)
-  #
-  # Takes options
-  # * :content_text => 'Content text in place of organization.login', escaped with
-  #   the standard h() function.
-  # * :content_method => :organization_instance_method_to_call_for_content_text
-  # * :title_method => :organization_instance_method_to_call_for_title_attribute
-  # * as well as link_to()'s standard options
-  #
-  # Examples:
-  #   link_to_organization @organization
-  #   # => <a href="/organizations/3" title="barmy">barmy</a>
-  #
-  #   # if you've added a .name attribute:
-  #  content_tag :span, :class => :vcard do
-  #    (link_to_organization organization, :class => 'fn n', :title_method => :login, :content_method => :name) +
-  #          ': ' + (content_tag :span, organization.email, :class => 'email')
-  #   end
-  #   # => <span class="vcard"><a href="/organizations/3" title="barmy" class="fn n">Cyril Fotheringay-Phipps</a>: <span class="email">barmy@blandings.com</span></span>
-  #
-  #   link_to_organization @organization, :content_text => 'Your user page'
-  #   # => <a href="/organizations/3" title="barmy" class="nickname">Your user page</a>
-  #
-  def link_to_organization(organization, options={})
-    raise "Invalid organization" unless organization
-    options.reverse_merge! :content_method => :login, :title_method => :login, :class => :nickname
-    content_text      = options.delete(:content_text)
-    content_text    ||= organization.send(options.delete(:content_method))
-    options[:title] ||= organization.send(options.delete(:title_method))
-    link_to h(content_text), organization_path(organization), options
-  end
-
-  #
   # Link to login page using remote ip address as link content
   #
   # The :title (and thus, tooltip) is set to the IP address 

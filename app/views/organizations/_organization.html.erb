@@ -1,80 +1,61 @@
 <li class="entity <%=cycle("even", "odd")%>">
-<div class="actions">
-    <%= link_to_function "Invite to Network", 
-      "new Effect.toggle('organization_#{organization.id}_network_invitation', 'blind', {duration: .5});return false;" 
-    %>
-    <div id='organization_<%=organization.id%>_network_invitation' style='display:none;'>
-      <% form_tag(
-          {:id => "organization_#{organization.id}_network_invitation_form"}, 
-          {:onsubmit => "return buildAjaxInvitationRequest(this['organization_id'],
-            this.network_organization_#{organization.id}_network_id,
-            new Template('#{networks_path}/\#{replacingID}/invitations'),
-            'organization_#{organization.id}_network_invitation_response');"
-          }
-          ) do 
-      %>
-        <%= collection_select("network_organization_#{organization.id}", 
-          :network_id, 
-          current_organization.owned_networks, 
-          :id, 
-          :name, 
-          {:prompt => 'Select a Network'})
-        %>
-        <%= hidden_field_tag "organization_id", organization.id %>
-        <input type="submit" value="Invite!">  
-      <% end %>
-      <div id='organization_<%=organization.id%>_network_invitation_response'>
-      </div>
-    </div>
-    <%= link_to_function "Invite to Survey", 
-      "new Effect.toggle('organization_#{organization.id}_survey_invitation', 'blind', {duration: .5});return false;" 
-    %>
-    <div id='organization_<%=organization.id%>_survey_invitation' style='display:none;'>
-      <% form_tag(
-          {:id => "organization_#{organization.id}_survey_invitation_form"}, 
-          {:onsubmit => "return buildAjaxInvitationRequest(this['organization_id'],
-            this.survey_organization_#{organization.id}_survey_id,
-            new Template('#{surveys_path}/\#{replacingID}/invitations'),
-            'organization_#{organization.id}_survey_invitation_response');"
-          }
-          ) do 
-      %>
-        <%= collection_select("survey_organization_#{organization.id}", 
-          :survey_id, 
-          current_organization.sponsored_surveys.running, 
-          :id, 
-          :job_title, 
-          {:prompt => 'Select a Survey'})
-        %>
-        <%= hidden_field_tag "organization_id", organization.id %>
-        <input type="submit" value="Invite!">  
-      <% end %>
-      <div id='organization_<%=organization.id%>_survey_invitation_response'>
-      </div>
-    </div>
-  </div>
-  <div class="organization_logo">
-    <% if !organization.logo.nil? then %>
+  <% if !organization.logo.nil? then %>
+    <div class="organization_logo">
       <%=image_tag organization.logo.public_filename(:standard_thumbnail) %>
-    <% else %>
-      &nbsp;      
-    <% end %>
-  </div>
-  <div class="title">
-    <%=link_to(
-      highlight(organization.name+(!organization.location.blank? ? " | "+organization.location : ""),@search_text), 
-      organization_path(organization.id))
-    %>
-  </div>
+    </div>
+  <% end %>
+  <h3><%= link_to_organization(organization) %></h3>
   <div class="description">
-    <%if @geodist then%><span class="label">Distance: </span><%=pluralize(@geodist,'miles')%> <br /><% end %>
     <%if !organization.city.blank? then%>
       <%=organization.city%><% end %><%if !organization.city.blank? && !organization.state.blank? then%>, <% end %>
     <%if !organization.state.blank? then%><%=organization.state%><% end %>
     <%if !organization.city.blank? || !organization.state.blank? then%><br /><% end %>
+    <%if defined? geodist then%><span class="label">Distance: </span><%=pluralize(@geodist,'miles')%> <br /><% end %>
+    <%if !organization.contact_name.blank? then%><span class="label">Contact: </span><%=highlight(organization.contact_name,@search_text)%><br /><% end %>
     <%if !organization.industry.blank? then%>
-      <span class="label">Industry: </span><%=highlight(organization.industry,@search_text)%><br />
+      <span class="label">Industry: </span><%=highlight(organization.industry,@search_text)%>
     <% end %>
-    <%if !organization.contact_name.blank? then%><span class="label">Contact: </span><%=highlight(organization.contact_name,@search_text)%><% end %>
+  </div>
+  <div class="actions">
+    <span class="label">Invite To: </span>
+  <% form_tag(
+      {:id => "organization_#{organization.id}_network_invitation_form"}, 
+      {:onsubmit => "return buildAjaxInvitationRequest(this['organization_id'],
+        this.network_organization_#{organization.id}_network_id,
+        new Template('#{networks_path}/\#{replacingID}/invitations'),
+        'organization_#{organization.id}_network_invitation_response');"
+      }
+      ) do 
+  %>
+    <%= collection_select("network_organization_#{organization.id}", 
+      :network_id, 
+      current_organization.owned_networks, 
+      :id, 
+      :name, 
+      {:prompt => 'A Network'})
+    %>
+    <%= hidden_field_tag "organization_id", organization.id %>
+  <% end %>
+  <span id='organization_<%=organization.id%>_network_invitation_response'></span>
+  or
+  <% form_tag(
+      {:id => "organization_#{organization.id}_survey_invitation_form"}, 
+      {:onsubmit => "return buildAjaxInvitationRequest(this['organization_id'],
+        this.survey_organization_#{organization.id}_survey_id,
+        new Template('#{surveys_path}/\#{replacingID}/invitations'),
+        'organization_#{organization.id}_survey_invitation_response');"
+      }
+      ) do 
+    %>
+    <%= collection_select("survey_organization_#{organization.id}", 
+      :survey_id, 
+      current_organization.sponsored_surveys.running, 
+      :id, 
+      :job_title, 
+      {:prompt => 'A Survey'})
+    %>
+    <%= hidden_field_tag "organization_id", organization.id %>
+  <% end %>
+  <span id='organization_<%=organization.id%>_survey_invitation_response'></span>
   </div>
 </li>

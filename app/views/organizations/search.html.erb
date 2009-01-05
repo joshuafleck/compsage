@@ -10,11 +10,7 @@
 <% else %>
   <ul id="organizations" class="entity_list">
     <% @organizations.each_with_geodist do | organization, geodist | %>  
-      <%= render :partial => "organization", :object => organization, :locals => 
-        { # grab the organization and their distance from the source organization
-          # must convert from distance in meters to distance in miles
-          :@geodist => (geodist/1609.344).round(1)
-        } %>
+      <%= render :partial => "organization", :object => organization, :locals => {:geodist => (geodist/1609.344).round(1) } %>
     <% end %>
   </ul>
   <%= will_paginate @organizations %>
