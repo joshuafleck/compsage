@@ -19,10 +19,7 @@ class Question < ActiveRecord::Base
      self[:question_type] = CUSTOM_QUESTION_TYPES[self[:custom_question_type]] if attribute_present?("custom_question_type")
      self[:options] = CUSTOM_QUESTION_OPTIONS[self[:custom_question_type]] if attribute_present?("custom_question_type")
   end
-  
-  named_scope :predefined, :conditions => "predefined_question_id IS NOT NULL"
-  named_scope :custom, :conditions => "custom_question_type IS NOT NULL"
-  
+
   QUESTION_TYPES = [  ["Single-line Text Box", 'text_field'],
                       ["Numerical Input", 'numerical_field'],
                       ["Multi-line Text Box", 'text_area'],

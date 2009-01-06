@@ -22,7 +22,7 @@ class Survey < ActiveRecord::Base
   has_many :discussions, :dependent => :destroy
   has_many :invitations, :class_name => 'SurveyInvitation', :dependent => :destroy
   has_many :external_invitations, :class_name => 'ExternalSurveyInvitation'
-  has_many :questions, :dependent => :destroy
+  has_many :questions, :dependent => :destroy, :order => "IF(predefined_question_id IS NULL, 99999999999, predefined_question_id), position" # ensure predefined questions show up before custom questions
   has_many :responses, :through => :questions
   has_many :participations
   has_many :subscriptions, :class_name => 'SurveySubscription', :dependent => :destroy

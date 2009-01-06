@@ -5,7 +5,6 @@ class QuestionsController < ApplicationController
   def index
     @survey = Survey.find(params[:survey_id])
     @participation = current_organization_or_survey_invitation.participations.find_or_initialize_by_survey_id(@survey.id)
-    @questions = @survey.questions
     respond_to do |wants|
       wants.html
       wants.xml { render :xml => @survey.questions.to_xml }
@@ -14,7 +13,6 @@ class QuestionsController < ApplicationController
   
   def preview
     @survey = Survey.find(params[:survey_id])
-    @questions = @survey.questions
     @participation = Participation.new
   end
     

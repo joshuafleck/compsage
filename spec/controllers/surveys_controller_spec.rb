@@ -424,7 +424,14 @@ describe SurveysController, " handling POST /surveys" do
       :build_questions => [])
     @pdq2 = mock_model(PredefinedQuestion, :id => 2, :question_hash => @question_hash, :included= => "0", :included => "0")
     @pdq3 = mock_model(PredefinedQuestion, :id => 3, :question_hash => @question_hash, :included= => "1", :included => "1")
-    @question = mock_model(Question, :save! => :true, :predefined_question_id= => 1, :survey= => @survey, :included => "1", :[]= => true)
+    @question = mock_model(
+      Question, 
+      :save! => true, 
+      :predefined_question_id= => 1, 
+      :survey= => @survey, 
+      :included => "1", 
+      :[]= => true,
+      :move_to_bottom => true)
     
     PredefinedQuestion.stub!(:find).and_return(@pdq1)
     @current_organization.stub!(:sponsored_surveys).and_return(@surveys)
@@ -573,7 +580,8 @@ describe SurveysController, " handling PUT /surveys/1" do
                                      :destroy => true,
                                      :nil? => false, 
                                      :[]= => true,
-                                     :included => "1")
+                                     :included => "1",
+                                     :move_to_bottom => true)
     
     @pdq3 = mock_model(PredefinedQuestion, :id => 3, :question_hash => @question_hash, :build_questions => [@question])
     PredefinedQuestion.stub!(:find).with("1").and_return(@pdq1)

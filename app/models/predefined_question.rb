@@ -12,4 +12,5 @@ class PredefinedQuestion < ActiveRecord::Base
       survey.questions.build(question_attr)
     end
   end
+
 end

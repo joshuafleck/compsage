@@ -60,19 +60,7 @@ class SurveysController < ApplicationController
   
   def update
     @survey = current_organization.sponsored_surveys.running.find(params[:id])
-    
-    # find all custom questions, determine if they already exist
-    #  all selected non-existent questions are created
-    #  all un-selected existing questions are deleted
-    params[:questions].each_value do |question|
-      existing_question = @survey.questions.find_by_id(question[:id]) unless question[:id].blank?
-      if existing_question.nil? then
-        @survey.questions.build(question) if question[:included] == "1"
-      else
-        existing_question.destroy if question[:included] == "0"
-      end
-    end unless params[:questions].blank?
-    
+     
     # find all predefined questions, determine if they already exist
     #  all selected non-existent questions are created
     #  all un-selected existing questions are deleted    
@@ -86,7 +74,20 @@ class SurveysController < ApplicationController
         end if params[:included] == "0"
       end    
     end unless params[:predefined_questions].blank?        
-    
+       
+    # find all custom questions, determine if they already exist
+    #  all selected non-existent questions are created
+    #  all un-selected existing questions are deleted
+    # need to sort questions based on created date to preserve order 
+    params[:questions].sort{|a,b| a[0].to_i <=> b[0].to_i}.each do |key,question|
+      existing_question = @survey.questions.find_by_id(question[:id]) unless question[:id].blank?
+      if existing_question.nil? then
+        @survey.questions.build(question).move_to_bottom if question[:included] == "1"
+      else
+        existing_question.destroy if question[:included] == "0"
+      end
+    end unless params[:questions].blank?
+
     #update the attributes for the survey
     if @survey.update_attributes(params[:survey])
        respond_to do |wants|  
@@ -111,19 +112,21 @@ class SurveysController < ApplicationController
   def create
     @survey = current_organization.sponsored_surveys.new(params[:survey])
     
-    params[:questions].each_value do |question|
-      @survey.questions.build(question) if question[:included] == "1"
-    end unless params[:questions].blank?
-    
     params[:predefined_questions].each_pair do |predefined_question_id, params|
       PredefinedQuestion.find(predefined_question_id).build_questions(@survey) if params[:included] == "1"
     end unless params[:predefined_questions].blank?
- 
+    
+    # need to sort questions based on created date to preserve order 
+    params[:questions].sort{|a,b| a[0].to_i <=> b[0].to_i}.each do |key,question|
+      @survey.questions.build(question).move_to_bottom if question[:included] == "1"
+    end unless params[:questions].blank?
+
     if @survey.save
     
       # For now, pretend we've received billing information.
       @survey.billing_info_received!
       
+      # invite the network, if this came from the 'survey network' link
       @survey.invite_network
       
       respond_to do |wants|

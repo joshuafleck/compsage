@@ -40,7 +40,9 @@ describe NetworksController, " handling GET /networks" do
     login_as(@organization)
     
     @network = mock_model(Network)
+    @invitation = mock_model(NetworkInvitation)    
     @organization.stub!(:networks).and_return([@network])
+    @organization.stub!(:network_invitations).and_return([@invitation])
   end
   
   def do_get
@@ -67,9 +69,15 @@ describe NetworksController, " handling GET /networks" do
     do_get
   end
   
-  it "should assign the found networks for the view" do
+  it "should find all network invitations for the organization" do
+    @organization.should_receive(:network_invitations).and_return([@invitation])
+    do_get
+  end  
+  
+  it "should assign the found networks and invitations for the view" do
     do_get
     assigns[:networks].should == [@network]
+    assigns[:network_invitations].should == [@invitation]
   end
   
   it "should support sorting..." do
