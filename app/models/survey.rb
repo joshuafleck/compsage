@@ -5,11 +5,11 @@ class Survey < ActiveRecord::Base
     indexes job_title
     indexes description
     indexes sponsor.industry, :as => :industry
-    indexes aasm_state
     
     has subscriptions.organization_id, :as => :subscribed_by
     has sponsor.latitude, :as => :latitude, :type => :float
     has sponsor.longitude, :as => :longitude, :type => :float
+    has aasm_state_number
 
     set_property :latitude_attr   => "latitude"
     set_property :longitude_attr  => "longitude"
@@ -22,7 +22,7 @@ class Survey < ActiveRecord::Base
   has_many :discussions, :dependent => :destroy
   has_many :invitations, :class_name => 'SurveyInvitation', :dependent => :destroy
   has_many :external_invitations, :class_name => 'ExternalSurveyInvitation'
-  has_many :questions, :dependent => :destroy, :order => "IF(predefined_question_id IS NULL, 99999999999, predefined_question_id), position" # ensure predefined questions show up before custom questions
+  has_many :questions, :dependent => :destroy, :order => "IF(predefined_question_id IS NULL, 99999999999, predefined_question_id), position" # ensure predefined questions show up before custom questions, then sort by position
   has_many :responses, :through => :questions
   has_many :participations
   has_many :subscriptions, :class_name => 'SurveySubscription', :dependent => :destroy
@@ -43,6 +43,7 @@ class Survey < ActiveRecord::Base
   
   after_create :add_sponsor_subscription
   before_destroy :cancel_survey
+  before_save :aasm_state_number=   
     
   aasm_initial_state :pending
   aasm_state :pending
@@ -50,6 +51,15 @@ class Survey < ActiveRecord::Base
   aasm_state :stalled, :enter => :email_failed_message, :exit => :email_rerun_message
   aasm_state :billing_error, :enter => :email_billing_error
   aasm_state :finished, :enter => :email_results_available
+  
+  # hack, for filtering surveys by aasm_state in sphinx
+  AASM_STATE_NUMBER_MAP = {
+    'pending' => 0,
+    'running' => 1,
+    'stalled' => 2,
+    'billing_error' => 3,
+    'finished' => 4
+  }
   
   aasm_event :billing_info_received do
     transitions :to => :running, :from => :pending
@@ -262,6 +272,11 @@ class Survey < ActiveRecord::Base
   # Validates whether or not questions have been chosen.
   def questions_exist
     errors.add_to_base("You must choose at least one question to ask") if questions.empty?
+  end
+  
+  # Set the aasm state number using the current aasm_state (hack for survey sphinx search filter by state attribute)
+  def aasm_state_number=
+    self[:aasm_state_number] = AASM_STATE_NUMBER_MAP[self[:aasm_state]]
   end
 
 end

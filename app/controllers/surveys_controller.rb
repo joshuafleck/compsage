@@ -161,7 +161,7 @@ class SurveysController < ApplicationController
     
     # filters by subscription (my surveys)
     @search_params[:conditions][:subscribed_by] = current_organization.id unless @filter_by_subscription.blank?
-    @search_params[:conditions][:aasm_state] = "running" if @filter_by_subscription.blank?
+    @search_params[:conditions][:aasm_state_number] = Survey::AASM_STATE_NUMBER_MAP['running'] if @filter_by_subscription.blank?
         
     @surveys = Survey.search @search_query, @search_params
        
