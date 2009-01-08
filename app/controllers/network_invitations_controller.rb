@@ -5,6 +5,7 @@ class NetworkInvitationsController < ApplicationController
   def index
     @network = current_organization.owned_networks.find(params[:network_id])
     @invitations = @network.all_invitations
+    @invalid_external_invites = []
     
     respond_to do |wants|
       wants.html {} # render the template
@@ -12,86 +13,58 @@ class NetworkInvitationsController < ApplicationController
     end
   end
   
-  def new
-    # render the new template
-  end
-  
   # Creates the new network invitation.  If the organization is not found in the database (by
   # email), it will send an external invitation out.
-  # 
-  # Raises AlreadyInvited if the user is already invited to the network.
-  
+  #   
   def create
-    @network = current_organization.owned_networks.find(params[:network_id])
-    
-    # If there is an organization ID in the params great (this request likely came from the Memebrs page), otherwise use the email
-    if !params[:organization_id].blank? then
-      invited_organization = Organization.find_by_id(params[:organization_id]) 
-    else
-      invited_organization = Organization.find_by_email(params[:invitation][:email])
-    end
-    
-    if invited_organization.nil? then
-      # create an external invitation
-      @invitation = @network.external_invitations.new(params[:invitation])
-      @invitation.inviter = current_organization
-    else
-      # Check for duplicate invite.
-      raise AlreadyInvited if invited_organization.network_invitations.collect(&:network_id).include?(@network.id)
-      # Check if invitee is already a member
-      raise AlreadyMember if invited_organization.networks.include?(@network)
-      # Check for sponsor inviting themself. This is not allowed
-      raise SelfInvitation if invited_organization == @network.owner
-            
-      # create an internal invitation.
-      @invitation = @network.invitations.new(:invitee => invited_organization, :inviter => current_organization)
-    end
-    
-    if @invitation.save then
-      if invited_organization.nil? then
-        flash[:message] = "Invitation sent to the following email address #{params[:invitation][:email]}."
-      else
-        flash[:message] = "Invitation sent to #{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)}."
+    @network = current_organization.owned_networks.find(params[:network_id])   
+    @invalid_external_invites = []     
+    invite_organizations = []
+    invitations_sent = false
+       
+    # find all of the individual invited organizations    
+    params[:invite_organization].each do |id, invite|
+      if invite[:included] == "1" then
+        organization = Organization.find_by_id(id) 
+        if !organization.invited_networks.include?(@network) && !organization.networks.include?(@network) then
+          invitation = @network.invitations.new(:invitee => organization, :inviter => current_organization)
+          invitation.save!
+          invitations_sent = true
+        end       
       end
+    end unless params[:invite_organization].blank?
+    
+    # create the external invitations
+    params[:external_invite].each do |id, invite|
+      if !invite[:included].blank? then
+        invitation = @network.external_invitations.new(invite)
+        invitation.inviter = current_organization
+        if !invitation.save then
+          @invalid_external_invites << invitation
+        else
+          invitations_sent = true
+        end
+      end
+    end unless params[:external_invite].blank?
+    
+    # if there was a problem creating any external invitations, re-render the index page
+    if @invalid_external_invites.size > 0 then
       respond_to do |wants|
-        wants.html { redirect_to network_invitations_path(params[:network_id]) }
-        wants.xml { head :status => :created }
-        wants.js { render :text => "Invitation to #{@network.name} sent to #{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)}."}
-      end
+        @invitations = @network.all_invitations
+        wants.html do
+          render :action => "index"
+        end
+      end 
     else
+      flash[:notice] = invitations_sent ? "Invitations sent!" : "No invitees were selected, or selected invitees were already invited."
       respond_to do |wants|
         wants.html do
-          # get ready to render the index template again.
-          @invitations = @network.all_invitations
-          render :action => 'index'
+          redirect_to :action => "index"
         end
-        wants.xml { render :xml => @invitation.errors.to_xml, :status => 422 }
-        wants.js { render :text => "Error creating invitation for #{@network.name}"}
-      end
+      end     
     end
-    
-  rescue AlreadyInvited
-    flash[:notice] = "#{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)} has already been invited."
-    respond_to do |wants|
-      wants.html { redirect_to network_invitations_path(params[:network_id]) }
-      wants.xml { head :status => 422 }
-      wants.js { render :text => "#{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)} has already been invited to #{@network.name}."}
-    end
-  rescue AlreadyMember
-    flash[:notice] = "#{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)} is already a member of this network."
-    respond_to do |wants|
-      wants.html { redirect_to network_invitations_path(params[:network_id]) }
-      wants.xml { head :status => 422 }
-      wants.js { render :text => "#{invited_organization.name+(invited_organization.location.blank? ? '' : ' | '+invited_organization.location)} is already a member of #{@network.name}."}
-    end  
-  rescue SelfInvitation
-    flash[:notice] = "As the network owner, you cannot be invited to your own network."
-    respond_to do |wants|
-      wants.html { redirect_to network_invitations_path(params[:network_id]) }
-      wants.xml { head :status => 422 }
-      wants.js { render :text => flash[:notice]}
-    end
-  end
+  end  
+  
   
   def destroy
     network = current_organization.owned_networks.find(params[:network_id])

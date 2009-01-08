@@ -1,26 +1,12 @@
 <% title "Invitations to #{@network.name}" %>
-<% breadcrumbs(link_to("Your Networks",networks_path),link_to(@network.name,network_path(@network))) %>
-<% highlight_tab "networks" %>
+<% highlight_tab("networks") %>
 <h2>Invitations to <%=@network.name%></h2>
-<%=flash_messages%>
+
 <%= render :partial => "invitations/invitation_form", :locals => {
-  :url => network_invitations_path(@network), 
-  :done => network_path(@network)
+  :include_networks => false
 }%> 
-<% if @invitations.size > 0 then %>
-  <ul id="invitations">
-    <% @invitations.each do |invitation| %>
-    <li>
-      <%if invitation.is_a?(NetworkInvitation) then%>
-        <%= render(:partial => "organizations/inline_organization", 
-          :locals => { :organization => invitation.invitee})%>
-        <div class="actions"><%=link_to "Delete", network_invitation_path(@network, invitation), :method => :delete %><div class="actions">
-      <%else%>      
-        <%=invitation.organization_name%> (<%=invitation.email%>)
-      <%end%>
-    </li>
-    <% end %>
-  </ul>
-<% else %>  
-  <p>No invitations have been sent</p>
-<% end %>
+
+<div class="separator"><%=image_tag 'embellish.gif' %></div>
+<div id="survey_finish_links">
+		<%=link_to "Finished", network_path(@network)%>
+</div>

@@ -11,7 +11,7 @@
 			<%=link_to "Report Abuse", report_survey_discussion_path(@survey,discussion_topic), :class => "abuse" %>  
 	  <% end %>
   </p>	
-  <div class="date"><%= discussion_topic.created_at.to_s(:long_ordinal) %></div>  
+  <div class="date"><%= I18n.localize discussion_topic.created_at %></div>  
   <ul id="discussion_<%=discussion_topic.id%>_replies">
       <%= render :partial => "discussions/discussion", 
                  :collection => discussion_topic.all_children.find_all{|discussion| discussion.is_not_abuse}.sort %>

@@ -145,6 +145,10 @@ class Organization < ActiveRecord::Base
     :through => :survey_invitations,
     :source => 'survey'
     
+  has_many :invited_networks, :class_name => "Network",
+    :through => :network_invitations,
+    :source => 'network'    
+    
   has_many :survey_subscriptions, :dependent => :destroy
   has_many :surveys, :through => :survey_subscriptions, :order => 'created_at DESC'
   
