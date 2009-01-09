@@ -165,7 +165,7 @@ class Organization < ActiveRecord::Base
   has_many :invitations, :class_name => "Invitation", :foreign_key => "invitee_id", :dependent => :destroy
   has_many :sent_global_invitations, :class_name => "ExternalInvitation", :foreign_key => "inviter_id"
   
-  has_one :logo
+  has_one :logo, :dependent => :destroy
 
   validates_presence_of     :name
   validates_format_of       :name,     :with => RE_NAME_OK,  :message => MSG_NAME_BAD, :allow_nil => true
@@ -190,26 +190,20 @@ class Organization < ActiveRecord::Base
   # HACK HACK HACK -- how to do attr_accessible from here?
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
-  attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name, :industry
+  attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name, :industry, :logo
   
-  #Sets the organizations logo, replaces any existing logo
-  def set_logo(logo_params)
-  
-    if !logo_params.nil? && !logo_params[:uploaded_data].blank? then
-    
-      if self.logo then
-        self.logo.destroy
+  # build the logo based on its attributes
+  def logo=(logo_attr)
+    # check for existing logo and remove it if it is being replaced
+    if !logo_attr[:uploaded_data].blank? then
+      if !self.new_record? then
+        old_logo = Logo.find_by_organization_id(self[:id])
+        old_logo.destroy unless old_logo.nil?
       end
-      
-      self.logo = Logo.new(logo_params)
-      self.logo.organization = self
-      self.logo.save!
-      
-    else    
-      true
+      self.build_logo(logo_attr)    
     end
   end
-
+  
   # returns the organization's name and location if they have one.
   def name_and_location
     if location.blank?

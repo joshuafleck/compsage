@@ -16,9 +16,10 @@ class AccountsController < ApplicationController
 	
 	def new
 	  
-	  #The external invitation can be found in the session if it is an external survey invitation, otherwise, check the URL for a key
+	  #The external invitation can be found in the session if it is an external survey invitation, 
+	  # otherwise, check the URL for a key
 	  @external_invitation = current_survey_invitation || Invitation.find_by_key(params[:key])
-	   
+	  
 	  #Prepopulate the name and email fields automagically
 	  @organization = Organization.new({
 	    :name => @external_invitation.organization_name,
@@ -41,29 +42,36 @@ class AccountsController < ApplicationController
 	  @organization = Organization.new(params[:organization])
         
     #Save the organization and set the logo
-    if @organization.save && @organization.set_logo(params[:logo]) then
+    if @organization.save then
     	  	
       #If the user was invited via network invitation, add the organization to the network
       if @external_invitation.is_a?(ExternalNetworkInvitation) then
         @organization.networks << @external_invitation.network
         
-      #If the user was invited via a survey invitation and has completed the survey, 
-      # attribute their participation to their organization
-      elsif @external_invitation.is_a?(ExternalSurveyInvitation) && @external_invitation.participations.count > 0 then
+      #If the user was invited via a survey invitation, move any objects created over to the new organization
+      elsif @external_invitation.is_a?(ExternalSurveyInvitation) then
       
-        @organization.participations << @external_invitation.participations.find(:first)
-        SurveySubscription.create!(
-          :organization => @organization,
-          :survey => @external_invitation.survey,
-          :relationship => 'participant'
-        )
+        # Move the participation to the new organization, and create a survey subscription
+        @external_invitation.participations.each do |participation|
+          @organization.participations << participation
+          SurveySubscription.create!(
+            :organization => @organization,
+            :survey => @external_invitation.survey,
+            :relationship => 'participant')        
+        end
+        
+        # Move any discussions to the new organization
+        @external_invitation.discussions.each do |discussion|
+          @organization.discussions << discussion 
+        end                
         
         #Convert the external invitation to a regular invitation, so the organization still shows as invited
         @external_invitation.type = 'SurveyInvitation'
         @external_invitation.save!
         @survey_invitation = SurveyInvitation.find(@external_invitation.id)
-        @organization.survey_invitations << @survey_invitation
-        
+        @survey_invitation.aasm_state = @organization.participations.count > 0 ? 'fulfilled' : 'pending'
+        @organization.survey_invitations << @survey_invitation                
+      
       end
     
       #Clear the existing session (in case the user is logged in as an external survey invitation)
@@ -72,7 +80,7 @@ class AccountsController < ApplicationController
       respond_to do |wants|
         wants.html do         
           flash[:notice] = "Your account was created successfully."
-          redirect_to new_session_path()
+          redirect_to new_session_path(:email => @organization.email)
         end   
         wants.xml do
           render :status => :created
@@ -94,7 +102,7 @@ class AccountsController < ApplicationController
 	
 	  @organization = current_organization  
      	    
-    if @organization.update_attributes(params[:organization]) && @organization.set_logo(params[:logo]) then
+    if @organization.update_attributes(params[:organization]) then
       respond_to do |wants|
         wants.html do
           flash[:notice] = "Your account was updated successfully."

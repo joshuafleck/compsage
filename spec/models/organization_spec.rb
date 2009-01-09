@@ -183,29 +183,6 @@ describe Organization do
     @organization.should have(1).errors_on(:zip_code)
   end
   
-  it 'should set the logo if a logo is available' do
-    @logo = mock_model(Logo, :[]= => true, :organization => @organization)
-    @logo.stub!(:destroy)    
-    @organization.logo = @logo  
-      
-    @logo_new = mock_model(Logo)
-    @logo_new.stub!(:organization=)
-    @logo_new.stub!(:save!)
-    Logo.stub!(:new).and_return(@logo_new)
-    
-    @organization.set_logo({:uploaded_data => "test"})
-    
-    @organization.logo.should eql(@logo_new)
-  end
-  
-  it 'should not set the logo if a logo is not available' do
-    @logo = mock_model(Logo, :[]= => true, :organization => @organization)
-    @organization.logo = @logo  
-     
-    @organization.set_logo({})
-    
-    @organization.logo.should eql(@logo)
-  end
 end
 
 describe Organization, "that already exists" do

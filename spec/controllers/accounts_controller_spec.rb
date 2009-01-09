@@ -138,7 +138,7 @@ describe AccountsController, " handling POST /account" do
   
     @key = "1234"
   
-    @organization = mock_model(Organization, :save => true)
+    @organization = mock_model(Organization, :save => true, :email => 'test@test.com')
     @external_invitation = mock_model(ExternalInvitation, :name => 'test', :email => 'test', :is_a? => false)
     
     Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
@@ -164,17 +164,12 @@ describe AccountsController, " handling POST /account" do
 	  @organization.should_receive(:save).and_return(true)
 	  do_post
 	end
-	
-	it "should save the organization's logo" do
-	  @organization.should_receive(:set_logo)
-	  do_post
-	end
 
   describe "when the requst is HTML" do
   
   	it "should redirect to the login page" do
       do_post
-      response.should redirect_to(new_session_path)
+      response.should redirect_to(new_session_path(:email => @organization.email))
   	end
   	
   	it "should flash a message regarding the success of the action" do
@@ -196,22 +191,38 @@ describe AccountsController, " handling POST /account with an external survey in
   
     @key = "1234"
   
-    @organization = mock_model(Organization, :save => true)
+    @organization = mock_model(Organization, :save => true, :email => 'test@test.com')
     @survey = mock_model(Survey, :id => "1")
     @participation = mock_model(Participation, :survey => @survey)
-    @participations = mock("participations proxy",:find => @participation, :count => 1)    
-    @external_invitation = mock_model(ExternalSurveyInvitation, :survey => @survey, :name => 'test', :email => 'test', :save! => true)
-    @survey_invitation = mock_model(SurveyInvitation, :survey => @survey, :name => 'test', :email => 'test', :save! => true)
+    @participations = mock('participations proxy', :count => 1) 
+    @discussions = mock('discussions proxy') 
+    @external_invitation = mock_model(
+      ExternalSurveyInvitation, 
+      :survey => @survey, 
+      :name => 'test', 
+      :email => 'test', 
+      :save! => true)
+    @survey_invitation = mock_model(
+      SurveyInvitation, 
+      :survey => @survey, 
+      :name => 'test', 
+      :email => 'test', 
+      :save! => true,
+      :aasm_state= => true)
     @survey_invitations = mock('survey invitations proxy')
+    @discussion = mock_model(Discussion)
     
     @external_invitation.stub!(:is_a?).with(ExternalSurveyInvitation).and_return(true)
     @external_invitation.stub!(:is_a?).with(ExternalNetworkInvitation).and_return(false)
-    @external_invitation.stub!(:participations).and_return(@participations)
+    @external_invitation.stub!(:participations).and_return([@participation])
+    @external_invitation.stub!(:discussions).and_return([@discussion])
     @external_invitation.stub!(:type=).and_return('SurveyInvitation')
     @participations.stub!(:<<)
+    @discussions.stub!(:<<)
     @survey_invitations.stub!(:<<)
     @organization.stub!(:set_logo).and_return(true)
     @organization.stub!(:participations).and_return(@participations)
+    @organization.stub!(:discussions).and_return(@discussions)
     @organization.stub!(:survey_invitations).and_return(@survey_invitations)
         
     Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
@@ -228,10 +239,16 @@ describe AccountsController, " handling POST /account with an external survey in
   end
 
   it "should attribute the external invitation's survey participation to new organization" do
-    @organization.should_receive(:participations).and_return(@participations)
+    @external_invitation.should_receive(:participations)
     @participations.should_receive(:<<).with(@participation)
     do_post
   end
+  
+  it "should attribute the external invitation's discussions to new organization" do
+    @external_invitation.should_receive(:discussions)
+    @discussions.should_receive(:<<).with(@discussion)
+    do_post
+  end  
   
   it "should subscribe the new organization to the survey" do
     SurveySubscription.should_receive(:create!).with(
@@ -260,7 +277,7 @@ describe AccountsController, " handling POST /account with an external network i
 
     @key = "1234"
 
-    @organization = mock_model(Organization, :save => true)
+    @organization = mock_model(Organization, :save => true, :email => 'test@test.com')
     @network = mock_model(Network)
     @external_invitation = mock_model(ExternalNetworkInvitation, :network => @network, :name => 'test', :email => 'test')
     @networks = []
@@ -376,11 +393,6 @@ describe AccountsController, " handling PUT /account" do
   	@current_organization.should_receive(:update_attributes).and_return(true)
   	do_put
   end
-
-	it "should save the organization's logo" do
-	  @current_organization.should_receive(:set_logo)
-	  do_put
-	end
 
 	describe "when the request is HTML" do
 		

@@ -4,6 +4,7 @@ class SessionsController < ApplicationController
 
   # render new.rhtml
   def new
+    @login = params[:email]
   end
 
   def create
@@ -34,8 +35,19 @@ class SessionsController < ApplicationController
   
   def create_survey_session
     logout_keeping_session!
-    self.current_survey_invitation = ExternalSurveyInvitation.find_by_key(params[:key])
-    redirect_to survey_path(self.current_survey_invitation.survey_id)
+    self.current_survey_invitation = Invitation.find_by_key(params[:key])
+    if self.current_survey_invitation then
+      # check to see if the external invite exists, it could have been replaced by a survey invite if the user created an account
+      if self.current_survey_invitation.is_a?(ExternalSurveyInvitation) then
+        redirect_to survey_path(self.current_survey_invitation.survey_id)
+      else
+        @login = self.current_survey_invitation.invitee.email
+        render :action => 'new'
+      end
+    else
+      note_failed_survey_signin
+      render :action => 'new'     
+    end
   end
 protected
   # Track failed login attempts
@@ -43,4 +55,9 @@ protected
     flash[:error] = "We couldn't log you in as '#{params[:email]}'"
     logger.warn "Failed login for '#{params[:email]}' from #{request.remote_ip} at #{Time.now.utc}"
   end
+  # Track failed survey login attempts
+  def note_failed_survey_signin
+    flash[:error] = "We couldn't log you in using the key provided"
+    logger.warn "Failed survey login for key:#{params[:key]} at #{Time.now.utc}"
+  end  
 end

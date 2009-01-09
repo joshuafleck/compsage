@@ -20,13 +20,14 @@
   <%=f.label :zip_code %> 
   <%=f.text_field :zip_code %>
   <%=f.label :industry %> 
-  <%=f.select :industry, Organization::INDUSTRIES, 
-		:include_blank => true %>
+  <%=f.select :industry, Organization::INDUSTRIES, :include_blank => true %>
   <% if !@organization.logo.nil? then %>
     <p><%=image_tag @organization.logo.public_filename(:standard_thumbnail) %></p>
-  <% end %>
-  <%=f.label :logo %> 
-  <%= file_field 'logo','uploaded_data' %>
+  <% end %>  
+  <% fields_for "organization[logo]",@organization.logo do |logo_form| %>
+      <%=logo_form.label :uploaded_data, 'Logo'%>
+      <%=logo_form.file_field :uploaded_data%>
+  <% end %>  		    
   <%=f.label :password %> 
   <%=f.password_field :password %>
   <%=f.label :password_confirmation %> 
