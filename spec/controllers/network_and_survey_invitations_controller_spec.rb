@@ -403,6 +403,10 @@ describe NetworkInvitationsController, " #route for" do
 
     it "should map { :controller => 'invitations', :action => 'destroy', :id => 1, :network_id => 1} to /networks/1/invitations/1" do
       route_for(:controller => "network_invitations", :action => "destroy", :id => 1, :network_id => 1).should == "/networks/1/invitations/1"
+    end    
+    
+    it "should map { :controller => 'invitations', :action => 'decline', :id => 1, :network_id => 1} to /networks/1/invitations/1/decline" do
+      route_for(:controller => "network_invitations", :action => "decline", :id => 1, :network_id => 1).should == "/networks/1/invitations/1/decline"
     end
 end
 
@@ -680,4 +684,38 @@ describe NetworkInvitationsController, " handling DELETE /network/1/invitations/
   	do_delete
   	response.should redirect_to(network_invitations_path(1))
   end
+
+end
+  
+describe NetworkInvitationsController, " handling PUT /network/1/invitations/1/decline" do
+  before do
+    @organization = mock_model(Organization)
+    login_as(@organization)
+    
+    @invitation = mock_model(NetworkInvitation, :destroy => true)
+    @invitations_proxy = mock('invitations proxy', :find => @invitation)
+
+    @organization.stub!(:network_invitations).and_return(@invitations_proxy)
+    
+    @params = {:network_id => 1, :id => 1}
+  end
+  
+  def do_put
+    put :decline, @params
+  end
+  
+  it "should find the invitation requested" do
+    @invitations_proxy.should_receive(:find).and_return(@invitation)
+  	do_put
+  end
+  
+  it "should destroy the invitation requested" do
+  	@invitation.should_receive(:destroy)
+  	do_put
+  end
+  
+  it "should redirect to the network index page" do
+  	do_put
+  	response.should redirect_to(networks_path())
+  end  
 end

@@ -15,7 +15,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resources :networks, :member => {:join => :put, :leave => :put, :evict => :put} do |network|
     network.resources :organizations
-    network.resources :invitations, :controller => :network_invitations
+    network.resources :invitations, :controller => :network_invitations, :member => {:decline => :put}
   end
   
   map.resources :external_invitations

@@ -5,10 +5,6 @@ class InvitationsController < ApplicationController
   def index
     
     respond_to do |wants|
-      wants.html do
-        @survey_invitations = current_organization.survey_invitations.running.find(:all, :order => 'invitations.created_at desc')
-        @network_invitations = current_organization.network_invitations.find(:all, :order => 'invitations.created_at desc')        
-      end
       wants.xml do      
         @invitations = current_organization.invitations
       	render :xml => @invitations.to_xml 
@@ -23,9 +19,6 @@ class InvitationsController < ApplicationController
     @invitation.destroy
     
     respond_to do |wants|
-      wants.html do 
-        redirect_to invitations_path
-      end
       wants.xml do
         render :status => :ok
       end

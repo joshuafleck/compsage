@@ -19,7 +19,7 @@
         <div class="description_box"><%=h invitation.network.description %></div>
         <div class="actions">
           <%= link_to "Join Network", join_network_path(invitation.network), :method => :put %>
-          <%= link_to "Decline" %>
+          <%= link_to "Decline", decline_network_invitation_path(invitation.network.id,invitation.id), :method => :put %>
         </div>
       </li>
     

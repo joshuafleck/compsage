@@ -12,58 +12,6 @@ describe InvitationsController, "#route_for" do
 
 end
 
-describe InvitationsController, " handling GET /invitations" do
-
-  before(:each) do
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
-    
-    @running_survey_invitations = []
-    @survey_invitations = [mock_model(SurveyInvitation)]
-    @network_invitations = [mock_model(NetworkInvitation)]
-    
-    @current_organization.stub!(:survey_invitations).and_return(@running_survey_invitations)
-    @current_organization.stub!(:network_invitations).and_return(@network_invitations)
-    
-    @running_survey_invitations.stub!(:running).and_return(@survey_invitations)
-    
-    @survey_invitations.should_receive(:find).and_return([])
-    @network_invitations.should_receive(:find).and_return([])
-  end
-  
-  def do_get
-    get :index
-  end
-    
-  it "should be successful" do
-    do_get
-    response.should be_success
-  end
-  
-  it "should require login" do
-    controller.should_receive(:login_required)
-    do_get
-  end
-  
-  it "should render index template" do
-    do_get
-    response.should render_template('index')
-  end
-  
-  it "should find all non-accepted invitations" do
-    @current_organization.should_receive(:survey_invitations).and_return(@running_survey_invitations)
-    @running_survey_invitations.should_receive(:running).and_return(@survey_invitations)
-    @current_organization.should_receive(:network_invitations).and_return(@network_invitations)
-    do_get
-  end
-  
-  it "should assign the found invitations to the view" do
-    do_get
-    assigns[:survey_invitations].should_not be_nil
-    assigns[:network_invitations].should_not be_nil
-  end
-  
-end
 
 describe InvitationsController, " handling GET /invitations.xml" do
   
@@ -125,6 +73,7 @@ describe InvitationsController, " handling DELETE /invitations/1" do
   end
   
   def do_delete
+    @request.env["HTTP_ACCEPT"] = "application/xml"
     delete :destroy, @params
   end
   
@@ -142,15 +91,7 @@ describe InvitationsController, " handling DELETE /invitations/1" do
     @invitation.should_receive(:destroy)
     do_delete
   end
-  
-  describe "when the request is HTML" do
 
-    it "should redirect to the network index" do
-      do_delete
-      response.should redirect_to(invitations_path)    
-    end
-    
-  end
   
 end
 

@@ -65,8 +65,7 @@ class NetworkInvitationsController < ApplicationController
         end
       end     
     end
-  end  
-  
+  end    
   
   def destroy
     network = current_organization.owned_networks.find(params[:network_id])
@@ -78,5 +77,15 @@ class NetworkInvitationsController < ApplicationController
       wants.xml { head :status => :ok }
     end
   end
+  
+  def decline
+    invitation = current_organization.network_invitations.find(params[:id])
+    invitation.destroy
+    
+    respond_to do |wants|
+      wants.html { redirect_to networks_path() }
+      wants.xml { head :status => :ok }
+    end    
+  end  
   
 end
