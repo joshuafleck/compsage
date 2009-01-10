@@ -15,3 +15,20 @@
   </ul>
   <%= will_paginate @organizations %>
 <% end %>
+
+<script type="text/javascript">
+
+function initializeObservers() {
+  <% @organizations.each do |organization| %>
+  	$('<%="survey_organization_#{organization.id}_survey_id"%>').observe(
+  	  'change', 
+  	  sendInvitation.curry('<%=organization.id%>','<%=surveys_path%>'));
+    $('<%="network_organization_#{organization.id}_network_id"%>').observe(
+      'change', 
+      sendInvitation.curry('<%=organization.id%>','<%=networks_path%>'));	
+  <% end %>
+}
+
+</script>
+
+<% content_for :initialize_js, "initializeObservers();"%>

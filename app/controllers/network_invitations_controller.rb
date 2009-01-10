@@ -18,8 +18,7 @@ class NetworkInvitationsController < ApplicationController
   #   
   def create
     @network = current_organization.owned_networks.find(params[:network_id])   
-    @invalid_external_invites = []     
-    invite_organizations = []
+    @invalid_external_invites = []
     invitations_sent = false
        
     # find all of the individual invited organizations    
@@ -56,10 +55,13 @@ class NetworkInvitationsController < ApplicationController
         end
       end 
     else
-      flash[:notice] = invitations_sent ? "Invitations sent!" : "No invitees were selected, or selected invitees were already invited."
       respond_to do |wants|
         wants.html do
+          flash[:notice] = invitations_sent ? "Invitations sent!" : "No invitees were selected, or selected invitees were already invited."
           redirect_to :action => "index"
+        end
+        wants.js do
+          render :text => invitations_sent ? "Invitation sent!" : "Selected invitee was already invited."
         end
       end     
     end

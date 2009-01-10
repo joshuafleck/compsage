@@ -27,6 +27,33 @@ function callFunctionOnEnter(toCall,e) {
   return false;
 }
 
+/*
+ * This will make an anynchronous request to have an invitation created 
+ * @organization the organization id of the invitee
+ */
+function sendInvitation(organization,path) {
+  e = this;
+	new Ajax.Request(path+'/'+$F(this)+'/invitations', {
+		'method': 'post',
+		'parameters': 'invite_organization['+organization+'][included]=1',
+		'requestHeaders': {'Accept':'text/javascript'},
+		'onSuccess': function(transport) {
+			showInvitationResults(transport.responseText,e,organization);
+		}
+	});  
+}
+
+/**
+ * This will render the response of the invitation request 
+ * @response the response from the server
+ * @elem the select element to be reset
+ * @organization the organization id of the invitee
+ */
+function showInvitationResults(response,elem,organization) {
+  elem.value = '';
+  $('organization_'+organization+'_response').update(response);
+}
+
 /**
  * Tab javascript code from the highly regarded Dan Peverill.
  */

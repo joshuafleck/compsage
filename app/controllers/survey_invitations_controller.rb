@@ -65,10 +65,13 @@ class SurveyInvitationsController < ApplicationController
         end
       end 
     else
-      flash[:notice] = invitations_sent ? "Invitations sent!" : "No invitees were selected, or selected invitees were already invited."
       respond_to do |wants|
         wants.html do
+          flash[:notice] = invitations_sent ? "Invitations sent!" : "No invitees were selected, or selected invitees were already invited."
           redirect_to :action => "index"
+        end
+        wants.js do
+          render :text => invitations_sent ? "Invitation sent!" : "Selected invitee was already invited."
         end
       end     
     end

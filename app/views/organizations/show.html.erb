@@ -7,33 +7,26 @@
   <p><%=image_tag @organization.logo.public_filename %></p>
 <% end %>
 <div class="organization_actions">
-  <%= link_to_function "Invite to Network", "new Effect.toggle('organization_#{@organization.id}_network_invitation', 'blind', {duration: .5});return false;" %>
-  <div id='organization_<%=@organization.id%>_network_invitation' style='display:none;'>
-    <% form_tag(
-        {:id => "organization_#{@organization.id}_network_invitation_form"}, 
-        {:onsubmit => "return buildAjaxInvitationRequest(this['organization_id'],this.network_organization_#{@organization.id}_network_id,new Template('#{networks_path}/\#{replacingID}/invitations'),'organization_#{@organization.id}_network_invitation_response');"}
-        ) do %>
-      <%= collection_select("network_organization_#{@organization.id}", :network_id, current_organization.owned_networks, :id, :name, {:prompt => 'Select a Network'}) %>
-      <%= hidden_field_tag "organization_id", @organization.id %>
-      <input type="submit" value="Invite!">  
-    <% end %>
-    <div id='organization_<%=@organization.id%>_network_invitation_response'>
-    </div>
-  </div>
-  <br />
-  <%= link_to_function "Invite to Survey", "new Effect.toggle('organization_#{@organization.id}_survey_invitation', 'blind', {duration: .5});return false;" %>
-  <div id='organization_<%=@organization.id%>_survey_invitation' style='display:none;'>
-    <% form_tag(
-        {:id => "organization_#{@organization.id}_survey_invitation_form"}, 
-        {:onsubmit => "return buildAjaxInvitationRequest(this['organization_id'],this.survey_organization_#{@organization.id}_survey_id,new Template('#{surveys_path}/\#{replacingID}/invitations'),'organization_#{@organization.id}_survey_invitation_response');"}
-        ) do %>
-      <%= collection_select("survey_organization_#{@organization.id}", :survey_id, current_organization.sponsored_surveys.running, :id, :job_title, {:prompt => 'Select a Survey'}) %>
-      <%= hidden_field_tag "organization_id", @organization.id %>
-      <input type="submit" value="Invite!">  
-    <% end %>
-    <div id='organization_<%=@organization.id%>_survey_invitation_response'>
-    </div>
-  </div>
+    <span class="label">Invite To: </span>
+  <% form_tag do 
+  %>
+    <%= collection_select("network_organization_#{@organization.id}", 
+      :network_id, 
+      current_organization.owned_networks, 
+      :id, 
+      :name, 
+      {:prompt => 'A Network'})
+    %>
+  or
+    <%= collection_select("survey_organization_#{@organization.id}", 
+      :survey_id, 
+      current_organization.sponsored_surveys.running, 
+      :id, 
+      :job_title, 
+      {:prompt => 'A Survey'})
+    %>
+  <span id='organization_<%=@organization.id%>_response'></span>
+  <% end %>
 </div>
 <p><span class="label">Location Name: </span><%=@organization.location%></p>
 <p><span class="label">City: </span><%=@organization.city%></p>
@@ -42,5 +35,19 @@
 <p><span class="label">Contact Name: </span><%=@organization.contact_name%></p>
 <p><span class="label">Industry: </span><%=@organization.industry%></p>
 
+<script type="text/javascript">
+
+function initializeObservers() {
+	$('<%="survey_organization_#{@organization.id}_survey_id"%>').observe(
+	  'change', 
+	  sendInvitation.curry('<%=@organization.id%>','<%=surveys_path%>'));
+  $('<%="network_organization_#{@organization.id}_network_id"%>').observe(
+    'change', 
+    sendInvitation.curry('<%=@organization.id%>','<%=networks_path%>'));	
+}
+
+</script>
+
+<% content_for :initialize_js, "initializeObservers();"%>
 
 
