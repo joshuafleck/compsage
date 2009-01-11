@@ -147,7 +147,9 @@ class SurveysController < ApplicationController
   
     @search_text = params[:search_text]
     
-    @search_query = "#{@search_text} #{@search_text} | @industry \"#{current_organization.industry}\""      
+    @esc_search_text = Riddle.escape(@search_text)
+    
+    @search_query = "#{@esc_search_text} #{@esc_search_text} | @industry \"#{current_organization.industry}\""      
     
     @filter_by_subscription = params[:filter_by_subscription]
     
@@ -162,7 +164,7 @@ class SurveysController < ApplicationController
     # filters by subscription (my surveys)
     @search_params[:conditions][:subscribed_by] = current_organization.id unless @filter_by_subscription.blank?
     @search_params[:conditions][:aasm_state_number] = Survey::AASM_STATE_NUMBER_MAP['running'] if @filter_by_subscription.blank?
-        
+    
     @surveys = Survey.search @search_query, @search_params
        
     respond_to do |wants|

@@ -31,9 +31,11 @@ class OrganizationsController < ApplicationController
   
     @search_text = params[:search_text]  
     
+    @esc_search_text = Riddle.escape(@search_text)    
+    
     # this basically says, find everything that matches the query, and everything that matches the query and industry
     # this will give a higher score to organizations with the same industry, but will not allow irrelevant matches
-    @search_query = "#{@search_text}* #{@search_text}* | @industry \"#{current_organization.industry}\""    
+    @search_query = "#{@esc_search_text}* #{@esc_search_text}* | @industry \"#{current_organization.industry}\""    
     
     @search_params = {
       :geo => [current_organization.latitude, current_organization.longitude],
