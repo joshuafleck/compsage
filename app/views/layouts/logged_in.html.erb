@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <body>
 	<div id="header">
-		<a href="/"><img src="/images/shawarma.gif" /></a>
+		<a href="/"><img src="/images/shawarma.gif" alt="CompSage"/></a>
 		<div id="account_settings">
 			<% if logged_in? && current_organization then %>
 				<%=link_to "Account Settings", account_path%>
@@ -19,7 +20,7 @@
 		<div id="main_content" class="<%=yield(:sidebar) ? 'with_side_bar' : ''%>">
 			<%=yield %>
 		</div>
-		<br id="end_break">
+		<br id="end_break" />
 	</div>
 	<div id="container_cap">&nbsp;</div>
   <div id="footer">
