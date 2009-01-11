@@ -13,7 +13,7 @@ class Discussion < ActiveRecord::Base
   validates_presence_of :responder
   validates_presence_of :survey
   
-  after_create :set_parent, :send_notification
+  after_create :set_parent
   
   named_scope :within_abuse_threshold, lambda { {:conditions => ['times_reported < 3']} }
   
@@ -50,37 +50,5 @@ class Discussion < ActiveRecord::Base
       self.move_to_child_of parent_discussion
     end    
   end
-  
-  #We are forced to send the notification from the model, rather than using an observer
-  # for now, as observer callbacks take precedence over model callbacks and we need the discussion to be placed in
-  # the nested set hierarchy before sending the notification. This looks like it will be fixed in the next rails version: 
-  # see http://rails.lighthouseapp.com/projects/8994/tickets/230-fire-model-callbacks-before-notifying-observers
-  # TODO: remove this and enable observer
-  def send_notification
-    sponsor = self.survey.sponsor
     
-    # If the sponsor is replying to the discussion, notify the other
-    #  organizations on the discussion chain of the event
-    if self.responder == sponsor && self.level > 0 then
-    
-      # build the recipient list with a responders of that thread
-      thread_members = []
-      self.root.full_set.each do |sibling|
-        thread_members << sibling.responder unless sibling.responder == sponsor || thread_members.include?(sibling.responder)
-      end
-    
-      thread_members.each do |recipient|
-        Notifier.deliver_discussion_thread_notification(
-          self, 
-          recipient
-        ) 
-      end
-      
-    # If an invitee is posting the discussion, notify the sponsor
-    #  so that they can quickly respond
-    elsif self.responder != sponsor
-      Notifier.deliver_discussion_sponsor_notification(self)
-    end  
-  end
-  
 end

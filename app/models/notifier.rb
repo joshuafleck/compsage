@@ -103,4 +103,12 @@ class Notifier < ActionMailer::Base
     subject    "The survey \"#{survey.job_title}\" did not receive enough responses"
     body       :survey => survey
   end  
+  
+  def new_organization_notification(organization)
+    recipients organization.email
+    from       "CompSage <do-not-reply@compsage.com>"
+    reply_to   "support@compsage.com"
+    subject    "Your compsage.com account has been created"
+    body       :organization => organization
+  end
 end
