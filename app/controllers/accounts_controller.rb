@@ -30,9 +30,7 @@ class AccountsController < ApplicationController
 	end
 	
 	def edit
-	  
   	@organization = current_organization
-  	
 	end
 	
 	def create
@@ -106,7 +104,7 @@ class AccountsController < ApplicationController
       respond_to do |wants|
         wants.html do
           flash[:notice] = "Your account was updated successfully."
-          redirect_to account_path
+          redirect_to edit_account_path
         end
         wants.xml do
           render :status => :ok

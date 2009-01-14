@@ -16,7 +16,7 @@
 		<a href="/"><img src="/images/shawarma.gif" alt="CompSage"/></a>
 		<div id="account_settings">
 			<% if logged_in? && current_organization then %>
-				<%=link_to "Account Settings", account_path%>
+				<%=link_to "Account Settings", edit_account_path%>
 				<%=link_to "Log Out", session_path, :method => :delete%>
 			<% end %>
 		</div>

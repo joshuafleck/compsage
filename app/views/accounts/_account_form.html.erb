@@ -4,8 +4,10 @@
   <% if @organization.new_record? %>
    <%= hidden_field_tag 'key', external_invitation.key %>
   <% end %>
-  <%=f.label :name, 'Name of Your Organization' %>
-  <%=f.text_field :name %>
+  <% unless @organization.new_record? %>
+    <%=f.label :name, 'Name of Your Organization' %>
+    <%=f.text_field :name %>
+  <% end %>
   <%=f.label :contact_name, 'Your Name' %>  
   <%=f.text_field :contact_name %>
   <%=f.label :email %> 
@@ -32,8 +34,8 @@
   <%=f.password_field :password %>
   <%=f.label :password_confirmation %> 
   <%=f.password_field :password_confirmation %>
-  <p>
-    <input type="submit" value='<%=@organization.new_record? ? "Create" : "Update"%>' /> 
+  <div class="submit">
+    <input type="submit" value='<%=@organization.new_record? ? "Create" : "Update"%>' /> or
     <% if @organization.new_record? && logged_in_from_survey_invitation? then %>
       <%=link_to "Cancel", survey_path(current_survey_invitation.survey.id) %>
     <% elsif @organization.new_record? %>
@@ -41,5 +43,5 @@
     <% else %>
       <%=link_to "Cancel", account_path %>
     <% end %>
-  </p>
+  </div>
 <% end %>
