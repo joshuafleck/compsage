@@ -1,10 +1,9 @@
 <% title "Search Members" %>
-<% breadcrumbs(link_to("Members",organizations_path)) %>
 <% highlight_tab "members" %>
 <h2>Search Members</h2>
 <%=flash_messages%>
 <%= render :partial => "search_form" %>
-<h3>Search Results</h3>
+<%= link_to "All organizations", organizations_path %>
 <% if @organizations.size == 0 then %>
   <p>Your search returned zero results</p>
 <% else %>

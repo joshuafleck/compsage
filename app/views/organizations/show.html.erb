@@ -1,15 +1,26 @@
 <% title @organization.name %>
-<% breadcrumbs(link_to("Members",organizations_path)) %>
-<% highlight_tab "members" %>
+<% highlight_tab "networks" %>
 <h2><%=@organization.name%></h2>
 <%=flash_messages%>
 <% if !@organization.logo.nil? then %>
   <p><%=image_tag @organization.logo.public_filename %></p>
 <% end %>
+<dl id="organization_information">
+  <% unless @organization.location.blank? %>
+    <dt>Branch / Location:</dt>
+    <dd><%= @organization.location %></dd>
+  <% end %>
+  <dt>Region:</dt>
+  <dd><%= @organization.city %> <%= @organization.state %> <%= @organization.zip_code %></dd>
+  <dt>Contact:</dt>
+  <dd><%= @organization.contact_name %></dd>
+  <dt>Industry:</dt>
+  <dd><%= @organization.industry %></dd>
+</dl>
+
 <div class="organization_actions">
-    <span class="label">Invite To: </span>
-  <% form_tag do 
-  %>
+  <% form_tag do %>
+    <span>Invite <%= @organization.name %> to </span>
     <%= collection_select("network_organization_#{@organization.id}", 
       :network_id, 
       current_organization.owned_networks, 
@@ -28,13 +39,6 @@
   <span id='organization_<%=@organization.id%>_response'></span>
   <% end %>
 </div>
-<p><span class="label">Location Name: </span><%=@organization.location%></p>
-<p><span class="label">City: </span><%=@organization.city%></p>
-<p><span class="label">State: </span><%=@organization.state%></p>
-<p><span class="label">Zip Code: </span><%=@organization.zip_code%></p>
-<p><span class="label">Contact Name: </span><%=@organization.contact_name%></p>
-<p><span class="label">Industry: </span><%=@organization.industry%></p>
-
 <script type="text/javascript">
 
 function initializeObservers() {

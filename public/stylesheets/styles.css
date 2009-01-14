@@ -662,6 +662,19 @@ ul#organizations div.organization_logo {
 ul#organizations form {
   display: inline;
 }
+
+dl#organization_information dt {
+  width: 5em;
+  text-align: right;
+  float: left;
+  color: #666;
+  clear: both;
+  margin: 0;
+}
+
+dl#organization_information dd {
+  margin-left: 6em;
+}
 /* Flash Notices */
 div.flash_notice {
   border: 1px solid #6c8272;
