@@ -1,6 +1,7 @@
 class AccountsController < ApplicationController
   before_filter :login_required, :except => [ :new , :create, :forgot, :reset ]
   layout :logged_in_or_invited_layout 
+  filter_parameter_logging :password
 	
 	def show
 	

@@ -3,6 +3,7 @@ class SurveysController < ApplicationController
   # we require a valid login if you are creating or editing a survey.
   before_filter :login_required, :only => [ :edit, :update, :create, :new, :index ]
   before_filter :login_or_survey_invitation_required, :except => [ :edit, :update, :create, :new, :index ]
+  filter_parameter_logging :response  
   
   
   def index    
