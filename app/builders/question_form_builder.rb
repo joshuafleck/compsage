@@ -3,7 +3,6 @@ class QuestionFormBuilder < ActionView::Helpers::FormBuilder
   
   # builds a form field for a survey question.
   def form_field
-    puts "Object's attributes: #{object.attributes.inspect}"
     case question.question_type
     when "text_field"
       label(:response, question.text) + text_field(:response, :size => 40) + error_text

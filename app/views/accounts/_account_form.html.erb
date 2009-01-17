@@ -1,17 +1,16 @@
 <%=flash_messages%>
 <%=error_messages_for :organization%>
 <% form_for @organization, :url => account_path, :html => {:multipart => true} do |f| %>
+  
   <% if @organization.new_record? %>
    <%= hidden_field_tag 'key', external_invitation.key %>
   <% end %>
-  <% unless @organization.new_record? %>
-    <%=f.label :name, 'Name of Your Organization' %>
-    <%=f.text_field :name %>
-  <% end %>
-  <%=f.label :contact_name, 'Your Name' %>  
+  <%=f.label :name, 'Name of Your Organization' %>
+  <%=f.text_field :name %><span class="required" title="This field is required.">&nbsp;*</span>
+  <%=f.label :contact_name, 'Your Name' %>
   <%=f.text_field :contact_name %>
   <%=f.label :email %> 
-  <%=f.text_field :email %>
+  <%=f.text_field :email %><span class="required" title="This field is required.">&nbsp;*</span>
   <%=f.label :location, 'Name of Office or Branch' %> 
   <%=f.text_field :location %>
   <%=f.label :city %> 
@@ -20,7 +19,7 @@
   <%= f.select :state, Organization::STATE_ABBR, 
 		:include_blank => true %>
   <%=f.label :zip_code %> 
-  <%=f.text_field :zip_code %>
+  <%=f.text_field :zip_code %><span class="required" title="This field is required.">&nbsp;*</span>
   <%=f.label :industry %> 
   <%=f.select :industry, Organization::INDUSTRIES, :include_blank => true %>
   <% if !@organization.logo.nil? then %>
@@ -31,9 +30,10 @@
       <%=logo_form.file_field :uploaded_data%>
   <% end %>  		    
   <%=f.label :password %> 
-  <%=f.password_field :password %>
+  <%=f.password_field :password %><span class="required" title="This field is required.">&nbsp;*</span>
   <%=f.label :password_confirmation %> 
-  <%=f.password_field :password_confirmation %>
+  <%=f.password_field :password_confirmation %><span class="required" title="This field is required.">&nbsp;*</span>
+  <p class="required" title="Asterisk indicates required field.">* = required</p>
   <div class="submit">
     <input type="submit" value='<%=@organization.new_record? ? "Create" : "Update"%>' /> or
     <% if @organization.new_record? && logged_in_from_survey_invitation? then %>

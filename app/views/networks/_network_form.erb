@@ -1,7 +1,7 @@
 <%=error_messages_for :network%>
 <% form_for @network do |f| %>
   <%= f.label :name, "Network Name" %>
-  <%= f.text_field :name, :size => 30 %>
+  <%= f.text_field :name, :size => 30 %><span class="required" title="This field is required.">&nbsp;*</span>
   <%= f.label :description %>
   <%= f.text_area :description, :rows => 4, :cols => 30 %>
   <% if !@network.new_record? && @network.organizations.count > 1 then %>
@@ -15,5 +15,6 @@
       <% end %>
     </ul>
   <% end %>
+  <p class="required" title="Asterisk indicates required field.">* = required</p>
   <div class="submit"><input type="submit" value="<%=@network.new_record? ? 'Create' : 'Update' %>" /> or <%=link_to "Cancel", networks_path %></div>
 <% end %>

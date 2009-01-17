@@ -10,17 +10,18 @@ you will be provided with a key that may be used to create an account
 <%=flash_messages%>
 <% form_for @pending_account, :url => signup_path do |f| %>
   <%=f.label :organization_name, 'Name of Your Organization' %>    
-  <%=f.text_field :organization_name %>
+  <%=f.text_field :organization_name %><span class="required" title="This field is required.">&nbsp;*</span>
   <%=f.label :contact_first_name, 'Your First Name' %>    
-  <%=f.text_field :contact_first_name %>
+  <%=f.text_field :contact_first_name %><span class="required" title="This field is required.">&nbsp;*</span>
   <%=f.label :contact_last_name, 'Your Last Name' %> 
-  <%=f.text_field :contact_last_name %>
+  <%=f.text_field :contact_last_name %><span class="required" title="This field is required.">&nbsp;*</span>
   <%=f.label :email %> 
-  <%=f.text_field :email %>
+  <%=f.text_field :email %><span class="required" title="This field is required.">&nbsp;*</span>
   <%=f.label :phone %> 
-  <%=f.text_field :phone %>
+  <%=f.text_field :phone %><span class="required" title="This field is required.">&nbsp;*</span>
   <%=f.label :phone_extension %> 
   <%=f.text_field :phone_extension %>
+  <p class="required" title="Asterisk indicates required field.">* = required</p>
   <p>
     <input type="submit" value="Signup" /> 
     <%=link_to "Cancel", '/' %>

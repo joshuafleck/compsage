@@ -2,9 +2,10 @@
 <% form_for @survey do |f| %>
   <%=error_messages_for :survey%>
   <%=f.label :job_title%>
-	<%=f.text_field :job_title, :size => 40 %>
+	<%=f.text_field :job_title, :size => 40 %><span class="required" title="This field is required.">&nbsp;*</span>
   <%=f.label :description, "Job description"%>
   <%=f.text_area :description, :rows => 4, :cols => 40 %>
+  <p class="required" title="Asterisk indicates required field.">* = required</p>
   <%=f.hidden_field :network_id %>
   <% if @survey.new_record? then %>
   	<%=f.label :days_running, "Run length" %>
@@ -65,6 +66,7 @@
   <% if !@network.nil? then %>
     <%=hidden_field_tag(:invite_network, @network.id ) %>
   <% end %>
+  <p class="required">* At least one question is required</p>
   <p><input id="form_submit" type="submit" value="<%=@survey.new_record? ? 'Create Survey' : 'Update' %>" /> or <%=link_to "Cancel", surveys_path %></p>
 <% end %>
 <script type="text/javascript">
