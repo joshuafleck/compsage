@@ -80,17 +80,25 @@ function initializeObservers() {
 	$('search').observe('keyup', liveOrganizationSearch);
 	
 	$('external_invitation_submit').observe('click', addExternalInvite);
-	$('invitation_form_submit').observe('click', addExternalInvite);
+	$('invitation_form_submit').observe('click', addExternalInviteOnSubmit);
 	
 	callFunctionOnEnterForm($('external_invitation_form'),addExternalInvite);
 
 }
+
 
 /*
  * This will send an ajax request to the server with the search text
  */
 function liveOrganizationSearch() {
 	if($F('search').length == 0) return;
+	
+	if($F('search').match(/\@/)) {
+		populateExternalInvitationForm($F('search'), '');
+	}
+	else {
+		populateExternalInvitationForm('', $F('search'));
+	}	
 	
 	new Ajax.Request('<%=search_organizations_path%>', {
 		'method': 'get',
@@ -112,12 +120,7 @@ function showResults(organizations) {
 	$('search_instructions').hide();
 	
 	if(organizations.length == 0) {
-		if($F('search').match(/\@/)) {
-			showExternalInvitationForm($F('search'), '');
-		}
-		else {
-			showExternalInvitationForm('', $F('search'));
-		}
+    showExternalInvitationForm();
 	}
 	else {
 		hideExternalInvitationForm();
@@ -171,21 +174,44 @@ function addOrganizationToInvite(organization) {
 		//Hack for IE6 - must explicitely set the checked flag after inserting element into DOM
 		item.childElements()[0].checked = true;
   }
+  
+  $('search').select();
 }
 
-function showExternalInvitationForm(email, org_name) {
+function populateExternalInvitationForm(email, org_name) {
+	$('external_invitation_organization_name').value = org_name;
+	$('external_invitation_email').value = email;
+}
+
+function showExternalInvitationForm() {
 	$('search_results').hide();
 	$('external_invitation_form').show();
-	$('external_invitation_email').value = email;
-	$('external_invitation_organization_name').value = org_name;
 }
 
 function hideExternalInvitationForm() {
 	$('search_results').show();
-	$('external_invitation_email').value = '';
-	$('external_invitation_organization_name').value = '';
 	$('external_invitation_form').hide();
 }
+
+function hideAll() {
+	$('search_results').hide();
+	$('external_invitation_form').hide();
+}
+
+/*
+ * This will add the external invitation to the request, in case the user forgot to click 'add'
+ */
+function addExternalInviteOnSubmit() {
+
+	var email = $F('external_invitation_email');
+	var name = $F('external_invitation_organization_name');
+
+  if ($('external_invitation_form').visible() && email != '' && name != '') {
+    return addExternalInvite();
+  }
+  
+  return;
+};
 
 /*
  * This will add the external invitation to the invite list and reset the search form
@@ -197,7 +223,7 @@ function addExternalInvite() {
   var invite_list = $('organizations_to_invite');
   
   // Don't want to submit if either field is blank, as this form is autosubmitted when invites are sent
-  if (email == '' || name == '') {
+  if (email == '' && name == '') {
     return;
   }
     
@@ -238,13 +264,10 @@ function addExternalInvite() {
   //IE6 hack - checkbox must be marked as checked after insertion into DOM
   checkbox.checked = true;
     
-  $('external_invitation_email').clear();
-  $('external_invitation_organization_name').clear();
   $('search').clear();
-  $('search').select();
-  $('search_results').update('');
+  $('search').focus();
   
-  hideExternalInvitationForm();
+  hideAll();
 }
 </script>
 
