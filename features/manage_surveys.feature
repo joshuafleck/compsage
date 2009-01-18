@@ -128,6 +128,6 @@ Feature: Manage surveys
     And there is a survey
     And I am on the survey index page
     When I fill in "search_text" with "Survey 1"
-    And I press "Find a Survey"
+    And I press "_"
     Then I should see "Survey 1"
 

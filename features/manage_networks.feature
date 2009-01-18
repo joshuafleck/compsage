@@ -33,7 +33,18 @@ Feature: Manage Networks
     And there is a network
     And I am invited to the network
     And I am on the network index page
-    #TODO: add network invitations to network index
+    And I follow "Join Network"
+    And I am on the network index page
+    Then I should not see "Join Network"
+    And I should see "Network 1"
+    
+  Scenario: Leave network
+    Given I am logged in
+    And there is a network
+    And I own the network
+    And I am on the network index page
+    When I follow "Leave Network"
+    Then I should not see "Network 1"
   
   Scenario: Survey network
     Given I am logged in

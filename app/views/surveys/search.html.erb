@@ -3,13 +3,18 @@
 <% highlight_tab("surveys") %>
 <h2>Search Results</h2>
 <%= render :partial => "search_form" %>
-<ul>
-  <% @surveys.each_with_geodist do |survey, geodist| %>
-    <%=render :partial => "survey", :object => survey, :locals => 
-        { # grab the organization and their distance from the source organization
-          # must convert from distance in meters to distance in miles
-          :geodist => (geodist/1609.344).round(1)
-        } %>
-  <% end %>
-</ul>
+<p><%= link_to "All surveys", surveys_path %></p>
+<% if @surveys.size > 0 then %>
+  <ul>
+    <% @surveys.each_with_geodist do |survey, geodist| %>
+      <%=render :partial => "survey", :object => survey, :locals => 
+          { # grab the organization and their distance from the source organization
+            # must convert from distance in meters to distance in miles
+            :geodist => (geodist/1609.344).round(1)
+          } %>
+    <% end %>
+  </ul>
+<% else %>
+  <p>Your search returned zero results</p>
+<% end %>
 <%= will_paginate @surveys %>

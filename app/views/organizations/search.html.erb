@@ -3,7 +3,7 @@
 <h2>Search Members</h2>
 <%=flash_messages%>
 <%= render :partial => "search_form" %>
-<%= link_to "All organizations", organizations_path %>
+<p><%= link_to "All organizations", organizations_path %></p>
 <% if @organizations.size == 0 then %>
   <p>Your search returned zero results</p>
 <% else %>
