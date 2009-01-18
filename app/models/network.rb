@@ -1,6 +1,7 @@
 class Network < ActiveRecord::Base
   
-  has_and_belongs_to_many :organizations
+  has_many :organizations, :through => :network_memberships
+  has_many :network_memberships, :dependent => :destroy  
   belongs_to :owner, :class_name => "Organization"
   has_many :invitations, :class_name => 'NetworkInvitation', :dependent => :destroy
   has_many :external_invitations, :class_name => 'ExternalNetworkInvitation', :dependent => :destroy
@@ -20,6 +21,16 @@ class Network < ActiveRecord::Base
     invitations += self.external_invitations.find(:all)
     invitations << NetworkInvitation.new(:invitee => self.owner) if include_owner
     invitations.sort    
+  end
+  
+  # if the owner leaves the network, they will be replaced with the next senior member
+  def promote_new_owner
+    membership = self.network_memberships.find(
+      :first, 
+      :conditions => ["organization_id <> ?", self.owner.id], 
+      :order => 'created_at')
+    self.owner = membership.organization
+    self.save
   end
   
   private

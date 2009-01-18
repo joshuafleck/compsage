@@ -409,68 +409,6 @@ describe NetworksController, " handling PUT /networks/1/leave" do
 
 end
 
-#We cannot allow the owner to leave the network without changing the owner
-#If the owner leaves the network, the network will no longer show up in that owner's index page
-describe NetworksController, "handling PUT /networks/1/leave when the organization is the owner of the network" do
-  before do
-    @organization = mock_model(Organization)
-    login_as(@organization)
-    
-    @network_organizations = mock('network organizations', :count => 0)
-    @network = mock_model(Network, :update_attributes! => true, :owner => @organization, :organizations => @network_organizations)
-    
-    @networks_proxy = mock('networks proxy', :find => @network, :delete => true)
-    
-    @organization.stub!(:networks).and_return(@networks_proxy)
-    
-    @params = {:id => @network.id}
-  end
-  
-  def do_put
-    put :leave, @params
-  end
-  
-  it "should check the number of members in the network" do
-    @network_organizations.should_receive(:count).and_return(1)
-    do_put
-  end
-  
-  describe "when the network has more than one member" do
-    before do
-      @network_organizations.stub!(:count).and_return(2)
-    end
-    
-    it "should redirect to the network edit page" do
-      do_put
-      response.should redirect_to(edit_network_path(@network))
-    end
-  
-    it "should flash a message instructing the organization to change the owner of the network" do
-      do_put
-      flash[:error].should == "You must first designate a new network owner."
-    end
-  end
-  
-  describe "when the network has only one member" do
-    before do
-      @network_organizations.stub!(:count).and_return(1)
-      @network.stub!(:destroy_when_empty)
-    end
-    
-    it "should allow the organization to leave the network" do
-      @networks_proxy.should_receive(:delete).with(@network)
-      do_put
-    end
-
-    it "should redirect to the network index" do
-      do_put
-      response.should redirect_to(networks_path)
-    end
-     
-  end
-  
-end
-
 describe NetworksController, " handling PUT /networks/1/join" do
   before do
     @organization = mock_model(Organization)

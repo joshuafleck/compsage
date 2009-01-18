@@ -131,7 +131,9 @@ class Organization < ActiveRecord::Base
 		'WV',
 		'WY']
   
-  has_and_belongs_to_many :networks, :after_remove => :delete_empty_network
+  has_many :networks, :through => :network_memberships, :after_remove => :delete_empty_network_or_promote_owner
+  has_many :network_memberships, :dependent => :destroy
+  
   has_many :owned_networks, :class_name => "Network", :foreign_key => "owner_id", :after_add => :join_created_network
   
   has_many :sponsored_surveys, :class_name => 'Survey',
@@ -239,8 +241,12 @@ class Organization < ActiveRecord::Base
   protected
   
   # Destroy the network if it has zero members.
-  def delete_empty_network(network)
-    network.destroy if network.organizations.empty?
+  def delete_empty_network_or_promote_owner(network)
+    if network.organizations.empty? then
+      network.destroy 
+    elsif self == network.owner then
+      network.promote_new_owner
+    end
   end
   
   # Joins the network just created by this organization.

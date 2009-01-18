@@ -253,5 +253,14 @@ describe Organization, "that already exists" do
     @organization.networks.destroy(@organization.networks.first)
     lambda { Network.find(@network.id) }.should raise_error(ActiveRecord::RecordNotFound)
   end
+  
+  it 'should promote a new owner if the owner leaves the network' do
+    @organization.save
+    @network = @organization.owned_networks.create(:name => "test")  
+    @organization2 = Factory.create(:organization)
+    @network.organizations << @organization2
+    @organization.networks.delete(@network)
+    @network.owner.should eql(@organization2)
+  end
 
 end

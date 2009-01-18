@@ -92,27 +92,16 @@ class NetworksController < ApplicationController
   # owns the network so that they can designate a new owner.
   def leave
     @network = current_organization.networks.find(params[:id])
-    if @network.owner == current_organization && @network.organizations.count > 1 then
-      respond_to do |wants|
-        wants.html do
-          flash[:error] = "You must first designate a new network owner."
-          redirect_to edit_network_path(@network)
-        end
-        wants.xml do
-          render :status => :bad_request
-        end
+
+    current_organization.networks.delete(@network)
+    
+    respond_to do |wants|
+      wants.html do
+        flash[:notice] = "You have successfully left the network."
+        redirect_to networks_path
       end
-    else
-      current_organization.networks.delete(@network)
-      
-      respond_to do |wants|
-        wants.html do
-          flash[:notice] = "You have successfully left the network."
-          redirect_to networks_path
-        end
-        wants.xml do
-          render :status => :ok
-        end
+      wants.xml do
+        render :status => :ok
       end
     end
   end
