@@ -133,6 +133,7 @@ class AccountsController < ApplicationController
         respond_to do |wants|
           wants.html do
             flash[:notice] = "Password reset email successfully sent to #{@organization.email}."
+            redirect_to root_path
           end
         end
       else
