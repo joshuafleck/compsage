@@ -45,32 +45,25 @@
 		<ul id="organizations_to_invite">
 		</ul>
 		<div id="invite_organizations">
-			<label>Organization name, contact, or email address</label>
-			<input type="text" id="search" name="search_text" autocomplete="off" />
+		  <label>Organization name, contact, or email address</label>
+		  <input type="text" id="search" name="search_text" autocomplete="off" />
 			<p id="search_instructions">Type a company name, contact name, or email address above.  If the company
 				is a member, it will show up here.  If no companies matching the criteria are found, enter
 				the organization name and a contact's email address to send the invitation.</p>
-			<div id="search_results">
+      <div id="search_results">
 
 			</div>
 			<div id="external_invitation_form" style="display:none;">
-				<p>No organizations found.  Enter contact details below.</p>
-					<div class="box_container">
-						<div class="box">
-							<label for="external_invitation_email">Email Address</label>
-							<input type="text" id="external_invitation_email" size="30" /><span class="required" title="This field is required.">&nbsp;*</span>
-						</div>
-						<div class="box">
-							<label for="external_invitation_organization_name">Organization Name</label>
-							<input type="text" id="external_invitation_organization_name" size="25" /><span class="required" title="This field is required.">&nbsp;*</span>
-						</div>
-						<div class="box">
-							<label>&nbsp;</label>
-							<input id="external_invitation_submit" type="button" value="Add" />
-						</div>
-					</div>
-					<p class="required" title="Asterisk indicates required field.">* = required</p>
-			</div>
+			  <p>No organizations found.  Enter contact details below.</p>
+			  <div class="box_container">
+			    <label for="external_invitation_email">Email Address</label>
+					<input type="text" id="external_invitation_email" size="30" /><span class="required" title="This field is required.">&nbsp;*</span>
+				  <label for="external_invitation_organization_name">Organization Name</label>
+					<input type="text" id="external_invitation_organization_name" size="25" /><span class="required" title="This field is required.">&nbsp;*&nbsp;</span>
+					<input id="external_invitation_submit" type="button" value="Add" />
+		      <p class="required" title="Asterisk indicates required field.">* = required</p>
+			  </div>
+      </div>
 		</div>
 		<p><input id="invitation_form_submit" type="submit" value="Send Invitations" /></p>
 	<% end %>

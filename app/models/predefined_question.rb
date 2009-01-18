@@ -4,6 +4,8 @@ class PredefinedQuestion < ActiveRecord::Base
   serialize :question_hash
   attr_accessor :included
   
+  xss_terminate :except => [ :question_hash ]
+  
   # this will build questions based on the predefined question's attributes
   def build_questions(survey)
     self[:question_hash].each do |question_attr|

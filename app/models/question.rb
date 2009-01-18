@@ -9,6 +9,8 @@ class Question < ActiveRecord::Base
   
   attr_accessor :included
   
+  xss_terminate :except => [ :question_type, :question_parameters, :html_parameters, :options, :custom_question_type ]
+  
   #jf- commented out validation, as this was causing survey.save to fail
   #validates_presence_of :survey
   validates_presence_of :question_type
