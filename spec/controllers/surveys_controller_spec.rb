@@ -299,9 +299,11 @@ describe SurveysController, " handling GET /surveys/1.xml when survey is closed"
   end
 end
 
-describe SurveysController, " handling GET /surveys/new" do
+describe SurveysController, " handling GET /surveys/new with no pending surveys" do
   before(:each) do
-    @current_organization = mock_model(Organization)
+    @surveys = []
+    @surveys.stub!(:pending).and_return([])
+    @current_organization = mock_model(Organization, :surveys => @surveys)
     login_as(@current_organization)
   end
 
@@ -317,6 +319,26 @@ describe SurveysController, " handling GET /surveys/new" do
   it "should render new template" do
     do_get
     response.should render_template('surveys/new')
+  end
+end
+
+describe SurveysController, " handling GET /surveys/new with a pending survey" do
+  before(:each) do
+    @surveys = []
+    @survey = mock_model(Survey, :id => 1)
+    @surveys.stub!(:pending).and_return([@survey])
+    @current_organization = mock_model(Organization, :surveys => @surveys)
+    login_as(@current_organization)
+  end
+
+  def do_get
+    get :new
+  end
+
+    
+  it "should render edit template" do
+    do_get
+    response.should redirect_to(edit_survey_path(@survey))
   end
 end
 
