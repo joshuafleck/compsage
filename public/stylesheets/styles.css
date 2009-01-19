@@ -697,6 +697,12 @@ label, div.label {
 	color: #333;
 }
 
+label.option {
+  font-weight: normal;
+  font-size: 0.875em;
+  margin: 0;
+}
+
 form div.box_container {
   overflow: hidden;
 }
