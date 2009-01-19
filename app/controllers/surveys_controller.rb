@@ -107,13 +107,7 @@ class SurveysController < ApplicationController
   end
   
   def new
-    @survey = current_organization.surveys.find_or_initialize_by_aasm_state(:pending) 
-    #if current_organization.surveys.pending.empty? then
-     # @survey = Survey.new(:network_id => params[:network_id])
-    #else
-    #  @survey = current_organization.surveys.pending.first
-    #  redirect_to edit_survey_path(@survey)
-  #end
+    @survey = current_organization.sponsored_surveys.find_or_initialize_by_aasm_state(:pending) 
   end
   
   def create
