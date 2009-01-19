@@ -302,7 +302,7 @@ end
 describe SurveysController, " handling GET /surveys/new with no pending surveys" do
   before(:each) do
     @surveys = []
-    @surveys.stub!(:pending).and_return([])
+    @surveys.stub!(:find_or_initialize_by_aasm_state).and_return([])
     @current_organization = mock_model(Organization, :surveys => @surveys)
     login_as(@current_organization)
   end
@@ -326,7 +326,7 @@ describe SurveysController, " handling GET /surveys/new with a pending survey" d
   before(:each) do
     @surveys = []
     @survey = mock_model(Survey, :id => 1)
-    @surveys.stub!(:pending).and_return([@survey])
+    @surveys.stub!(:find_or_initialize_by_aasm_state).and_return([@survey])
     @current_organization = mock_model(Organization, :surveys => @surveys)
     login_as(@current_organization)
   end
@@ -336,9 +336,9 @@ describe SurveysController, " handling GET /surveys/new with a pending survey" d
   end
 
     
-  it "should render edit template" do
+  it "should render new template" do
     do_get
-    response.should redirect_to(edit_survey_path(@survey))
+    response.should render_template('surveys/new')
   end
 end
 
