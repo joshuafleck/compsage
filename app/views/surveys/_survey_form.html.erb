@@ -26,7 +26,6 @@
 	</div>
 	<h3>Custom questions</h4>
 	<div id="custom_questions">
-	  <p>
 	  <ul id="custom_question_list">
 		  <% @survey.custom_questions.each_with_index do |question, index| %>
 		    <% fields_for "questions[#{index}]", question do |question_form| %>
@@ -41,7 +40,6 @@
 		    <% end %>
 		  <% end %>
 	  </ul>
-	  </p>
 		<div class="box_container" id="custom_question_form">
 			<div class="box">
 				<label for="question_text">Question Text</label>

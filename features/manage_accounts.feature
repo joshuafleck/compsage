@@ -31,5 +31,23 @@ Feature: Manage accounts
     Then I should see "test organization"
     And I should not see "There were problems with the following fields:"
     
+  Scenario: Reset password
+    Given there is an organization
+    And I am on the login page
+    And I follow "Forgot your password?"
+    When I fill in "Email" with "test@test.com"
+    And I press "Reset Password"
+    Then I should see "Password reset email successfully sent to test@test.com."
+    Given I am on the reset password page
+    When I fill in "Password" with "test12"
+    And I fill in "Confirm Password" with "test12"
+    And I press "Reset Password"
+    Then I should see "Email"
+    Given I am on the login page
+    And I fill in "Email" with "test@test.com"
+    And I fill in "Password" with "test12"
+    And I press "Log in"
+    Then I should not see "Password"
+    
 
 

@@ -16,12 +16,12 @@
   <%=f.label :city %> 
   <%=f.text_field :city %>
   <%=f.label :state %> 
-  <%= f.select :state, Organization::STATE_ABBR, 
+  <%= f.select :state, AccountsHelper::STATE_ABBR, 
 		:include_blank => true %>
   <%=f.label :zip_code %> 
   <%=f.text_field :zip_code %><span class="required" title="This field is required.">&nbsp;*</span>
   <%=f.label :industry %> 
-  <%=f.select :industry, Organization::INDUSTRIES, :include_blank => true %>
+  <%=f.select :industry, AccountsHelper::INDUSTRIES, :include_blank => true %>
   <% if !@organization.logo.nil? then %>
     <p><%=image_tag @organization.logo.public_filename(:standard_thumbnail) %></p>
   <% end %>  
