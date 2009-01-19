@@ -3,7 +3,7 @@
 <% highlight_tab("surveys") %>
 <h2>Search Results</h2>
 <%= render :partial => "search_form" %>
-<p><%= link_to "Return to surveys (View all)", surveys_path %></p>
+<p><%= link_to "Return to Surveys", surveys_path %></p>
 <% if @surveys.size > 0 then %>
   <ul>
     <% @surveys.each_with_geodist do |survey, geodist| %>
