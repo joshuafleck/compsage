@@ -11,7 +11,8 @@ class Response < ActiveRecord::Base
     :numerical_response => "Response",
     :textual_response => "Response"
   }
-  
+ 
+
   named_scope :from_invitee,
     :include => {:participation => [{:survey => [:invitations]}]}, 
     :conditions => ['participations.participant_type = ? OR (participations.participant_type = ? AND participations.participant_id = surveys.sponsor_id) OR (invitations.invitee_id = participations.participant_id AND participations.participant_type = ?)',
@@ -29,6 +30,7 @@ class Response < ActiveRecord::Base
   end
 
   def response=(value)
+    value = sanitize_number(value)
     @response_before_type_cast = value
     if !question.nil? && question.numerical_response? then
       self.numerical_response = value
@@ -41,4 +43,10 @@ class Response < ActiveRecord::Base
     HUMANIZED_ATTRIBUTES[attr.to_sym] || super
   end
 
+  private
+
+  # removes dollar signs and commas
+  def sanitize_number(value)
+    value.gsub(/\$|\,/, '')
+  end
 end
