@@ -1,17 +1,17 @@
-<% title "Welcome to Compsage!" %>
-<% breadcrumbs() %>
-<%=flash_messages%>
-<h1>Welcome</h1>
-<p>Thank you for visiting CompSage, your HR needs specialist. This is the jump page to find more information or to login. More content coming ASAP.</p>
-<% if !logged_in? %>
-  <% form_tag session_path do -%>
-    <p><label for="email">Email</label><br />
-    <%= text_field_tag 'email' %></p>
-    <p><label for="password">Password</label><br />
-    <%= password_field_tag 'password' %></p>
-    <p><label for="remember_me">Remember me:</label>
-    <%= check_box_tag 'remember_me' %></p>
-    <p><%= submit_tag 'Log in' %></p>
-  <% end -%>
-  <p><%=link_to "Forgot your password?", forgot_account_path%></p>
-<% end %>
+<% 
+  title "Welcome to Compsage!"
+  page_name "front"
+%>
+<div id="banner">
+  <image src="/images/banner.jpg" />
+  <div id="login">
+    <% form_tag session_path do %>
+      <label for="email">Email Address</label>
+      <%= text_field_tag 'email', '', :class => 'email' %>
+      <label for="password">Password</label>
+      <%= password_field_tag 'password', '', :class => 'password' %>
+      <label for="remember_me">Remember Me: <%= check_box_tag 'remember_me', '' %></label>
+      <%= submit_tag 'Log in' %> <%=link_to "Forgot your password?", forgot_account_path%> 
+    <% end %>
+  </div>
+</div>

@@ -12,11 +12,8 @@
 	</script>
 </head>
 <body>
-	<div id="header">
-		<a href="/"><img src="/images/shawarma.gif" alt="CompSage"/></a>
-		<div id="account_settings">
-				<%=link_to "Join", signup_path %>
-		</div>
+  <div id="header" class="<%= yield :page_name%>">
+    <a href="/"><img src="/images/shawarma<%=yield :page_name%>.gif" alt="CompSage"/></a>
 		<ul id="nav" class="<%=yield :highlighted_tab %>">
 			<li></li>
 		</ul>

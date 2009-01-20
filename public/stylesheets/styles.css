@@ -64,9 +64,9 @@ input[type=text], input[type=password] {
 }
 
 textarea {
+	font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
   font-size: 1.25em;
 	padding: 5px;
-	font-family: helvetica;
 	letter-spacing: .05em;
 	font-weight: normal;
 	font-size: 1em;
@@ -87,6 +87,10 @@ textarea {
 	height: 53px;
 	font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
   background: url('../images/inner_header_background.gif');
+}
+
+#header.front {
+  background: url('../images/inner_header_background_front.gif') right no-repeat;
 }
 
 #header img {
@@ -200,6 +204,54 @@ textarea {
   border-bottom: 1px dotted #43728b;
 }
 
+
+/* Front Page */
+
+div#banner {
+  margin: -5px -5px 0 -5px;
+}
+
+div#banner img {
+  float: left;
+}
+
+div#banner div#login {
+  background: url('../images/banner_login.jpg') no-repeat right;
+  height: 170px;
+  color: #88ccff;
+  padding: 56px 0 0 20px;
+  float: left;
+  width: 246px;
+	font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
+}
+
+div#banner div#login input {
+  padding: 2px;
+  font-size: .75em;
+}
+
+div#login input.email {
+  width: 220px;
+} 
+
+div#login input.password {
+  width: 110px;
+}
+
+div#banner div#login label {
+  margin: 2px 0 0 0;
+  font-size: 1em;
+  font-weight: normal;
+  color: inherit;
+}
+
+div#banner a {
+  color: #88ccff;
+  border-bottom: 1px solid #88ccff;
+  text-decoration: none;
+  font-size: .9em;
+  margin-left: 5px;
+}
 /* Survey Sidebar */
 #surveys_sidebar {
 	width: 246px;
