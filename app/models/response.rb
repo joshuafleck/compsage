@@ -47,6 +47,6 @@ class Response < ActiveRecord::Base
 
   # removes dollar signs and commas
   def sanitize_number(value)
-    value.gsub(/\$|\,/, '')
+    value.respond_to?(:gsub) ? value.gsub(/\$|\,/, '') : value
   end
 end
