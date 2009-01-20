@@ -56,7 +56,8 @@ Feature: Manage Networks
     And I fill in "Job title" with "Survey network 1"
     And I check "Question 1"
     And I press "Create"
-    And I follow "Finish"
+    And I follow "Continue"
+    And I follow "Maybe Later"
     Then I should see "Organization 0"
     
   
