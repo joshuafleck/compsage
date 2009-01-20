@@ -85,8 +85,8 @@ textarea {
 
 #header {
 	height: 53px;
- 	font-family: 'Adobe Garamond Pro', 'Adobe Garamond', 'AGaramond', 'Hoefler Text', 'Baskerville', 'Times New Roman', serif;
-	background: url('../images/inner_header_background.gif');
+	font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
+  background: url('../images/inner_header_background.gif');
 }
 
 #header img {
@@ -100,14 +100,14 @@ textarea {
 	height: 28px;
 	list-style-type: none;
 	margin: 0;
-	padding-top: 25px;
+	padding-top: 23px;
 }
 
 #header #nav li {
 	display: block;
 	float: left;
-	font-size: 18px;
-	padding: 0px 20px 0 20px;
+	font-size: 17px;
+	padding: 0px 20px 2px 20px;
 	height: 28px;
 }
 
