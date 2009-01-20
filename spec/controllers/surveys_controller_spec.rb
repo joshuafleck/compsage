@@ -303,7 +303,7 @@ describe SurveysController, " handling GET /surveys/new with no pending surveys"
   before(:each) do
     @surveys = []
     @surveys.stub!(:find_or_initialize_by_aasm_state).and_return([])
-    @current_organization = mock_model(Organization, :surveys => @surveys)
+    @current_organization = mock_model(Organization, :sponsored_surveys => @surveys, :surveys => @surveys)
     login_as(@current_organization)
   end
 
@@ -327,7 +327,7 @@ describe SurveysController, " handling GET /surveys/new with a pending survey" d
     @surveys = []
     @survey = mock_model(Survey, :id => 1)
     @surveys.stub!(:find_or_initialize_by_aasm_state).and_return([@survey])
-    @current_organization = mock_model(Organization, :surveys => @surveys)
+    @current_organization = mock_model(Organization, :sponsored_surveys => @surveys, :surveys => @surveys)
     login_as(@current_organization)
   end
 
