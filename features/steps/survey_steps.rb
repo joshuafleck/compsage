@@ -1,9 +1,9 @@
 Given /I am logged in/ do
   @current_organization = Factory.create(:organization, :name => "Organization 0")
-  visits new_session_url
-  fills_in("Email", :with => @current_organization.email)
-  fills_in("Password", :with => "test12")
-  clicks_button "Log in"
+  visit new_session_url
+  fill_in("Email", :with => @current_organization.email)
+  fill_in("Password", :with => "test12")
+  click_button "Log in"
   response.body.should_not =~ /Password/m
 end
 

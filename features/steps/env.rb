@@ -9,3 +9,7 @@ require 'cucumber/rails/rspec'
 
 require 'webrat'
 require 'factory_girl'
+
+Webrat.configure do |config|
+  config.mode = :rails
+end

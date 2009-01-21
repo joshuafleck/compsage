@@ -128,6 +128,6 @@ Feature: Manage surveys
     And there is a survey
     And I am on the survey index page
     When I fill in "search_text" with "Survey 1"
-    And I press "_"
+    And I press the button with id "submit"
     Then I should see "Survey 1"
 

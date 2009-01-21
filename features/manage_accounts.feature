@@ -37,7 +37,7 @@ Feature: Manage accounts
     And I follow "Forgot your password?"
     When I fill in "Email" with "test@test.com"
     And I press "Reset Password"
-    Then I should see "Password reset email successfully sent to test@test.com."
+    Then I should see "Password reset email sent to test@test.com."
     Given I am on the reset password page
     When I fill in "Password" with "test12"
     And I fill in "Confirm Password" with "test12"
