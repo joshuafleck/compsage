@@ -62,19 +62,19 @@ Given /I am externally invited to the survey/ do
 end
 
 Given /I am logged in as an external invitee/ do
-  visits survey_login_url(:key => @external_invitation.key, :survey_id => @survey.id)   
+  visit survey_login_url(:key => @external_invitation.key, :survey_id => @survey.id)   
 end
  
 Given /I am on the new survey page/ do
-  visits new_survey_url
+  visit new_survey_url
 end
 
 Given /I am on the edit survey page/ do
-  visits edit_survey_url(@survey)
+  visit edit_survey_url(@survey)
 end
 
 Given /I am on the survey invitations page/ do
-  visits survey_invitations_url(@survey)
+  visit survey_invitations_url(@survey)
 end
 
 Given /I own networks/ do
@@ -92,18 +92,18 @@ end
 
 Given /I am on the survey show page/ do
   if @external_invitation.nil? then
-    visits survey_url(@survey)   
+    visit survey_url(@survey)   
   else
-    visits survey_login_url(:survey_id => @survey.id, :key => @external_invitation.key)   
+    visit survey_login_url(:survey_id => @survey.id, :key => @external_invitation.key)   
   end
 end
 
 Given /I am on the survey respond page/ do
-  visits survey_questions_url(@survey)
+  visit survey_questions_url(@survey)
 end
 
 Given /I am on the survey index page/ do
-  visits surveys_url
+  visit surveys_url
 end
 
 Given /the survey is stalled/ do

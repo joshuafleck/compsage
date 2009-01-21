@@ -34,7 +34,7 @@ When /^I choose "(.*)"$/ do |field|
 end
 
 When /^I attach the file at "(.*)" to "(.*)" $/ do |path, field|
-  attache_file(field, path)
+  attach_file(field, path)
 end
 
 Then /^I should see "(.*)"$/ do |text|
