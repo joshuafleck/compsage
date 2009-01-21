@@ -17,12 +17,12 @@
 						<div class="qualifications">
 							<% if @response.qualifications.blank? %>
 								<div class="field" style="display: none;">
-									Qualification: <%=q.text_field :qualifications %>
+									Comment: <%=q.text_field :qualifications %>
 								</div>
-								<span class="label"><a href="#">Qualify Answer</a></span>
+								<span class="label"><a href="#">Add Comment</a></span>
 							<% else %>
 								<div class="field">
-									Qualification: <%=q.text_field :qualifications %>
+									Comment: <%=q.text_field :qualifications %>
 								</div>
 								<span class="label"><a href="#">Cancel</a></span>
 							<% end %>
