@@ -45,6 +45,11 @@ a:hover {
 	color: #11609f;
 }
 
+h3 a {
+  text-decoration: none;
+  color: #333;
+}
+
 a img {
 	vertical-align: middle;
 }
