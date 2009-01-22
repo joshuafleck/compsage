@@ -25,7 +25,6 @@ h3 {
   font-size: 1.142857em;
 	line-height: 1em;
 	font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
-	letter-spacing: -0.025em;
 	color: #333;
 }
 
@@ -397,7 +396,7 @@ ul.surveys {
 }
 
 div.description_box {
-	color: #555;
+	color: #444;
 	font-size: 1em;
 }
 
@@ -470,7 +469,8 @@ span.sponsor, span.manager {
 }
 
 div.deadline {
-  color: #888;
+  color: #777;
+  font-size: .9em;
 }
 a.abuse {
 	color: #888;

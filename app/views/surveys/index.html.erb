@@ -66,12 +66,7 @@
         <% if survey.stalled? then %>
           <li>
             <h3><%=link_to survey, survey%></h3>
-            <div class="description_box">Stalled with <%=pluralize(survey.participations.count, 'participant')%>.
-              <% if survey.can_be_rerun? then %>
-                <%= link_to "Re-Run", survey_path(survey)%> or
-              <% end %>
-              <%=link_to "Cancel Survey", survey_path(survey) %>
-            </div>
+            <div class="description_box">Stalled with <%=pluralize(survey.participations.count, 'participant')%>.</div>
           </li>
         <% else %>
           <li>
