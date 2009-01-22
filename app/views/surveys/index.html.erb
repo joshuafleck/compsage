@@ -50,8 +50,9 @@
 				<li>
 					<h3><%=link_to invite.survey, survey_path(invite.survey)%> <span class="sponsor">sponsored by
 						<%=link_to invite.survey.sponsor.name, organization_path(invite.survey.sponsor) %></span></h3>
-					<div class="actions no_description"><%=link_to "More information", survey_path(invite.survey), :class => 'action'%> or
-						<%=link_to "Decline", decline_survey_invitation_path(invite.survey, invite), :method => :put, :class => 'action' %></div>
+					<div class="actions no_description">
+            <%=link_to "Decline", decline_survey_invitation_path(invite.survey, invite), :method => :put, :class => 'action' %>
+          </div>
 				</li>
 			<% end %>
 		</ul>
@@ -77,7 +78,6 @@
             <h3><%=link_to survey, survey%></h3>
             <div class="description_box"><%=distance_of_time_in_words_to_now(survey.end_date)%> left with
               <%=survey.participations.count%> out of <%=survey.all_invitations(true).size%> invitees participating.
-              <%=link_to "More details…", survey %>
             </div>
           </li>
         <% end %>
