@@ -1,6 +1,6 @@
 <% title @survey.job_title %>
 <% highlight_tab logged_in? ? "surveys" : "survey" %>
-<h2>Survey for <%= @survey.job_title %>
+<h2><%= @survey.job_title %>
 	<span class="sponsor">sponsored by <%=link_to_organization(@survey.sponsor)%></span></h2>
 <% if @survey.stalled? then %>
   <% if logged_in? && @survey.sponsor.id == current_organization.id then %>
@@ -33,13 +33,16 @@
   <% end %>
 <% else %>
 	<%=flash_messages%>
-	<% if @participation.nil? then %>
-	  <%=link_to image_tag("respond_button.gif"), survey_questions_path(@survey)%> (<%=time_ago_in_words(@survey.end_date)%> left)
-	<%else%>
-	  You responded on <%=@participation.created_at.strftime("%B %d")%>. <%=link_to "Edit your response.", survey_questions_path(@survey)%>
-	<%end%>
-	<div id="invitation_list">
-		<% if @survey.sponsor == current_organization then %>
+  <div id="invitation_list">
+    <% if @participation.nil? then %>
+      <%=link_to image_tag("respond_button.gif"), survey_questions_path(@survey)%>
+      <div class="deadline">Participation deadline in <%=time_ago_in_words(@survey.end_date)%></div>
+    <%else%>
+      You responded on <%=@participation.created_at.strftime("%B %d")%>.<br />
+      <%=link_to "Edit your response.", survey_questions_path(@survey)%>
+    <%end%>
+
+    <% if @survey.sponsor == current_organization then %>
 			<h3>Manage Your Survey</h3>
 				<p><%=link_to "Edit Questions &amp; Job Description", edit_survey_path(@survey)%><br />
 				<%=link_to "Manage Invitation List", survey_invitations_path(@survey) %></p>
@@ -56,7 +59,7 @@
 				</li>
 			<% end %>
 		</ol>
-		<p><%=pluralize(@survey.participations.count, 'participant')%> so far.</p>
+    <p>Participants: <%= @survey.participations.count %></p>
 		<% if @survey.sponsor == current_organization && !@survey.enough_invitations? then %>
 		  <p>Warning: <%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%> participants are required to provide results. We recommend you invite at least <%=pluralize(@survey.recommended_number_of_invitations, 'additional organization')%>.</p>
 		<% end %>

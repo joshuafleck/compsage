@@ -390,7 +390,7 @@ div#my_surveys .deadline {
 #invitation_list {
 	float: right;
 	width: 256px;
-	margin-left: 10px;
+	margin-left: 1em;
 }
 
 #invitation_list h3 {
@@ -401,6 +401,11 @@ div#my_surveys .deadline {
 	padding-left: 1.5em;
 	margin-top: 0;
 	padding-top: 0;
+}
+
+#invitation_list .deadline {
+  text-align: center;
+  padding-right: 10px;
 }
 
 div.link_bar {
