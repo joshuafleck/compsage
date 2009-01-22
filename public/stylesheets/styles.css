@@ -38,11 +38,20 @@ h4 {
 }
 
 a {
-	color: #0c4572;
+	color: #084f82;
 }
 
 a:hover {
 	color: #11609f;
+}
+
+h3 a {
+	color:#084f82;
+  text-decoration: underline;
+}
+
+h3 a:hover {
+  text-decoration: underline;
 }
 
 a img {
