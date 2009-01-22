@@ -358,6 +358,34 @@ div#my_surveys li {
 div#my_surveys li h3 {
   margin-top: 0;
 }
+
+div#my_surveys .status {
+  overflow: hidden;
+}
+
+div#my_surveys .state, div#my_surveys .participants, div#my_surveys .invitations {
+  width: 6.5em;
+  float: left;
+}
+
+div#my_surveys .state {
+  font-weight: bold;
+  width: 5em;
+}
+
+div#my_surveys .running {
+  color: #52795d;
+}
+
+div#my_surveys .stalled {
+  color: #937979;
+  font-weight: bold;
+}
+
+div#my_surveys .deadline {
+  font-size: 1em;
+}
+
 /* Survey show page invitation list */
 #invitation_list {
 	float: right;
@@ -470,7 +498,7 @@ span.sponsor, span.manager {
 
 div.deadline {
   color: #777;
-  font-size: .9em;
+  font-size: .95em;
 }
 a.abuse {
 	color: #888;
@@ -479,8 +507,12 @@ a.abuse {
 
 span.sponsor a, span.manager a{
 	color: #4e728b;
+  text-decoration: none;
 }
 
+span.sponsor a:hover {
+  text-decoration: underline;
+}
 .description_box {
 	color: #555;
 	font-size: 1em;
