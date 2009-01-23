@@ -3,7 +3,7 @@ class SurveyFinisher < BeanstalkWorker
   def finish(options)
     survey = Survey.find(options[:id])
     
-    survey.finish! unless (survey.nil? || survey.finished?)
+    survey.finish! if survey && survey.running? 
     
     job.delete
   end
