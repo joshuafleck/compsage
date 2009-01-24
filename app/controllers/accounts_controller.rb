@@ -132,7 +132,7 @@ class AccountsController < ApplicationController
         Notifier.deliver_reset_password_key_notification(@organization)
         respond_to do |wants|
           wants.html do
-            flash[:notice] = "Password reset email sent to #{@organization.email}."
+            flash[:notice] = "Email sent to #{@organization.email}."
             redirect_to new_session_path 
           end
         end

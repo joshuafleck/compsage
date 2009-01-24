@@ -2,9 +2,10 @@
 <% title "Forgot your password?" %>
 <% breadcrumbs() %>
 <h2>Forgot your password?</h2>
-<p>Forgot your password? Enter your login email below. We will send you an email with a link to reset your password. You have five days to do so before the link will expire.</p>
+<p>Enter your login email below and we will send you an email with a link to reset your password.</p>
 <% form_tag forgot_account_path do -%>
-<p><label for="email">Email</label><br />
-<%= text_field_tag 'email' %></p>
-<p><%= submit_tag 'Reset Password' %></p>
+<label for="email">Email Address</label>
+<%= text_field_tag 'email' %> <%= submit_tag 'Reset My Password' %>
 <% end -%>
+<br />
+Remember your password? <%= link_to "Log in", new_session_path %>!
