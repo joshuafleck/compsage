@@ -50,15 +50,18 @@ Feature: Manage Networks
     Given I am logged in
     And there is a network
     And I am a member of the network
+    And the network has members
     And I am on the show network page
     And there is a predefined question
-    When I follow "Survey 2 members"
+    When I follow "Survey 4 members"
     And I fill in "Job title" with "Survey network 1"
     And I check "Question 1"
     And I press "Create"
     And I follow "Continue"
+    And I press "Send Invitations"
     And I follow "Maybe Later"
-    Then I should see "Organization 0"
+    Then I should see "Organization 1"
+    And I should see "Organization 2"
     
   
   

@@ -32,8 +32,11 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
     @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :all_invitations => @invitations)
     @surveys_proxy = mock('surveys proxy')
     @surveys_proxy.stub!(:find).and_return(@survey)
-    
+    @network = mock_model(Network, :id => "1", :included= => "1")
+    @networks = [@network]
+    session[:survey_network_id] = "1"
     @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
+    @current_organization.stub!(:networks).and_return(@networks)
     
     @params = {:survey_id => 1}
   end
@@ -62,10 +65,25 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
     assigns(:invitations).should eql(@invitations)
    end
    
+  it "should assign the networks for the view" do    
+    do_get
+    assigns(:networks).should eql(@networks)
+   end   
+   
   it "should find all invitations" do
     @survey.should_receive(:all_invitations).and_return(@invitations)
     do_get
   end
+  
+  it "should mark the surveyed network as selected" do
+    @network.should_receive(:included=).with("1")
+    do_get
+  end  
+  
+  it "should find all networks" do
+    @current_organization.should_receive(:networks).and_return(@networks)
+    do_get
+  end  
       
   it "should error if requesting organization is not survey sponsor" do
     @current_organization.should_receive(:sponsored_surveys).and_return(@surveys_proxy)
@@ -80,14 +98,27 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations.xml"
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @invitation = mock_model(SurveyInvitation, :id => 1, :inviter => @current_organization, :to_xml => 'XML')
+    @invitation = mock_model(
+      SurveyInvitation, 
+      :id => 1, 
+      :inviter => @current_organization, 
+      :to_xml => 'XML')
     @invitations = [@invitation]
     
-    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :all_invitations =>  @invitations)
+    @survey = mock_model(
+      Survey, 
+      :id => 1, 
+      :update_attributes => false, 
+      :sponsor => @current_organization, 
+      :job_title => "test", 
+      :all_invitations =>  @invitations)
     @surveys_proxy = mock('surveys proxy')
     @surveys_proxy.stub!(:find).and_return(@survey)
     
+    @networks = []
+    
     @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
+    @current_organization.stub!(:networks).and_return(@networks)
     
     @params = {:survey_id => 1}
   end
@@ -269,8 +300,9 @@ describe SurveyInvitationsController, " handling POST /surveys/1/invitations wit
     @external_invitations_proxy = mock('external_invitations_proxy', :new => @external_invitation)
     
     @current_organization.stub!(:sponsored_surveys).and_return(@sponsored_surveys_proxy)
+    @current_organization.stub!(:networks).and_return([])
     @sponsored_surveys_proxy.stub!(:running).and_return(@sponsored_surveys_proxy)
-    
+
     @survey.stub!(:external_invitations).and_return(@external_invitations_proxy)
     
     @params = {

@@ -1,6 +1,7 @@
 # This controller handles the login/logout function of the site.  
 class SessionsController < ApplicationController
   layout 'front'
+  filter_parameter_logging :password  
 
   # render new.rhtml
   def new

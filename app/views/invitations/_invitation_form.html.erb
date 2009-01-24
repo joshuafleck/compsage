@@ -30,7 +30,7 @@
 	  <% if include_networks then %>
 		<h3>Invite Your Networks</h3>
 		<ul>
-			<% current_organization.networks.each do |network| %>
+			<% @networks.each do |network| %>
 		    <% fields_for network, :index => network.id do |network_form| %>
 		      <li>
   		        <%=network_form.check_box :included%>

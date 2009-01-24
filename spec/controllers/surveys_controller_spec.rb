@@ -305,16 +305,22 @@ describe SurveysController, " handling GET /surveys/new with no pending surveys"
     @surveys.stub!(:find_or_initialize_by_aasm_state).and_return([])
     @current_organization = mock_model(Organization, :sponsored_surveys => @surveys, :surveys => @surveys)
     login_as(@current_organization)
+    @params = {:network_id => "1"}
   end
 
   def do_get
-    get :new
+    get :new, @params
   end
   
   it "should be successful" do
     do_get
     response.should be_success
   end
+  
+  it "should save the survey network id in the session" do
+    do_get
+    session[:survey_network_id].should eql("1")
+  end  
     
   it "should render new template" do
     do_get
@@ -481,11 +487,6 @@ describe SurveysController, " handling POST /surveys" do
     @pdq1.should_receive(:build_questions).with(@survey)
     do_post
   end  
-  
-  it "should invite the network" do
-    @survey.should_receive(:invite_network)
-    do_post
-  end
   
   it "should redirect to the survey preview page upon success" do
     do_post

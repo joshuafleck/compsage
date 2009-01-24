@@ -108,6 +108,10 @@ class SurveysController < ApplicationController
   
   def new
     @survey = current_organization.sponsored_surveys.find_or_initialize_by_aasm_state(:pending) 
+    
+    # if we came from a 'survey network' link, save the network in the session
+    #  to be accessed later when sending invitations
+    session[:survey_network_id] = params[:network_id] unless params[:network_id].blank?
   end
   
   def create
@@ -126,10 +130,7 @@ class SurveysController < ApplicationController
     
       # For now, pretend we've received billing information.
       @survey.billing_info_received!
-      
-      # invite the network, if this came from the 'survey network' link
-      @survey.invite_network
-      
+            
       respond_to do |wants|
         wants.html do
           redirect_to preview_survey_questions_path(@survey)

@@ -6,7 +6,6 @@
   <%=f.label :description, "Job description"%>
   <%=f.text_area :description, :rows => 4, :cols => 40 %>
   <p class="required" title="Asterisk indicates required field.">* = required</p>
-  <%=f.hidden_field :network_id %>
   <% if @survey.new_record? then %>
   	<%=f.label :days_running, "Run length" %>
   	<%=f.select :days_running, (3..7).to_a.collect {|i| ["#{i} days", i]} %>

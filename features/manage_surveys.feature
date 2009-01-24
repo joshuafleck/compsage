@@ -90,7 +90,7 @@ Feature: Manage surveys
     When I fill in "Question 1" with "1"
     And I press "Submit My Responses"
     Then I should see "Thank you for participating in the survey!"
-    And I should see "1 participant so far."
+    And I should see "Participants: 1"
     When I follow "Surveys &amp; Results"
     Then I should not see "Decline"
     

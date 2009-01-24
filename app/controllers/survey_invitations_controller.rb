@@ -5,7 +5,16 @@ class SurveyInvitationsController < ApplicationController
   def index
     @survey = current_organization.sponsored_surveys.find(params[:survey_id])
     @invitations = @survey.all_invitations
-    @invalid_external_invites = []
+    @invalid_external_invites = []    
+    @networks = current_organization.networks    
+    
+    # if this came from a survey network link, be sure to mark the network as selected
+    @networks.each do |network|
+      if network.id.to_s == session[:survey_network_id] then
+        network.included = "1"
+        session[:survey_network_id] = nil
+      end    
+    end unless session[:survey_network_id].blank?
     
     respond_to do |wants|
       wants.html {} # render the template
@@ -60,6 +69,7 @@ class SurveyInvitationsController < ApplicationController
     if @invalid_external_invites.size > 0 then
       respond_to do |wants|
         @invitations = @survey.all_invitations
+        @networks = current_organization.networks
         wants.html do
           render :action => "index"
         end

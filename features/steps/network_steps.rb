@@ -1,17 +1,17 @@
 Given /I am on the new network page/ do
-  visits new_network_url
+  visit new_network_url
 end
 
 Given /I am on the edit network page/ do
-  visits edit_network_url(@network)
+  visit edit_network_url(@network)
 end
 
 Given /I am on the show network page/ do
-  visits network_url(@network)
+  visit network_url(@network)
 end
 
 Given /I am on the network index page/ do
-  visits networks_url
+  visit networks_url
 end
 
 Given /there is a network/ do

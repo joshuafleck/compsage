@@ -1,18 +1,18 @@
 Given /I am on the new account page/ do
-  visits new_account_url
+  visit new_account_url
 end
 
 Given /I am on the edit account page/ do
-  visits edit_account_url
+  visit edit_account_url
 end
 
 Given /I am on the login page/ do
-  visits new_session_url
+  visit new_session_url
 end
 
 Given /I am on the reset password page/ do  
   @current_organization = Organization.find_by_email("test@test.com")
-  visits reset_account_url(:key => @current_organization.reset_password_key)
+  visit reset_account_url(:key => @current_organization.reset_password_key)
 end
 
 Given /there is an organization/ do
