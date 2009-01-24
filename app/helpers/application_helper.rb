@@ -36,4 +36,9 @@ module ApplicationHelper
         "managed by " + link_to_organization(network.owner)
       end
   end
+  
+  # Appends the required image to the text
+  def required(text)
+    text + image_tag("required.gif")
+  end  
 end

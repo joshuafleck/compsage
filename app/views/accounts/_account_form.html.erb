@@ -5,12 +5,12 @@
   <% if @organization.new_record? %>
    <%= hidden_field_tag 'key', external_invitation.key %>
   <% end %>
-  <%=f.label :name, 'Name of Your Organization' %>
-  <%=f.text_field :name %><span class="required" title="This field is required.">&nbsp;*</span>
+  <%=f.label :name, required('Name of your organization') %>
+  <%=f.text_field :name %>
   <%=f.label :contact_name, 'Your Name' %>
   <%=f.text_field :contact_name %>
-  <%=f.label :email %> 
-  <%=f.text_field :email %><span class="required" title="This field is required.">&nbsp;*</span>
+  <%=f.label :email, required('Contact email address') %> 
+  <%=f.text_field :email %>
   <%=f.label :location, 'Name of Office or Branch' %> 
   <%=f.text_field :location %>
   <%=f.label :city %> 
@@ -18,8 +18,8 @@
   <%=f.label :state %> 
   <%= f.select :state, AccountsHelper::STATE_ABBR, 
 		:include_blank => true %>
-  <%=f.label :zip_code %> 
-  <%=f.text_field :zip_code %><span class="required" title="This field is required.">&nbsp;*</span>
+  <%=f.label :zip_code, required('Zip code') %> 
+  <%=f.text_field :zip_code %>
   <%=f.label :industry %> 
   <%=f.select :industry, AccountsHelper::INDUSTRIES, :include_blank => true %>
   <% if !@organization.logo.nil? then %>
@@ -29,11 +29,10 @@
       <%=logo_form.label :uploaded_data, 'Logo'%>
       <%=logo_form.file_field :uploaded_data%>
   <% end %>  		    
-  <%=f.label :password %> 
-  <%=f.password_field :password %><span class="required" title="This field is required.">&nbsp;*</span>
-  <%=f.label :password_confirmation %> 
-  <%=f.password_field :password_confirmation %><span class="required" title="This field is required.">&nbsp;*</span>
-  <p class="required" title="Asterisk indicates required field.">* = required</p>
+  <%=f.label :password, required('Password') %> 
+  <%=f.password_field :password %>
+  <%=f.label :password_confirmation, required('Confirm your password') %> 
+  <%=f.password_field :password_confirmation %>
   <div class="submit">
     <input type="submit" value='<%=@organization.new_record? ? "Create" : "Update"%>' /> or
     <% if @organization.new_record? && logged_in_from_survey_invitation? then %>
