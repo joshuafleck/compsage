@@ -1,8 +1,8 @@
 <% title "Welcome to Compsage!"
    page_name "front"
    highlight_tab "benefits" %>
+   
 <div id="banner">
-  <image src="/images/banner.jpg" />
   <div id="login">
     <% form_tag session_path do %>
       <label for="email">Email Address</label>
@@ -12,6 +12,10 @@
       <label for="remember_me">Remember Me: <%= check_box_tag 'remember_me', '' %></label>
       <%= submit_tag 'Log in' %> <%=link_to "Forgot your password?", forgot_account_path%> 
     <% end %>
+  </div>
+  <div id="top_banner"><img src="/images/banner.jpg" /></div>
+  <div id="bottom_banner">
+    <img src="/images/banner_bottom_left.jpg" /><%= link_to '<img src="/images/banner_bottom_right.jpg" />', home_path('how') %>
   </div>
 </div>
 

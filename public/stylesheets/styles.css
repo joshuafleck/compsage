@@ -229,7 +229,14 @@ div#banner {
 }
 
 div#banner img {
+  border: 0;
+  padding: 0;
+  margin: 0;
   float: left;
+}
+
+div#banner #top_banner, div#banner #bottom_banner {
+  line-height: 0;
 }
 
 div#banner div#login {
@@ -237,7 +244,7 @@ div#banner div#login {
   height: 170px;
   color: #88ccff;
   padding: 56px 0 0 20px;
-  float: left;
+  float: right;
   width: 246px;
 	font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
 }
@@ -262,7 +269,7 @@ div#banner div#login label {
   color: #88ccff;
 }
 
-div#banner a {
+div#login a {
   color: #88ccff;
   border-bottom: 1px solid #88ccff;
   text-decoration: none;
