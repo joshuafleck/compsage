@@ -1,9 +1,11 @@
-<% title "Search Members" %>
-<% highlight_tab "members" %>
-<h2>Search Members</h2>
+<% title "Members" %>
+<% highlight_tab "networks" %>
+<h2>CompSage Members</h2>
+<p>Explore the community. Invite members to join one of <%=link_to "your networks", networks_path %> or to take part in
+  a survey you are sponsoring.</p>
 <%=flash_messages%>
 <%= render :partial => "search_form" %>
-<p><%= link_to "All organizations", organizations_path %></p>
+<p><%= link_to "All organizations", search_organizations_path %></p>
 <% if @organizations.size == 0 then %>
   <p>Your search returned zero results</p>
 <% else %>
@@ -31,3 +33,4 @@ function initializeObservers() {
 </script>
 
 <% content_for :initialize_js, "initializeObservers();"%>
+

@@ -6,3 +6,4 @@ Feature: Manage Contacts
     When I fill in "Find CompSage Members" with "Organization 1"
     And I press "Search"
     Then I should see "Organization 1"
+    

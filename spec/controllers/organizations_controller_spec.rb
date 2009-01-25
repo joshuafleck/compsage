@@ -19,62 +19,6 @@ describe OrganizationsController, "#route_for" do
   
 end
 
-describe OrganizationsController, "handling GET /organizations" do
-
-	before do
-
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
-      
-    @organization = mock_model(Organization, :id => 1, :to_xml => "XML")
-    
-    @params = {:page => "1"}
-    #Commented out pagination for this round
-    #Organization.stub!(:paginate).and_return([@organization])
-    Organization.stub!(:find).and_return([@organization])
-    
-	end
-  
-  def do_get
-    get :index, @params
-  end
-
-  it "should require being logged in" do
-    controller.should_receive(:login_required)
-    do_get
-  end
-  
-  it "should be successful" do
-  	do_get
-  	response.should be_success
-  end
-  
-  it "should render index template" do
-    do_get
-    response.should render_template('index')
-  end
-  
-  it "should find all organizations" do
-    #Organization.should_receive(:paginate).with({:page => @params[:page]}).and_return([@organization])
-    Organization.should_receive(:find).and_return([@organization])
-    do_get
-  end
-  
-  it "should assign the found organizations for the view" do
-    do_get
-    assigns[:organizations].should == [@organization]
-  end
- 
-  it "should support sorting..." do
-    pending
-  end
-    
-  it "should support pagination..." do
-    pending
-  end
-   
-end
-
 describe OrganizationsController, " handling GET /organizations.xml" do
 
 	before do
@@ -242,13 +186,48 @@ describe OrganizationsController, "handling GET /organizations/search" do
   	do_get
   	assigns[:organizations].should == [@organization]
   end
+    
+end
+
+describe OrganizationsController, "handling GET /organizations/search without search text" do
+	
+	before do
+
+    @current_organization = mock_model(Organization, :industry => 'Coal', :latitude => 1, :longitude => 1)
+    login_as(@current_organization)
+      
+    @organization = mock_model(Organization, :id => 1, :name => "Denarius", :to_xml => "XML")
+    @organizations = [@organization]
+    Organization.stub!(:search).and_return(@organizations)
+	end
   
-  it "should support sorting..." do
-    pending
+  def do_get
+    get :search
+  end
+  
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_get
+  end
+  
+  it "should be successful" do
+  	do_get
+  	response.should be_success
+  end
+  
+  it "should render the search template" do
+  	do_get
+  	response.should render_template('search')
+  end
+  
+  it "should find the organizations that match the search terms" do
+  	Organization.should_receive(:search).and_return(@organizations)
+  	do_get
+  end
+  
+  it "should assign the found organizations for the view" do
+  	do_get
+  	assigns[:organizations].should == [@organization]
   end
     
-  it "should support pagination..." do
-    pending
-  end
-  
 end

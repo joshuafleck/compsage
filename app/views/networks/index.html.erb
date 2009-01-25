@@ -5,7 +5,7 @@
   <label for="search_text">Find CompSage Members</label>
   <%= text_field_tag 'search_text', '', :size => 30 %>
   <input type="submit" value="Search" />
-  or <%=link_to "Browse CompSage members in your area", organizations_path %>
+  or <%=link_to "Browse CompSage members in your area", search_organizations_path %>
 <% end %>
 
 <% if @network_invitations.any? then %>

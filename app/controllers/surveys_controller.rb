@@ -147,7 +147,7 @@ class SurveysController < ApplicationController
   def search
     #TODO: highlight search text in survey description (if applicable)
   
-    @search_text = params[:search_text]
+    @search_text = params[:search_text] || ""
     
     @esc_search_text = Riddle.escape(@search_text)
     
