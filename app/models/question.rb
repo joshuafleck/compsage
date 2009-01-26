@@ -11,8 +11,6 @@ class Question < ActiveRecord::Base
   
   xss_terminate :except => [ :question_type, :question_parameters, :html_parameters, :options, :custom_question_type ]
   
-  #jf- commented out validation, as this was causing survey.save to fail
-  #validates_presence_of :survey
   validates_presence_of :question_type
   validates_presence_of :options, :message => " are required multiple response question", :if => Proc.new { |question| question.has_options? }
   validates_length_of :text, :within => 1..1000, :message => " is required for a question."
@@ -22,25 +20,20 @@ class Question < ActiveRecord::Base
      self[:options] = CUSTOM_QUESTION_OPTIONS[self[:custom_question_type]] if attribute_present?("custom_question_type")
   end
 
-  QUESTION_TYPES = [  ["Single-line Text Box", 'text_field'],
-                      ["Numerical Input", 'numerical_field'],
-                      ["Multi-line Text Box", 'text_area'],
-                      ["Multiple Choice - 1 Answer", 'radio'],
-                      ["Multiple Choice - Any Answer", 'checkbox'],
-                      ["Textual Comments or Instructions", 'text']
-                    ]
-                    
   TYPES_WITH_OPTIONS = ['radio', 'checkbox']
   
-  NUMERICAL_RESPONSES = { 'text_field' => false,
-                                'text_area' => false,
-                                'numerical_field' => true,
-                                'radio' => true,
-                                'checkbox' => false,
-                                'text' => false
+  NUMERICAL_RESPONSES = { 
+                          'text_field' => false,
+                          'text_area' => false,
+                          'numerical_field' => true,
+                          'radio' => true,
+                          'checkbox' => false,
+                          'text' => false,
+                          'wage_field' => false
                         }
                         
   CUSTOM_QUESTION_TYPES = {'Free response' => 'text_area',
+                           'Pay or Wage' => 'wage_field',
                            'Numeric response' => 'numerical_field', 
                            'Yes/No' => 'radio', 
                            'Agreement scale' => 'radio'}
