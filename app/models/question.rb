@@ -21,26 +21,39 @@ class Question < ActiveRecord::Base
   end
 
   TYPES_WITH_OPTIONS = ['radio', 'checkbox']
-  
+  TYPES_WITH_UNITS = ['wage']
+
   NUMERICAL_RESPONSES = { 
-                          'text_field' => false,
-                          'text_area' => false,
-                          'numerical_field' => true,
-                          'radio' => true,
-                          'checkbox' => false,
-                          'text' => false,
-                          'wage_field' => false
-                        }
+    'text_field' => false,
+    'text_area' => false,
+    'numerical_field' => true,
+    'radio' => true,
+    'checkbox' => false,
+    'text' => false,
+    'wage' => false
+  }
                         
-  CUSTOM_QUESTION_TYPES = {'Free response' => 'text_area',
-                           'Pay or Wage' => 'wage_field',
-                           'Numeric response' => 'numerical_field', 
-                           'Yes/No' => 'radio', 
-                           'Agreement scale' => 'radio'}
+  CUSTOM_QUESTION_TYPES = {
+    'Free response' => 'text_area',
+    'Pay or wage' => 'wage',
+    'Numeric response' => 'numerical_field', 
+    'Yes/No' => 'radio', 
+    'Agreement scale' => 'radio'
+  }
                            
-  CUSTOM_QUESTION_OPTIONS = { 'Yes/No' => ['Yes', 'No'],
-                              'Agreement scale' => ['Strongly Agree','Agree','Neutral','Disagree','Strongly Disagree']}
+  CUSTOM_QUESTION_OPTIONS = {
+    'Yes/No' => ['Yes', 'No'],
+    'Agreement scale' => ['Strongly Agree','Agree','Neutral','Disagree','Strongly Disagree']
+  }
                         
+  QUESTION_UNITS = {
+    'wage' => ['Annually', 'Hourly']
+  }
+  
+  UNIT_CONVERSION_FACTORS = {
+    'Annually' => 1,
+    'Hourly' => 2080
+  }
   
   def answerable?
     return !(self[:question_type] == 'text')
@@ -57,7 +70,15 @@ class Question < ActiveRecord::Base
   def needs_chart?
     return ['radio', 'checkbox'].include?(self[:question_type])
   end
-  
+ 
+  def has_units?
+    return TYPES_WITH_UNITS.include?(self[:question_type])
+  end
+
+  def units
+    return QUESTION_UNITS[self[:question_type]]
+  end
+
   def grouped_responses
   
     if self[:question_type] == 'checkbox' then    

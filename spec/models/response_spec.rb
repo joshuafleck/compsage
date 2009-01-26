@@ -4,15 +4,23 @@ module ResponseSpecHelper
 
   def valid_numerical_response_attributes
     {
-      :question => mock_model(Question, {:numerical_response? => true}),
+      :question => mock_model(Question, {:numerical_response? => true, :has_units? => false}),
       :response => 1.0
     }
   end
   
   def valid_textual_response_attributes
     {
-      :question => mock_model(Question, {:numerical_response? => false}),
+      :question => mock_model(Question, {:numerical_response? => false, :has_units? => false}),
       :response => "The response"
+    }
+  end
+
+  def valid_wage_response_attributes
+    {
+      :question => mock_model(Question, {:numerical_response? => true, :has_units? => true}),
+      :response => 1.0,
+      :units => "Hourly",
     }
   end
 end
@@ -83,8 +91,6 @@ describe Response, "to question with text-based response" do
    
   it 'should be valid' do
     @response.attributes = valid_textual_response_attributes
-    puts @response.valid?
-    puts @response.errors.full_messages
     @response.should be_valid
     
   end
@@ -96,3 +102,16 @@ describe Response, "to question with text-based response" do
   
 end
 
+describe Response, "to a question with units" do
+  include ResponseSpecHelper
+
+  before do
+    @response = Response.new
+    @response.stub!(:question).and_return(valid_wage_response_attributes[:question])
+  end
+
+  it 'should require units to be specified' do
+    @response.attributes = valid_wage_response_attributes.except(:units)
+    @response.should_not be_valid
+  end
+end

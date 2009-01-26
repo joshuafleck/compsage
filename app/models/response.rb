@@ -6,12 +6,14 @@ class Response < ActiveRecord::Base
   validates_presence_of :response
   validates_numericality_of :response, :if => Proc.new { |r| !r.question.nil? && r.question.numerical_response? },
     :message => "must be a number", :allow_nil => true
+  validates_presence_of :unit, :if => Proc.new { |r| !r.question.nil? && r.question.has_units? }
 
   HUMANIZED_ATTRIBUTES = {
     :numerical_response => "Response",
     :textual_response => "Response"
   }
  
+  before_save :convert_units
 
   named_scope :from_invitee,
     :include => {:participation => [{:survey => [:invitations]}]}, 
@@ -48,5 +50,11 @@ class Response < ActiveRecord::Base
   # removes dollar signs and commas
   def sanitize_number(value)
     value.respond_to?(:gsub) ? value.gsub(/\$|\,/, '') : value
+  end
+
+  def convert_units
+    if question.has_units? then
+      self.numerical_response *= Question::UNIT_CONVERSION_FACTORS[self.unit] unless self.unit.nil?
+    end
   end
 end

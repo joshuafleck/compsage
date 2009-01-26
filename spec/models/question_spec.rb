@@ -162,3 +162,16 @@ describe Question, "that is just plain old text (like instructions)" do
   end
   
 end
+
+describe Question, "that has units" do
+  include QuestionSpecHelper
+
+  before do
+    @question = Question.new
+    @question.attributes = valid_question_attributes.with(:question_type => 'wage')
+  end
+
+  it "should have units" do
+    @question.has_units?.should be_true
+  end
+end
