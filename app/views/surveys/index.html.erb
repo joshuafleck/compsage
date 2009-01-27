@@ -50,7 +50,7 @@
 				<li>
 					<h3><%=link_to invite.survey, survey_path(invite.survey)%> <span class="sponsor">sponsored by
 						<%=link_to invite.survey.sponsor.name, organization_path(invite.survey.sponsor) %></span></h3>
-          <div class="description"><%= invite.survey.description %></div>
+          <div class="description"><%= auto_link(invite.survey.description) %></div>
           <div class="deadline">Participation deadline in <%=distance_of_time_in_words_to_now(invite.survey.end_date)%></div>
           <div class="actions no_description">
             <%=link_to "Decline Invitation", decline_survey_invitation_path(invite.survey, invite), :method => :put, :class => 'action' %>

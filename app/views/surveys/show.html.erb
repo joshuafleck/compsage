@@ -65,7 +65,7 @@
 		<% end %>
 	</div>
 	<h3>Job Description</h3>
-	<p class="description_box"><%=@survey.description%></p>
+	<p class="description_box"><%=auto_link(@survey.description)%></p>
 	<h3>Discussion</h3>
 	<% if @discussions.any? then %>
 		<p><a href="#" id="new_discussion_link">Start new discussion</a></p>
