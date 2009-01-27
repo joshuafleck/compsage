@@ -40,7 +40,7 @@ function observeQualificationLinks() {
 		links = elem.select('a')
 		links.invoke('observe', 'click', function(e) {
 			field = elem.select('div.field').first().toggle();
-			e.target.innerHTML = e.target.innerHTML == 'Cancel' ? 'Qualify Answer' : 'Cancel';
+			e.target.innerHTML = e.target.innerHTML == 'Cancel' ? 'Add Comment' : 'Cancel';
 			elem.select('input').first().value = "";
 			e.stop();
 		});
