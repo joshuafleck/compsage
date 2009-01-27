@@ -8,6 +8,8 @@ class QuestionFormBuilder < ActionView::Helpers::FormBuilder
       label(:response, question.text) + text_field(:response, :size => 40) + error_text
     when "numerical_field"
       label(:response, question.text) + text_field(:response, :size => 5) + error_text
+    when "wage"
+      label(:response, question.text) + text_field(:response, :size => 5) + " " + select(:unit, question.units, :prompt => 'Select format') + error_text
     when "radio"
       @template.content_tag(:div, question.text, :class => "label") +
       question.options.to_enum(:each_with_index).collect { |option, index|
@@ -29,7 +31,6 @@ class QuestionFormBuilder < ActionView::Helpers::FormBuilder
     end
   end
   
-
   private
   
   # return the question for the response object.

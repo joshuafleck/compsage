@@ -30,12 +30,12 @@ class Question < ActiveRecord::Base
     'radio' => true,
     'checkbox' => false,
     'text' => false,
-    'wage' => false
+    'wage' => true 
   }
                         
   CUSTOM_QUESTION_TYPES = {
     'Free response' => 'text_area',
-    'Pay or wage' => 'wage',
+    'Pay or wage response' => 'wage',
     'Numeric response' => 'numerical_field', 
     'Yes/No' => 'radio', 
     'Agreement scale' => 'radio'

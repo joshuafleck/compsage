@@ -4,13 +4,13 @@ pay_questions:
   name: Pay Questions
   description: "Questions regarding pay for a positions"
   question_hash: --- 
-  - :question_type: numerical_field
+  - :question_type: wage
     :text: What is this position's average base wage/salary?
-  - :question_type: numerical_field
+  - :question_type: wage
     :text: What is this position's pay range minimum?
-  - :question_type: numerical_field
+  - :question_type: wage
     :text: What is this position's pay range midpoint?
-  - :question_type: numerical_field
+  - :question_type: wage
     :text: What is this position's pay range maximum?
   
 incentive_question:

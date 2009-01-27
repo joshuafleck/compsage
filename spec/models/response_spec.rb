@@ -20,7 +20,8 @@ module ResponseSpecHelper
     {
       :question => mock_model(Question, {:numerical_response? => true, :has_units? => true}),
       :response => 1.0,
-      :units => "Hourly",
+      :unit => "Hourly",
+      :participation => mock_model(Participation)
     }
   end
 end
@@ -111,7 +112,14 @@ describe Response, "to a question with units" do
   end
 
   it 'should require units to be specified' do
-    @response.attributes = valid_wage_response_attributes.except(:units)
+    @response.attributes = valid_wage_response_attributes.except(:unit)
     @response.should_not be_valid
   end
+
+  it 'should convert the units when the response is saved' do
+    @response.attributes = valid_wage_response_attributes.with(:unit => 'Hourly')
+    @response.save
+    @response.response.should == 2080
+  end
+
 end
