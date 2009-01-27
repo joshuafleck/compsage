@@ -2,7 +2,7 @@
 <% highlight_tab logged_in? ? "surveys" : "survey" %>
 <h2>Report on <%=@survey.job_title%></h2>
 <h4>Job Description</h4>
-<div class="description_box"><%=auto_link(@survey.description)%></div>
+<div class="description_box"><%=auto_link(@survey.description, :href_options => { :target => '_blank' })%></div>
 <p><%= link_to_function "Show Invitation List (#{@invitations.size} invitees)", "new Effect.toggle('invitation_section', 'blind', {duration: .5});return false;" %></p>
 <div id="invitation_section" style="display:none;">
   <ul id="invitations">
