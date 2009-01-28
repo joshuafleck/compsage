@@ -12,8 +12,12 @@ class Response < ActiveRecord::Base
     :numerical_response => "Response",
     :textual_response => "Response"
   }
- 
-  before_save :convert_units
+  
+  before_save :convert_to_standard_units
+
+  # Enable after_find by defining this method
+  def after_find; end;
+  after_find :convert_from_standard_units
 
   named_scope :from_invitee,
     :include => {:participation => [{:survey => [:invitations]}]}, 
@@ -52,9 +56,16 @@ class Response < ActiveRecord::Base
     value.respond_to?(:gsub) ? value.gsub(/\$|\,/, '') : value
   end
 
-  def convert_units
+  def convert_to_standard_units
     if question.has_units? then
       self.numerical_response *= Question::UNIT_CONVERSION_FACTORS[self.unit] unless self.unit.nil?
     end
   end
+
+  def convert_from_standard_units
+    if !self.unit.blank? then
+      self.numerical_response *= 1.0/Question::UNIT_CONVERSION_FACTORS[self.unit]
+    end
+  end
+
 end

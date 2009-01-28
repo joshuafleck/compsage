@@ -122,4 +122,10 @@ describe Response, "to a question with units" do
     @response.response.should == 2080
   end
 
+  it 'should convert the units back when the response is loaded' do
+    @response.attributes = valid_wage_response_attributes.with(:unit => 'Hourly')
+    @response.save
+    @response.reload
+    @response.response.should == 1
+  end
 end
