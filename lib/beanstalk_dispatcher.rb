@@ -1,8 +1,13 @@
-# Get back to RAILS_ROOT.
-Dir.chdir(RAILS_ROOT)
+if !defined?(RAILS_ROOT) then
+  ENV['RAILS_ENV'] = ARGV.first || ENV['RAILS_ENV'] || 'development'
+  require File.dirname(__FILE__) + '/../config/environment'
+else
+  # Get back to RAILS_ROOT.
+  Dir.chdir(RAILS_ROOT)
 
-# Load our Rails environment.
-require File.join('config', 'environment')
+  # Load our Rails environment.
+  require File.join('config', 'environment')
+end
 
 loop do
   job = BEANSTALK.reserve
