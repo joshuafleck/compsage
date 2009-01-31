@@ -1,4 +1,4 @@
-Your organization been invited by <%=@invitation.inviter.name%> to join CompSage.
+Your organization has been invited by <%=@invitation.inviter.name%> to join CompSage.
 
 CompSage allows HR professionals to send quick compensation surveys to organizations of their choosing. 
 
@@ -9,12 +9,7 @@ With CompSage you can:
   * Guaranteed results, otherwise you will not pay a cent.
   * Access compensation data in use right now by the companies of your choosing.
 
-Becoming a member of CompSage is easy and free! Please click the link below to get sign up:
-<% if @network.nil? then %>
-  <%=url_for(new_account_path(:key => @invitation.key, :only_path => false))%>.
-<% else %>
-  <%=url_for(new_account_path(:key => @invitation.key, :network_id => @network.id, :only_path => false))%>.
-<% end %>
+Becoming a member of CompSage is easy and free! Click here to sign up: <%= @network.nil? ? url_for(new_account_path(:key => @invitation.key, :only_path => false)) : url_for(new_account_path(:key => @invitation.key, :network_id => @network.id, :only_path => false))%>.
 
 Thanks,
 CompSage.com

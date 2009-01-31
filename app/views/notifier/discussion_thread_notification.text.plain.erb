@@ -2,8 +2,7 @@
 
 Message: "<%=@discussion.body%>"
 
-To respond to this discussion, please follow the link below:
-<%=url_for(survey_path(@discussion.survey, :only_path => false))%>
+To respond to this discussion, go to: <%=url_for(survey_path(@discussion.survey, :only_path => false))%>
 
 Thanks,
 CompSage.com

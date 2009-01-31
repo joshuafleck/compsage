@@ -1,15 +1,13 @@
 Welcome to CompSage!
 
-To get started, follow the link below:
-<%=url_for(new_session_path(:email => @organization.email,:only_path => false))%>
+To get started, go to: <%=url_for(new_session_path(:email => @organization.email,:only_path => false))%>
 
 Once you are logged in, you can:
 * Create a survey <%=url_for(new_survey_path(:only_path => false))%>
 * Browse currently running surveys <%=url_for(surveys_path(:only_path => false))%>
 * Find members to survey <%=url_for(networks_path(:only_path => false))%>
 
-To view or make changes to your account, follow the link below:
-<%=url_for(account_path(:only_path => false))%>
+To view or make changes to your account, go to: <%=url_for(account_path(:only_path => false))%>
 
 Thanks,
 CompSage.com

@@ -178,11 +178,14 @@ class Survey < ActiveRecord::Base
   
   def email_rerun_message
     #email all participants (so they know they may be receiving results), all pending invitees, external invitees
-    distribution_list = participations.collect { |p| p.participant } + 
-      invitations.pending.collect { |p| p.invitee } + 
-      external_invitations
-    distribution_list.uniq.each do |notify|
-      Notifier.deliver_survey_rerun_notification(self,notify)
+    self.participations.each do |p| 
+      Notifier.deliver_survey_rerun_notification_participant(self,p.participant) unless p.participant == self.sponsor
+    end 
+    self.invitations.pending.each do |i| 
+      Notifier.deliver_survey_rerun_notification_non_participant(self,i.invitee)
+    end
+    self.external_invitations.each do |e|
+      Notifier.deliver_survey_rerun_notification_non_participant(self,e) unless self.participations.collect{|p| p.participant}.include?(e)
     end
   end
   
