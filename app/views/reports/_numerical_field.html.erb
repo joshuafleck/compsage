@@ -1,6 +1,9 @@
 <% percentiles = question.send(@responses_method).percentiles(:numerical_response, 25, 50, 75) %>
 <div class="report_item">
 	<h3><%= question.text %></h3>
+	<% if question.responses.any? {|response| !response.qualifications.nil?} then %>
+      <%=render :partial => "qualifications", :locals => {:question => question}%>
+    <% end %>
 	<dl>
 		<dt>Average:</dt>
     <dd><%= number_with_precision(question.send(@responses_method).average(:numerical_response))%></dd>

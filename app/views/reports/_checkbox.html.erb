@@ -1,4 +1,7 @@
 <div class="report_item">
-  <h3><%=question.text%></h3> 
+  <h3><%=question.text%></h3>
+  <% if question.responses.any? {|response| !response.qualifications.nil?} then %>
+    <%=render :partial => "qualifications", :locals => {:question => question}%>
+  <% end %> 
   <%=chart('bar', url_for(chart_survey_report_path(:question_id => question.id)))%>
 </div>

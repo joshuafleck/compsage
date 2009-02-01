@@ -154,6 +154,11 @@ class Question < ActiveRecord::Base
   # returns the number of responses from invitees
   def invitee_response_count
       self.invitee_responses.size
-  end  
+  end
+  
+  # returns the number of qualifications
+  def qualifications_count
+    return self.responses.find_all{|response| !response.qualifications.nil?}.size
+  end
   
 end

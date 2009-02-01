@@ -1,6 +1,8 @@
 <div class="report_item">
   <h3><%=question.text%></h3>
-
+  <% if question.responses.any? {|response| !response.qualifications.nil?} then %>
+    <%=render :partial => "qualifications", :locals => {:question => question}%>
+  <% end %>
   <% if question.options.size == 2 then %>
     <%=chart('pie', url_for(chart_survey_report_path(:question_id => question.id)), :dimensions => 3)%>
   <% else %>
