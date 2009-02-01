@@ -35,7 +35,7 @@
 		      <li>
   		        <%=network_form.check_box :included%>
   		        <%=network_form.label :included, network.name%>:
-					    <span class="description"><%=auto_link(network.description, :target => '_blank')%></span>
+					    <span class="description"><%=auto_link(network.description, :href_options => { :target => '_blank' })%></span>
 					</li>
 		    <% end %>			
 			<% end %>

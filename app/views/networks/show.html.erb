@@ -12,7 +12,7 @@
 </div>
 <% unless @network.description.blank? %>
   <h3>Description</h3>
-  <div><%=auto_link(@network.description, :target => '_blank')%></div>
+  <div><%=auto_link(@network.description, :href_options => { :target => '_blank' })%></div>
 <% end %>
 <h3>Members</h3>
 <ul id="network_members">
