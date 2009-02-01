@@ -16,7 +16,7 @@
         <h3><%= invitation.network.name %>
           <span class="manager">managed by <%= link_to_organization(invitation.network.owner) %></span>
         </h3>
-        <div class="description_box"><%=h invitation.network.description %></div>
+        <div class="description_box"><%=h auto_link(invitation.network.description, :target => '_blank') %></div>
         <div class="actions">
           <%= link_to "Join Network", join_network_path(invitation.network), :method => :put %>
           <%= link_to "Decline", decline_network_invitation_path(invitation.network.id,invitation.id), :method => :put %>
