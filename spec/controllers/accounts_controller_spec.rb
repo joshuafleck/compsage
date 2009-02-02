@@ -94,7 +94,7 @@ describe AccountsController, " handling GET /account/new" do
     @external_invitation = mock_model(ExternalInvitation, :name => 'test', :email => 'test', :organization_name => 'test')
     
     Organization.stub!(:new).and_return(@organization)    
-    Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
+    ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     
     @params = {:key => @key}
     
@@ -106,7 +106,7 @@ describe AccountsController, " handling GET /account/new" do
   end
 
   it "should require a valid external invitation key" do
-    Invitation.should_receive(:find_by_key).with(@key).and_return(@external_invitation)
+    ExternalInvitation.should_receive(:find_by_key).with(@key).and_return(@external_invitation)
     do_get
   end
   
@@ -141,12 +141,12 @@ describe AccountsController, " handling POST /account" do
     @organization = mock_model(Organization, :save => true, :email => 'test@test.com')
     @external_invitation = mock_model(ExternalInvitation, :name => 'test', :email => 'test', :is_a? => false)
     
-    Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
+    ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:new).and_return(@organization)
     
     @organization.stub!(:set_logo).and_return(true)
     
-    @params = {:key => @key}
+    @params = {:key => @key, :organization => {:password => "test12"}}
     
   end
   
@@ -155,7 +155,7 @@ describe AccountsController, " handling POST /account" do
   end
 
   it "should require a valid external invitation key" do
-    Invitation.should_receive(:find_by_key).with(@key).and_return(@external_invitation)
+    ExternalInvitation.should_receive(:find_by_key).with(@key).and_return(@external_invitation)
     do_post
   end
   
@@ -167,9 +167,9 @@ describe AccountsController, " handling POST /account" do
 
   describe "when the requst is HTML" do
   
-  	it "should redirect to the login page" do
+  	it "should redirect to the surveys page" do
       do_post
-      response.should redirect_to(new_session_path(:email => @organization.email))
+      response.should redirect_to(surveys_path)
   	end
   	
   	it "should flash a message regarding the success of the action" do
@@ -225,12 +225,12 @@ describe AccountsController, " handling POST /account with an external survey in
     @organization.stub!(:discussions).and_return(@discussions)
     @organization.stub!(:survey_invitations).and_return(@survey_invitations)
         
-    Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
+    ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:new).and_return(@organization)
     SurveySubscription.stub!(:create!)
     SurveyInvitation.stub!(:find).and_return(@survey_invitation)
             
-    @params = {:key => @key}
+    @params = {:key => @key, :organization => {:password => "test12"}}
     
   end
   
@@ -279,19 +279,24 @@ describe AccountsController, " handling POST /account with an external network i
 
     @organization = mock_model(Organization, :save => true, :email => 'test@test.com')
     @network = mock_model(Network)
-    @external_invitation = mock_model(ExternalNetworkInvitation, :network => @network, :name => 'test', :email => 'test')
+    @external_invitation = mock_model(
+      ExternalNetworkInvitation, 
+      :network => @network, 
+      :name => 'test', 
+      :email => 'test',
+      :destroy => true)
     @networks = []
   
     @external_invitation.stub!(:is_a?).with(ExternalSurveyInvitation).and_return(false)
     @external_invitation.stub!(:is_a?).with(ExternalNetworkInvitation).and_return(true)
-    Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
+    ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:new).and_return(@organization)
 
     @networks.stub!(:<<)
     @organization.stub!(:set_logo).and_return(true)
     @organization.stub!(:networks).and_return(@networks)
 
-    @params = {:key => @key}
+    @params = {:key => @key, :organization => {:password => "test12"}}
 
   end
 
@@ -302,6 +307,11 @@ describe AccountsController, " handling POST /account with an external network i
   it "should add the organization to the network" do
     @organization.should_receive(:networks).and_return(@networks)
     @networks.should_receive(:<<).with(@external_invitation.network)
+    do_post
+  end
+  
+  it "should destroy the external invitation" do
+    @external_invitation.should_receive(:destroy)
     do_post
   end
 
@@ -316,7 +326,7 @@ describe AccountsController, " handling POST /account with validation error" do
     @organization = mock_model(Organization, :save => false)
     @external_invitation = mock_model(ExternalInvitation, :name => 'test', :email => 'test')
     
-    Invitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
+    ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:new).and_return(@organization)
     @organization.stub!(:set_logo)
     

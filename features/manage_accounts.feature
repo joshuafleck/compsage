@@ -13,10 +13,7 @@ Feature: Manage accounts
     And I fill in "Confirm your password" with "123456"
     And I press "Create"
     Then I should see "Your account was created successfully."
-    And I fill in "Email" with "test@test.com"
-    And I fill in "Password" with "123456"
-    And I press "Log In"
-    Then I should not see "Password"
+    And I should see "Surveys"
     
   Scenario: Edit account
     Given I am logged in

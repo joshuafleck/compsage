@@ -19,14 +19,18 @@ class AccountsController < ApplicationController
 	  
 	  #The external invitation can be found in the session if it is an external survey invitation, 
 	  # otherwise, check the URL for a key
-	  @external_invitation = current_survey_invitation || Invitation.find_by_key(params[:key])
+	  @external_invitation = current_survey_invitation || ExternalInvitation.find_by_key(params[:key])
 	  
-	  #Prepopulate the name and email fields automagically
-	  @organization = Organization.new({
-	    :name => @external_invitation.organization_name,
-	    :contact_name => @external_invitation.name,
-	    :email => @external_invitation.email
-	  })
+	  if @external_invitation then
+  	  #Prepopulate the name and email fields automagically
+  	  @organization = Organization.new({
+  	    :name => @external_invitation.organization_name,
+  	    :contact_name => @external_invitation.name,
+  	    :email => @external_invitation.email
+  	  }) 
+	  else
+	    redirect_to new_session_path
+	  end
 	      
 	end
 	
@@ -36,16 +40,17 @@ class AccountsController < ApplicationController
 	
 	def create
 	
-	  @external_invitation = Invitation.find_by_key(params[:key])
+	  @external_invitation = ExternalInvitation.find_by_key(params[:key])
 	  
 	  @organization = Organization.new(params[:organization])
         
-    #Save the organization and set the logo
-    if @organization.save then
+    #Save the organization and set the logo if there was a valid external invitation
+    if @external_invitation && @organization.save then
     	  	
-      #If the user was invited via network invitation, add the organization to the network
+      #If the user was invited via network invitation, add the organization to the network and delete the invite
       if @external_invitation.is_a?(ExternalNetworkInvitation) then
         @organization.networks << @external_invitation.network
+        @external_invitation.destroy
         
       #If the user was invited via a survey invitation, move any objects created over to the new organization
       elsif @external_invitation.is_a?(ExternalSurveyInvitation) then
@@ -77,9 +82,12 @@ class AccountsController < ApplicationController
       logout_killing_session!
       
       respond_to do |wants|
-        wants.html do         
-          flash[:notice] = "Your account was created successfully."
-          redirect_to new_session_path(:email => @organization.email)
+        wants.html do
+          flash[:notice] = "Your account was created successfully."  
+          #Log the user in, and bring them to the surveys page        
+          organization = Organization.authenticate(@organization.email, params[:organization][:password])          
+          self.current_organization = organization if organization
+          redirect_to surveys_path
         end   
         wants.xml do
           render :status => :created
