@@ -1,7 +1,10 @@
-<%=flash_messages%>
-<%=error_messages_for :organization%>
+<%= flash_messages %>
+<p>Now that you've participated in a CompSage compensation survey, you may join CompSage instantly and free! Simply
+fill out the form below to create your account.  Then, you'll have easy access to compensation surveys in your area
+and you can sponsor surveys of your own design.</p>
+
 <% form_for @organization, :url => account_path, :html => {:multipart => true} do |f| %>
-  
+  <%=error_messages_for :organization%>
   <% if @organization.new_record? %>
    <%= hidden_field_tag 'key', external_invitation.key %>
   <% end %>
