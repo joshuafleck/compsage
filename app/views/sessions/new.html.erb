@@ -1,11 +1,13 @@
 <%=flash_messages%>
+
 <% form_tag session_path do -%>
-<p><label for="email">Email</label><br />
-<%= text_field_tag 'email', @login %></p>
-<p><label for="password">Password</label><br />
-<%= password_field_tag 'password' %></p>
-<p><label for="remember_me">Remember me:</label>
-<%= check_box_tag 'remember_me' %></p>
-<p><%= submit_tag 'Log in' %></p>
+  <label for="email">Email</label>
+  <%= text_field_tag 'email', @login, :size => 25 %>
+
+  <label for="password">Password</label>
+  <%= password_field_tag 'password', '', :size => 10 %>
+  
+  <label for="remember_me">Remember me <%= check_box_tag 'remember_me' %></label>
+  
+  <div class="submit"><%= submit_tag 'Log in' %> &nbsp;&nbsp;<%=link_to "Forgot your password?", forgot_account_path%></div>
 <% end -%>
-<p><%=link_to "Forgot your password?", forgot_account_path%></p>

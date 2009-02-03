@@ -41,4 +41,13 @@ module ApplicationHelper
   def required(text)
     text + image_tag("required.gif")
   end  
+
+  # Simplifies making form items nested next to each other. Use in conjunction with form_block
+  def form_row(&block)
+    @template.concat @template.content_tag(:div, @template.capture(&block), :class => 'box_container')
+  end
+
+  def form_box(&block)
+    @template.concat @template.content_tag(:div, @template.capture(&block), :class => 'box')
+  end
 end

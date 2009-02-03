@@ -2,27 +2,38 @@
 <% highlight_tab "join" %>
 <h2>Signup</h2>
 <p>
-In order to ensure the intregrity of our product, we must verify the identity of all applicants.
-After signing up, you will be contacted within three business days. When your identity is verfied,
-you will be provided with a key that may be used to create an account
+In order to ensure the best possible experience, we verify the identity of all CompSage applicants.
+After signing up, you will be contacted within three business days to verify your account details.
 </p>
 <%=error_messages_for :pending_account%>
 <%=flash_messages%>
 <% form_for @pending_account, :url => signup_path do |f| %>
-  <%=f.label :organization_name, required('Name of Your Organization') %>    
+  <%=f.label :organization_name, 'Name of Your Organization' %>    
   <%=f.text_field :organization_name %>
-  <%=f.label :contact_first_name, required('Your First Name') %>    
-  <%=f.text_field :contact_first_name %>
-  <%=f.label :contact_last_name, required('Your Last Name') %> 
-  <%=f.text_field :contact_last_name %>
-  <%=f.label :email, required("Email") %> 
+  <% form_row do %>
+    <% form_box do %>
+      <%=f.label :contact_first_name, 'First Name' %>    
+      <%=f.text_field :contact_first_name, :size => 13 %>
+    <% end %>
+    <% form_box do %>
+      <%=f.label :contact_last_name, 'Last Name' %> 
+      <%=f.text_field :contact_last_name, :size => 13 %>
+    <% end %>
+  <% end %>
+  <%=f.label :email, "Email" %> 
   <%=f.text_field :email %>
-  <%=f.label :phone, required("Phone") %> 
-  <%=f.text_field :phone %>
-  <%=f.label :phone_extension %> 
-  <%=f.text_field :phone_extension %>
-  <p>
-    <input type="submit" value="Signup" /> 
+  <% form_row do %>
+    <% form_box do %>
+      <%=f.label :phone, "Phone" %> 
+      <%=f.text_field :phone, :size => 15 %>
+    <% end %>
+    <% form_box do %>
+      <%=f.label :phone_extension, 'Ext.' %> 
+      <%=f.text_field :phone_extension, :size => 5 %>
+    <% end %>
+  <% end %>
+  <div class="submit">
+    <input type="submit" value="Signup" /> or 
     <%=link_to "Cancel", '/' %>
-  </p>
+  </div>
 <% end %>
