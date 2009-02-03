@@ -27,7 +27,7 @@
 </div>
 <div id="send_invitations">
 	<% form_tag do %>
-	  <% if include_networks then %>
+	  <% if include_networks && current_organization.networks.size > 0 then %>
 		<h3>Invite Your Networks</h3>
 		<ul>
 			<% @networks.each do |network| %>
