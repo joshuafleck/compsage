@@ -1,43 +1,53 @@
-<%= flash_messages %>
-<p>Now that you've participated in a CompSage compensation survey, you may join CompSage instantly and free! Simply
-fill out the form below to create your account.  Then, you'll have easy access to compensation surveys in your area
-and you can sponsor surveys of your own design.</p>
-
 <% form_for @organization, :url => account_path, :html => {:multipart => true} do |f| %>
   <%=error_messages_for :organization%>
   <% if @organization.new_record? %>
    <%= hidden_field_tag 'key', external_invitation.key %>
+ <% end %>
+  <% if @organization.new_record? %>
+    <%=f.label :name, required('Name of your organization') %>
+    <%=f.text_field :name %>
   <% end %>
-  <%=f.label :name, required('Name of your organization') %>
-  <%=f.text_field :name %>
-  <%=f.label :contact_name, 'Your Name' %>
+  <%=f.label :contact_name, 'Your name' %>
   <%=f.text_field :contact_name %>
   <%=f.label :email, required('Email address') %> 
   <%=f.text_field :email %>
-  <%=f.label :location, 'Name of Office or Branch' %> 
+  <%=f.label :location, 'Name of office or branch' %> 
   <%=f.text_field :location %>
-  <%=f.label :city %> 
-  <%=f.text_field :city %>
-  <%=f.label :state %> 
-  <%= f.select :state, AccountsHelper::STATE_ABBR, 
-		:include_blank => true %>
-  <%=f.label :zip_code, required('Zip code') %> 
-  <%=f.text_field :zip_code %>
+  <% form_row do %>
+    <% form_box do %>
+      <%=f.label :city %> 
+      <%=f.text_field :city, :size => 13 %>
+    <% end %>
+    <% form_box do %>
+      <%= f.label :state %> 
+      <%= f.select :state, AccountsHelper::STATE_ABBR, :include_blank => true %>
+    <% end %>
+    <% form_box do %>
+      <%=f.label :zip_code, required('Zip') %> 
+      <%=f.text_field :zip_code, :size => 7 %>
+    <% end %>
+  <% end %>
   <%=f.label :industry %> 
   <%=f.select :industry, AccountsHelper::INDUSTRIES, :include_blank => true %>
   <% if !@organization.logo.nil? then %>
     <p><%=image_tag @organization.logo.public_filename(:standard_thumbnail) %></p>
   <% end %>  
   <% fields_for "organization[logo]",@organization.logo do |logo_form| %>
-      <%=logo_form.label :uploaded_data, 'Logo'%>
+      <%=logo_form.label :uploaded_data, 'Company logo'%>
       <%=logo_form.file_field :uploaded_data%>
-  <% end %>  		    
-  <%=f.label :password, required('Password') %> 
-  <%=f.password_field :password %>
-  <%=f.label :password_confirmation, required('Confirm your password') %> 
-  <%=f.password_field :password_confirmation %>
+  <% end %>  
+  <% form_row do %>
+    <% form_box do %>
+      <%=f.label :password, required('Password') %> 
+      <%=f.password_field :password, :size => 15 %>
+    <% end %>
+    <% form_box do %>
+      <%=f.label :password_confirmation, 'Confirm password' %> 
+      <%=f.password_field :password_confirmation, :size => 15 %>
+    <% end %>
+  <% end %>  
   <div class="submit">
-    <input type="submit" value='<%=@organization.new_record? ? "Create" : "Update"%>' /> or
+    <input type="submit" value='<%=@organization.new_record? ? "Sign Up" : "Update"%>' /> or
     <% if @organization.new_record? && logged_in_from_survey_invitation? then %>
       <%=link_to "Cancel", survey_path(current_survey_invitation.survey.id) %>
     <% elsif @organization.new_record? %>
