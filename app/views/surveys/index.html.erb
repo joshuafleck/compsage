@@ -100,10 +100,10 @@
 		</ul>
 	</div>
 <% end %>
-<h2>Browse Current Surveys</h2>
-<ul class="surveys">
-	<% if @surveys.any? then %>
-	  <%=render :partial => 'survey', :collection => @surveys %>
-	<% end %>
-</ul>
+<% if @surveys.any? then %>
+  <h2>Browse Current Surveys</h2>
+  <ul class="surveys">
+    <%=render :partial => 'survey', :collection => @surveys %>
+  </ul>
+<% end %>
 <%=will_paginate @surveys%>
