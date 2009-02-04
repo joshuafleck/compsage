@@ -1,6 +1,9 @@
 if !defined?(RAILS_ROOT) then
   ENV['RAILS_ENV'] = ARGV.first || ENV['RAILS_ENV'] || 'development'
-  require File.dirname(__FILE__) + '/../config/environment'
+  require File.dirname(__FILE__) + '/../config/environment.rb'
+  
+  # Ensure workers are loaded...
+  Dir.glob(File.join(RAILS_ROOT, 'app/workers/*.rb')).each {|f| require f }
 else
   # Get back to RAILS_ROOT.
   Dir.chdir(RAILS_ROOT)
@@ -12,7 +15,7 @@ end
 loop do
   job = BEANSTALK.reserve
   body = job.ybody
-  
+
   worker_klass = body[:worker].to_s.classify.constantize || BeanstalkWorker
   worker = worker_klass.new(job)
   
