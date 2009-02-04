@@ -1,6 +1,6 @@
 <% title "Welcome to Compsage!"
    page_name "front"
-   highlight_tab "benefits" %>
+   highlight_tab "home" %>
    
 <div id="banner">
   <div id="login">
@@ -18,13 +18,13 @@
     <img src="/images/banner_bottom_left.jpg" /><%= link_to '<img src="/images/banner_bottom_right.jpg" />', home_path('how') %>
   </div>
 </div>
-
+<div class="surveys_are"><%= image_tag 'sub_banner.gif' %></div>
 <div class="third_column benefit">
   <h2>Customized</h2>
-  Ask our standard questions or add questions of your own design.
+  Ask our standard questions or add questions of your own.
 
   <h2>Cost Effective</h2>
-  Participate in a survey and get results free. Sponsor a survey for $100 and get data that won't go over budget.
+  Participate in a survey and get results free. Sponsor a survey for $100 and get just what you need.
 </div>
 
 <div class="third_column benefit">
@@ -41,3 +41,8 @@
   <h2>Relevant &amp; Current</h2>
   Get compensation data in use right now by companies you choose.
 </div>
+<br clear="both" />
+<br />
+<p class="main_page">Find out how our <%= link_to "revolutionary approach" %> to compensation surveys works so well.
+If you're ready to go, our <%= link_to "registration form", signup_path %> will take mere seconds. As always, we're
+available and open for <a href="mailto:support@compsage.com">comments and questions</a>.</p>
