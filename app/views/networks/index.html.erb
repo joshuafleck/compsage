@@ -5,7 +5,7 @@
   <label for="search_text">Find CompSage Members</label>
   <%= text_field_tag 'search_text', '', :size => 30 %>
   <input type="submit" value="Search" />
-  or <%=link_to "Browse CompSage members in your area", search_organizations_path %>
+  <p>or <%=link_to "Browse CompSage members in your area", search_organizations_path %></p>
 <% end %>
 
 <% if @network_invitations.any? then %>
@@ -22,7 +22,6 @@
           <%= link_to "Decline", decline_network_invitation_path(invitation.network.id,invitation.id), :method => :put %>
         </div>
       </li>
-    
     <% end %>
   </ul>
 <% end %>
@@ -32,19 +31,14 @@
   contact network, surveying that group of organizations is just a few clicks away. You can easily
   <%= link_to "make your own contact network", new_network_path %> and invite your own group of organizations.
 <% else %>
-  <%= link_to "Create a New Network", new_network_path %>
+  <div id="new_network">
+    <%= link_to "New Network", new_network_path %>
+  </div>
   <ul id="networks">
     <% @networks.each do |network| %>
       <li class="<%=cycle("even", "odd")%>">
         <h3><%= link_to_network(network) %></h3>
-        <div class="description"><%=network.description%></div>
-        <div class="actions">
-          <%=link_to "Survey #{pluralize(network.organizations.count, "member")}", new_survey_path(:network_id => network.id) %>
-          <% if network.owner_id == current_organization.id then %>
-            <%=link_to "Manage Network", network_path(network) %>
-          <% end %>
-          <%=link_to "Leave Network", leave_network_path(network), :method => :put %>
-        </div>
+        <div class="description_box"><%=network.description%></div>
       </li>
     <% end %>
   </ul>

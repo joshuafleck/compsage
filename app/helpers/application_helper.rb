@@ -33,7 +33,9 @@ module ApplicationHelper
   def link_to_network(network)
     link_to(network.name, network_path(network)) + " " +
       content_tag(:span, :class => "manager") do
-        "managed by " + link_to_organization(network.owner)
+        if current_organization != network.owner then
+         "managed by #{link_to_organization(network.owner)}"
+        end
       end
   end
   

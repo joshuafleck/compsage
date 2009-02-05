@@ -757,6 +757,11 @@ ul#network_invitations {
 	background: url('../images/embellish.gif') bottom center no-repeat;
 }
 
+div#new_network {
+  margin-top: -1em;
+  margin-bottom: 1em;
+}
+
 /* Network form */
 form#new_network input#network_name, form#edit_network input#network_name {
   width: 300px;

@@ -80,7 +80,7 @@
 	<% if @discussions.any? then %>
 		<p><a href="#" id="new_discussion_link">Start new discussion</a></p>
 	<% else %>
-		There are currently no discussion topics.  You may <a href="#" id="new_discussion_link">start one now</a>.
+		There are currently no discussion topics.  <a href="#" id="new_discussion_link">Start one now</a>.
 	<% end %>
 	<div id="new_discussion_form" style="<%='display: none;' unless @discussion.errors.size > 0%>">
   	<%=render :partial => 'discussions/discussion_form', :locals => { :discussion => @discussion } %>
