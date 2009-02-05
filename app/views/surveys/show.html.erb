@@ -9,6 +9,10 @@
         <p>
           Not all of the questions have adequate participation for results to be available. You may <%=link_to "finish", finish_partial_survey_path(@survey)%> the survey to view the partial results or re-run the survey and send additional invitations. The question response rates are below.
         </p>
+      <% elsif @survey.enough_participations? %>
+        <p>      
+          Unfortunately, none of the questions have adequate participation for results to be available.  You may re-run the survey and send additional invitations. 
+        </p>     
       <% else %>
         <p>
           Unfortunately, you did not get the required number of participants for results to be available.  You may re-run the survey and send additional invitations.

@@ -169,8 +169,12 @@ class Survey < ActiveRecord::Base
     self.questions.find_all{|q| !q.custom_question_type.blank?}.each{|q| q.included = "1"}
   end
   
+  def enough_participations?
+    participations.count >= REQUIRED_NUMBER_OF_PARTICIPATIONS
+  end
+  
   def enough_responses?
-    participations.count >= REQUIRED_NUMBER_OF_PARTICIPATIONS && !self.blank_report?
+    self.enough_participations? && !self.blank_report?
   end
   
   # determine if all questions can be reported
