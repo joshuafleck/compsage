@@ -189,14 +189,14 @@ describe Survey, "that is ready to be billed" do
   end
   
   it "should be finished if there are enough responses and billing is successful" do
-    @survey.stub!(:enough_responses?).and_return(true)
+    @survey.stub!(:full_report?).and_return(true)
     @survey.finish!
     
     @survey.should be_finished
   end
 
   it "should transition to billing error if there are enough responses but we couldn't bill the sponsor" do
-    @survey.stub!(:enough_responses?).and_return(true)
+    @survey.stub!(:full_report?).and_return(true)
     Gateway.stub!(:bill_survey_sponsor).and_raise(Exceptions::GatewayException.new("Billing fubar"))
     @survey.finish!
     

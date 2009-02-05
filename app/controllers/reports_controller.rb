@@ -3,7 +3,7 @@ class ReportsController < ApplicationController
   before_filter :login_or_survey_invitation_required, :must_have_responded_or_sponsored
   
   def show
-    @survey = Survey.find(params[:survey_id])
+    @survey = Survey.finished.find(params[:survey_id])
     @invitations = @survey.all_invitations(true)
 
     define_response_scope

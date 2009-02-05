@@ -1,6 +1,11 @@
-The survey "<%=@survey.job_title%>" has completed but only attained <%=@survey.participations.size%> of <%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%> required responses to provide results. You may leave the survey as it is at no cost, or re-run the survey with additional invitees.
+<% if !@survey.enough_responses? then %>
+  The survey "<%=@survey.job_title%>" has completed but only attained <%=@survey.participations.size%> of <%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%> required responses to provide results. You may leave the survey as it is at no cost, or re-run the survey with additional invitees.
+<% else %>
+  The survey "<%=@survey.job_title%>" has completed but only <%=@survey.reportable_questions.size%> of <%=@survey.questions.size%> questions has adequate participation to show results. You may leave the survey as it is at no cost, re-run the survey with additional invitees, or finish the survey with partial results.
+<% end %>
 
 To view the survey, go to: <%=url_for(survey_path(@survey, :only_path => false))%>
 
 Thanks,
 CompSage.com
+

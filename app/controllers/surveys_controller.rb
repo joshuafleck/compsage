@@ -238,6 +238,25 @@ class SurveysController < ApplicationController
      end
   end
   
+  def finish_partial
+    @survey = current_organization.sponsored_surveys.stalled.find(params[:id])
+    
+    if @survey.finish_with_partial_report!
+       respond_to do |wants|  
+         wants.html do
+           redirect_to survey_report_path(@survey) 
+         end
+       end
+     else
+       respond_to do |wants|
+         flash[:notice] = 'Unable to complete survey. Please try again later'
+         wants.html do
+           redirect_to survey_path(@survey)
+         end
+       end
+     end    
+  end
+  
   def destroy
     @survey = current_organization.sponsored_surveys.stalled.find(params[:id])
 

@@ -32,6 +32,16 @@ class Question < ActiveRecord::Base
     'text' => false,
     'wage' => true 
   }
+  
+  MINIMUM_RESPONSES = {
+    'text_field' => 1,
+    'text_area' => 1,
+    'numerical_field' => 3,
+    'radio' => 1,
+    'checkbox' => 1,
+    'text' => 1,
+    'wage' => 5  
+  }
                         
   CUSTOM_QUESTION_TYPES = {
     'Free response' => 'text_area',
@@ -121,14 +131,19 @@ class Question < ActiveRecord::Base
     end
   end
   
+  # returns the minimum number of responses required for the question type
+  def minimum_responses
+    MINIMUM_RESPONSES[self.question_type]
+  end
+  
   # returns true if the question received enough responses to be displayed in the report
   def adequate_responses?
-    self.response_count >= Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS
+    self.response_count >= self.minimum_responses
   end
   
   # returns true if the question received enough responses from invitees to be displayed in the report
   def adequate_invitee_responses?
-    self.invitee_response_count >= Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS
+    self.invitee_response_count >= self.minimum_responses
   end
   
   # returns the total number of responses

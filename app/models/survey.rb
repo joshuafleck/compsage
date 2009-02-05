@@ -45,8 +45,8 @@ class Survey < ActiveRecord::Base
     
   aasm_initial_state :pending
   aasm_state :pending
-  aasm_state :running
-  aasm_state :stalled, :enter => :email_failed_message, :exit => :email_rerun_message
+  aasm_state :running, :enter => :email_rerun_message
+  aasm_state :stalled, :enter => :email_failed_message
   aasm_state :billing_error, :enter => :email_billing_error
   aasm_state :finished, :enter => :email_results_available
   
@@ -65,8 +65,8 @@ class Survey < ActiveRecord::Base
 
   aasm_event :finish do
     # AASM currently doesn't support more than one guard, hence this absurd method here.
-    transitions :to => :finished, :from => :running, :guard => :closed_and_enough_responses_and_billing_successful? 
-    transitions :to => :billing_error, :from => :running, :guard => :closed_and_enough_responses?
+    transitions :to => :finished, :from => :running, :guard => :closed_and_full_report_and_billing_successful? 
+    transitions :to => :billing_error, :from => :running, :guard => :closed_and_full_report?
     transitions :to => :stalled, :from => :running, :guard => :closed?
   end
   
@@ -76,6 +76,11 @@ class Survey < ActiveRecord::Base
 
   aasm_event :billing_error_resolved do
     transitions :to => :finished, :from => :billing
+  end
+  
+  aasm_event :finish_with_partial_report do
+    transitions :to => :finished, :from => :stalled, :guard => :closed_and_enough_responses_and_billing_successful? 
+    transitions :to => :billing_error, :from => :stalled, :guard => :closed_and_enough_responses?
   end
    
   # the minumum number of days a survey can be rerun
@@ -164,20 +169,45 @@ class Survey < ActiveRecord::Base
     self.questions.find_all{|q| !q.custom_question_type.blank?}.each{|q| q.included = "1"}
   end
   
-  private
-  
   def enough_responses?
-    participations.count >= REQUIRED_NUMBER_OF_PARTICIPATIONS
+    participations.count >= REQUIRED_NUMBER_OF_PARTICIPATIONS && !self.blank_report?
   end
   
+  # determine if all questions can be reported
+  def full_report?
+    self.questions.each do |question|
+      return false unless question.adequate_responses?
+    end
+    
+    return true
+  end
+  
+  # determine if the report would contain any data
+  def blank_report?
+    self.questions.each do |question|
+      return false if question.adequate_responses?
+    end
+    
+    return true    
+  end
+  
+  def reportable_questions
+    self.questions.find_all{|q| q.adequate_responses?}
+  end
+  
+  private
+    
   # TODO: Figure out who to email...
   def email_failed_message
     logger.info("Sending failed email message for survey #{self.id}")
     Notifier.deliver_survey_stalled_notification(self)
   end
   
+  # email all participants (so they know they may be receiving results), all pending invitees, external invitees
   def email_rerun_message
-    #email all participants (so they know they may be receiving results), all pending invitees, external invitees
+    return unless self.stalled? # calling this from running 'enter' method, 
+    # so need to make sure the survey was stalled
+    
     self.participations.each do |p| 
       Notifier.deliver_survey_rerun_notification_participant(self,p.participant) unless p.participant == self.sponsor
     end 
@@ -204,7 +234,6 @@ class Survey < ActiveRecord::Base
   # Participations are deleted manually here because otherwise the participations will be
   # destroyed before we actually enter this callback, so their dependent option cannot be
   # set.
-
   def cancel_survey
     email_not_rerunning_message
     participations.destroy_all
@@ -237,6 +266,16 @@ class Survey < ActiveRecord::Base
   def closed_and_enough_responses_and_billing_successful?
     closed_and_enough_responses? && billing_successful?
   end
+  
+  # returns whether or not all questions can be reported and the survey is closed
+  def closed_and_full_report?
+    closed? && full_report?
+  end  
+ 
+  # returns whether or not all questions can be reported and the survey is closed, and if so, if billing was successful
+  def closed_and_full_report_and_billing_successful?
+    closed_and_full_report? && billing_successful?
+  end  
 
   # Calls the billing routine and returns whether or not billing was successful.
   def billing_successful?
@@ -258,8 +297,6 @@ class Survey < ActiveRecord::Base
   def open_and_can_be_rerun?
     self.open? && self.can_be_rerun?
   end
-
-  private
   
   # Validates whether or not questions have been chosen.
   def questions_exist
