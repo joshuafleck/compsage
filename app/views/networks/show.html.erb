@@ -1,6 +1,9 @@
 <% title @network.name %>
 <% highlight_tab "networks" %>
 <h2><%=@network.name%> <span class="manager">managed by <%=link_to_organization @network.owner%></span></h2>
+<% unless @network.description.blank? %>
+  <div class="main_description"><%= auto_link(@network.description, :href_options => { :target => '_blank' }) %></div>
+<% end %>
 <%=flash_messages%>
 <div class="actions">
   <%=link_to "Survey #{pluralize(@network.organizations.count, "member")}", new_survey_path(:network_id => @network.id) %>
@@ -10,10 +13,6 @@
   <% end %>
   <%=link_to "Leave Network", leave_network_path(@network), :method => :put %>
 </div>
-<% unless @network.description.blank? %>
-  <h3>Description</h3>
-  <div><%=auto_link(@network.description, :href_options => { :target => '_blank' })%></div>
-<% end %>
 <h3>Members</h3>
 <ul id="network_members">
   <% @network.organizations.each do |organization| %>

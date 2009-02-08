@@ -1,7 +1,5 @@
 <% title @survey.job_title %>
 <% highlight_tab logged_in? ? "surveys" : "survey" %>
-<h2><%= @survey.job_title %>
-	<span class="sponsor">sponsored by <%=link_to_organization(@survey.sponsor)%></span></h2>
 <% if @survey.stalled? then %>
   <% if logged_in? && @survey.sponsor.id == current_organization.id then %>
     <% if @survey.can_be_rerun? then %>
@@ -42,7 +40,7 @@
       the case, you will be notified.</p>      
   <% end %>
 <% else %>
-	<%=flash_messages%>
+  <%=flash_messages%>
   <div id="invitation_list">
     <% if @participation.nil? then %>
       <%=link_to image_tag("respond_button.gif"), survey_questions_path(@survey)%>
@@ -74,8 +72,10 @@
 		  <p>Warning: <%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%> participants are required to provide results. We recommend you invite at least <%=pluralize(@survey.recommended_number_of_invitations, 'additional organization')%>.</p>
 		<% end %>
 	</div>
-	<h3>Job Description</h3>
-	<p class="description_box"><%=auto_link(@survey.description, :href_options => { :target => '_blank' })%></p>
+  <h2><%= @survey.job_title %><br />
+	<div class="sponsor">sponsored by <%=link_to_organization(@survey.sponsor)%></div></h2>
+
+	<div class="main_description"><%=auto_link(@survey.description, :href_options => { :target => '_blank' })%></div>
 	<h3>Discussion</h3>
 	<% if @discussions.any? then %>
 		<p><a href="#" id="new_discussion_link">Start new discussion</a></p>
