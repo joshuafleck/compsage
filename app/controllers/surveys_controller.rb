@@ -46,6 +46,8 @@ class SurveysController < ApplicationController
         if @survey.finished?
           redirect_to survey_report_path(@survey)
         end
+
+        render :action => "show_#{@survey.aasm_state}"
       }
       wants.xml{
           render :xml => @survey.to_xml
