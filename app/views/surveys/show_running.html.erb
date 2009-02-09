@@ -33,7 +33,7 @@
 		<% end %>
 	</div>
   <h2><%= @survey.job_title %><br />
-	<div class="sponsor">sponsored by <%=link_to_organization(@survey.sponsor)%></div></h2>
+	<div class="sponsor">Sponsored by <%=link_to_organization(@survey.sponsor)%></div></h2>
 
 	<div class="main_description"><%=auto_link(@survey.description, :href_options => { :target => '_blank' })%></div>
 	<h3>Discussion</h3>

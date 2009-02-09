@@ -1,7 +1,7 @@
 <% title @survey.job_title %>
 <% highlight_tab logged_in? ? "surveys" : "survey" %>
 <h2><%= @survey.job_title %>
-	<span class="sponsor">sponsored by <%=link_to_organization(@survey.sponsor)%></span></h2>
+	<div class="sponsor">Sponsored by <%=link_to_organization(@survey.sponsor)%></div></h2>
   <% if logged_in? && @survey.sponsor.id == current_organization.id then %>
     <% if @survey.can_be_rerun? then %>
       <% if @survey.enough_responses? then %>
