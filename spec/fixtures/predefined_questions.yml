@@ -1,23 +1,23 @@
-pay_questions:
+salary_questions:
   id: 1
   position: 1
-  name: Pay Questions
-  description: "Questions regarding pay for a positions"
+  name: Questions pertaining to this position's salary and salary range
+  description: "Questions regarding salary for a positions"
   question_hash: --- 
   - :question_type: wage
-    :text: What is this position's average base wage/salary?
+    :text: What is this position's average base salary/salary?
   - :question_type: wage
-    :text: What is this position's pay range minimum?
+    :text: What is this position's salary range minimum?
   - :question_type: wage
-    :text: What is this position's pay range midpoint?
+    :text: What is this position's salary range midpoint?
   - :question_type: wage
-    :text: What is this position's pay range maximum?
+    :text: What is this position's salary range maximum?
   
 incentive_question:
   id: 2
   position: 2
-  description: Whether the position is eligible for an incentive bonus
-  name: Incentive Bonus Eligibility
+  description: Whether this position is eligible for an incentive bonus
+  name: Whether this position is eligible for an incentive bonus
   question_hash: --- 
   - :text: "Is this position eligible for incentive bonus?"
     :question_type: "radio"
@@ -28,17 +28,23 @@ incentive_question:
 incentive_target_question:
     id: 3
     position: 3
-    description: This positions target incentive as a percentage of base wage
-    name: Incentive Target
+    description: This positions target incentive as a percentage of base salary
+    name: Questions pertaining to this position's incentive opportunity as a percent of base salary 
     question_hash: ---
-    - :text: "What is this position's incentive pay target (as percent of base pay)?"
+    - :text: "What is this position's incentive target as percent of base salary?"
       :question_type: "numerical_field"
-
+    - :text: Is there a maximum incentive that can be earned?
+      :question_type: "radio"
+      :options:
+          - "Yes"
+          - "No"
+    - :text: If yes, what is the maximum incentive as a percent of base salary?
+      :question_type: "numerical_field"
 bargaining_unit_question:
     id: 4
     position: 4
     description: Whether the position is part of a bargaining unit
-    name: Bargaining Unit
+    name: Whether the incumbents of this position are members of a collective bargaining unit 
     question_hash: ---
     - :text: "Is this position part of a bargaining unit?"
       :question_type: "radio"
@@ -50,34 +56,10 @@ flsa_question:
     id: 5
     position: 5
     description: Whether the position is FLSA Exempt or Non-Exempt
-    name: FLSA Status
+    name: Whether this position is exempt or non-exempt 
     question_hash: ---
     - :text: "What is this position's FLSA status with regard to overtime provisions?"
       :question_type: "radio"
       :options:
           - "Exempt"
           - "Non-Exempt"
-          
-mood_question:
-    id: 6
-    position: 6
-    description: How are you feeling today?
-    name: Your mood
-    question_hash: ---
-    - :text: "How are you feeling today?"
-      :question_type: "checkbox"
-      :options:
-          - "Happy"
-          - "Sad"  
-          - "Angry"
-          - "Bored"
-          - "Nervous"
-
-color_question:
-    id: 7
-    position: 7
-    description: What is your favourite color?
-    name: Your fav color
-    question_hash: ---
-    - :text: "What is your favourite color?"
-      :question_type: "text_field"
