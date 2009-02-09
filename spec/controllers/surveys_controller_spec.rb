@@ -132,7 +132,7 @@ describe SurveysController, " handling GET /surveys/1" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => 1, :job_title => "test", :finished? => false, :all_invitations => [])    
+    @survey = mock_model(Survey, :id => 1, :job_title => "test", :finished? => false, :all_invitations => [], :aasm_state => 'running') 
     Survey.stub!(:find).and_return(@survey)
         
     @discussion = mock_model(Discussion)
@@ -154,18 +154,22 @@ describe SurveysController, " handling GET /surveys/1" do
   def do_get
     get :show, :id => 1
   end
+
   it "should be successful" do
     do_get
     response.should be_success
   end
+  
   it "should find the survey requested" do
     Survey.should_receive(:find).and_return(@survey)
     do_get
   end
-  it "should render the show template" do
+  
+  it "should render the running template" do
     do_get
-    response.should render_template('surveys/show')
+    response.should render_template('surveys/show_running')
   end
+  
   it "should assign the found survey to the view" do
     do_get
     assigns[:survey].should_not be_nil
@@ -182,7 +186,7 @@ describe SurveysController, " handling GET /surveys/1" do
     do_get
   end
   
-  it "should assign the found discussion for the view"do
+  it "should assign the found discussion for the view" do
     do_get
     assigns[:discussions].should eql(@discussions)
   end
@@ -194,7 +198,7 @@ describe SurveysController, " handling GET /surveys/1 when survey is closed" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => 1, :discussions => nil, :job_title => "test", :all_invitations => [])    
+    @survey = mock_model(Survey, :id => 1, :discussions => nil, :job_title => "test", :all_invitations => [], :aasm_state => 'running') 
     Survey.stub!(:find).and_return(@survey)
     @survey.stub!(:finished?).and_return(:true)
         

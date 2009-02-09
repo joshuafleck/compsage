@@ -42,16 +42,16 @@ class SurveysController < ApplicationController
 	  @participation = current_organization_or_survey_invitation.participations.find_by_survey_id(@survey)
 	  
     respond_to do |wants|
-      wants.html {
+      wants.html do
         if @survey.finished?
           redirect_to survey_report_path(@survey)
+        else
+          render :action => "show_#{@survey.aasm_state}"
         end
-
-        render :action => "show_#{@survey.aasm_state}"
-      }
-      wants.xml{
-          render :xml => @survey.to_xml
-      }
+      end
+      wants.xml do
+        render :xml => @survey.to_xml
+      end
     end
   end
 
