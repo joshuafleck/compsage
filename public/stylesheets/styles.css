@@ -449,9 +449,13 @@ ul.surveys {
 
 div.description_box {
 	color: #444;
-	font-size: 1em;
 }
 
+div.main_description {
+  color: #444;
+  margin: -1em 0 1em 0;
+  padding-left: 1em;
+}
 ul.surveys li {
 	margin-bottom: 1.2857em;
 }
@@ -518,6 +522,11 @@ ul#survey_results li {
 span.sponsor, span.manager {
 	color: #888;
 	font-size: .9em;
+}
+
+div.sponsor {
+  color: #888;
+  font-size: .9em;
 }
 
 div.deadline {
