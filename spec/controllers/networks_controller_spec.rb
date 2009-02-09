@@ -127,8 +127,8 @@ describe NetworksController, " handling GET /networks/1" do
     @organization = mock_model(Organization)
     login_as(@organization)
     
-    @network = mock_model(Network, :name => "Network!")
-    
+    @organizations_proxy = mock('org_proxy', :find => [])
+    @network = mock_model(Network, :name => "Network!", :organizations => @organizations_proxy)
     @network_proxy = mock('Network Proxy', :find => @network)
     @organization.stub!(:networks).and_return(@network_proxy)
     
@@ -154,6 +154,11 @@ describe NetworksController, " handling GET /networks/1" do
     do_get    
   end  
 
+  it "should find the network members" do
+    @network.should_receive(:organizations).and_return(@organizations_proxy)
+    do_get
+  end
+
   it "should render the show template" do
     do_get
     response.should render_template("show")    
@@ -170,7 +175,8 @@ describe NetworksController, " handling GET /networks/1.xml" do
     @organization = mock_model(Organization)
     login_as(@organization)
     
-    @network = mock_model(Network, :name => "Network!", :to_xml => "XML")
+    @organizations_proxy = mock('org_proxy', :find => [])
+    @network = mock_model(Network, :name => "Network!", :organizations => @organizations_proxy, :to_xml => "XML")
     
     @network_proxy = mock('Network Proxy', :find => @network)
     @organization.stub!(:networks).and_return(@network_proxy)

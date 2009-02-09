@@ -779,6 +779,16 @@ div#new_network {
   margin-bottom: 1em;
 }
 
+ul#network_members {
+  list-style-type: none;
+  padding: 0;
+  margin-left: 1em;
+}
+
+ul#network_members a.remove {
+  color: #888;
+  font-size: 0.8em;
+}
 /* Network form */
 form#new_network input#network_name, form#edit_network input#network_name {
   width: 300px;

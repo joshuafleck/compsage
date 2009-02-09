@@ -20,7 +20,8 @@ class NetworksController < ApplicationController
   # Show a specific network that the current organization is a member of.
   def show
     @network = current_organization.networks.find(params[:id])
-    
+    @members = @network.organizations.find(:all, :conditions => ['organizations.id <> ?', current_organization.id])  
+
     respond_to do |wants|
       wants.html # render template
       wants.xml do

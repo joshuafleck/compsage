@@ -1,26 +1,34 @@
 <% title @network.name %>
 <% highlight_tab "networks" %>
 <h2><%=@network.name%> <span class="manager">managed by <%=link_to_organization @network.owner%></span></h2>
-<% unless @network.description.blank? %>
-  <div class="main_description"><%= auto_link(@network.description, :href_options => { :target => '_blank' }) %></div>
-<% end %>
-<%=flash_messages%>
-<div class="actions">
-  <%=link_to "Survey #{pluralize(@network.organizations.count, "member")}", new_survey_path(:network_id => @network.id) %>
-  <% if @network.owner_id == current_organization.id then %>
-    <%=link_to "Invite Others", network_invitations_path(@network) %>
-    <%=link_to "Edit Network", edit_network_path(@network) %>
-  <% end %>
-  <%=link_to "Leave Network", leave_network_path(@network), :method => :put %>
+<div class="main_description">
+  <%= auto_link(@network.description, :href_options => { :target => '_blank' }) %>
+  <div class="actions">
+    <% if @network.owner_id == current_organization.id then %>
+      <%=link_to "Edit Network", edit_network_path(@network) %>
+    <% end %>
+    <%=link_to "Leave Network", leave_network_path(@network), :method => :put %>
+  </div>
 </div>
-<h3>Members</h3>
-<ul id="network_members">
-  <% @network.organizations.each do |organization| %>
-    <li>
-    <%= link_to_organization(organization) %>
-    <% if @network.owner_id == current_organization.id && current_organization != organization then %>
-        <%=link_to "Remove", evict_network_path(@network, :organization_id => organization.id), :method => :put %>
-      <% end %>
-    </li>
-  <% end %>
-</ul>
+<%=flash_messages%>
+<h3>Members in this Network</h3>
+<% if @members.none? && @network.owner_id == current_organization.id then %>
+  <p>Your network doesn't have any members! <%= link_to "Send some invitations", network_invitations_path(@network) %>.</p>   
+<% else %>
+  <div class="actions">
+    <%=link_to "Survey these organizations", new_survey_path(:network_id => @network.id) %>
+    <% if @network.owner_id == current_organization.id then %>
+      or <%= link_to "Invite others", network_invitations_path(@network) %>
+    <% end %>
+  </div> 
+  <ul id="network_members">
+    <% @members.each do |organization| %>
+      <li>
+        <%= link_to_organization(organization) %>
+        <% if @network.owner_id == current_organization.id && current_organization != organization then %>
+          <%=link_to "Remove", evict_network_path(@network, :organization_id => organization.id), :method => :put, :class => 'remove' %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
