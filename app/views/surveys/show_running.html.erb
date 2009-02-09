@@ -2,46 +2,6 @@
 <% highlight_tab logged_in? ? "surveys" : "survey" %>
 <h2><%= @survey.job_title %>
 	<span class="sponsor">sponsored by <%=link_to_organization(@survey.sponsor)%></span></h2>
-<% if @survey.stalled? then %>
-  <% if logged_in? && @survey.sponsor.id == current_organization.id then %>
-    <% if @survey.can_be_rerun? then %>
-      <% if @survey.enough_responses? then %>
-        <p>
-          Not all of the questions have adequate participation for results to be available. You may <%=link_to "finish", finish_partial_survey_path(@survey)%> the survey to view the partial results or re-run the survey and send additional invitations. The question response rates are below.
-        </p>
-      <% elsif @survey.enough_participations? %>
-        <p>      
-          Unfortunately, none of the questions have adequate participation for results to be available.  You may re-run the survey and send additional invitations. 
-        </p>     
-      <% else %>
-        <p>
-          Unfortunately, you did not get the required number of participants for results to be available.  You may re-run the survey and send additional invitations.
-  		  </p>
-      <% end %>
-      <p>
-        <% form_for(:survey, @survey, :url => rerun_survey_path(@survey), :html => { :method => :get }) do |f| %>  
-          <%=error_messages_for :survey%>      
-          Re-run for <%=f.select :days_running, (Survey::MINIMUM_DAYS_TO_RERUN..(@survey.maximum_days_to_rerun)).to_a %> days.
-          <input type="submit" value="Re-Run" />
-        <% end %>  
-      </p>
-      <%=render :partial => 'questions/response_rates', :locals => { :survey => @survey } %>
-      <p>
-        Click <%=link_to "here", survey_path(@survey), :method => :delete %> to cancel the survey.
-      </p> 
-    <% else %>
-      <p>
-        Unfortunately, you did not get the required number of participants for results to be
-        available. This survey has exceeded more than <%=(Survey::MAXIMUM_DAYS_TO_RUN - Survey::MINIMUM_DAYS_TO_RERUN)%> days
-        old and may no longer be rerun.
-      </p>
-    <% end %>
-  <% else %>
-    <p>Survey results are unavailable due to insufficient data.  The
-      survey sponsor may choose to re-run the survey in an effort to get increased participation.  If this is
-      the case, you will be notified.</p>      
-  <% end %>
-<% else %>
 	<%=flash_messages%>
   <div id="invitation_list">
     <% if @participation.nil? then %>
@@ -161,4 +121,3 @@ function cancelNewDiscussion(elem, e) {
 </script>
 
 <% content_for :initialize_js, "observeDiscussions();"%>
-<% end %>
