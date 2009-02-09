@@ -8,10 +8,10 @@ Feature: Manage accounts
     And I fill in "Email address" with "test@test.com"
     And I fill in "Name of Your Organization" with "test organization"
     And I fill in "Your Name" with "test name"
-    And I fill in "Zip Code" with "12345"
+    And I fill in "Zip" with "12345"
     And I fill in "Password" with "123456"
-    And I fill in "Confirm your password" with "123456"
-    And I press "Create"
+    And I fill in "Confirm password" with "123456"
+    And I press "Sign Up"
     Then I should see "Your account was created successfully."
     And I should see "Surveys"
     
@@ -19,14 +19,12 @@ Feature: Manage accounts
     Given I am logged in
     And I am on the edit account page 
     And I fill in "Email address" with "test@test.com"
-    And I fill in "Name of Your Organization" with "test organization"
     And I fill in "Your Name" with "test name"
-    And I fill in "Zip Code" with "12345"
+    And I fill in "Zip" with "12345"
     And I fill in "Password" with "123456"
-    And I fill in "Confirm your password" with "123456"
+    And I fill in "Confirm password" with "123456"
     And I press "Update"        
-    Then I should see "test organization"
-    And I should not see "There were problems with the following fields:"
+    Then I should not see "There were problems with the following fields:"
     
   Scenario: Reset password
     Given there is an organization

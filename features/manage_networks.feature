@@ -43,6 +43,7 @@ Feature: Manage Networks
     And there is a network
     And I own the network
     And I am on the network index page
+    And I follow "Network 1"
     When I follow "Leave Network"
     Then I should not see "Network 1"
   
@@ -53,7 +54,7 @@ Feature: Manage Networks
     And the network has members
     And I am on the show network page
     And there is a predefined question
-    When I follow "Survey 4 members"
+    When I follow "Survey these organizations"
     And I fill in "Job title" with "Survey network 1"
     And I check "Question 1"
     And I press "Create"
