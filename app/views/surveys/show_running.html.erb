@@ -1,6 +1,7 @@
 <% title @survey.job_title %>
 <% highlight_tab logged_in? ? "surveys" : "survey" %>
 <%=flash_messages%>
+<% content_for :sidebar do %>
   <div id="invitation_list">
     <% if @participation.nil? then %>
       <%=link_to image_tag("respond_button.gif"), survey_questions_path(@survey)%>
@@ -29,16 +30,17 @@
 		</ol>
     <p>Participants: <%= @survey.participations.count %></p>
 		<% if @survey.sponsor == current_organization && !@survey.enough_invitations? then %>
-		  <p>Warning: <%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%> participants are required to provide results. We recommend you invite at least <%=pluralize(@survey.recommended_number_of_invitations, 'additional organization')%>.</p>
+		  <p><%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%> participants are required to provide results. We recommend you invite at least <%=pluralize(@survey.recommended_number_of_invitations, 'additional organization')%>.</p>
 		<% end %>
 	</div>
+<% end %>
   <h2><%= @survey.job_title %><br />
 	<div class="sponsor">Sponsored by <%=link_to_organization(@survey.sponsor)%></div></h2>
 
 	<div class="main_description"><%=auto_link(@survey.description, :href_options => { :target => '_blank' })%></div>
 	<h3>Discussion</h3>
 	<% if @discussions.any? then %>
-		<p><a href="#" id="new_discussion_link">Start new discussion</a></p>
+		<p><a href="#" id="new_discussion_link">Start a new discussion topic</a></p>
 	<% else %>
 		There are currently no discussion topics.  <a href="#" id="new_discussion_link">Start one now</a>.
 	<% end %>

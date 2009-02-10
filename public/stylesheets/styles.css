@@ -18,7 +18,7 @@ h2 {
 	font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
 	color: #455349;
 	letter-spacing: -0.025em;
-  margin-top: 0.5em;
+  margin-top: 0em;
 }
 
 h3 {
@@ -185,7 +185,7 @@ textarea {
 }
 
 #main_content {
-	padding: 5px;
+  padding: 1em 5px 5px 5px;
 }
 
 #main_content.with_side_bar {
@@ -407,9 +407,9 @@ div#my_surveys .deadline {
 
 /* Survey show page invitation list */
 #invitation_list {
-	float: right;
-	width: 256px;
-	margin-left: 1em;
+	float: left;
+	width: 246px;
+	margin: 1em 10px;
 }
 
 #invitation_list h3 {
@@ -526,7 +526,9 @@ span.sponsor, span.manager {
 
 div.sponsor {
   color: #888;
-  font-size: .9em;
+  font-size: .8em;
+  margin-top: -.25em;
+  font-weight: normal;
 }
 
 div.deadline {
@@ -538,12 +540,12 @@ a.abuse {
 	font-size: .8em	;
 }
 
-span.sponsor a, span.manager a{
+span.sponsor a, span.manager a, div.sponsor a {
 	color: #4e728b;
   text-decoration: none;
 }
 
-span.sponsor a:hover {
+span.sponsor a:hover, div.sponsor a:hover {
   text-decoration: underline;
 }
 .description_box {
@@ -915,6 +917,10 @@ div.errorExplanation h2 {
 div.third_column {
   width: 243px;
   padding: 10px;
+}
+
+a.editor_cancel_link {
+  padding-left: 1em;
 }
 /* inline error description for survey fields eg. */
 div.error_description {
