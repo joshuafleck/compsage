@@ -1,4 +1,4 @@
-class SurveysController < ApplicationController
+  class SurveysController < ApplicationController
   layout :logged_in_or_invited_layout 
   # we require a valid login if you are creating or editing a survey.
   before_filter :login_required, :only => [ :edit, :update, :create, :new, :index, :destroy ]
