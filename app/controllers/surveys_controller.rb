@@ -1,7 +1,7 @@
 class SurveysController < ApplicationController
   layout :logged_in_or_invited_layout 
   # we require a valid login if you are creating or editing a survey.
-  before_filter :login_required, :only => [ :edit, :update, :create, :new, :index ]
+  before_filter :login_required, :only => [ :edit, :update, :create, :new, :index, :destroy ]
   before_filter :login_or_survey_invitation_required, :except => [ :edit, :update, :create, :new, :index ]
   filter_parameter_logging :response  
   
@@ -57,7 +57,7 @@ class SurveysController < ApplicationController
 
   def edit
 
-    @survey = current_organization.sponsored_surveys.running.find(params[:id])
+    @survey = current_organization.sponsored_surveys.running_or_pending.find(params[:id])
     
   end
   
@@ -260,7 +260,7 @@ class SurveysController < ApplicationController
   end
   
   def destroy
-    @survey = current_organization.sponsored_surveys.stalled.find(params[:id])
+    @survey = current_organization.sponsored_surveys.deletable.find(params[:id])
 
     @survey.destroy
     

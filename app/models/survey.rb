@@ -38,6 +38,8 @@ class Survey < ActiveRecord::Base
   named_scope :recent, :order => 'surveys.created_at DESC', :limit => 10
   named_scope :closed, :conditions => ['aasm_state = ? OR aasm_state = ?', 'finished', 'stalled']
   named_scope :not_finished, :conditions => "aasm_state <> 'finished'"
+  named_scope :running_or_pending, :conditions => ['aasm_state = ? OR aasm_state = ?', 'running', 'pending']
+  named_scope :deletable, :conditions => ['aasm_state = ? OR aasm_state = ?', 'stalled', 'pending']
   
   after_create :add_sponsor_subscription
   before_destroy :cancel_survey

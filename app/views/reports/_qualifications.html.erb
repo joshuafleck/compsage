@@ -1,0 +1,12 @@
+<p><%= link_to_function "Show Comments (#{question.qualifications_count})", "new Effect.toggle('qualification_section_#{question.id}', 'blind', {duration: .5});return false;" %></p>
+<div id="qualification_section_<%=question.id%>" style="display:none;">
+  <ul id="qualifications_<%=question.id%>">
+      <% question.responses.each do |response| %>
+        <% if !response.qualifications.nil? then%>
+        <li>
+          <%= response.qualifications %>         
+        </li>
+        <% end %>
+    <% end %>
+    </ul>
+</div>

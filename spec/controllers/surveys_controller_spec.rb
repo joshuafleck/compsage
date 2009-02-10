@@ -368,7 +368,7 @@ describe SurveysController, " handling GET /surveys/1/edit" do
     @questions = [@question]
 
     @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
-    @surveys_proxy.stub!(:running).and_return(@open_surveys)
+    @surveys_proxy.stub!(:running_or_pending).and_return(@open_surveys)
     @open_surveys.stub!(:find).and_return(@survey)
     PredefinedQuestion.stub!(:all).and_return(@predefined_questions)
     @survey.stub!(:questions).and_return(@questions)
@@ -390,7 +390,7 @@ describe SurveysController, " handling GET /surveys/1/edit" do
   
   it "should find the survey requested" do
     @current_organization.should_receive(:sponsored_surveys).and_return(@surveys_proxy)
-    @surveys_proxy.should_receive(:running).and_return(@open_surveys)
+    @surveys_proxy.should_receive(:running_or_pending).and_return(@open_surveys)
     @open_surveys.should_receive(:find).and_return(@survey)
     do_get
   end
@@ -411,7 +411,7 @@ describe SurveysController, " handling GET /surveys/1/edit, without access" do
     @open_surveys = []
 
     @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
-    @surveys_proxy.stub!(:running).and_return(@open_surveys)
+    @surveys_proxy.stub!(:running_or_pending).and_return(@open_surveys)
     @open_surveys.stub!(:find).and_raise(ActiveRecord::RecordNotFound)
   end
 
