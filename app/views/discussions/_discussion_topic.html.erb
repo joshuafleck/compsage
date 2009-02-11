@@ -6,7 +6,7 @@
   	<% if discussion_topic.responder.eql?(@survey.sponsor) && !discussion_topic.body.blank? then %>
 	    <span class="sponsor">Sponsor: </span>
 	  <% end %>
-	  <span id="discussion_body_<%=discussion_topic.id%>"><%= auto_link(discussion_topic.body, :href_options => { :target => '_blank' }) %></span>
+	  <span id="discussion_body_<%=discussion_topic.id%>"><%= auto_link(discussion_topic.body, :html => { :target => '_blank' }) %></span>
   	<% if !current_organization_or_survey_invitation.eql?(discussion_topic.responder) then %>
 			<%=link_to "Report Abuse", report_survey_discussion_path(@survey,discussion_topic), :class => "abuse" %>  
 	  <% end %>

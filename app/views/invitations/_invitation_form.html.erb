@@ -27,7 +27,7 @@
 </div>
 <div id="send_invitations">
 	<% form_tag do %>
-	  <% if include_networks && current_organization.networks.size > 0 then %>
+	  <% if include_networks then %>
 		<h3>Invite Your Networks</h3>
 		<ul>
 			<% @networks.each do |network| %>
@@ -35,7 +35,7 @@
 		      <li>
   		        <%=network_form.check_box :included%>
   		        <%=network_form.label :included, network.name%>:
-					    <span class="description"><%=auto_link(network.description, :href_options => { :target => '_blank' })%></span>
+					    <span class="description"><%=auto_link(network.description, :html => { :target => '_blank' })%></span>
 					</li>
 		    <% end %>			
 			<% end %>
@@ -68,12 +68,9 @@
 	<% end %>
 </div>
 <script type="text/javascript">
-//The previous search text
-var lastSearch = '';
 
 function initializeObservers() {
-  //This will check the search box for changes every .5 seconds
-	new PeriodicalExecuter(liveOrganizationSearch, .5);
+	$('search').observe('keyup', liveOrganizationSearch);
 	
 	$('external_invitation_submit').observe('click', addExternalInvite);
 	$('invitation_form_submit').observe('click', addExternalInviteOnSubmit);
@@ -87,9 +84,7 @@ function initializeObservers() {
  * This will send an ajax request to the server with the search text
  */
 function liveOrganizationSearch() {
-	if($F('search').length == 0 || $F('search') == lastSearch) return;
-	
-	lastSearch = $F('search');
+	if($F('search').length == 0) return;
 	
 	if($F('search').match(/\@/)) {
 		populateExternalInvitationForm($F('search'), '');

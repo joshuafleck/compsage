@@ -37,7 +37,7 @@
   <h2><%= @survey.job_title %><br />
 	<div class="sponsor">Sponsored by <%=link_to_organization(@survey.sponsor)%></div></h2>
 
-	<div class="main_description"><%=auto_link(@survey.description, :href_options => { :target => '_blank' })%></div>
+	<div class="main_description"><%=auto_link(@survey.description, :html => { :target => '_blank' })%></div>
 	<h3>Discussion</h3>
 	<% if @discussions.any? then %>
 		<p><a href="#" id="new_discussion_link">Start a new discussion topic</a></p>

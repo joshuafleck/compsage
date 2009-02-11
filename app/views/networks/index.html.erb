@@ -16,7 +16,7 @@
         <h3><%= invitation.network.name %>
           <span class="manager">managed by <%= link_to_organization(invitation.network.owner) %></span>
         </h3>
-        <div class="description_box"><%=h auto_link(invitation.network.description, :href_options => { :target => '_blank' }) %></div>
+        <div class="description_box"><%=h auto_link(invitation.network.description, :html => { :target => '_blank' }) %></div>
         <div class="actions">
           <%= link_to "Join Network", join_network_path(invitation.network), :method => :put %>
           <%= link_to "Decline", decline_network_invitation_path(invitation.network.id,invitation.id), :method => :put %>
@@ -38,7 +38,7 @@
     <% @networks.each do |network| %>
       <li class="<%=cycle("even", "odd")%>">
         <h3><%= link_to_network(network) %></h3>
-        <div class="description_box"><%=network.description%></div>
+        <div class="description_box"><%=auto_link(network.description, :html => { :target => '_blank' })%></div>
       </li>
     <% end %>
   </ul>
