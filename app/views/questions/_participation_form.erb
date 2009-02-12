@@ -3,7 +3,8 @@
 </h2>
 <h3>Job Description</h3>
 <p class="description_box"><%=auto_link(@survey.description, :html => { :target => '_blank' })%></p>
-<p>Report data as of <%=90.days.ago.to_date.to_s(:long_ordinal)%>.</p>
+<p>Report data as of <%=90.days.ago.to_date.to_s(:long_ordinal)%> <%= link_to_function "Why?", "new Effect.toggle('why_section', 'blind', {duration: .5});return false;" %></p>
+<div id="why_section", style="display:none;">This day is 90 days prior to today's date and is needed to preserve the historical requirement for the exchange of compensation information.</div>
 <%=flash_messages%>
 <%= error_messages_for :participation %>
 <% form_for @participation, :url => respond_survey_path(@survey), :builder => QuestionFormBuilder do |f|%>
