@@ -47,7 +47,7 @@ class Survey < ActiveRecord::Base
     
   aasm_initial_state :pending
   aasm_state :pending
-  aasm_state :running, :enter => :email_rerun_message
+  aasm_state :running
   aasm_state :stalled, :enter => :email_failed_message
   aasm_state :billing_error, :enter => :email_billing_error
   aasm_state :finished, :enter => :email_results_available
@@ -73,7 +73,7 @@ class Survey < ActiveRecord::Base
   end
   
   aasm_event :rerun do
-    transitions :to => :running, :from => :stalled, :guard => :open_and_can_be_rerun?
+    transitions :to => :running, :from => :stalled, :guard => :open_and_can_be_rerun?, :on_transition => :email_rerun_message
   end
 
   aasm_event :billing_error_resolved do
@@ -176,7 +176,7 @@ class Survey < ActiveRecord::Base
   end
   
   def enough_responses?
-    self.enough_participations? && !self.blank_report?
+    self.enough_participations? && !self.no_reportable_questions?
   end
   
   # determine if all questions can be reported
@@ -189,12 +189,8 @@ class Survey < ActiveRecord::Base
   end
   
   # determine if the report would contain any data
-  def blank_report?
-    self.questions.each do |question|
-      return false if question.adequate_responses?
-    end
-    
-    return true    
+  def no_reportable_questions?
+    !self.questions.any?(&:adequate_responses?) 
   end
   
   def reportable_questions
@@ -210,10 +206,7 @@ class Survey < ActiveRecord::Base
   end
   
   # email all participants (so they know they may be receiving results), all pending invitees, external invitees
-  def email_rerun_message
-    return unless self.stalled? # calling this from running 'enter' method, 
-    # so need to make sure the survey was stalled
-    
+  def email_rerun_message    
     self.participations.each do |p| 
       Notifier.deliver_survey_rerun_notification_participant(self,p.participant) unless p.participant == self.sponsor
     end 

@@ -21,7 +21,7 @@ class Question < ActiveRecord::Base
   end
 
   TYPES_WITH_OPTIONS = ['radio', 'checkbox']
-  TYPES_WITH_UNITS = ['wage']
+  TYPES_WITH_UNITS = ['wage_range','base_wage']
 
   NUMERICAL_RESPONSES = { 
     'text_field' => false,
@@ -30,7 +30,8 @@ class Question < ActiveRecord::Base
     'radio' => true,
     'checkbox' => false,
     'text' => false,
-    'wage' => true 
+    'wage_range' => true,
+    'base_wage' => true 
   }
   
   MINIMUM_RESPONSES = {
@@ -40,12 +41,13 @@ class Question < ActiveRecord::Base
     'radio' => 1,
     'checkbox' => 1,
     'text' => 1,
-    'wage' => 5  
+    'wage_range' => 3,
+    'base_wage' => 5 
   }
                         
   CUSTOM_QUESTION_TYPES = {
     'Free response' => 'text_area',
-    'Pay or wage response' => 'wage',
+    'Pay or wage response' => 'wage_range',
     'Numeric response' => 'numerical_field', 
     'Yes/No' => 'radio', 
     'Agreement scale' => 'radio'
@@ -57,7 +59,8 @@ class Question < ActiveRecord::Base
   }
                         
   QUESTION_UNITS = {
-    'wage' => ['Annually', 'Hourly']
+    'wage_range' => ['Annually', 'Hourly'],
+    'base_wage' => ['Annually', 'Hourly']
   }
   
   UNIT_CONVERSION_FACTORS = {

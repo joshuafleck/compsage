@@ -4,13 +4,13 @@ salary_questions:
   name: Questions pertaining to this position's salary and salary range
   description: "Questions regarding salary for a positions"
   question_hash: --- 
-  - :question_type: wage
+  - :question_type: base_wage
     :text: What is this position's average base salary/salary?
-  - :question_type: wage
+  - :question_type: wage_range
     :text: What is this position's salary range minimum?
-  - :question_type: wage
+  - :question_type: wage_range
     :text: What is this position's salary range midpoint?
-  - :question_type: wage
+  - :question_type: wage_range
     :text: What is this position's salary range maximum?
   
 incentive_question:

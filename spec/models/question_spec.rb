@@ -168,7 +168,7 @@ describe Question, "that has units" do
 
   before do
     @question = Question.new
-    @question.attributes = valid_question_attributes.with(:question_type => 'wage')
+    @question.attributes = valid_question_attributes.with(:question_type => 'wage_range')
   end
 
   it "should have units" do

@@ -408,7 +408,7 @@ describe AccountsController, " handling PUT /account" do
 		
 	  it "should redirect to account show page" do
 	  	do_put
-	  	response.should redirect_to(account_path)
+	  	response.should redirect_to(edit_account_path)
 	  end
 	  
 	  it "should flash a message regarding the success of the edit" do
