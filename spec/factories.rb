@@ -131,3 +131,9 @@ Factory.define :response do |p|
   p.numerical_response { Factory.next(:counter) }
 end
 
+#definition and setup for network membership
+Factory.define :network_membership do |p|
+  p.network {|a| a.association(:network)}
+  p.organization {|a| a.association(:organization)}
+end
+

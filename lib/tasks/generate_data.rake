@@ -7,12 +7,8 @@ namespace :data_generator do
   desc "Generate a fake set of responses for a survey."
   task :finished_survey => :environment do
     sponsor = Organization.first
-    survey = Factory(:survey, :job_title => Faker::Company.catch_phrase, :sponsor => sponsor, :description => Faker::Lorem.paragraph)
+    survey = Factory(:survey, :job_title => Faker::Company.catch_phrase, :sponsor => sponsor, :description => Faker::Lorem.paragraph, :questions => generate_questions)
     
-    questions = []
-    #anywhere between 3 and 8 questions
- 
-
     invitations = []
     current_org = 1
     # between 5 and 10 invitations  
@@ -34,7 +30,7 @@ namespace :data_generator do
       
       # build responses.
       responses = []
-      questions.each do |question|
+      survey.questions.each do |question|
         next if rand(5) == 0 # (80% chance of answering a question)
         
         case question.question_type
@@ -67,6 +63,7 @@ namespace :data_generator do
     Rake::Task["ts:index"].invoke
   end
 
+  # usage: rake 'data_generator:load_all[5]'
   desc "Generate a fake set of data for all types."
   task :load_all, :total, :needs => [:environment] do |task,args|
     before
@@ -76,7 +73,7 @@ namespace :data_generator do
     generate_organizations(total)   
           
     generate_networks
-    generate_network_organizations
+    generate_network_memberships
     generate_network_invitations
     
     generate_surveys  
@@ -99,7 +96,7 @@ namespace :data_generator do
     'discussions',
     'logos',
     'networks',
-    'networks_organizations',
+    'network_memberships',
     'organizations',
     'questions']
   
@@ -178,7 +175,7 @@ namespace :data_generator do
         :city => Faker::Address.city,
         :state => Faker::Address.us_state_abbr,
         :zip_code => Faker::Address.zip_code.slice(0..4),
-        :industry => Organization::INDUSTRIES[rand(53)])
+        :industry => AccountsHelper::INDUSTRIES[rand(53)])
     end
     
     puts "generating organizations complete"
@@ -207,7 +204,7 @@ namespace :data_generator do
   end
   
   # adds members to all networks
-  def generate_network_organizations      
+  def generate_network_memberships      
     networks = Network.all
     
     puts "generating #{ORGANIZATIONS_PER_NETWORK} organizations per network (about #{ORGANIZATIONS_PER_NETWORK*networks.size})..." 
@@ -219,7 +216,7 @@ namespace :data_generator do
       organizations = []
       (rand(ORGANIZATIONS_PER_NETWORK)+3).times do |index|
         organization = Organization.find :first, :offset => (Organization.count * rand).to_i
-        network.organizations << organization unless network.owner == organization || organizations.include?(organization)
+        Factory(:network_membership,:network => network, :organization => organization) unless network.owner == organization || organizations.include?(organization)
         organizations << organization
       end
     end
@@ -376,13 +373,17 @@ namespace :data_generator do
     questions = []
     (rand(QUESTIONS_PER_SURVEY) + 3).times do |index|
       
-      question_type = case rand(3)
+      question_type = case rand(5)
       when 0 # create numerical response
         'numerical_field'
       when 1 # create textual response
         'text_field'
       when 2 # create multiple choice
         'radio'
+      when 3 # create wage range
+        'wage_range'
+      when 4 # create base wage
+        'base_wage'
       end
       
       if question_type == 'radio' then
@@ -425,16 +426,25 @@ namespace :data_generator do
         next if rand > RESPONSE_RATE # ((RESPONSE_RATE*100)% chance of answering a question)
         
         case question.question_type
+        when 'wage_range','base_wage'
+          response = Factory.build(
+            :response, 
+            :question => question, 
+            :numerical_response => 20000 + rand(60000),
+            :unit => ['Annually', 'Hourly'][rand(2)],
+            :qualifications => ["",Faker::Lorem.sentence][rand(2)])
         when 'numerical_field'
           response = Factory.build(
             :response, 
             :question => question, 
-            :numerical_response => 20000 + rand(60000))
+            :numerical_response => 20000 + rand(60000),
+            :qualifications => ["",Faker::Lorem.sentence][rand(2)])
         when 'radio'
           response = Factory.build(
             :response, 
             :question => question, 
-            :numerical_response => rand(question.options.size))
+            :numerical_response => rand(question.options.size),
+            :qualifications => ["",Faker::Lorem.sentence][rand(2)])
         else
           response = Factory.build(
             :response, :question => question, 

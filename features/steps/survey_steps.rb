@@ -112,5 +112,30 @@ Given /the survey is stalled/ do
   @survey.finish!
 end
 
-
+Given /the survey has enough participants but partial report/ do
+  #there are 3 questions with numerical responses,
+  # if we respond to each question twice, except the last,
+  # which we respond to 3 times, then the survey will have
+  # adequate participation, but only a partial report
+  @survey.questions.each do |question|
+    @response = Factory.build(:response, :question => question, :numerical_response => 1.4)
+    @participation = Factory.create(
+      :participation, 
+      :survey => @survey, 
+      :responses => [@response], 
+      :participant => Factory.create(:organization)) 
+    @response = Factory.build(:response, :question => question, :numerical_response => 1.4)
+    @participation = Factory.create(
+      :participation, 
+      :survey => @survey, 
+      :responses => [@response], 
+      :participant => Factory.create(:organization))        
+  end
+  @response = Factory.build(:response, :question => @question, :numerical_response => 1.4)
+  @participation = Factory.create(
+    :participation, 
+    :survey => @survey, 
+    :responses => [@response], 
+    :participant => Factory.create(:organization)) 
+end
 

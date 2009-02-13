@@ -130,4 +130,14 @@ Feature: Manage surveys
     When I fill in "search_text" with "Survey 1"
     And I press the button with id "submit"
     Then I should see "Survey 1"
+    
+  Scenario: Finish stalled survey
+    Given I am logged in
+    And there is a survey
+    And I am the sponsor
+    And the survey has enough participants but partial report
+    And the survey is stalled
+    And I am on the survey show page
+    When I follow "finish"
+    Then I should see "Report on"
 
