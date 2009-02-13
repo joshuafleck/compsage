@@ -113,7 +113,7 @@ class NetworksController < ApplicationController
     if network_invite.nil? then
       respond_to do |wants|
         wants.html do
-          flash[:error] = "You get an invite before joining that network."
+          flash[:notice] = "You get an invite before joining that network."
           redirect_to networks_path
         end
         wants.xml do

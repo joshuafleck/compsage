@@ -161,7 +161,7 @@ class AccountsController < ApplicationController
           respond_to do |wants|
             wants.html do
               flash[:notice] = "Your password has been updated for #{@organization.email}!"
-              redirect_back_or_default('/')
+              redirect_to new_session_path
             end
           end
         else
@@ -179,7 +179,7 @@ class AccountsController < ApplicationController
         respond_to do |wants|
           wants.html do
             flash[:notice] = "We were not able to access this page."
-            redirect_back_or_default('/')
+            redirect_to new_session_path
           end
         end
       elsif @organization.reset_password_key_expires_at < Time.now
@@ -187,7 +187,7 @@ class AccountsController < ApplicationController
           wants.html do
             flash[:notice] = "Your key has expired - please request a new key."
             @organization.delete_reset_key
-            redirect_back_or_default('/')
+            redirect_to new_session_path
           end
         end
       end

@@ -822,6 +822,7 @@ ul#organizations h3 {
 
 ul#organizations div.organization_logo {
   float: left;
+  margin-right: .2em;
 }
 
 ul#organizations form {
@@ -829,7 +830,7 @@ ul#organizations form {
 }
 
 dl#organization_information dt {
-  width: 5em;
+  width: 7em;
   text-align: right;
   float: left;
   color: #666;
@@ -876,6 +877,7 @@ label img {
 
 form div.box_container {
   overflow: hidden;
+  width: 100%;
 }
 
 form div.box {
@@ -936,4 +938,12 @@ span.label {
 
 span.message {
 	font-style: italic;
+}
+
+p.thumbnail {
+  margin-top: 1em;
+}
+
+div.actions form select {
+  width: 14em;
 }

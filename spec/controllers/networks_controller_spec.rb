@@ -474,6 +474,6 @@ describe NetworksController, "handling PUT /networks/1/join with no invitation" 
   
   it "should flash an error message" do
     do_put
-    flash[:error].should == "You get an invite before joining that network."
+    flash[:notice].should == "You get an invite before joining that network."
   end
 end

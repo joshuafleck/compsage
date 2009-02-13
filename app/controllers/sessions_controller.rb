@@ -53,12 +53,12 @@ class SessionsController < ApplicationController
 protected
   # Track failed login attempts
   def note_failed_signin
-    flash[:error] = "We couldn't log you in as '#{params[:email]}'"
+    flash[:notice] = "We couldn't log you in as '#{params[:email]}'"
     logger.warn "Failed login for '#{params[:email]}' from #{request.remote_ip} at #{Time.now.utc}"
   end
   # Track failed survey login attempts
   def note_failed_survey_signin
-    flash[:error] = "We couldn't log you in using the key provided"
+    flash[:notice] = "We couldn't log you in using the key provided"
     logger.warn "Failed survey login for key:#{params[:key]} at #{Time.now.utc}"
   end  
 end

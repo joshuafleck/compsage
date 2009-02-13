@@ -29,13 +29,19 @@
   <% end %>
   <%=f.label :industry %> 
   <%=f.select :industry, AccountsHelper::INDUSTRIES, :include_blank => true %>
-  <% if !@organization.logo.nil? then %>
-    <p><%=image_tag @organization.logo.public_filename(:standard_thumbnail) %></p>
-  <% end %>  
-  <% fields_for "organization[logo]",@organization.logo do |logo_form| %>
-      <%=logo_form.label :uploaded_data, 'Company logo'%>
-      <%=logo_form.file_field :uploaded_data%>
-  <% end %>  
+  <% form_row do %>  
+    <% if !@organization.logo.nil? then %>
+      <% form_box do %>  
+        <p class="thumbnail"><%=image_tag @organization.logo.public_filename(:standard_thumbnail) %></p>
+      <% end %>    
+    <% end %>  
+    <% form_box do %>  
+      <% fields_for "organization[logo]",@organization.logo do |logo_form| %>
+          <%=logo_form.label :uploaded_data, 'Company logo'%>
+          <%=logo_form.file_field :uploaded_data%>
+      <% end %>  
+    <% end %>
+  <% end %>    
   <% form_row do %>
     <% form_box do %>
       <%=f.label :password, required('Password') %> 
