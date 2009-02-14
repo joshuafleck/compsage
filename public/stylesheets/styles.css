@@ -409,7 +409,7 @@ div#my_surveys .deadline {
 #invitation_list {
 	float: left;
 	width: 246px;
-	margin: 1em 10px;
+	margin: 1em 6px;
 }
 
 #invitation_list h3 {
@@ -418,6 +418,8 @@ div#my_surveys .deadline {
 
 #invitation_list ol {
 	padding-left: 1.5em;
+	margin-left: 0;
+	margin-right: 0;
 	margin-top: 0;
 	padding-top: 0;
 }

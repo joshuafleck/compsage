@@ -1,13 +1,12 @@
+<div style="display:none;">Need this div for flash notices in IE6</div>
 <%=flash_messages%>
-
-<% form_tag session_path do -%>
+<% form_tag session_path do %>
   <label for="email">Email</label>
   <%= text_field_tag 'email', @login, :size => 25 %>
-
   <label for="password">Password</label>
-  <%= password_field_tag 'password', '', :size => 10 %>
-  
-  <label for="remember_me">Remember me <%= check_box_tag 'remember_me' %></label>
-  
-  <div class="submit"><%= submit_tag 'Log in' %> &nbsp;&nbsp;<%=link_to "Forgot your password?", forgot_account_path%></div>
-<% end -%>
+  <%= password_field_tag 'password', '', :size => 10 %>  
+  <label for="remember_me">Remember me <%= check_box_tag 'remember_me' %></label>  
+  <div class="submit">
+    <%= submit_tag 'Log in' %> &nbsp;&nbsp;<%=link_to "Forgot your password?", forgot_account_path%>
+  </div>
+<% end %>
