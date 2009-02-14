@@ -373,6 +373,7 @@ div#my_surveys li h3 {
 
 div#my_surveys .status {
   overflow: hidden;
+  width: 100%;
 }
 
 div#my_surveys .state, div#my_surveys .participants, div#my_surveys .invitations {
@@ -763,8 +764,12 @@ span.inadequate_responses {
 
 ul#networks, ul#network_invitations {
   list-style-type: none;
-  padding: 0 0 1em 0;
-  margin: 0 0 1em 0;
+  padding: 0;
+  margin: 0;
+}
+
+ul#networks li, ul#network_invitations li {
+  margin-bottom: 1.2857em;
 }
 
 ul#network_invitations {
