@@ -930,6 +930,7 @@ div.error_description {
 	font-style: italic;
 	padding: 0 0.5em 0 1em;
 	font-weight: bold;
+	color: #990000;
 }
 
 span.label {
