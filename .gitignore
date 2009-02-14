@@ -9,3 +9,4 @@ tmp/*
 db/sphinx
 config/development.sphinx.conf
 *.swp
+.DS_Store
