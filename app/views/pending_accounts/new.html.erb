@@ -1,39 +1,41 @@
 <% title "Signup" %>
 <% highlight_tab "join" %>
-<h2>Signup</h2>
-<p>
-In order to ensure the best possible experience, we verify the identity of all CompSage applicants.
-After signing up, you will be contacted within three business days to verify your account details.
-</p>
-<%=error_messages_for :pending_account%>
-<%=flash_messages%>
-<% form_for @pending_account, :url => signup_path do |f| %>
-  <%=f.label :organization_name, 'Name of Your Organization' %>    
-  <%=f.text_field :organization_name %>
-  <% form_row do %>
-    <% form_box do %>
-      <%=f.label :contact_first_name, 'First Name' %>    
-      <%=f.text_field :contact_first_name, :size => 13 %>
+<div class="image_header"><%= image_tag "signup_banner.gif" %></div>
+<div class="main_page">
+  <p>
+  In order to ensure the best possible experience, we verify the identity of all CompSage applicants.
+  After signing up, you will be contacted within three business days to verify your account details.
+  </p>
+  <%=error_messages_for :pending_account%>
+  <%=flash_messages%>
+  <% form_for @pending_account, :url => signup_path do |f| %>
+    <%=f.label :organization_name, 'Name of Your Organization' %>    
+    <%=f.text_field :organization_name %>
+    <% form_row do %>
+      <% form_box do %>
+        <%=f.label :contact_first_name, 'First Name' %>    
+        <%=f.text_field :contact_first_name, :size => 13 %>
+      <% end %>
+      <% form_box do %>
+        <%=f.label :contact_last_name, 'Last Name' %> 
+        <%=f.text_field :contact_last_name, :size => 13 %>
+      <% end %>
     <% end %>
-    <% form_box do %>
-      <%=f.label :contact_last_name, 'Last Name' %> 
-      <%=f.text_field :contact_last_name, :size => 13 %>
+    <%=f.label :email, "Email" %> 
+    <%=f.text_field :email %>
+    <% form_row do %>
+      <% form_box do %>
+        <%=f.label :phone, "Phone" %> 
+        <%=f.text_field :phone, :size => 15 %>
+      <% end %>
+      <% form_box do %>
+        <%=f.label :phone_extension, 'Ext.' %> 
+        <%=f.text_field :phone_extension, :size => 5 %>
+      <% end %>
     <% end %>
+    <div class="submit">
+      <input type="submit" value="Signup" /> or 
+      <%=link_to "Cancel", '/' %>
+    </div>
   <% end %>
-  <%=f.label :email, "Email" %> 
-  <%=f.text_field :email %>
-  <% form_row do %>
-    <% form_box do %>
-      <%=f.label :phone, "Phone" %> 
-      <%=f.text_field :phone, :size => 15 %>
-    <% end %>
-    <% form_box do %>
-      <%=f.label :phone_extension, 'Ext.' %> 
-      <%=f.text_field :phone_extension, :size => 5 %>
-    <% end %>
-  <% end %>
-  <div class="submit">
-    <input type="submit" value="Signup" /> or 
-    <%=link_to "Cancel", '/' %>
-  </div>
-<% end %>
+</div>
