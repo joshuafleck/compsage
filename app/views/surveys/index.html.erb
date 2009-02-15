@@ -2,6 +2,18 @@
 <% highlight_tab("surveys") %>
 <% content_for :sidebar do %>
 	<div id="surveys_sidebar">
+		<h2>Recent Survey Results</h2>
+		<% if @my_results.empty? then %>
+			<p>You currently don't have any survey results.  You can search for surveys to participate in to the right, as well
+				as <%=link_to "sponsor a survey", new_survey_path%>.</p>
+		<% else %>
+			<ul>
+				<% @my_results.each do |survey| %>
+					<li><%=link_to survey, survey_report_path(survey)%></li>
+				<% end %>
+			</ul>
+			<p><%=link_to "All Results", reports_surveys_path%></p>
+		<% end %>
 		<% if @survey_participations.any? then %>
 			<h2>Recent Responses</h2>
 			<ul>
@@ -18,20 +30,8 @@
           </li>
 				<% end %>
 			</ul>
-		<% end %>
-		<h2>Recent Survey Results</h2>
-		<% if @my_results.empty? then %>
-			<p>You currently don't have any survey results.  You can search for surveys to participate in to the right, as well
-				as <%=link_to "sponsor a survey", new_survey_path%>.</p>
-		<% else %>
-			<ul>
-				<% @my_results.each do |survey| %>
-					<li><%=link_to survey, survey_report_path(survey)%></li>
-				<% end %>
-			</ul>
-			<p><%=link_to "All Results", reports_surveys_path%></p>
-		<% end %>
-	</div>
+    <% end %>
+  </div>
 <% end %>
 
 <div id="search_box">
