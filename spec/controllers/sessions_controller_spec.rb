@@ -100,5 +100,29 @@ describe SessionsController do
 end
 
 describe SessionsController, "handling POST /sessions (logging in)" do
-  it "should update the organizations last logged in at time"
+  before do
+    @org = Factory.create(:organization)
+    @params = {:email => @org.email, :password => 'test12'}
+  end
+
+  def do_post
+    post :create, @params 
+  end
+  
+  it "should update the organizations last logged in at time" do
+    lambda { do_post }.should change { @org.reload; @org.last_login_at }
+  end
+  
+  it "should set a session flag if this is the first time logging in" do
+    do_post
+    session[:first_login].should be_true
+  end
+
+  it "should not set a session flag if this is not the first time logging in" do
+    @org.last_login_at = Time.now
+    @org.save
+
+    do_post
+    session[:first_login].should be_nil
+  end
 end

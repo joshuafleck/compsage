@@ -16,6 +16,13 @@ class SessionsController < ApplicationController
       # protection if user resubmits an earlier form using back
       # button. Uncomment if you understand the tradeoffs.
       # reset_session
+
+      # Set first_login in the session so we can show a tutorial if the user is new.
+      session[:first_login] = true if organization.last_login_at.nil?
+      
+      organization.last_login_at = Time.now
+      organization.save
+
       self.current_organization = organization
       new_cookie_flag = (params[:remember_me] == "1")
       handle_remember_cookie! new_cookie_flag
