@@ -286,12 +286,12 @@ div.benefit p {
   display: block;
   height: 40px;
 }
-div.surveys_are {
+div.image_header {
 	color: #455349;
   margin: 20px 0px 10px 10px;
 }
 
-p.main_page {
+.main_page {
   margin: 0 10px;
   font-size: 1.1em;
   line-height: 1.4em;
