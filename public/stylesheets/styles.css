@@ -279,17 +279,22 @@ div.benefit {
 div.benefit h2 {
   font-size: 1.2em;
   margin-bottom: 0;
+  font-weight: normal;
 }
 
+div.benefit p {
+  display: block;
+  height: 40px;
+}
 div.surveys_are {
-  margin-top: 1em;
-	font-family: 'Georgia', 'Times New Roman', serif;
-  text-align: center;
 	color: #455349;
+  margin: 20px 0px 10px 10px;
 }
 
 p.main_page {
   margin: 0 10px;
+  font-size: 1.1em;
+  line-height: 1.4em;
 }
 /* Survey Sidebar */
 #surveys_sidebar {
@@ -918,12 +923,13 @@ div.errorExplanation h2 {
 
 div.third_column {
   width: 243px;
-  padding: 10px;
+  padding: 0 10px;
 }
 
 a.editor_cancel_link {
   padding-left: 1em;
 }
+
 /* inline error description for survey fields eg. */
 div.error_description {
 	display: inline;
