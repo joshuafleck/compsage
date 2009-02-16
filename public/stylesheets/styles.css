@@ -319,8 +319,13 @@ div.image_header {
 }
 
 /* Search box */
+#search_box_container {
+  margin-top: 10px;
+  margin-bottom: 1em;
+}
+
 #search_box {
-	float: right;
+  float: right;
 	width: 246px;
   line-height: 20px;
 }
