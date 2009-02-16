@@ -286,6 +286,7 @@ div.benefit p {
   display: block;
   height: 40px;
 }
+
 div.image_header {
 	color: #455349;
   margin: 20px 0px 10px 10px;
@@ -359,6 +360,13 @@ div.image_header {
   width: 200px;
 }
 
+/* Tutorial */
+div.tutorial {
+  margin: 1em 0;
+  background-color: #f1ffe6;
+  border: 1px solid #e2ffcd;
+  padding: 1em;
+}
 /* My Surveys */
 div#my_surveys ul {
   list-style-type: none;

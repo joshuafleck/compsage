@@ -42,6 +42,9 @@
 </div>
 <%=link_to image_tag("sponsor_a_survey_button.gif"), new_survey_path%>
 <%=flash_messages%>
+<% if session[:first_login] then %>
+  <%= render :partial => 'tutorial' %>
+<% end %>
 <% if @invited_surveys.any? then %>
 	<div id="invitations">
 		<h2>Invitations</h2>
