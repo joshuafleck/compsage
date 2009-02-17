@@ -8,7 +8,7 @@
   <br />
   <b>Job Title: </b><%=@survey.job_title%>
   <br />
-  <b>Description: </b><%=auto_link(@survey.description)%>
+  <b>Description: </b><%=simple_format(auto_link(@survey.description))%>
   <br />
   <b>Sponsor: </b><%=@survey.sponsor.name%>
   <br />

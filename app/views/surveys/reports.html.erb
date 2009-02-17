@@ -6,7 +6,7 @@
   <% @surveys.each do |survey| %>
     <li>
       <h3><%= link_to survey, survey %> <span class="sponsor">sponsored by <%= link_to_organization survey.sponsor %></span></h3>
-      <div class="description_box"><%= auto_link(survey.description, :html => { :target => '_blank' }) %></div>
+      <div class="description_box"><%= simple_format(auto_link(survey.description, :html => { :target => '_blank' })) %></div>
       <div>Results generated <%= survey.end_date.to_date.to_s(:long_ordinal) %></div>
     </li>
   <% end %>
