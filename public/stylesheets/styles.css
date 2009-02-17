@@ -92,6 +92,7 @@ textarea {
 }
 
 #header {
+  overflow: hidden;
 	height: 53px;
 	font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
   background: url('../images/inner_header_background.gif') no-repeat;
@@ -112,7 +113,7 @@ textarea {
 	height: 28px;
 	list-style-type: none;
 	margin: 0;
-	padding-top: 23px;
+	padding: 23px 0 0 0;
 	float: left;
 }
 
@@ -120,7 +121,7 @@ textarea {
 	display: block;
 	float: left;
 	font-size: 17px;
-	padding: 0px 20px 2px 20px;
+	padding: 0px 20px 2px 10px;
 	height: 28px;
 }
 
@@ -146,16 +147,16 @@ textarea {
 	float: right;
 	background: url('../images/login_background.gif') no-repeat;
 	height: 53px;
-	width: 194px;
-	padding-left: 8px;
-	padding-right: 8px;
+	width: 200px;
+	padding-left: 5px;
+	padding-right: 5px;
 	padding-top: 2px;
 }
 
 #header #account_settings a {
 	text-decoration: none;
 	color: #dee9e1;
-	padding: 0 2px;
+	padding: 0 0.5em;
 	font-size: 13px;
 }
 #header #account_settings a:hover {
