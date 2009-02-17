@@ -15,7 +15,7 @@ class PendingAccountsController < ApplicationController
       respond_to do |wants|
         wants.html {         
           flash[:notice] = "Your signup request was received."
-          redirect_to '/' }      
+          redirect_to new_session_path }      
         wants.xml do
           render :status => :created
         end

@@ -240,6 +240,7 @@
      end
   end
   
+  #Allows users to view the results of a partial report
   def finish_partial
     @survey = current_organization.sponsored_surveys.stalled.find(params[:id])
     
@@ -272,11 +273,5 @@
       end
     end
   end  
- 
-    
-  private
-  
-  def logged_in_or_invited_layout
-    logged_in? ? "logged_in" : "survey_invitation_logged_in"
-  end
+
 end

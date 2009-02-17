@@ -16,10 +16,4 @@ class QuestionsController < ApplicationController
     @participation = Participation.new
   end
     
-  private
-  
-  def logged_in_or_invited_layout
-    logged_in? ? "logged_in" : "survey_invitation_logged_in"
-  end
-    
 end

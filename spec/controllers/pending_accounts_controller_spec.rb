@@ -68,7 +68,7 @@ describe PendingAccountsController, " handling POST /pending_account" do
   
     it "should redirect to the index page" do
       do_post
-      response.should redirect_to('/')
+      response.should redirect_to(new_session_path)
     end
     
     it "should flash a message regarding the success of the action" do

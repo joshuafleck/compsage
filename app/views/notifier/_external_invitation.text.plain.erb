@@ -9,7 +9,7 @@ With CompSage you can:
   * Guaranteed results, otherwise you will not pay a cent.
   * Access compensation data in use right now by the companies of your choosing.
 
-Becoming a member of CompSage is easy and free! Click here to sign up: <%= @network.nil? ? url_for(new_account_path(:key => @invitation.key, :only_path => false)) : url_for(new_account_path(:key => @invitation.key, :network_id => @network.id, :only_path => false))%>.
+Becoming a member of CompSage is easy and free! Click here to sign up: <%= url_for(new_account_path(:key => @invitation.key, :only_path => false))%>.
 
 Thanks,
 CompSage.com

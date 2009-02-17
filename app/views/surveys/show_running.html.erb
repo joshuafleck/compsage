@@ -1,5 +1,5 @@
 <% title @survey.job_title %>
-<% highlight_tab logged_in? ? "surveys" : "survey" %>
+<% highlight_tab("surveys") %>
 <%=flash_messages%>
 <% content_for :sidebar do %>
   <div id="invitation_list">

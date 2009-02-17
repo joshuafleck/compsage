@@ -77,6 +77,10 @@ Given /I am on the survey invitations page/ do
   visit survey_invitations_url(@survey)
 end
 
+Given /I am on the survey report page/ do
+  visit survey_report_url(@survey)
+end
+
 Given /I own networks/ do
   @organization1 = Factory.create(:organization, :name => "Organization 1")
   @organization2 = Factory.create(:organization, :name => "Organization 2", :email => "org2@org2.com")
@@ -110,6 +114,12 @@ Given /the survey is stalled/ do
   @survey.end_date = Date.today - 1.day
   @survey.save!
   @survey.finish!
+end
+
+Given /the survey is finished/ do
+  @survey.end_date = Date.today - 1.day
+  @survey.save!
+  @survey.finish_with_partial_report!
 end
 
 Given /the survey has enough participants but partial report/ do

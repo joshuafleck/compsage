@@ -16,10 +16,13 @@ class AccountsController < ApplicationController
 	end
 	
 	def new
+	
+	  # save the network invitation in the session, in case the user navigates away from this page
+	  session[:external_network_invitation] = ExternalNetworkInvitation.find_by_key(params[:key]) unless params[:key].blank?
 	  
 	  #The external invitation can be found in the session if it is an external survey invitation, 
 	  # otherwise, check the URL for a key
-	  @external_invitation = current_survey_invitation || ExternalInvitation.find_by_key(params[:key])
+	  @external_invitation = current_survey_invitation || session[:external_network_invitation]
 	  
 	  if @external_invitation then
   	  #Prepopulate the name and email fields automagically
@@ -85,7 +88,11 @@ class AccountsController < ApplicationController
         wants.html do
           flash[:notice] = "Your account was created successfully."  
           #Log the user in, and bring them to the surveys page        
-          organization = Organization.authenticate(@organization.email, params[:organization][:password])          
+          organization = Organization.authenticate(@organization.email, params[:organization][:password])         
+          # Set first_login in the session so we can show a tutorial if the user is new.
+          session[:first_login] = true     
+          organization.last_login_at = Time.now
+          organization.save       
           self.current_organization = organization if organization
           redirect_to surveys_path
         end   
@@ -194,10 +201,4 @@ class AccountsController < ApplicationController
     end
   end
 
-  private
-  
-  #Use a different layout depending on how the user has entered the application
-  def logged_in_or_invited_layout
-    logged_in_from_survey_invitation? ? "survey_invitation_logged_in" : (logged_in? ? "logged_in" : "front")
-  end
 end

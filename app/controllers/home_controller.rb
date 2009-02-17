@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  layout :logged_in_or_front_layout
+  layout :logged_in_or_invited_layout
   #class used to serve static files which we want rendered in the site layout.
   def index
     if logged_in?
@@ -10,10 +10,5 @@ class HomeController < ApplicationController
   def show
     render :action => params[:page]
   end
-  
-  private
-  
-  def logged_in_or_front_layout
-    logged_in? ? "logged_in" : "front"
-  end
+
 end

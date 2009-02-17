@@ -1,5 +1,5 @@
 <% title "Preview for #{@survey.job_title}" %>
-<% highlight_tab logged_in? ? "surveys" : "survey" %>
+<% highlight_tab("surveys") if logged_in? %>
 <h2>Survey Preview</h2>
 <p>This is how your survey will look.  If you are not satisfied, you can make changes before the survey is published.
   You may make changes to a survey at any time after the survey is published as well.</p>

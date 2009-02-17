@@ -13,12 +13,17 @@
 </head>
 <body>
   <div id="header" class="<%= yield :page_name%>">
-    <a href="/"><img src="/images/shawarma<%=yield :page_name%>.gif" alt="CompSage"/></a>
+    <a href="<%=root_path()%>"><img src="/images/shawarma<%=yield :page_name%>.gif" alt="CompSage"/></a>  
 		<ul id="nav" class="<%=yield :highlighted_tab %>_nav">
-      <li id="home"><a href="/">Home</a></li>
-      <li id="how"><%= link_to "How it works", home_path('how') %></li>
-      <li id="join"><%= link_to "Sign Up", signup_path %></li>
-		</ul>
+      <li id="home"><%= link_to "Home", root_path() %></li>
+      <% if current_survey_invitation then %>
+        <li id="surveys"><%= link_to "Survey", survey_path(current_survey_invitation.survey_id) %></li>
+      <% end %>
+      <li id="how"><%= link_to "How it works", home_path('how') %></li>     
+      <li id="join">
+      		<%= link_to "Sign Up", has_key? ? new_account_path() : signup_path() %>
+      </li>
+		</ul> 
 	</div>
 	<div id="container">
 		<%=yield(:sidebar)%>

@@ -94,7 +94,7 @@ textarea {
 #header {
 	height: 53px;
 	font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
-  background: url('../images/inner_header_background.gif');
+  background: url('../images/inner_header_background.gif') no-repeat;
 }
 
 #header.front {
@@ -113,6 +113,7 @@ textarea {
 	list-style-type: none;
 	margin: 0;
 	padding-top: 23px;
+	float: left;
 }
 
 #header #nav li {
@@ -123,21 +124,11 @@ textarea {
 	height: 28px;
 }
 
-#header #nav.surveys_nav li#surveys {
-	background: url('../images/selected_menu_item.gif') bottom center no-repeat;
-}
-
-#header #nav.networks_nav li#networks {
-	background: url('../images/selected_menu_item.gif') bottom center no-repeat;
-}
-
-#header #nav.home_nav li#home {
-  background: url('../images/banner_selected_menu_item.gif') bottom center no-repeat;
-}
-
 #header #nav.join_nav li#join,
 #header #nav.how_nav li#how, 
-#header #nav.contact_nav li#contact {
+#header #nav.surveys_nav li#surveys,
+#header #nav.networks_nav li#networks,
+#header #nav.home_nav li#home {
   background: url('../images/selected_menu_item.gif') bottom center no-repeat;
 }
 #header #nav li a {
@@ -180,7 +171,7 @@ textarea {
 }
 
 #container_cap {
-	background: url('../images/footer_background.gif');
+	background: url('../images/footer_background.gif') no-repeat;
 	height: 17px;
 }
 

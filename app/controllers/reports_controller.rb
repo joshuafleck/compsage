@@ -1,5 +1,5 @@
 class ReportsController < ApplicationController
-  layout 'logged_in'
+  layout :logged_in_or_invited_layout 
   before_filter :login_or_survey_invitation_required, :must_have_responded_or_sponsored
   
   def show
@@ -29,7 +29,20 @@ class ReportsController < ApplicationController
     if (current_organization_or_survey_invitation.participations.find_by_survey_id(@survey.id).nil? &&
       current_organization != @survey.sponsor) 
     then
-       render :text => "You must first respond to the survey before getting results.", :status => :unauthorized
+      respond_to do |wants|
+        wants.html do
+          flash[:notice] = "The response deadline has passed. You may not view the results unless you have responded to the survey."
+          if logged_in_from_survey_invitation? then
+            redirect_to new_account_path
+          else
+            redirect_to surveys_path
+          end
+        end
+        wants.xml do
+          render :text => "You must first respond to the survey before getting results.", :status => :unauthorized
+        end
+      end
+       
       return false
     end
   end
@@ -74,5 +87,5 @@ class ReportsController < ApplicationController
     
   
   end
-  
+   
 end

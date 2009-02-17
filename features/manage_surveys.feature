@@ -140,4 +140,25 @@ Feature: Manage surveys
     And I am on the survey show page
     When I follow "finish"
     Then I should see "Report on"
+    
+  Scenario: View survey report after responding
+    Given I am logged in
+    And there is a survey
+    And I have responded to the survey
+    And the survey has enough participants but partial report
+    And the survey is stalled
+    And the survey is finished
+    And I am on the survey report page
+    Then I should see "Question 1 text"
+    And I should see "1.40"
+    And I should see "Data hidden due to insufficient responses."
+  
+  Scenario: View survey report without responding
+    Given I am logged in
+    And there is a survey
+    And the survey has enough participants but partial report
+    And the survey is stalled
+    And the survey is finished
+    And I am on the survey report page
+    Then I should see "The response deadline has passed. You may not view the results unless you have responded to the survey."
 

@@ -52,4 +52,10 @@ module ApplicationHelper
   def form_box(&block)
     @template.concat @template.content_tag(:div, @template.capture(&block), :class => 'box')
   end
+  
+  # Determines if the user can create an account directly, or must use the signup page
+  def has_key?
+    current_survey_invitation || !session[:external_network_invitation].nil?
+  end
+
 end

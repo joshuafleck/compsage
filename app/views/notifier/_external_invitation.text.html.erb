@@ -17,12 +17,7 @@
   </ul>  
 </p>
 <p>
-  Becoming a member of CompSage is easy and free! To get started, please  
-  <% if @network.nil? then %>
-    <%=link_to "click here", new_account_path(:key => @invitation.key, :only_path => false)%>.
-  <% else %>
-      <%=link_to "click here", new_account_path(:key => @invitation.key, :network_id => @network.id, :only_path => false)%>.
-  <% end %>
+  Becoming a member of CompSage is easy and free! To get started, please <%=link_to "click here", new_account_path(:key => @invitation.key, :only_path => false)%>.
 </p>
 <p>
   Thanks,

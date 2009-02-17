@@ -5,13 +5,12 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include Exceptions
   include ExceptionNotifiable
-  
-  before_filter :make_breadcrumbs
-  
+
   session :session_key => '_shawarma_session_id'
-  
-  def make_breadcrumbs
-    @breadcrumbs = Breadcrumbs.new(["Surveys", url_for(surveys_path)])
-  end
+
+  #Use a different layout depending on how the user has entered the application
+  def logged_in_or_invited_layout
+    logged_in? ? "logged_in" : "front"
+  end  
   
 end

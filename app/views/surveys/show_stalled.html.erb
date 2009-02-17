@@ -1,5 +1,5 @@
 <% title @survey.job_title %>
-<% highlight_tab logged_in? ? "surveys" : "survey" %>
+<% highlight_tab("surveys") %>
 <h2><%= @survey.job_title %>
 	<div class="sponsor">Sponsored by <%=link_to_organization(@survey.sponsor)%></div></h2>
   <% if logged_in? && @survey.sponsor.id == current_organization.id then %>

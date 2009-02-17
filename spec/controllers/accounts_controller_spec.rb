@@ -94,7 +94,7 @@ describe AccountsController, " handling GET /account/new" do
     @external_invitation = mock_model(ExternalInvitation, :name => 'test', :email => 'test', :organization_name => 'test')
     
     Organization.stub!(:new).and_return(@organization)    
-    ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
+    ExternalNetworkInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     
     @params = {:key => @key}
     
@@ -106,7 +106,7 @@ describe AccountsController, " handling GET /account/new" do
   end
 
   it "should require a valid external invitation key" do
-    ExternalInvitation.should_receive(:find_by_key).with(@key).and_return(@external_invitation)
+    ExternalNetworkInvitation.should_receive(:find_by_key).with(@key).and_return(@external_invitation)
     do_get
   end
   
@@ -138,11 +138,12 @@ describe AccountsController, " handling POST /account" do
   
     @key = "1234"
   
-    @organization = mock_model(Organization, :save => true, :email => 'test@test.com')
+    @organization = mock_model(Organization, :save => true, :email => 'test@test.com', :last_login_at= => true)
     @external_invitation = mock_model(ExternalInvitation, :name => 'test', :email => 'test', :is_a? => false)
     
     ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:new).and_return(@organization)
+    Organization.stub!(:authenticate).and_return(@organization)
     
     @organization.stub!(:set_logo).and_return(true)
     
@@ -161,6 +162,17 @@ describe AccountsController, " handling POST /account" do
   
 	it "should create a new organization" do
 	  Organization.should_receive(:new).and_return(@organization)
+	  @organization.should_receive(:save).and_return(true)
+	  do_post
+	end
+	
+	it "should authenticate the organization" do
+	  Organization.should_receive(:authenticate).and_return(@organization)
+	  do_post
+	end	
+	
+	it "should set the last login date" do
+	  @organization.should_receive(:last_login_at=).and_return(true)
 	  @organization.should_receive(:save).and_return(true)
 	  do_post
 	end
@@ -191,7 +203,7 @@ describe AccountsController, " handling POST /account with an external survey in
   
     @key = "1234"
   
-    @organization = mock_model(Organization, :save => true, :email => 'test@test.com')
+    @organization = mock_model(Organization, :save => true, :email => 'test@test.com', :last_login_at= => true)
     @survey = mock_model(Survey, :id => "1")
     @participation = mock_model(Participation, :survey => @survey)
     @participations = mock('participations proxy', :count => 1) 
@@ -227,6 +239,7 @@ describe AccountsController, " handling POST /account with an external survey in
         
     ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:new).and_return(@organization)
+    Organization.stub!(:authenticate).and_return(@organization)
     SurveySubscription.stub!(:create!)
     SurveyInvitation.stub!(:find).and_return(@survey_invitation)
             
@@ -277,7 +290,7 @@ describe AccountsController, " handling POST /account with an external network i
 
     @key = "1234"
 
-    @organization = mock_model(Organization, :save => true, :email => 'test@test.com')
+    @organization = mock_model(Organization, :save => true, :email => 'test@test.com', :last_login_at= => true)
     @network = mock_model(Network)
     @external_invitation = mock_model(
       ExternalNetworkInvitation, 
@@ -291,6 +304,7 @@ describe AccountsController, " handling POST /account with an external network i
     @external_invitation.stub!(:is_a?).with(ExternalNetworkInvitation).and_return(true)
     ExternalInvitation.stub!(:find_by_key).with(@key).and_return(@external_invitation) 
     Organization.stub!(:new).and_return(@organization)
+    Organization.stub!(:authenticate).and_return(@organization)
 
     @networks.stub!(:<<)
     @organization.stub!(:set_logo).and_return(true)

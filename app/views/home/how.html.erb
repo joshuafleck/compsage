@@ -9,7 +9,7 @@
   <h3>Becoming a member</h3>
   <p>Becoming a member of CompSage is entirely free of charge and without obligation. We require membership to sponsor
     surveys to ensure the integrity of your data.  To do this, we personally verify all applications. Fill out our simple
-    <%=link_to "sign up form", signup_path%>, it only takes a few seconds!</p>
+    <%=link_to "sign up form", has_key? ? new_account_path() : signup_path()%>, it only takes a few seconds!</p>
   <h3>Sponsoring a survey</h3>
   <p>Sponsoring a survey allows you to create a customized online compensation survey using our standard questions or
     questions of your own design. Sponsoring a survey is no risk and you'll only be billed when a report is made

@@ -257,6 +257,8 @@ function addExternalInvite() {
   //IE6 hack - checkbox must be marked as checked after insertion into DOM
   checkbox.checked = true;
     
+	$('external_invitation_email').clear();
+	$('external_invitation_organization_name').clear();    
   $('search').clear();
   $('search').focus();
   

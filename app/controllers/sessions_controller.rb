@@ -43,13 +43,14 @@ class SessionsController < ApplicationController
   
   def create_survey_session
     logout_keeping_session!
-    self.current_survey_invitation = Invitation.find_by_key(params[:key])
-    if self.current_survey_invitation then
+    invitation = Invitation.find_by_key(params[:key])     
+    if invitation then
       # check to see if the external invite exists, it could have been replaced by a survey invite if the user created an account
-      if self.current_survey_invitation.is_a?(ExternalSurveyInvitation) then
+      if invitation.is_a?(ExternalSurveyInvitation) then
+        self.current_survey_invitation = invitation
         redirect_to survey_path(self.current_survey_invitation.survey_id)
       else
-        @login = self.current_survey_invitation.invitee.email
+        @login = invitation.invitee.email
         render :action => 'new'
       end
     else
