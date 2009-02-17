@@ -766,10 +766,6 @@ div.top_join_link {
   padding: 0 1em 0 1em;
 }
 
-div.bottom_join_link {
-  padding: 0 1em 0 1em;
-}
-
 /* Survey stalled */
 span.adequate_responses {
   color: green;
