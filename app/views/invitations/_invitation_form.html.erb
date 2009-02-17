@@ -216,7 +216,7 @@ function addExternalInvite() {
   var invite_list = $('organizations_to_invite');
   
   // Don't want to submit if either field is blank, as this form is autosubmitted when invites are sent
-  if (email == '' && name == '') {
+  if (email == '' || name == '') {
     return;
   }
     
