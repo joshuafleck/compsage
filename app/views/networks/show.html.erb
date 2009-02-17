@@ -2,7 +2,7 @@
 <% highlight_tab "networks" %>
 <h2><%=@network.name%> <span class="manager">managed by <%=link_to_organization @network.owner%></span></h2>
 <div class="main_description">
-  <%= simple_format(auto_link(@network.description, :html => { :target => '_blank' })) %>
+  <%= link_and_format(@network.description) %>
   <div class="actions">
     <% if @network.owner_id == current_organization.id then %>
       <%=link_to "Edit Network", edit_network_path(@network) %>

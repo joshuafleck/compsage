@@ -57,5 +57,10 @@ module ApplicationHelper
   def has_key?
     current_survey_invitation || !session[:external_network_invitation].nil?
   end
-
+  
+  # Passes text through a gauntlet of functions to improve the results for an end user
+  # Used for description fields.
+  def link_and_format(text, *args)
+    simple_format(auto_link(text, :html => {:target => '_blank'}))
+  end
 end
