@@ -1,6 +1,9 @@
 <% title("Report for #{@survey.job_title}") %>
 <% highlight_tab("surveys") %>
 <h2>Report on <%=@survey.job_title%></h2>
+<%if logged_in_from_survey_invitation? then%>
+  <div class="top_join_link"><%= link_to "Interested? Sign Up Now!", signup_path %></div>
+<% end %>
 <h4>Job Description</h4>
 <div class="description_box"><%=auto_link(@survey.description, :html => { :target => '_blank' })%></div>
 <p><%= link_to_function "Show Invitation List (#{@invitations.size} invitees)", "new Effect.toggle('invitation_section', 'blind', {duration: .5});return false;" %></p>
@@ -27,3 +30,10 @@
     </div>
 	<% end %>
 <% end %>
+  <%if logged_in_from_survey_invitation? then%>
+  <div>
+	<h4>Like what you see?</h4>
+    <p>If you like the results you see here, and are interested in creating your own surveys, networks, and other benefits of membership, <%= link_to "sign up now!", signup_path %>
+    </p>
+  </div>
+  <% end %>

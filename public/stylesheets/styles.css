@@ -761,6 +761,15 @@ div.report_item_suppressed {
   font-size: .9em;
 }
 
+div.top_join_link {
+  float: right;
+  padding: 0 1em 0 1em;
+}
+
+div.bottom_join_link {
+  padding: 0 1em 0 1em;
+}
+
 /* Survey stalled */
 span.adequate_responses {
   color: green;
@@ -930,6 +939,8 @@ div.third_column {
   width: 243px;
   padding: 0 10px;
 }
+
+
 
 a.editor_cancel_link {
   padding-left: 1em;
