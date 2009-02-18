@@ -60,7 +60,7 @@ module ApplicationHelper
   
   # Passes text through a gauntlet of functions to improve the results for an end user
   # Used for description fields.
-  def link_and_format(text, *args)
-    simple_format(auto_link(text, :html => {:target => '_blank'}))
+  def link_and_format(text)
+    auto_link(text, :html => {:target => '_blank'})
   end
 end
