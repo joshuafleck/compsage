@@ -467,9 +467,11 @@ describe SurveysController, " handling POST /surveys" do
     
     PredefinedQuestion.stub!(:find).and_return(@pdq1)
     @current_organization.stub!(:sponsored_surveys).and_return(@surveys)
-    @surveys.stub!(:new).and_return(@survey)
+    @surveys.stub!(:find_or_create_by_aasm_state).and_return(@survey)
     @survey.stub!(:questions).and_return(@questions_proxy)
+    @survey.stub!(:update_attributes).and_return(:true)
     @questions_proxy.stub!(:build).and_return(@question)
+    @questions_proxy.stub!(:find_all_by_predefined_question_id).and_return([])
   end
   
   def do_post
@@ -477,7 +479,7 @@ describe SurveysController, " handling POST /surveys" do
   end
 
   it "should create a new survey" do
-    @surveys.should_receive(:new).and_return(@survey)
+    @surveys.should_receive(:find_or_create_by_aasm_state).and_return(@survey)
     do_post
   end
   
@@ -500,7 +502,7 @@ describe SurveysController, " handling POST /surveys" do
   it "should assign the questions and predefined questions to the view" do
     do_post
     assigns[:survey].should_not be_nil
-  end  
+  end
   
 end
 
@@ -552,14 +554,14 @@ describe SurveysController, " handling POST /surveys, upon failure" do
                     "1" => {'included' => "1", 'text' => 'question_1', 'custom_question_type' => 'Free Response'}, 
                     "2" => {'included' => "0", 'text' => 'question_2', 'custom_question_type' => 'Yes/No'}
                  }}
-    @survey = mock_model(Survey, :id => 1, :save => false, :errors => ["asdfadsfdsa"], :job_title => "test")
+    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :errors => ["asdfadsfdsa"], :job_title => "test")
     @surveys = []
     @questions = []
     @question = mock_model(Question, :save! => :true, :predefined_question_id= => 1, :survey= => @survey, :included => "1", :[]= => true)
     
     @survey.stub!(:new_record?).and_return(true)
     @current_organization.stub!(:sponsored_surveys).and_return(@surveys)
-    @surveys.stub!(:new).and_return(@survey)
+    @surveys.stub!(:find_or_create_by_aasm_state).and_return(@survey)
     @survey.stub!(:questions).and_return(@questions)
     @questions.stub!(:new).and_return(@question)
   end
