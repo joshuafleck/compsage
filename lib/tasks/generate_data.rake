@@ -375,18 +375,18 @@ namespace :data_generator do
       
       question_type = case rand(5)
       when 0 # create numerical response
-        'numerical_field'
+        'Numeric response'
       when 1 # create textual response
-        'text_field'
+        'Free response'
       when 2 # create multiple choice
-        'radio'
+        'Pay or wage response'
       when 3 # create wage range
-        'wage_range'
+        'Yes/No'
       when 4 # create base wage
-        'base_wage'
+        'Agreement scale'
       end
       
-      if question_type == 'radio' then
+      if ['Yes/No','Agreement scale'].include?(question_type) then
         options = Array.new(rand(4) + 2) { Faker::Lorem.words(rand(3) + 1).join(" ") } 
       else
         options = nil
@@ -394,7 +394,7 @@ namespace :data_generator do
 
       question = Factory.build(
         :question,
-        :question_type => question_type, 
+        :custom_question_type => question_type, 
         :options => options, 
         :text => Faker::Lorem.sentence.gsub(/.$/, '?'), 
         :position => index)
