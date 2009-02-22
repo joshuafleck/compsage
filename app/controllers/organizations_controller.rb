@@ -38,7 +38,7 @@ class OrganizationsController < ApplicationController
       :geo => [current_organization.latitude, current_organization.longitude],
       :conditions => {},
       :with => {},
-      :match_mode => :extended, # this allows us to use boolean operators in the search query
+      :match_mode => @esc_search_text.blank? ? :fullscan : :extended, # this allows us to use boolean operators in the search query, or forego the query all together if the search string was empty
       :order => '@weight desc, @geodist asc' # sort by relevance, then distance
     }
         
