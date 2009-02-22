@@ -1,13 +1,6 @@
 <% title "Your Contact Networks" %>
 <% highlight_tab "networks" %>
-<h2>Find an Organization</h2>
-<% form_tag search_organizations_path do %> 
-  <label for="search_text">Find CompSage Members</label>
-  <%= text_field_tag 'search_text', '', :size => 30 %>
-  <input type="submit" value="Search" />
-  <p>or <%=link_to "Browse CompSage members in your area", search_organizations_path %></p>
-<% end %>
-
+<h2>Networks &amp; Contacts</h2>
 <% if @network_invitations.any? then %>
   <h2>Network Invitations</h2>
   <ul id="network_invitations">
@@ -25,24 +18,33 @@
     <% end %>
   </ul>
 <% end %>
-<h2>Your Contact Networks</h2>
+<div id="search_organizations">
+  <div id="new_network"><%= link_to image_tag("new_network_button.gif"), new_network_path %></div>
+  <% form_tag search_organizations_path do %>
+    <label for="search_text">Find CompSage Members</label>
+    <%= text_field_tag 'search_text', '', :size => 20 %> 
+    <p><input type="submit" value="Search" /></p>
+    <p>You can also <%= link_to "browse CompSage members in your area", search_organizations_path %></p>
+  <% end %>
+</div>
 <% if @networks.empty? then %>
   <p>Contact Networks make it easy for you to send surveys to and receive surveys from a group of peers. When you join a
   contact network, surveying that group of organizations is just a few clicks away. You can easily
   <%= link_to "make your own contact network", new_network_path %> and invite your own group of organizations.
 <% else %>
-  <div id="new_network">
-    <%= link_to "New Network", new_network_path %>
-  </div>
-  <ul id="networks">
+  <table id="networks">
     <% @networks.each do |network| %>
-      <li class="<%=cycle("even", "odd")%>">
-        <h3><%= link_to_network(network) %></h3>
-        <div class="description_box"><%=link_and_format(network.description)%></div>
-      </li>
+      <tr class="<%=cycle("even", "odd")%>">
+        <td class="network_actions">
+          <%= link_to image_tag('survey_network_button.gif'), new_survey_path(:network_id => network.id) %>
+        </td>
+        <td class="network_details">
+        <h3><%= link_to network.name, network_path(network) %>
+          <div class="sponsor">Managed by <%= link_to network.owner.name, organization_path(network.owner) %></div></h3>
+          <div class="description_box"><%=link_and_format(network.description)%></div>
+        </td>
+      </tr>
     <% end %>
-  </ul>
+  </table>
   <%= will_paginate @networks %>  
 <% end %>
-
-<% %>
