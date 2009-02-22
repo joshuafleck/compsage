@@ -221,12 +221,29 @@ textarea {
 /* Front Page */
 
 div#banner {
-  margin: -5px;
+  position: relative;
+  left: -5px;
+  top: -5px;
+  /*margin: -5px;*/
   overflow: hidden;
+  width: 799px;
 }
 
 div#banner img {
   float: left;
+}
+
+div#top_banner img {
+  width: 533px;
+}
+
+div#bottom_banner img {
+  width: 210px;
+  height: 80px;
+}
+
+div#bottom_banner a img {
+  width: 323px;
 }
 
 div#login {
