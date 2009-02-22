@@ -828,19 +828,6 @@ div#search_organizations {
 div#search_organizations p {
   margin-top: .5em;
 }
-ul#networks, ul#network_invitations {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-ul#networks li, ul#network_invitations li {
-  margin-bottom: 1.2857em;
-}
-
-ul#network_invitations {
-	background: url('../images/embellish.gif') bottom center no-repeat;
-}
 
 div#new_network {
   margin-top: 1em;
