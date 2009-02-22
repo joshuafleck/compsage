@@ -55,6 +55,16 @@ function showInvitationResults(response,elem,organization) {
 }
 
 /**
+ * This will return true if the field is an email address, and false otherwise
+ * @email the email string
+
+ */
+function isValidEmail(email) {
+  var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  return filter.test(email);
+}
+
+/**
  * Tab javascript code from the highly regarded Dan Peverill.
  */
 var Tabs = {
