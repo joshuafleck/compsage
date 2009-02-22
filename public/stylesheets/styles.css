@@ -476,7 +476,7 @@ ul.surveys {
 div.main_description {
   color: #444;
   margin: -1em 0 1em 0;
-  padding-left: 1em;
+  padding-left: 10px;
 }
 ul.surveys li {
 	margin-bottom: 1.2857em;
@@ -834,15 +834,40 @@ div#new_network {
   margin-left: -10px;
 }
 
+/* Networks show page */
+div#network_actions {
+  float: right;
+  width: 31%;
+  margin-right: 1%;
+}
+
+div#network_actions h3 {
+  margin-top: .25em;
+}
+
+ul#network_menu {
+  list-style-type: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+ul#network_menu li {
+  margin-bottom: .25em;
+}
 ul#network_members {
   list-style-type: none;
   padding: 0;
-  margin-left: 1em;
+  margin: 0 0 0 10px;
+}
+
+h3#network_members_header {
+  margin: 1em 0 0 10px;
 }
 
 ul#network_members a.remove {
   color: #888;
   font-size: 0.8em;
+  padding-left: 1em;
 }
 /* Network form */
 form#new_network input#network_name, form#edit_network input#network_name {
