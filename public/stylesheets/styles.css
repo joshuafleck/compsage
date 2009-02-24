@@ -662,8 +662,13 @@ form.new_survey textarea, form.edit_survey textarea {
 
 #current_invitation_list ol {
 	padding-left: 1.5em;
-	margin-top: 0;
+	margin: 0;
 	padding-top: 0;
+}
+
+#current_invitation_list ol li {
+  /* required for IE6 to wrap long invitations, prevents from pushing the invitations input down */
+  word-wrap: break-word;
 }
 
 #current_invitation_list h3 {
