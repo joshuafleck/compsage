@@ -887,8 +887,10 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
     
     #participations stub
     @participations = []
-    @participation = mock_model(Participation, :responses => @responses, :attributes= => [], :save => false)
+    @errors = []
+    @participation = mock_model(Participation, :responses => @responses, :attributes= => [], :save => false, :errors => @errors)
     @current_organization.stub!(:participations).and_return(@participations)
+    @errors.stub!(:clear).and_return([])
     @participations.stub!(:find_or_initialize_by_survey_id).and_return(@participation)
   end
   
