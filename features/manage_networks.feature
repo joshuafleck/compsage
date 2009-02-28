@@ -54,7 +54,7 @@ Feature: Manage Networks
     And the network has members
     And I am on the show network page
     And there is a predefined question
-    When I follow "Survey these organizations"
+    When I follow "Survey Network"
     And I fill in "Job title" with "Survey network 1"
     And I check "Question 1"
     And I press "Create"
