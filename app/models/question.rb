@@ -136,7 +136,7 @@ class Question < ActiveRecord::Base
   
   # returns the minimum number of responses required for the question type
   def minimum_responses
-    MINIMUM_RESPONSES[self.question_type]
+    MINIMUM_RESPONSES[self.question_type] || 1 
   end
   
   # returns true if the question received enough responses to be displayed in the report
