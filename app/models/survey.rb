@@ -43,7 +43,7 @@ class Survey < ActiveRecord::Base
   
   after_create :add_sponsor_subscription
   before_destroy :cancel_survey
-  before_save :aasm_state_number=   
+  before_save :set_aasm_state_number
     
   aasm_initial_state :pending
   aasm_state :pending
@@ -303,7 +303,7 @@ class Survey < ActiveRecord::Base
   end
   
   # Set the aasm state number using the current aasm_state (hack for survey sphinx search filter by state attribute)
-  def aasm_state_number=
+  def set_aasm_state_number
     self[:aasm_state_number] = AASM_STATE_NUMBER_MAP[self[:aasm_state]]
   end
 
