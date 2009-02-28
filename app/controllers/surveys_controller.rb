@@ -120,25 +120,23 @@
   
     @search_text = params[:search_text] || ""
     
-    @esc_search_text = Riddle.escape(@search_text)
-    
-    @search_query = "#{@esc_search_text} #{@esc_search_text} | @industry \"#{current_organization.industry}\""      
-    
-    @filter_by_subscription = params[:filter_by_subscription]
-    
-    @search_params = {
+    escaped_search_text = Riddle.escape(@search_text)
+      
+    # TODO: Why is the search text duplicated?
+    search_query = "#{escaped_search_text} #{escaped_search_text} | @industry \"#{current_organization.industry}\""
+
+    search_params = {
       :geo => [current_organization.latitude, current_organization.longitude],
       :conditions => {},
-      :with => {},
       :match_mode => :extended, # this allows us to use boolean operators in the search query
       :order => '@weight desc, @geodist asc' # sort by relevance, then distance
     }
     
     # filters by subscription (my surveys)
-    @search_params[:conditions][:subscribed_by] = current_organization.id unless @filter_by_subscription.blank?
-    @search_params[:conditions][:aasm_state_number] = Survey::AASM_STATE_NUMBER_MAP['running'] if @filter_by_subscription.blank?
+    search_params[:conditions][:subscribed_by] = current_organization.id unless params[:filter_by_subscription].blank?
+    search_params[:conditions][:aasm_state_number] = Survey::AASM_STATE_NUMBER_MAP['running'] if params[:filter_by_subscription].blank?
     
-    @surveys = Survey.search @search_query, @search_params
+    @surveys = Survey.search search_query, search_params
        
     respond_to do |wants|
       wants.html {}
