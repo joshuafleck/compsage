@@ -724,6 +724,10 @@ form.new_survey textarea, form.edit_survey textarea {
   margin-top: 0;
 }
 
+ul#external_invitation_form_errors {
+  margin-bottom: 1em;
+  margin-top: -1em;
+}
 #invite_organizations p {
   margin: .5em 0;
 }
