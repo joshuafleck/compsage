@@ -2,11 +2,11 @@ class Participation < ActiveRecord::Base
   belongs_to :participant, :polymorphic => true
   belongs_to :survey
   
-  has_many :responses, :dependent => :destroy
+  has_many :responses, :dependent => :destroy, :validate => false
   
   validates_presence_of :participant, :survey
   validates_presence_of :responses, :message => "must be provided"
-  validate :validate_associated_responses
+  validates_associated :responses, :message => "may have errors. Check your responses for errors highlighted in red."
   
   after_create :create_participant_subscription, :fulfill_invitation
   
@@ -26,7 +26,7 @@ class Participation < ActiveRecord::Base
         # didn't respond
         response[question.id].first.destroy if response[question.id] # So, destroy the previous response if it exists
       else
-        question_response =  (current_responses.nil? || current_responses.empty? ) ? responses.build(:question => question) : current_responses.first
+        question_response =  (current_responses.nil? || current_responses.empty?) ? responses.build(:question => question) : current_responses.first 
         question_response.attributes = attributes
       end
     end
@@ -59,11 +59,5 @@ class Participation < ActiveRecord::Base
     # we also want to update the associated records.  We'll assume it's valid by this point
     # as we are validating the associated records.
     responses.each { |r| r.save! if r.changed? }
-  end
-  
-  #need to write a custom validator to do away with messy error messages
-  def validate_associated_responses
-    errors.add_to_base("Responses may have errors. Check your responses for errors highlighted in red.") unless responses.all? {|r| r.valid?}
-  end
-  
+  end  
 end
