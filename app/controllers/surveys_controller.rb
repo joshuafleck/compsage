@@ -162,13 +162,6 @@
         end
       end
     else
-      #Suppress the annoying "is invalid" errors.
-      old_errors = @participation.errors.clone 
-      @participation.errors.clear 
-      old_errors.each do |attr, msg| 
-        @participation.errors.add(attr, msg) unless msg =~ /is invalid/ || @participation.errors.full_messages.include?(msg) 
-      end 
-      
       respond_to do |wants|
         wants.html do 
           render :template => 'questions/index' 
