@@ -426,6 +426,7 @@ div#my_surveys .stalled {
 }
 
 div#my_surveys .deadline {
+  margin-top: 0em;
   font-size: 1em;
 }
 
@@ -449,6 +450,7 @@ div#my_surveys .deadline {
 }
 
 #invitation_list .deadline {
+  margin-top: 0em;
   text-align: center;
   padding-right: 10px;
 }
@@ -521,8 +523,8 @@ ul#discussions .body {
 
 ul#discussions .date {
   color: #444;
+  margin-top: -1.2em;
   font-size: .9em;
-  letter-spacing: .05em;
   margin-bottom: 0.5em;
 }
 /* Survey Results Page */
@@ -533,8 +535,8 @@ ul#survey_results {
   list-style-type: none;
 }
 
-ul#survey_results li {
-
+ul#survey_results div.generated {
+  margin-top: -1em;
 }
 
 .abbrev {
@@ -559,6 +561,7 @@ h3 div.sponsor {
 
 div.deadline {
   color: #777;
+  margin-top: -1em;
   font-size: .95em;
 }
 a.abuse {
@@ -762,6 +765,9 @@ ol#questions {
 	list-style-type: none;
 }
 
+div#why_section {
+  margin-top: -1em;
+}
 /* Survey Reports */
 div.report_item h3 {
   margin-bottom: .5em;
@@ -1008,7 +1014,9 @@ div.third_column {
   padding: 0 10px;
 }
 
-
+form.inplaceeditor-form {
+  margin-bottom: 1em;
+}
 
 a.editor_cancel_link {
   padding-left: 1em;

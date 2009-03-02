@@ -14,7 +14,7 @@
 <h2><%=@network.name%> <span class="manager">managed by <%=link_to_organization @network.owner%></span></h2>
 <% unless @network.description.blank? %>
   <div class="main_description">
-    <%= link_and_format(@network.description) %>
+    <%= auto_link_new_window(@network.description) %>
   </div>
 <% end %>
 <%=flash_messages%>

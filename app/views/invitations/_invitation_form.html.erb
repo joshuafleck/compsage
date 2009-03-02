@@ -34,8 +34,8 @@
 		    <% fields_for network, :index => network.id do |network_form| %>
 		      <li>
   		        <%=network_form.check_box :included%>
-  		        <%=network_form.label :included, network.name%>:
-					    <span class="description"><%= link_and_format(network.description)%></span>
+              <%=network_form.label :included, network.name%><%= ":" unless network.description.blank? %>
+              <span class="description"><%= auto_link_new_window(truncate(network.description, :length => 50))%></span>
 					</li>
 		    <% end %>			
 			<% end %>

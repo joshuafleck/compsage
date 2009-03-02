@@ -9,7 +9,7 @@
         <h3><%= invitation.network.name %>
           <span class="manager">managed by <%= link_to_organization(invitation.network.owner) %></span>
         </h3>
-        <div class="description_box"><%=h link_and_format(invitation.network.description) %></div>
+        <div class="description_box"><%= auto_link_new_window(invitation.network.description) %></div>
         <div class="actions">
           <%= link_to "Join Network", join_network_path(invitation.network), :method => :put %>
           <%= link_to "Decline", decline_network_invitation_path(invitation.network.id,invitation.id), :method => :put %>
@@ -41,7 +41,7 @@
         <td class="network_details">
         <h3><%= link_to network.name, network_path(network) %>
           <div class="sponsor">Managed by <%= link_to network.owner.name, organization_path(network.owner) %></div></h3>
-          <div class="description_box"><%=link_and_format(network.description)%></div>
+          <div class="description_box"><%= auto_link_new_window(network.description)%></div>
         </td>
       </tr>
     <% end %>

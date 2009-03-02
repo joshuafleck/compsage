@@ -2,9 +2,10 @@
 	<span class="sponsor">sponsored by <%=link_to @survey.sponsor.name, organization_path(@survey.sponsor)%></span>
 </h2>
 <h3>Job Description</h3>
-<p class="description_box"><%=link_and_format(@survey.description)%></p>
-<p>Report data as of <%=90.days.ago.to_date.to_s(:long_ordinal)%> <%= link_to_function "Why?", "new Effect.toggle('why_section', 'blind', {duration: .5});return false;" %></p>
-<div id="why_section", style="display:none;">This day is 90 days prior to today's date and is needed to preserve the historical requirement for the exchange of compensation information.</div>
+<%=link_and_format(@survey.description, :class => "description_box")%>
+<p>Report data as of <%=90.days.ago.to_date.to_s(:long_ordinal)%>. <%= link_to_function "Why?", "new Effect.toggle('why_section', 'blind', {duration: .5});return false;" %></p>
+<div id="why_section" style="display:none;">This day is 90 days prior to today and is a legal requirement to preserve
+  the historical nature of the compensation information being exchanged.</div>
 <%=flash_messages%>
 <%= error_messages_for :participation %>
 <% form_for @participation, :url => respond_survey_path(@survey), :builder => QuestionFormBuilder do |f|%>
