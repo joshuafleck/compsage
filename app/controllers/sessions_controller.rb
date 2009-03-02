@@ -61,7 +61,7 @@ class SessionsController < ApplicationController
 protected
   # Track failed login attempts
   def note_failed_signin
-    flash[:notice] = "We couldn't log you in as '#{params[:email]}'"
+    flash[:error] = "Incorrect email or password."
     logger.warn "Failed login for '#{params[:email]}' from #{request.remote_ip} at #{Time.now.utc}"
   end
   # Track failed survey login attempts

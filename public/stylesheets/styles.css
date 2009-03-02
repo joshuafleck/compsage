@@ -959,6 +959,12 @@ div.flash_notice {
   clear: right;
 }
 
+div.flash_error {
+  color: #900;
+  font-size: 1.2em;
+  margin: 1em 0;
+	font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
+}
 /* Custom Elements */
 label, div.label {
 	display: block;
