@@ -1,7 +1,7 @@
 <% title @organization.name %>
 <% highlight_tab "networks" %>
 <h2><%=@organization.name%></h2>
-<%=flash_messages%>
+<%= flash_messages %>
 <% if !@organization.logo.nil? then %>
   <p><%=image_tag @organization.logo.public_filename %></p>
 <% end %>
@@ -18,40 +18,30 @@
   <dd><%= @organization.industry %></dd>
 </dl>
 
-<div class="actions">
-  <% form_tag do %>
-    <span>Invite <%= @organization.name %> to </span>
-    <%= collection_select("network_organization_#{@organization.id}", 
-      :network_id, 
-      current_organization.owned_networks, 
-      :id, 
-      :name, 
-      {:prompt => 'A Network'})
-    %>
-  or
-    <%= collection_select("survey_organization_#{@organization.id}", 
-      :survey_id, 
-      current_organization.sponsored_surveys.running, 
-      :id, 
-      :job_title, 
-      {:prompt => 'A Survey'})
-    %>
-  <span id='organization_<%=@organization.id%>_response'></span>
+<% if current_organization.sponsored_surveys.running.any? || current_organization.owned_networks.any? then %>
+  <% if current_organization.owned_networks.any? then %>
+    <% form_tag invitations_path do %>
+      <label>Invite to a Network</label>
+      <%= hidden_field :organization, :id, :value => @organization.id %>
+      <%= collection_select(:network, 
+          :id, 
+          current_organization.owned_networks, 
+          :id, 
+          :name) %>
+      <%= submit_tag "Send Network Invitation" %>
+    <% end %>
   <% end %>
-</div>
-<script type="text/javascript">
-
-function initializeObservers() {
-	$('<%="survey_organization_#{@organization.id}_survey_id"%>').observe(
-	  'change', 
-	  sendInvitation.curry('<%=@organization.id%>','<%=surveys_path%>'));
-  $('<%="network_organization_#{@organization.id}_network_id"%>').observe(
-    'change', 
-    sendInvitation.curry('<%=@organization.id%>','<%=networks_path%>'));	
-}
-
-</script>
-
-<% content_for :initialize_js, "initializeObservers();"%>
-
-
+  
+  <% if current_organization.sponsored_surveys.running.any? then %>
+    <% form_tag invitations_path do %>
+      <label>Invite to a Survey</label>
+      <%= hidden_field :organization, :id, :value => @organization.id %>
+      <%= collection_select(:survey, 
+          :id, 
+          current_organization.sponsored_surveys.running, 
+          :id, 
+          :job_title) %>
+      <%= submit_tag "Send Survey Invitation" %>
+    <% end %>
+  <% end %>
+<% end %>

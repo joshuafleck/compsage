@@ -95,4 +95,69 @@ describe InvitationsController, " handling DELETE /invitations/1" do
   
 end
 
+describe InvitationsController, "handling POST /invitations" do
+  before do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
 
+    @invitee = Factory(:organization)
+    @params = {:organization => {:id => @invitee.id } }
+    request.env['HTTP_REFERER'] = "http://test.host/surveys"
+  end
+
+  def do_post
+    post :create, @params
+  end
+
+  it "should require login" do
+    controller.should_receive(:login_required)
+    do_post
+  end
+
+  it 'should find the specified organization' do
+    Organization.should_receive(:find).and_return(@invitee)
+    do_post
+  end
+
+  it 'should redirect back' do
+    do_post
+    response.should be_redirect
+    response.should redirect_to("http://test.host/surveys")
+  end
+
+  describe 'when sending a network invitation' do
+    before do
+      @network = Factory(:network, :owner => @current_organization)
+      @params[:network] = {}
+      @params[:network][:id] = @network.id
+    end
+    
+    it 'should find the network' do
+      @current_organization.owned_networks.should_receive(:find).and_return(@network)
+      do_post
+    end
+
+    it 'should create the network invitation' do
+      do_post
+      @network.invitations.size.should == 1
+    end
+  end
+
+  describe 'when sending a survey invitation' do
+    before do
+      @survey = Factory(:survey, :sponsor => @current_organization)
+      @params[:survey] = {}
+      @params[:survey][:id] = @survey.id
+    end
+
+    it 'should find the survey' do
+      @current_organization.sponsored_surveys.should_receive(:find).and_return(@survey)
+      do_post
+    end
+
+    it 'should create the survey invitation' do
+      do_post
+      @survey.invitations.size.should == 1
+    end
+  end
+end
