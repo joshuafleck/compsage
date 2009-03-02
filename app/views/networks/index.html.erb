@@ -1,25 +1,25 @@
 <% title "Your Contact Networks" %>
 <% highlight_tab "networks" %>
 <h2>Networks &amp; Contacts</h2>
-<% if @network_invitations.any? then %>
-  <h2>Network Invitations</h2>
-  <ul id="network_invitations">
-    <% @network_invitations.each do |invitation| %>
-      <li>
-        <h3><%= invitation.network.name %>
-          <span class="manager">managed by <%= link_to_organization(invitation.network.owner) %></span>
-        </h3>
-        <div class="description_box"><%= auto_link_new_window(invitation.network.description) %></div>
-        <div class="actions">
-          <%= link_to "Join Network", join_network_path(invitation.network), :method => :put %>
-          <%= link_to "Decline", decline_network_invitation_path(invitation.network.id,invitation.id), :method => :put %>
-        </div>
-      </li>
-    <% end %>
-  </ul>
-<% end %>
+
 <div id="search_organizations">
   <div id="new_network"><%= link_to image_tag("new_network_button.gif"), new_network_path %></div>
+  <% if @network_invitations.any? then %>
+    <h3>Network Invitations</h3>
+    <ul id="network_invitations">
+      <% @network_invitations.each do |invitation| %>
+        <li>
+          <h4><%= invitation.network.name %></h4>
+          <span class="manager">Managed by <%= link_to_organization(invitation.network.owner) %></span>
+          <div class="description_box"><%= auto_link_new_window(invitation.network.description) %></div>
+          <div class="actions">
+            <%= link_to "Join Network", join_network_path(invitation.network), :method => :put %> or 
+            <%= link_to "Decline", decline_network_invitation_path(invitation.network.id,invitation.id), :method => :put %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>  
   <% form_tag search_organizations_path do %>
     <label for="search_text">Find CompSage Members</label>
     <%= text_field_tag 'search_text', '', :size => 20 %> 

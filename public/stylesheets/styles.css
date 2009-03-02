@@ -849,6 +849,19 @@ div#new_network {
   margin-left: -10px;
 }
 
+ul#network_invitations {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul#network_invitations h4 {
+  margin-top: 0;
+}
+
+ul#network_invitations li {
+  margin-bottom: .5em;
+}
 /* Networks show page */
 div#network_actions {
   float: right;
@@ -943,6 +956,7 @@ div.flash_notice {
   background: #87a38f;
   color: #fff;
   text-align: center;
+  clear: right;
 }
 
 /* Custom Elements */
