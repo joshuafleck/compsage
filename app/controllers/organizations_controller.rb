@@ -12,14 +12,16 @@ class OrganizationsController < ApplicationController
     end
   end
   
-  def show
-  
+  def show 
     @organization = Organization.find(params[:id])   
-    
-    respond_to do |wants|
-      wants.html # render template
-      wants.xml do
-         render :xml => @organization.to_xml
+    if @organization == current_organization then
+      redirect_to edit_account_path
+    else
+      respond_to do |wants|
+        wants.html # render template
+        wants.xml do
+           render :xml => @organization.to_xml
+        end
       end
     end
   end

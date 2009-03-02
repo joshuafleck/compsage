@@ -14,8 +14,10 @@
   <dd><%= @organization.city %> <%= @organization.state %> <%= @organization.zip_code %></dd>
   <dt>Contact:</dt>
   <dd><%= @organization.contact_name %></dd>
-  <dt>Industry:</dt>
-  <dd><%= @organization.industry %></dd>
+  <% unless @organization.industry.blank? then %> 
+    <dt>Industry:</dt>
+    <dd><%= @organization.industry %></dd>
+  <% end %>
 </dl>
 
 <% if current_organization.sponsored_surveys.running.any? || current_organization.owned_networks.any? then %>
