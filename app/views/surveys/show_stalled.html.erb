@@ -25,14 +25,13 @@
         <% end %>  
       </p>
       <%=render :partial => 'questions/response_rates', :locals => { :survey => @survey } %>
-      <p>
-        Click <%=link_to "here", survey_path(@survey), :method => :delete %> to cancel the survey.
-      </p> 
+      <p><%=link_to "Cancel the survey", survey_path(@survey), :method => :delete %></p> 
     <% else %>
       <p>
         Unfortunately, you did not get the required number of participants for results to be
         available. This survey has exceeded <%=(Survey::MAXIMUM_DAYS_TO_RUN - Survey::MINIMUM_DAYS_TO_RERUN)%> days and may no longer be rerun.
       </p>
+      <p><%=link_to "Cancel the survey", survey_path(@survey), :method => :delete %></p> 
     <% end %>
   <% else %>
     <p>Survey results are unavailable due to insufficient data.  The
