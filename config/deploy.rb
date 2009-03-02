@@ -3,13 +3,12 @@ set :application, "compsage"
 set :deploy_to, "/var/www/compsage"
 
 ### SSH Settings ###
-set :user, "brian"
-set :ssh_options, { :forward_agent => true }
+set :user, "deploy"
 set :use_sudo, false
 
 ### Repository Setup ###
 set :scm, :git
-set :repository,  "brian@dev.huminsight.com:/home/git/shawarma"
+set :repository,  "deploy@dev.huminsight.com:/home/git/shawarma"
 set :branch, "master"
 set :deploy_via, :remote_cache
 
