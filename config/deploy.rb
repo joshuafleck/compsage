@@ -1,3 +1,7 @@
+set :stages, %w(staging production)
+set :default_stage, "staging"
+require 'capistrano/ext/multistage'
+
 ### Application Settings
 set :application, "compsage"
 set :deploy_to, "/var/www/compsage"
@@ -11,12 +15,6 @@ set :scm, :git
 set :repository,  "deploy@dev.huminsight.com:/home/git/shawarma"
 set :branch, "master"
 set :deploy_via, :remote_cache
-set :rails_env, "production"
-
-### Server Settings ###
-role :app, "compsage.com"
-role :web, "compsage.com"
-role :db,  "compsage.com", :primary => true
 
 ### Custom Tasks ###
 namespace :deploy do
@@ -37,8 +35,13 @@ namespace :deploy do
   
   desc "Configure thinking_sphinx"
   task :configure_ts, :roles => :app do
-    run "pushd #{current_path}; rake ts:config; popd"
+    run "cd #{current_path}; rake ts:config RAILS_ENV=#{rails_env}"
+  end  
+  
+  desc "Load predefined questions"
+  task :load_pdq, :roles => :app do
+    run "cd #{current_path}; rake spec:db:fixtures:load FIXTURES=predefined_questions RAILS_ENV=#{rails_env}"
   end  
 end
 
-after 'deploy', 'deploy:copy_database_yml'
+after 'deploy', 'deploy:copy_database_yml', 'deploy:migrations', 'deploy:load_pdq', 'deploy:configure_ts'
