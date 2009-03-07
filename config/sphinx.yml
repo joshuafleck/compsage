@@ -1,6 +1,9 @@
 development:
   enable_star: true
   min_prefix_len: 2
+staging:
+  enable_star: true
+  min_prefix_len: 2
 production:
   enable_star: true
   min_prefix_len: 2

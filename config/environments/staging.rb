@@ -19,14 +19,14 @@ config.action_controller.perform_caching             = true
 
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.default_url_options = {:host => "compsage.com", :port => 80}
+  config.action_mailer.default_url_options = {:host => "dev.huminsight.com", :port => 81}
   
 ActionMailer::Base.perform_deliveries = true
 ActionMailer::Base.raise_delivery_errors = true
 ActionMailer::Base.delivery_method = :smtp
 ActionMailer::Base.smtp_settings = {
-  :domain => "localhost",
-  :address => "localhost",
+  :domain => "josh-laptop",
+  :address => "josh-laptop",
   :port => 25
 }
 

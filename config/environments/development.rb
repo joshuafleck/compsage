@@ -25,3 +25,4 @@ ActionMailer::Base.smtp_settings = {
   :port => 2525,
 }
 
+

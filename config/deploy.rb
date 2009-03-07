@@ -11,6 +11,7 @@ set :scm, :git
 set :repository,  "deploy@dev.huminsight.com:/home/git/shawarma"
 set :branch, "master"
 set :deploy_via, :remote_cache
+set :rails_env, "production"
 
 ### Server Settings ###
 role :app, "compsage.com"
@@ -33,6 +34,11 @@ namespace :deploy do
   task :copy_database_yml, :roles => :app do
     run "cp -pf #{deploy_to}/shared/config-files/database.yml #{current_path}/config"
   end
+  
+  desc "Configure thinking_sphinx"
+  task :configure_ts, :roles => :app do
+    run "pushd #{current_path}; rake ts:config; popd"
+  end  
 end
 
 after 'deploy', 'deploy:copy_database_yml'

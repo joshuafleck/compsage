@@ -23,6 +23,13 @@ module SymetrieCom
         #   of your model class.
         def acts_as_nested_set(options = {})          
           
+          # TS loads models on call to environment, if we are migrating to an emty db, we don't want this to trip us up
+          begin
+            columns
+          rescue Exception => e
+            return
+          end
+          
           extend(SingletonMethods) unless respond_to?(:find_in_nestedset)
           
           options[:scope] = "#{options[:scope]}_id".intern if options[:scope].is_a?(Symbol) && options[:scope].to_s !~ /_id$/
