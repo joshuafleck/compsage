@@ -30,18 +30,20 @@ namespace :deploy do
 
   desc "Copy database.yml file to the project directory"
   task :copy_database_yml, :roles => :app do
-    run "cp -pf #{deploy_to}/shared/config-files/database.yml #{current_path}/config"
+    run "cp -pf #{shared_path}/config-files/database.yml #{current_path}/config"
   end
-  
-  desc "Configure thinking_sphinx"
-  task :configure_ts, :roles => :app do
-    run "cd #{current_path}; rake ts:config RAILS_ENV=#{rails_env}"
-  end  
-  
+   
   desc "Load predefined questions"
   task :load_pdq, :roles => :app do
-    run "cd #{current_path}; rake spec:db:fixtures:load FIXTURES=predefined_questions RAILS_ENV=#{rails_env}"
+    run "rake -f #{current_path}/Rakefile spec:db:fixtures:load FIXTURES=predefined_questions RAILS_ENV=#{rails_env}"
+  end 
+ 
+  desc "Configure thinking_sphinx"
+  task :configure_ts, :roles => :app do
+    run "ln -s #{shared_path}/sphinx #{current_path}/db/sphinx && cp -pf #{shared_path}/config-files/#{rails_env}.sphinx.conf #{current_path}/config"
   end  
+
+
 end
 
 after 'deploy', 'deploy:copy_database_yml', 'deploy:migrations', 'deploy:load_pdq', 'deploy:configure_ts'
