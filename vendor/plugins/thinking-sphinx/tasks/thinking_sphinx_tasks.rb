@@ -55,10 +55,6 @@ namespace :thinking_sphinx do
   desc "Index data for Sphinx using Thinking Sphinx's settings"
   task :index => :app_env do
     config = ThinkingSphinx::Configuration.instance
-    unless ENV["INDEX_ONLY"] == "true"
-      puts "Generating Configuration to #{config.config_file}"
-      config.build
-    end
         
     FileUtils.mkdir_p config.searchd_file_path
     cmd = "#{config.bin_path}indexer --config #{config.config_file} --all"
