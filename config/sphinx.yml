@@ -5,9 +5,9 @@ staging:
   enable_star: true
   min_prefix_len: 2
   config_file: /var/www/compsage/shared/config-files/staging.sphinx.conf
-  pid_file: /var/www/compsage/shared/log/searchd.staging.pid
+  pid_file: /var/www/compsage/shared/log/searchd.pid
 production:
   enable_star: true
   min_prefix_len: 2
   config_file: /var/www/compsage/shared/config-files/production.sphinx.conf
-  pid_file: /var/www/compsage/shared/log/searchd.production.pid
+  pid_file: /var/www/compsage/shared/log/searchd.pid
