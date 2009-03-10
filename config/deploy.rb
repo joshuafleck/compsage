@@ -40,7 +40,7 @@ namespace :deploy do
  
   desc "Configure thinking_sphinx"
   task :configure_ts, :roles => :app do
-    run "ln -s #{shared_path}/sphinx #{current_path}/db/sphinx && cp -pf #{shared_path}/config-files/#{rails_env}.sphinx.conf #{current_path}/config"
+    run "ln -s #{shared_path}/sphinx #{current_path}/db/sphinx"
   end  
 
 
