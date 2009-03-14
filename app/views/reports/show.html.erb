@@ -2,7 +2,7 @@
 <% highlight_tab("surveys") %>
 <h2>Report on <%=@survey.job_title%></h2>
 <%if logged_in_from_survey_invitation? then%>
-  <div class="top_join_link"><%= link_to "Interested? Sign Up Now!", signup_path %></div>
+  <div class="top_join_link"><%= link_to "Sign Up for CompSage", signup_path %></div>
 <% end %>
 <h4>Job Description</h4>
 <div class="description_box"><%=link_and_format(@survey.description)%></div>
@@ -28,12 +28,9 @@
       <h3><%=question.text%></h3>
     	<p>Data hidden due to insufficient responses.</p>
     </div>
-	<% end %>
-<% end %>
-  <%if logged_in_from_survey_invitation? then%>
-  <div>
-	<h4>Like what you see?</h4>
-    <p>If you like the results you see here, and are interested in creating your own surveys, networks, and other benefits of membership, <%= link_to "sign up now!", signup_path %>
-    </p>
-  </div>
   <% end %>
+<% end %>
+<% if logged_in_from_survey_invitation? then %>
+  <p>If you want to start creating your own surveys, and participating in other surveys of interest,
+    <%= link_to "sign up now!", signup_path %></p>
+<% end %>
