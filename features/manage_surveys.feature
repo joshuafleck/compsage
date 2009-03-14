@@ -120,7 +120,7 @@ Feature: Manage surveys
     And I am the sponsor
     And the survey is stalled
     And I am on the survey show page
-    When I follow "here"
+    When I follow "Cancel the survey"
     Then I should see "You currently don't have any survey results."  
     
   Scenario: Search for survey by title
