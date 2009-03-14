@@ -1,5 +1,4 @@
 require 'rubygems'
-require 'factory_girl'
 require 'faker'
 
 namespace :data_generator do
