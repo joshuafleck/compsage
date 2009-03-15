@@ -89,10 +89,10 @@ textarea {
 	width: 818px;
 	margin-left: auto;
 	margin-right: auto;
+  overflow: hidden;
 }
 
 #header {
-  overflow: hidden;
 	height: 53px;
 	font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
   background: url('../images/inner_header_background.gif') no-repeat;
@@ -837,16 +837,11 @@ table#networks h3 {
 div#search_organizations {
   float: right;
   width: 31%;
-  margin-right: 1%;
-  margin-left: 1%;
+  padding-right: 1%
 }
 
 div#search_organizations p {
   margin-top: .5em;
-}
-
-div#new_network {
-  margin-left: -5px;
 }
 
 ul#network_invitations {
