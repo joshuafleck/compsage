@@ -812,6 +812,10 @@ span.inadequate_responses {
 
 /* Networks page */
 
+p#networks_description {
+  width: 67%;
+}
+
 table#networks {
   border: 0;
   border-collapse: collapse;
