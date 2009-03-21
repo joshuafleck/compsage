@@ -1,13 +1,22 @@
 <% title("Report for #{@survey.job_title}") %>
 <% highlight_tab("surveys") %>
+<%if !@printer_friendly then %> 
+  <%= link_to 'Printer Friendly', survey_report_path(@survey, :printer_friendly => 'true'), :class => 'printer_friendly' %>
+<%else%>
+  <%= link_to 'Back', survey_report_path(@survey) %>
+<%end%>
 <h2>Report on <%=@survey.job_title%></h2>
 <%if logged_in_from_survey_invitation? then%>
   <div class="top_join_link"><%= link_to "Sign Up for CompSage", signup_path %></div>
 <% end %>
 <h4>Job Description</h4>
 <div class="description_box"><%=link_and_format(@survey.description)%></div>
-<p><%= link_to_function "Show Invitation List (#{@invitations.size} invitees)", "new Effect.toggle('invitation_section', 'blind', {duration: .5});return false;" %></p>
-<div id="invitation_section" style="display:none;">
+<%if !@printer_friendly then %>
+  <p><%= link_to_function "Show Invitation List (#{@invitations.size} invitees)", "new Effect.toggle('invitation_section', 'blind', {duration: .5});return false;" %></p>
+<%else%>
+  <h4>Invitation List</h4>
+<%end%>
+<div id="invitation_section" style='<%=!@printer_friendly ? "display:none;" : "" %>'>
   <ul id="invitations">
       <% @invitations.each do |invitation| %>
         <li>

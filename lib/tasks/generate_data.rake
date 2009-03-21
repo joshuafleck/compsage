@@ -431,19 +431,19 @@ namespace :data_generator do
             :question => question, 
             :numerical_response => 20000 + rand(60000),
             :unit => ['Annually', 'Hourly'][rand(2)],
-            :qualifications => ["",Faker::Lorem.sentence][rand(2)])
+            :qualifications => [nil,Faker::Lorem.sentence][rand(2)])
         when 'numerical_field'
           response = Factory.build(
             :response, 
             :question => question, 
             :numerical_response => 20000 + rand(60000),
-            :qualifications => ["",Faker::Lorem.sentence][rand(2)])
+            :qualifications => [nil,Faker::Lorem.sentence][rand(2)])
         when 'radio'
           response = Factory.build(
             :response, 
             :question => question, 
             :numerical_response => rand(question.options.size),
-            :qualifications => ["",Faker::Lorem.sentence][rand(2)])
+            :qualifications => [nil,Faker::Lorem.sentence][rand(2)])
         else
           response = Factory.build(
             :response, :question => question, 

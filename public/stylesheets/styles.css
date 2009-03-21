@@ -8,6 +8,10 @@ body {
   font-size: 1em;
 }
 
+body.printer_friendly {
+  background: none;
+}
+
 p {
 	margin-top: 0;
 }
@@ -799,6 +803,10 @@ div.report_item_suppressed {
 div.top_join_link {
   float: right;
   padding: 0 1em 0 1em;
+}
+
+a.printer_friendly {
+  float: right;
 }
 
 /* Survey stalled */
