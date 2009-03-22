@@ -4,8 +4,8 @@
 <p>This is how your survey will look.  If you are not satisfied, you can make changes before the survey is published.
   You may make changes to a survey at any time after the survey is published as well.</p>
 <p>
-<%= if @survey.invitations.size == 0 then
-   link_to "Continue", survey_invitations_path(@survey) 
+<%= if @survey.aasm_state == 'pending' then
+   link_to "Continue", billing_survey_path(@survey) 
    else
     link_to "Finish", survey_path(@survey)
 end %>
@@ -16,8 +16,8 @@ or
   <%= render :partial => "questions/participation_form"%>
 </div>
 <p>
-<%= if @survey.invitations.size == 0 then
-   link_to "Continue", survey_invitations_path(@survey) 
+<%= if @survey.aasm_state == 'pending' then
+   link_to "Continue", billing_survey_path(@survey) 
    else
     link_to "Finish", survey_path(@survey)
 end %>

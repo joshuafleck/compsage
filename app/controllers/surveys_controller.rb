@@ -1,7 +1,7 @@
   class SurveysController < ApplicationController
   layout :logged_in_or_invited_layout 
   # we require a valid login if you are creating or editing a survey.
-  before_filter :login_required, :only => [ :edit, :update, :create, :new, :index, :destroy ]
+  before_filter :login_required, :only => [ :edit, :update, :create, :new, :index, :destroy, :billing ]
   before_filter :login_or_survey_invitation_required, :except => [ :edit, :update, :create, :new, :index ]
   filter_parameter_logging :response  
   
@@ -62,7 +62,7 @@
   end
   
   def update
-    @survey = current_organization.sponsored_surveys.running.find(params[:id])
+    @survey = current_organization.sponsored_surveys.running_or_pending.find(params[:id])
      
     update_predefined_questions(params[:predefined_questions]) unless params[:predefined_questions].blank?        
     update_questions(params[:questions]) unless params[:questions].blank?
@@ -98,10 +98,7 @@
     update_questions(params[:questions]) unless params[:questions].blank?
  
     if @survey.update_attributes(params[:survey])
-    
-      # For now, pretend we've received billing information.
-      @survey.billing_info_received!
-            
+                
       respond_to do |wants|
         wants.html do
           redirect_to preview_survey_questions_path(@survey)
@@ -227,6 +224,18 @@
      end    
   end
   
+  def billing
+    @survey = current_organization.sponsored_surveys.pending.find(params[:id])
+    # For now, pretend we've received billing information.
+    @survey.billing_info_received!
+    
+    respond_to do |wants|
+      wants.html do
+        redirect_to survey_invitations_path(@survey)
+      end
+    end
+  end
+    
   def destroy
     @survey = current_organization.sponsored_surveys.deletable.find(params[:id])
 

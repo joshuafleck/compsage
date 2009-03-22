@@ -6,7 +6,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resource :session
 
-  map.resources :surveys, :collection => {:search => :any, :reports => :get }, :member => {:respond => :any, :rerun => :any, :finish_partial => :any} do |survey|
+  map.resources :surveys, :collection => {:search => :any, :reports => :get }, :member => {:respond => :any, :rerun => :any, :finish_partial => :any, :billing => :any} do |survey|
     survey.resources :questions, :collection => {:preview => :any}
     survey.resources :discussions, :member => {:report => :any}
     survey.resources :invitations, :controller => :survey_invitations, :member => {:decline => :put}

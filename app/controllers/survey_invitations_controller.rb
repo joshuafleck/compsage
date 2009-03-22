@@ -6,7 +6,7 @@ class SurveyInvitationsController < ApplicationController
     @survey = current_organization.sponsored_surveys.find(params[:survey_id])
     @invitations = @survey.all_invitations
     @invalid_external_invites = []    
-    @networks = current_organization.networks    
+    @networks = current_organization.networks   
     
     # if this came from a survey network link, be sure to mark the network as selected
     @networks.each do |network|

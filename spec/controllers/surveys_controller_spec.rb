@@ -617,7 +617,7 @@ describe SurveysController, " handling PUT /surveys/1" do
     PredefinedQuestion.stub!(:find).with("2").and_return(@pdq2)
     PredefinedQuestion.stub!(:find).with("3").and_return(@pdq3)
     @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
-    @surveys_proxy.stub!(:running).and_return(@open_surveys)
+    @surveys_proxy.stub!(:running_or_pending).and_return(@open_surveys)
     @open_surveys.stub!(:find).and_return(@survey)
     @survey.stub!(:questions).and_return(@questions_proxy)
     @questions_proxy.stub!(:find_by_id).and_return(@question)
@@ -634,7 +634,7 @@ describe SurveysController, " handling PUT /surveys/1" do
   
   it "should find the survey requested" do
     @current_organization.should_receive(:sponsored_surveys).and_return(@surveys_proxy)
-    @surveys_proxy.should_receive(:running).and_return(@open_surveys)
+    @surveys_proxy.should_receive(:running_or_pending).and_return(@open_surveys)
     @open_surveys.should_receive(:find).and_return(@survey)
     do_update
   end
@@ -696,7 +696,7 @@ end
       @surveys_proxy = mock('surveys proxy')
       @open_surveys = []
       @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
-      @surveys_proxy.stub!(:running).and_return(@open_surveys)
+      @surveys_proxy.stub!(:running_or_pending).and_return(@open_surveys)
       @open_surveys.stub!(:find).and_return(@survey)
     end
 
@@ -720,7 +720,7 @@ describe SurveysController, " handling PUT /surveys/1, with failure" do
     @open_surveys = []
     
     @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
-    @surveys_proxy.stub!(:running).and_return(@open_surveys)
+    @surveys_proxy.stub!(:running_or_pending).and_return(@open_surveys)
     @open_surveys.stub!(:find).and_raise(ActiveRecord::RecordNotFound)
   end
 
