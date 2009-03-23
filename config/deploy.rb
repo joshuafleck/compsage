@@ -35,7 +35,7 @@ namespace :deploy do
    
   desc "Load predefined questions"
   task :load_pdq, :roles => :app do
-    run "rake -f #{current_path}/Rakefile spec:db:fixtures:load FIXTURES=predefined_questions RAILS_ENV=#{rails_env}"
+    run "cd #{current_path}; rake spec:db:fixtures:load FIXTURES=predefined_questions RAILS_ENV=#{rails_env}"
   end 
  
   desc "Configure thinking_sphinx"
