@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include Exceptions
   include ExceptionNotifiable
+  include SslRequirement
 
   session :session_key => '_shawarma_session_id'
 
@@ -13,4 +14,8 @@ class ApplicationController < ActionController::Base
     logged_in? ? "logged_in" : "front"
   end  
   
+
+  def ssl_required?
+    Rails.env.production? && super
+  end
 end

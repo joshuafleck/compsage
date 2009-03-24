@@ -2,7 +2,6 @@
 class SessionsController < ApplicationController
   layout 'front'
   filter_parameter_logging :password  
-
   # render new.rhtml
   def new
     @login = params[:email]
