@@ -7,7 +7,7 @@
 <%end%>
 <h2>Report on <%=@survey.job_title%></h2>
 <%if logged_in_from_survey_invitation? then%>
-  <div class="top_join_link"><%= link_to "Sign Up for CompSage", signup_path %></div>
+  <div class="top_join_link"><%= link_to "Sign Up for CompSage", new_account_path %></div>
 <% end %>
 <h4>Job Description</h4>
 <div class="description_box"><%=link_and_format(@survey.description)%></div>
@@ -41,5 +41,5 @@
 <% end %>
 <% if logged_in_from_survey_invitation? then %>
   <p>If you want to start creating your own surveys, and participating in other surveys of interest,
-    <%= link_to "sign up now!", signup_path %></p>
+    <%= link_to "sign up now!", new_account_path %></p>
 <% end %>

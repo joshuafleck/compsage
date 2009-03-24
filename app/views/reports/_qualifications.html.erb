@@ -1,12 +1,14 @@
-<%if !@printer_friendly then %>
-  <p><%= link_to_function "Show Comments (#{question.qualifications_count})", "new Effect.toggle('qualification_section_#{question.id}', 'blind', {duration: .5});return false;" %></p>
-<%else%>
-  <h4>Qualifications</h4>
+<% if question.qualifications_count > 0 then %>
+  <%if !@printer_friendly then %>
+    <p><%= link_to_function "Show Comments (#{question.qualifications_count})", "new Effect.toggle('qualification_section_#{question.id}', 'blind', {duration: .5});return false;" %></p>
+  <%else%>
+    <h4>Qualifications</h4>
+  <%end%>
 <%end%>
 <div id="qualification_section_<%=question.id%>" style='<%=!@printer_friendly ? "display:none;" : "" %>'>
   <ul id="qualifications_<%=question.id%>">
       <% question.responses.each do |response| %>
-        <% if !response.qualifications.nil? then%>
+        <% if !response.qualifications.blank? then%>
         <li>
           <%= response.qualifications %>         
         </li>
