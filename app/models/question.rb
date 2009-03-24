@@ -161,7 +161,7 @@ class Question < ActiveRecord::Base
   
   # returns the number of qualifications
   def qualifications_count
-    return self.responses.find_all{|response| !response.qualifications.nil?}.size
+    return self.responses.find_all{|response| !response.qualifications.blank?}.size
   end
   
 end
