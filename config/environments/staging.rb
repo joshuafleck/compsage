@@ -1,5 +1,8 @@
 # Settings specified here will take precedence over those in config/environment.rb
 
+#Required for ruby_inline, to prevent 'Define INLINEDIR or HOME in your environment and try again' error
+ENV['INLINEDIR'] = '/home/www'
+
 # The production environment is meant for finished, "live" apps.
 # Code is not reloaded between requests
 config.cache_classes = true
