@@ -805,7 +805,11 @@ div.top_join_link {
   padding: 0 1em 0 1em;
 }
 
-a.printer_friendly {
+.printer_friendly_show {
+  display: none;
+}
+
+.print_link {
   float: right;
 }
 

@@ -5,11 +5,8 @@ class ReportsController < ApplicationController
   def show
     @survey = Survey.finished.find(params[:survey_id])
     @invitations = @survey.all_invitations(true)
-    @printer_friendly = !params[:printer_friendly].blank?
     
     define_response_scope
-    
-    render :layout => "printer_friendly" if @printer_friendly
     
   end
   

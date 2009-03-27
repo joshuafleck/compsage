@@ -1,10 +1,6 @@
 <% title("Report for #{@survey.job_title}") %>
 <% highlight_tab("surveys") %>
-<%if !@printer_friendly then %> 
-  <%= link_to 'Printer Friendly', survey_report_path(@survey, :printer_friendly => 'true'), :class => 'printer_friendly' %>
-<%else%>
-  <%= link_to 'Back', survey_report_path(@survey) %>
-<%end%>
+<%= link_to_function("Print this Report", "javascript:print()", :class => 'print_link') %>
 <h2>Report on <%=@survey.job_title%></h2>
 <%if logged_in_from_survey_invitation? then%>
   <div class="top_join_link"><%= link_to "Sign Up for CompSage", new_account_path %></div>
@@ -16,12 +12,26 @@
 <%else%>
   <h4>Invitation List</h4>
 <%end%>
-<div id="invitation_section" style='<%=!@printer_friendly ? "display:none;" : "" %>'>
+<div id="invitation_section" style="display:none;">
   <ul id="invitations">
       <% @invitations.each do |invitation| %>
         <li>
           <%if invitation.is_a?(SurveyInvitation) then%>
             <%= link_to_organization(invitation.invitee) %>
+          <%else%>      
+            <%=invitation.organization_name%> (<%=invitation.email%>)
+          <%end%>          
+        </li>
+      <% end %>
+    </ul>
+</div>
+<div id="invitation_section_print" class="printer_friendly_show">
+  <h4>Invitations:</h4>
+  <ul id="invitations_print">
+      <% @invitations.each do |invitation| %>
+        <li>
+          <%if invitation.is_a?(SurveyInvitation) then%>
+            <%= invitation.invitee.name_and_location %>
           <%else%>      
             <%=invitation.organization_name%> (<%=invitation.email%>)
           <%end%>          

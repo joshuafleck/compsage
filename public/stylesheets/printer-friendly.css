@@ -1,0 +1,12 @@
+body, #container {
+  background: none;
+}
+
+#header, #container_cap, #footer, a {
+	display: none;
+}
+
+.printer_friendly_show {
+  display: inline;
+}
+
