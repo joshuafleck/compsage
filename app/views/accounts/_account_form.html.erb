@@ -32,7 +32,7 @@
   <% form_row do %>  
     <% if !@organization.logo.nil? then %>
       <% form_box do %>  
-        <p class="thumbnail"><%=image_tag @organization.logo.public_filename(:standard_thumbnail) %></p>
+        <%=image_tag @organization.logo.public_filename(:standard_thumbnail), :class => "thumbnail" %>
       <% end %>    
     <% end %>  
     <% form_box do %>  
@@ -41,7 +41,13 @@
           <%=logo_form.file_field :uploaded_data%>
       <% end %>  
     <% end %>
-  <% end %>    
+  <% end %>  
+  <% if !@organization.new_record? then %>  
+  <div id="change_password_link">
+        <%= link_to_function "Change My Password", "new Effect.toggle('change_password', 'blind', {duration: .5});return false;" %>
+    </div>
+  <% end %>
+  <div id="change_password" style='<%=@organization.new_record? ? "" : "display: none;"%>'>
   <% form_row do %>
     <% form_box do %>
       <%=f.label :password, required('Password') %> 
@@ -52,6 +58,7 @@
       <%=f.password_field :password_confirmation, :size => 15 %>
     <% end %>
   <% end %>  
+  </div>
   <div class="submit">
     <input type="submit" value='<%=@organization.new_record? ? "Sign Up" : "Update"%>' /> or
     <% if @organization.new_record? && logged_in_from_survey_invitation? then %>

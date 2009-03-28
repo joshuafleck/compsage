@@ -953,6 +953,11 @@ dl#organization_information dt {
 dl#organization_information dd {
   margin-left: 6em;
 }
+
+div#change_password_link {
+  margin-top: 1em;
+}
+
 /* Flash Notices */
 div.flash_notice {
   border: 1px solid #6c8272;
@@ -1065,7 +1070,7 @@ span.message {
 	font-style: italic;
 }
 
-p.thumbnail {
+img.thumbnail {
   margin-top: 1em;
 }
 
