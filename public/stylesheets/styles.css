@@ -8,9 +8,6 @@ body {
   font-size: 1em;
 }
 
-body.printer_friendly {
-  background: none;
-}
 
 p {
 	margin-top: 0;
@@ -805,12 +802,9 @@ div.top_join_link {
   padding: 0 1em 0 1em;
 }
 
-.printer_friendly_show {
-  display: none;
-}
-
 .print_link {
   float: right;
+  padding-right: 10px;
 }
 
 /* Survey stalled */
@@ -1077,4 +1071,7 @@ p.thumbnail {
 
 div.actions form select {
   width: 14em;
+}
+.hidden {
+  display: none;
 }

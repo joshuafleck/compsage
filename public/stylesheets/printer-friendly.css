@@ -2,11 +2,19 @@ body, #container {
   background: none;
 }
 
-#header, #container_cap, #footer, a {
-	display: none;
+#header, #container_cap, #footer {
+  display: none;
 }
 
-.printer_friendly_show {
-  display: inline;
+a {
+  text-decoration: none;
+  color: #000000;
+}
+/* Report Page */
+a#invitation_list_link {
+  font-size: 1.1em;
 }
 
+a.print_link {
+  display: none;
+}

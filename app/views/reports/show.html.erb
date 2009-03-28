@@ -7,12 +7,8 @@
 <% end %>
 <h4>Job Description</h4>
 <div class="description_box"><%=link_and_format(@survey.description)%></div>
-<%if !@printer_friendly then %>
-  <p><%= link_to_function "Show Invitation List (#{@invitations.size} invitees)", "new Effect.toggle('invitation_section', 'blind', {duration: .5});return false;" %></p>
-<%else%>
-  <h4>Invitation List</h4>
-<%end%>
-<div id="invitation_section" style="display:none;">
+<%= link_to "Invitation List", '#', :id => "invitation_list_link" %>
+<div id="invitation_section" class="hidden">
   <ul id="invitations">
       <% @invitations.each do |invitation| %>
         <li>
@@ -25,20 +21,7 @@
       <% end %>
     </ul>
 </div>
-<div id="invitation_section_print" class="printer_friendly_show">
-  <h4>Invitations:</h4>
-  <ul id="invitations_print">
-      <% @invitations.each do |invitation| %>
-        <li>
-          <%if invitation.is_a?(SurveyInvitation) then%>
-            <%= invitation.invitee.name_and_location %>
-          <%else%>      
-            <%=invitation.organization_name%> (<%=invitation.email%>)
-          <%end%>          
-        </li>
-      <% end %>
-    </ul>
-</div>
+
 <%@survey.questions.each do |question| %>
   <% if question.send(@adequate_responses_method) then %>
 	  <%=render :partial => question.question_type, :locals => {:question => question, :survey => @survey}%>
@@ -53,3 +36,15 @@
   <p>If you want to start creating your own surveys, and participating in other surveys of interest,
     <%= link_to "sign up now!", new_account_path %></p>
 <% end %>
+
+<% content_for :initialize_js, "observeInvitationList()" %>
+<script type="text/javascript">
+  function observeInvitationList() {
+    $('invitation_list_link').observe('click', function(e) {
+      e.preventDefault();
+      $('invitation_section').toggleClassName('hidden');
+      $('invitation_section').highlight();
+      return false;
+    });
+  }
+</script>
