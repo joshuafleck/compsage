@@ -159,9 +159,8 @@ class Question < ActiveRecord::Base
       self.invitee_responses.size
   end
   
-  # returns the number of qualifications
-  def qualifications_count
-    return self.responses.find_all{|response| !response.qualifications.blank?}.size
+  # The qualifications for this question
+  def qualifications
+    @qualifications ||= self.responses.collect(&:qualifications).compact
   end
-  
 end

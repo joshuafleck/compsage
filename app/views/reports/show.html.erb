@@ -24,11 +24,11 @@
 
 <%@survey.questions.each do |question| %>
   <% if question.send(@adequate_responses_method) then %>
-	  <%=render :partial => question.question_type, :locals => {:question => question, :survey => @survey}%>
-	<% else %>
-	  <div class="report_item report_item_suppressed">
+    <%=render :partial => question.question_type, :locals => {:question => question, :survey => @survey}%>
+  <% else %>
+    <div class="report_item report_item_suppressed">
       <h3><%=question.text%></h3>
-    	<p>Data hidden due to insufficient responses.</p>
+      <p>Data hidden due to insufficient responses.</p>
     </div>
   <% end %>
 <% end %>
@@ -46,5 +46,15 @@
       $('invitation_section').highlight();
       return false;
     });
+
+    $$('.show_comments').each(function(elem) {
+      elem.observe('click', function(e) {
+        e.preventDefault();
+        var question_id = e.target.href.match(/question_(\d+)_qualifications/)[1];
+        $('question_' + question_id + '_qualifications').toggleClassName('hidden');
+        $('question_' + question_id + '_qualifications').highlight();
+        return false;
+      })
+    })
   }
 </script>

@@ -1,25 +1,9 @@
-<% if question.qualifications_count > 0 then %>
-  <p><%= link_to_function "Show Comments (#{question.qualifications_count})", "new Effect.toggle('qualification_section_#{question.id}', 'blind', {duration: .5});return false;" %></p>
-  <div id="qualification_section_<%=question.id%>" style="display:none;">
-    <ul id="qualifications_<%=question.id%>">
-      <% question.responses.each do |response| %>
-        <% if !response.qualifications.blank? then%>
-          <li>
-            <%= response.qualifications %>         
-          </li>
-        <% end %>
-      <% end %>
-    </ul>
-  </div>
-  <div id="qualification_section_print_<%=question.id%>" class="printer_friendly_show">
-    <h4>Qualifications:</h4>
-    <ul id="qualifications_print_<%=question.id%>">
-      <% question.responses.each do |response| %>
-        <% if !response.qualifications.blank? then%>
-          <li>
-            <%= response.qualifications %>         
-          </li>
-        <% end %>
+<% if qualifications.any? then %>
+  <p><%= link_to "Comments (#{qualifications.size})", "#question_#{question.id}_qualifications", :class => 'show_comments' %></p>
+  <div id="question_<%=question.id%>_qualifications" class="hidden">
+    <ul>
+      <% qualifications.each do |qualification| %>
+        <li><%= qualification %></li>
       <% end %>
     </ul>
   </div>
