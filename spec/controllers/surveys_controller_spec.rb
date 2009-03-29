@@ -967,6 +967,48 @@ end
     end
   end
   
+  describe SurveysController, " handling GET surveys/1/billing" do
+     before(:each) do
+       @current_organization = mock_model(Organization)
+       login_as(@current_organization)
+
+       @survey = mock_model(Survey, :id => 1, :billing_info_received! => true, :aasm_state => :pending)
+       @surveys_proxy = mock('surveys proxy')
+       @pending_surveys = [@survey]
+       @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
+       @surveys_proxy.stub!(:pending).and_return(@pending_surveys)
+       @pending_surveys.stub!(:find).and_return(@survey)
+     end
+
+     def do_billing
+       get :billing, :id => @survey
+     end
+     
+     it "should render the survey invitations page" do
+       do_billing
+       response.should redirect_to(survey_invitations_path(@survey))
+     end
+     
+     #this should happen once the billing gateway is set up
+     it "should render the billing page"
+     
+   end
+   
+   describe SurveysController, " handling GET surveys/1/billing when survey is not pending" do
+      before(:each) do
+        @current_organization = Factory.create(:organization)
+        login_as(@current_organization)
+        @survey = Factory.create(:survey)
+      end
+
+      def do_billing
+        get :billing, :id => @survey
+      end
+
+      it " should give RecordNotFound error" do
+        lambda{ do_billing }.should raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
 
 
 
