@@ -87,6 +87,13 @@ Factory.define :external_survey_invitation do |i|
   i.email { Factory.next(:email) }
 end
 
+#definition and setup for external invitation
+Factory.define :external_invitation do |i|
+  i.inviter {|a| a.association(:organization)}
+  i.organization_name { Factory.next(:organization_name) }
+  i.email { Factory.next(:email) }
+end
+
 #definition and setup for external network invitation
 Factory.define :external_network_invitation do |i|
   i.network {|a| a.association(:network)}

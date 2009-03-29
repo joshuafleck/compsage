@@ -9,4 +9,15 @@ class ExternalSurveyInvitation < ExternalInvitation
   validates_presence_of :organization_name
   
   attr_accessible :survey, :disccusions, :responses
+  
+ 
+  def validate_on_create
+    validate_not_invited if survey
+  end
+  
+  private
+  
+  def validate_not_invited
+    errors.add_to_base "Invitee is already invited" if survey.external_invitations.collect(&:email).include?(email)
+  end  
 end

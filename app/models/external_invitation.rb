@@ -17,6 +17,10 @@ class ExternalInvitation < Invitation
   
   before_create :create_key
   
+  def to_s
+    "#{self[:organization_name]} (#{self[:email]})"
+  end
+  
   protected
    
     def create_key

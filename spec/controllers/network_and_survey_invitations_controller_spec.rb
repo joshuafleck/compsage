@@ -28,6 +28,7 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
     login_as(@current_organization)
     
     @invitation = mock_model(SurveyInvitation, :id => 1, :inviter => @current_organization)
+    @invalid_invitations = []
     @invitations = [@invitation]
     @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :all_invitations => @invitations)
     @surveys_proxy = mock('surveys proxy')
@@ -64,6 +65,11 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
     do_get
     assigns(:invitations).should eql(@invitations)
    end
+   
+  it "should assign the invalid invitations the view" do    
+    do_get
+    assigns(:invalid_invitations).should eql(@invalid_invitations)
+   end   
    
   it "should assign the networks for the view" do    
     do_get
@@ -162,32 +168,16 @@ describe SurveyInvitationsController, " handling POST /surveys/1/invitations" do
     @network2 = mock_model(Network, :owner => @current_organization, :id => "2")
     @network3 = mock_model(Network, :owner => @current_organization, :id => "3")
     
-    @external_invitation = mock_model(
-      ExternalSurveyInvitation, 
-      :inviter => @current_organization, 
-      :inviter= => true, 
-      :id => "1", 
-      :save => true
-    )
-    
-    @invitation = mock_model(SurveyInvitation, :id => "1", :save! => true)
-    
     @organization1 = mock_model(Organization, :id => "2")
     @organization2 = mock_model(Organization, :id => "3")
     @organization3 = mock_model(Organization, :id => "4")
-    @organization4 = mock_model(Organization, :id => "5")
-    @organization5 = mock_model(Organization, :id => "6")
-    @organization6 = mock_model(Organization, :id => "7")
     
     @networks_proxy = mock('networks_proxy')
     @sponsored_surveys_proxy = mock('sponsored_surveys_proxy', :find => @survey)
-    @external_invitations_proxy = mock('external_invitations_proxy', :new => @external_invitation)
-    @invited_surveys_proxy_incl = mock('invited_surveys_proxy_incl', :include? => true)
-    @invited_surveys_proxy_excl = mock('invited_surveys_proxy_incl', :include? => false)
     @invitations_proxy = mock('invitations_proxy')
     
-    @current_organization.stub!(:sponsored_surveys).and_return(@sponsored_surveys_proxy)
     @current_organization.stub!(:networks).and_return(@networks_proxy)
+    @current_organization.stub!(:sponsored_surveys).and_return(@sponsored_surveys_proxy)
     @sponsored_surveys_proxy.stub!(:running).and_return(@sponsored_surveys_proxy)
     
     Organization.stub!(:find_by_id).with(@organization1.id).and_return(@organization1)
@@ -196,19 +186,9 @@ describe SurveyInvitationsController, " handling POST /surveys/1/invitations" do
     @networks_proxy.stub!(:find).with(@network1.id).and_return(@network1)
     @networks_proxy.stub!(:find).with(@network2.id).and_return(@network2)
     @networks_proxy.stub!(:find).with(@network3.id).and_return(@network3)
-    @network1.stub!(:organizations).and_return([@organization4])
-    @network2.stub!(:organizations).and_return([@organization5])
-    @network3.stub!(:organizations).and_return([@organization6])
-    @organization1.stub!(:invited_surveys).and_return(@invited_surveys_proxy_excl)
-    @organization2.stub!(:invited_surveys).and_return(@invited_surveys_proxy_incl)
-    @organization3.stub!(:invited_surveys).and_return(@invited_surveys_proxy_incl)
-    @organization4.stub!(:invited_surveys).and_return(@invited_surveys_proxy_excl)
-    @organization5.stub!(:invited_surveys).and_return(@invited_surveys_proxy_incl)
-    @organization6.stub!(:invited_surveys).and_return(@invited_surveys_proxy_incl)
-    @survey.stub!(:external_invitations).and_return(@external_invitations_proxy)
-    @survey.stub!(:invitations).and_return(@invitations_proxy)
-    @invitations_proxy.stub!(:new).with(:invitee => @organization1, :inviter => @current_organization).and_return(@invitation)
-    @invitations_proxy.stub!(:new).with(:invitee => @organization4, :inviter => @current_organization).and_return(@invitation)
+    @survey.stub!(:all_invitations).and_return(@invitations_proxy)
+    
+    Invitation.stub!(:create_internal_or_external_invitations).and_return([[],@invitations_proxy])
     
     @params = {
           :survey_id => @survey.id.to_s, 
@@ -250,84 +230,43 @@ describe SurveyInvitationsController, " handling POST /surveys/1/invitations" do
     do_post
   end
   
-  it "should find all of the invited networks members" do
-    @network1.should_receive(:organizations).and_return([@organization4])
-    @network2.should_receive(:organizations).and_return([@organization5])
-    do_post
-  end  
-  
-  it "should create an invitation for each invited organization" do
-    @invitations_proxy.should_receive(:new).with(:invitee => @organization1, :inviter => @current_organization).and_return(@invitation)
-    @invitations_proxy.should_receive(:new).with(:invitee => @organization4, :inviter => @current_organization).and_return(@invitation)
-    do_post
-  end
-  
-  it "should not create invitations for previously invited organizations" do
-    @invitations_proxy.should_not_receive(:new).with(:invitee => @organization2, :inviter => @current_organization)
-    @invitations_proxy.should_not_receive(:new).with(:invitee => @organization5, :inviter => @current_organization)
-    do_post
-  end
-  
   it "should not create invitations for unselected organizations" do
     Organization.should_not_receive(:find_by_id).with(@organization3.id)
     do_post
   end  
   
-  it "should create an invitation for each external invitation" do
-    @external_invitations_proxy.should_receive(:new).with(@params[:external_invite]['1'])
+  it "should not create invitations for unselected networks" do
+    @networks_proxy.should_not_receive(:find_by_id).with(@network3.id)
+    do_post
+  end  
+  
+  it "should build the invitations" do
+    Invitation.should_receive(:create_internal_or_external_invitations).with([@params[:external_invite]["1"]],[@organization1,@organization2],[@network1,@network2],@current_organization,@survey)
     do_post
   end
   
-end
-
-describe SurveyInvitationsController, " handling POST /surveys/1/invitations with bad external invitation" do
-
- before do
-    @current_organization = mock_model(Organization, :id => "1")
-    login_as(@current_organization)
-    
-    @survey = mock_model(Survey, :sponsor => @current_organization, :id => "1", :all_invitations => [])
-
-    @external_invitation = mock_model(
-      ExternalSurveyInvitation, 
-      :inviter => @current_organization, 
-      :inviter= => true, 
-      :id => "1", 
-      :save => false
-    )
-
-    @sponsored_surveys_proxy = mock('sponsored_surveys_proxy', :find => @survey)
-    @external_invitations_proxy = mock('external_invitations_proxy', :new => @external_invitation)
-    
-    @current_organization.stub!(:sponsored_surveys).and_return(@sponsored_surveys_proxy)
-    @current_organization.stub!(:networks).and_return([])
-    @sponsored_surveys_proxy.stub!(:running).and_return(@sponsored_surveys_proxy)
-
-    @survey.stub!(:external_invitations).and_return(@external_invitations_proxy)
-    
-    @params = {
-          :survey_id => @survey.id.to_s,
-          :external_invite => {
-            '1' => {"included" => '1', "organization_name" => 'ext1', "email" => 'ext1@ext1.com'}
-          }
-        }
-       
-  end
- 
-  def do_post
-    post :create, @params
-  end
-   
-  it "should assign the invalid invitations to the view" do
+  it "should assign the invalid invitations the view" do    
     do_post
-    assigns(:invalid_external_invites).should eql([@external_invitation])
+    assigns(:invalid_invitations).should eql(@invitations_proxy)
+   end 
+   
+  it "should assign the invitations to the view" do
+    @survey.should_receive(:all_invitations)
+    do_post
+  	assigns[:invitations].should_not be_nil
+  end  
+  
+  it "should assign the networks to the view" do
+    @current_organization.should_receive(:networks)
+    do_post
+  	assigns[:networks].should_not be_nil
+  end     
+  
+  it "should flash a message notiing if invitations were sent" do
+    do_post
+    flash[:notice].should eql("No invitations were sent")
   end
   
-  it "should render the index template" do
-    do_post
-    response.should render_template 'index'
-  end
-   
 end
 
 describe SurveyInvitationsController, " handling DELETE /surveys/1/invitations/1" do
@@ -449,6 +388,7 @@ describe NetworkInvitationsController, " handling GET /networks/1/invitations" d
     
     @invitation = mock_model(Invitation)
     @invitations = [@invitation]
+    @invalid_invitations = []
     
     @network = mock_model(Network, :all_invitations => @invitations, :name => 'network')
     @network_proxy = mock('Network Proxy', :find => @network)
@@ -491,7 +431,12 @@ describe NetworkInvitationsController, " handling GET /networks/1/invitations" d
   	do_get
   	assigns[:invitations].should_not be_nil
   end
-  
+     
+  it "should assign the invalid invitations the view" do    
+    do_get
+    assigns(:invalid_invitations).should eql(@invalid_invitations)
+   end   
+     
   it "should require being logged in" do
     controller.should_receive(:login_required).and_return(true)
     do_get
@@ -542,27 +487,11 @@ describe NetworkInvitationsController, " handling POST /networks/1/invitations" 
     
     @network = mock_model(Network, :owner => @current_organization, :id => "1")
        
-    @external_invitation = mock_model(
-      ExternalNetworkInvitation, 
-      :inviter => @current_organization, 
-      :inviter= => true, 
-      :id => "1", 
-      :save => true
-    )
-    
-    @invitation = mock_model(NetworkInvitation, :id => "1", :save! => true)
-    
     @organization1 = mock_model(Organization, :id => "2", :networks => [])
     @organization2 = mock_model(Organization, :id => "3", :networks => [])
     @organization3 = mock_model(Organization, :id => "4", :networks => [])
-    @organization4 = mock_model(Organization, :id => "5", :networks => [])
-    @organization5 = mock_model(Organization, :id => "6", :networks => [])
-    @organization6 = mock_model(Organization, :id => "7", :networks => [])
     
     @owned_networks_proxy = mock('owned_networks_proxy', :find => @network)
-    @external_invitations_proxy = mock('external_invitations_proxy', :new => @external_invitation)
-    @invited_networks_proxy_incl = mock('invited_networks_proxy_incl', :include? => true)
-    @invited_networks_proxy_excl = mock('invited_networks_proxy_incl', :include? => false)
     @invitations_proxy = mock('invitations_proxy')
     
     @current_organization.stub!(:owned_networks).and_return(@owned_networks_proxy)
@@ -573,14 +502,9 @@ describe NetworkInvitationsController, " handling POST /networks/1/invitations" 
     @organization1.stub!(:invited_networks).and_return(@invited_networks_proxy_excl)
     @organization2.stub!(:invited_networks).and_return(@invited_networks_proxy_incl)
     @organization3.stub!(:invited_networks).and_return(@invited_networks_proxy_incl)
-    @organization4.stub!(:invited_networks).and_return(@invited_networks_proxy_excl)
-    @organization5.stub!(:invited_networks).and_return(@invited_networks_proxy_incl)
-    @organization6.stub!(:invited_networks).and_return(@invited_networks_proxy_incl)
-    @network.stub!(:external_invitations).and_return(@external_invitations_proxy)
     @network.stub!(:all_invitations).and_return(@invitations_proxy)
-    @network.stub!(:invitations).and_return(@invitations_proxy)
-    @invitations_proxy.stub!(:new).with(:invitee => @organization1, :inviter => @current_organization).and_return(@invitation)
-    @invitations_proxy.stub!(:new).with(:invitee => @organization4, :inviter => @current_organization).and_return(@invitation)
+    
+    Invitation.stub!(:create_internal_or_external_invitations).and_return([[],@invitations_proxy])
     
     @params = {
           :network_id => @network.id.to_s, 
@@ -610,77 +534,35 @@ describe NetworkInvitationsController, " handling POST /networks/1/invitations" 
     Organization.should_receive(:find_by_id).with(@organization2.id).and_return(@organization2)
     do_post
   end
-  
-  it "should create an invitation for each invited organization" do
-    @invitations_proxy.should_receive(:new).with(:invitee => @organization1, :inviter => @current_organization).and_return(@invitation)
-    do_post
-  end
-  
-  it "should not create invitations for previously invited organizations" do
-    @invitations_proxy.should_not_receive(:new).with(:invitee => @organization2, :inviter => @current_organization)
-    @invitations_proxy.should_not_receive(:new).with(:invitee => @organization5, :inviter => @current_organization)
-    do_post
-  end
-  
+    
   it "should not create invitations for unselected organizations" do
     Organization.should_not_receive(:find_by_id).with(@organization3.id)
     do_post
   end  
   
-  it "should create an invitation for each external invitation" do
-    @external_invitations_proxy.should_receive(:new).with(@params[:external_invite]['1'])
+  it "should build the invitations" do
+    Invitation.should_receive(:create_internal_or_external_invitations).with([@params[:external_invite]["1"]],[@organization1,@organization2],[],@current_organization,@network)
     do_post
-  end
-  
-end
-
-describe NetworkInvitationsController, " handling POST /network/1/invitations with bad external invitation" do
-
- before do
-    @current_organization = mock_model(Organization, :id => "1")
-    login_as(@current_organization)
-    
-    @network = mock_model(Network, :owner => @current_organization, :id => "1", :all_invitations => [])
-
-    @external_invitation = mock_model(
-      ExternalNetworkInvitation, 
-      :inviter => @current_organization, 
-      :inviter= => true, 
-      :id => "1", 
-      :save => false
-    )
-
-    @owned_networks_proxy = mock('owned_networks_proxy', :find => @network)
-    @external_invitations_proxy = mock('external_invitations_proxy', :new => @external_invitation)
-    
-    @current_organization.stub!(:owned_networks).and_return(@owned_networks_proxy)
-    
-    @network.stub!(:external_invitations).and_return(@external_invitations_proxy)
-    
-    @params = {
-          :network_id => @network.id.to_s,
-          :external_invite => {
-            '1' => {"included" => '1', "organization_name" => 'ext1', "email" => 'ext1@ext1.com'}
-          }
-        }
-       
-  end
- 
-  def do_post
-    post :create, @params
   end
    
-  it "should assign the invalid invitations to the view" do
+  it "should assign the invitations to the view" do
+    @network.should_receive(:all_invitations)
     do_post
-    assigns(:invalid_external_invites).should eql([@external_invitation])
+  	assigns[:invitations].should_not be_nil
   end
   
-  it "should render the index template" do
+  it "should assign the invalid invitations the view" do    
     do_post
-    response.should render_template 'index'
-  end
+    assigns(:invalid_invitations).should eql(@invitations_proxy)
+   end   
    
+  it "should flash a message notiing if invitations were sent" do
+    do_post
+    flash[:notice].should eql("No invitations were sent")
+  end   
+    
 end
+
 
 describe NetworkInvitationsController, " handling DELETE /network/1/invitations/1" do
   before do

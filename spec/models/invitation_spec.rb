@@ -33,24 +33,103 @@ describe Invitation do
  
 end
 
-module NetworkInvitationSpecHelper
-
-  def valid_network_invitation_attributes
-    {
-      :inviter => mock_model(Organization),
-      :invitee => mock_model(Organization),
-      :network => mock_model(Network)
-    }
+describe Invitation, "self.create_internal_or_external_invitations" do
+   
+  before(:each) do
+    @inviter = Factory.create(:organization)
+    @network = Factory.create(:network)
+    @survey = Factory.create(:survey)
+    @networks = [Factory.create(:network)]
+    @invitees = [Factory.create(:organization)]
+    @external_invitees = [{:email => "flec0025@umn.edu",:organization_name => "test1"}]
+  end
+  
+  it "should collect any invitations that were not valid" do
+    @external_invitees[0][:organization_name] = nil
+    
+    invitations, invalid_invitations = Invitation.create_internal_or_external_invitations(
+      @external_invitees,
+      [],
+      [],
+      @inviter,
+      @survey)
+    
+    invitations.size.should eql(0)  
+    invalid_invitations.size.should eql(1)
+  end
+  
+  it "should return the valid external invitations" do    
+    invitations, invalid_invitations = Invitation.create_internal_or_external_invitations(
+      @external_invitees,
+      [],
+      [],
+      @inviter,
+      @survey)
+    
+    invitations.size.should eql(1)  
+    invalid_invitations.size.should eql(0)
+  end
+   
+  it "should invite all members of an invited network except the inviter" do
+    org = Factory.create(:organization)
+    Factory.create(:network_membership, :network => @networks[0], :organization => org)
+    Factory.create(:network_membership, :network => @networks[0], :organization => @inviter)
+    invitations, invalid_invitations = Invitation.create_internal_or_external_invitations(
+      [],
+      [],
+      @networks,
+      @inviter,
+      @survey)
+    
+    invitations.size.should eql(1)  
+    invalid_invitations.size.should eql(0)
+  end
+  
+  it "should return the valid internal invitations" do
+    invitations, invalid_invitations = Invitation.create_internal_or_external_invitations(
+      [],
+      @invitees,
+      [],
+      @inviter,
+      @survey)
+    
+    invitations.size.should eql(1)  
+    invalid_invitations.size.should eql(0)
+  end
+  
+  it "should not send an external invitation to a pre-existing member" do 
+    org = Factory.create(:organization)
+    @external_invitees[0][:email] = org.email
+    invitations, invalid_invitations = Invitation.create_internal_or_external_invitations(
+      @external_invitees,
+      [],
+      [],
+      @inviter,
+      @survey)
+    
+    invitations.size.should eql(1)  
+    invalid_invitations.size.should eql(0)
+    invitations[0].class.should eql(SurveyInvitation)    
+  end
+  
+  it "should not send more than one internal invitation to the same invitee" do
+    invitations, invalid_invitations = Invitation.create_internal_or_external_invitations(
+      [],
+      @invitees += @invitees,
+      [],
+      @inviter,
+      @survey)
+    
+    invitations.size.should eql(1)  
+    invalid_invitations.size.should eql(0)
   end
   
 end
 
 describe NetworkInvitation do
    
-  include NetworkInvitationSpecHelper
-
   before(:each) do
-    @network_invitation = NetworkInvitation.new
+    @network_invitation = Factory.build(:network_invitation)
   end
 
   it "should belong to a network" do
@@ -62,43 +141,56 @@ describe NetworkInvitation do
   end    
      
   it "should be invalid if a network is not specified" do
-  	@network_invitation.attributes = valid_network_invitation_attributes.except(:network)
+  	@network_invitation.network = nil
   	@network_invitation.should have(1).error_on(:network)
   end  
    
   it "should be invalid without an invitee" do
-  	@network_invitation.attributes = valid_network_invitation_attributes.except(:invitee)
+  	@network_invitation.invitee = nil
     @network_invitation.should have(1).error_on(:invitee)
   end
   
   it "should be invalid without an inviter" do
-    @network_invitation.attributes = valid_network_invitation_attributes.except(:inviter)
+    @network_invitation.inviter = nil
     @network_invitation.should have(1).error_on(:inviter)
   end
   
+  it "should be invalid if the invitee is already invited" do
+    @network_invitation.invitee.invited_networks << @network_invitation.network
+      
+    @network_invitation.should have(1).error_on(:base)
+  end  
+  
+  it "should be invalid if the invitee is already a member" do
+    Factory.create(
+      :network_membership,
+      :network => @network_invitation.network, 
+      :organization => @network_invitation.invitee)
+      
+    @network_invitation.should have(1).error_on(:base)
+  end 
+  
+  it "should be invalid if the invitee is the network owner" do
+    @network_invitation.network.owner = @network_invitation.invitee
+    @network_invitation.network.save!
+    
+    @network_invitation.should have(1).error_on(:base)
+  end   
+  
   it "should be valid" do
-  	@network_invitation.attributes = valid_network_invitation_attributes
     @network_invitation.should be_valid
   end  
  
 end
 
 describe NetworkInvitation, ".accept!" do
-  include NetworkInvitationSpecHelper
   
   before(:each) do
-    @invitee = mock_model(Organization, :email => "brian.terlson@gmail.com",
-                                        :name => "invitee",
-                                        :contact_name => "Brian")
+    @invitee = Factory.create(:organization)
+    @network = Factory.create(:network)   
+    @network_invitation = Factory.create(:network_invitation,:network => @network, :invitee => @invitee)
     @networks = []
-    @network = mock_model(Network, :name => "Network", :description => "Descr", :owner => mock_model(Organization, :name => "Owner", :contact_name => "Bill"))
-    @invitee.stub!(:networks).and_return(@networks)
-    
-    @network_invitation = NetworkInvitation.create(
-      :invitee => @invitee,
-      :network => @network,
-      :inviter => mock_model(Organization, :name => "Inviter", :contact_name => "Bill")
-    )
+    @invitee.stub!(:networks).and_return(@networks) 
   end
   
   it "should add the network to the invitees networks" do
@@ -116,24 +208,10 @@ describe NetworkInvitation, ".accept!" do
   end
 end
 
-module SurveyInvitationSpecHelper
-
-  def valid_survey_invitation_attributes
-    {
-      :inviter => organization_mock,
-      :invitee => organization_mock,  
-      :survey => survey_mock
-    }
-  end
-  
-end
-
 describe SurveyInvitation do
    
-  include SurveyInvitationSpecHelper
-
   before(:each) do
-    @survey_invitation = SurveyInvitation.new
+    @survey_invitation = Factory.build(:survey_invitation)
   end
 
   it "should inherit from invitation" do
@@ -145,17 +223,29 @@ describe SurveyInvitation do
   end
   
   it "should be invalid if a survey is not specified" do
-    @survey_invitation.attributes = valid_survey_invitation_attributes.except(:survey)
+    @survey_invitation.survey = nil
     @survey_invitation.should have(1).errors_on(:survey)
   end
     
   it "should be invalid without an invitee" do
-    @survey_invitation.attributes = valid_survey_invitation_attributes.except(:invitee)
+    @survey_invitation.invitee = nil
     @survey_invitation.should have(1).errors_on(:invitee)
   end
+  
+  it "should be invalid if the invitee is already invited" do
+    @survey_invitation.invitee.invited_surveys << @survey_invitation.survey
+      
+    @survey_invitation.should have(1).error_on(:base)
+  end  
+  
+  it "should be invalid if the invitee is the survey sponsor" do
+    @survey_invitation.survey.sponsor = @survey_invitation.invitee
+    @survey_invitation.survey.save!
+    
+    @survey_invitation.should have(1).error_on(:base)
+  end   
      
   it "should be valid" do  	
-    @survey_invitation.attributes = valid_survey_invitation_attributes
     @survey_invitation.should be_valid
   end  
  
@@ -225,31 +315,10 @@ describe ExternalInvitation do
  
 end
 
-describe ExternalInvitation, "that exists" do
-   
-  include ExternalInvitationSpecHelper
-
-end  
- 
-module ExternalNetworkInvitationSpecHelper
-
-  def valid_external_network_invitation_attributes
-    {
-      :name => 'David Peterson',
-      :email => 'eazydp@gmail.com',
-      :inviter => organization_mock,
-      :network => mock_model(Network)
-    }
-  end
-  
-end
-
 describe ExternalNetworkInvitation do
    
-  include ExternalNetworkInvitationSpecHelper
-
   before(:each) do
-    @external_network_invitation = ExternalNetworkInvitation.new
+    @external_network_invitation = Factory.build(:external_network_invitation)
   end
 
   it "should belong to a network" do
@@ -261,56 +330,30 @@ describe ExternalNetworkInvitation do
   end    
      
   it "should be invalid if a network is not specified" do
-  	 @external_network_invitation.attributes = valid_external_network_invitation_attributes.except(:network)
+  	 @external_network_invitation.network = nil
   	 @external_network_invitation.should have(1).errors_on(:network)
+  end  
+  
+  it "should be invalid if the invitee is already invited" do
+  	 @external_network_invitation.network.external_invitations << @external_network_invitation
+  	 @external_network_invitation.should have(1).errors_on(:base)
   end  
    
   it "should be valid" do
-     @external_network_invitation.attributes = valid_external_network_invitation_attributes
      @external_network_invitation.should be_valid
   end  
  
-end
-
-describe ExternalNetworkInvitation, "that exists" do
-   
-  include ExternalNetworkInvitationSpecHelper
-
-  before(:each) do
-    @external_network_invitation = ExternalNetworkInvitation.new
-    @external_network_invitation.attributes = valid_external_network_invitation_attributes
-    @external_network_invitation.save
-  end
-  
-  after(:each) do
-    @external_network_invitation.destroy
-  end
-  
   it "should have a key" do
+    @external_network_invitation.save!
   	@external_network_invitation.key.should_not be_nil
   end
 
- end 
- 
-module ExternalSurveyInvitationSpecHelper
-
-  def valid_external_survey_invitation_attributes
-    {
-      :organization_name => 'David E. Peteron',
-      :email => 'pete2786@umn.edu',
-      :inviter => organization_mock,
-      :survey => mock_model(Survey, :job_title => 'test', :end_date => Time.now + 2.days, :sponsor => organization_mock, :description => "Descr")
-    }
-  end
-  
-end
+end 
 
 describe ExternalSurveyInvitation do
-   
-  include ExternalSurveyInvitationSpecHelper
 
   before(:each) do
-    @external_survey_invitation = ExternalSurveyInvitation.new
+    @external_survey_invitation = Factory.build(:external_survey_invitation)
   end
 
   it "should inherit from external_invitation" do
@@ -334,37 +377,26 @@ describe ExternalSurveyInvitation do
   end
   
   it "should be invalid if a survey is not specified" do
-  	@external_survey_invitation.attributes = valid_external_survey_invitation_attributes.except(:survey)
+  	@external_survey_invitation.survey = nil
   	@external_survey_invitation.should have(1).errors_on(:survey)
   end
       
   it "should be invalid if an organization name is not specified" do
-  	@external_survey_invitation.attributes = valid_external_survey_invitation_attributes.except(:organization_name)
+  	@external_survey_invitation.organization_name = nil
   	@external_survey_invitation.should have(1).errors_on(:organization_name)
   end
-     
+  
+  it "should be invalid if the invitee is already invited" do
+  	 @external_survey_invitation.survey.external_invitations << @external_survey_invitation
+  	 @external_survey_invitation.should have(1).errors_on(:base)
+  end  
+        
   it "should be valid" do
-  	@external_survey_invitation.attributes = valid_external_survey_invitation_attributes
   	@external_survey_invitation.should be_valid
   end  
  
-end
-
-describe ExternalSurveyInvitation, "that exists" do
-   
-  include ExternalSurveyInvitationSpecHelper
-
-  before(:each) do
-    @external_survey_invitation = ExternalSurveyInvitation.new
-    @external_survey_invitation.attributes = valid_external_survey_invitation_attributes
-    @external_survey_invitation.save
-  end
-  
-  after(:each) do
-    @external_survey_invitation.destroy
-  end
-  
   it "should have a key" do
+    @external_survey_invitation.save!
   	@external_survey_invitation.key.should_not be_nil
   end
 

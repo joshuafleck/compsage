@@ -1,11 +1,11 @@
 <%=flash_messages%>
-<% if @invalid_external_invites.size > 0 then %>
+<% if @invalid_invitations.size > 0 then %>
   <div class="errorExplanation">
-    <h2><%=t :header, :scope => [:activerecord, :errors, :template], :model => "invitation", :count => @invalid_external_invites.size %></h2>
+    <h2><%=t :header, :scope => [:activerecord, :errors, :template], :model => "invitation", :count => @invalid_invitations.size %></h2>
     <p><%=t :body, :scope => [:activerecord, :errors, :template] %></p>
     <ul>
-      <% @invalid_external_invites.each do |invite| %>
-        <li><%= invite.organization_name %> (<%= invite.email %>): <%= invite.errors.full_messages.to_sentence %></li>
+      <% @invalid_invitations.each do |invite| %>
+        <li><%= invite.to_s %>: <%= invite.errors.full_messages.to_sentence %></li>
       <% end %>
     </ul>
   </div>

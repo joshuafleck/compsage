@@ -7,14 +7,8 @@ describe SessionsController do
     @brian = Organization.new(valid_organization_attributes)
     @brian.save
     
-    @invitation = ExternalSurveyInvitation.new(
-      :inviter => organization_mock, 
-      :survey => survey_mock, 
-      :name => 'TEST',
-      :email => '111@1.com',
-      :organization_name => "test org name")
+    @invitation = Factory.create(:external_survey_invitation)
       
-    @invitation.save!
   end
   
   after(:all) do
