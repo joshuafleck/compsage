@@ -4,13 +4,13 @@ salary_questions:
   name: Questions pertaining to this position's salary and salary range
   description: "Questions regarding salary for a positions"
   question_hash: --- 
-  - :question_type: base_wage
+  - :response_type: BaseWageResponse
     :text: What is this position's average base salary/salary?
-  - :question_type: wage_range
+  - :response_type: WageResponse
     :text: What is this position's salary range minimum?
-  - :question_type: wage_range
+  - :response_type: WageResponse
     :text: What is this position's salary range midpoint?
-  - :question_type: wage_range
+  - :response_type: WageResponse
     :text: What is this position's salary range maximum?
   
 incentive_question:
@@ -20,7 +20,7 @@ incentive_question:
   name: Whether this position is eligible for an incentive bonus
   question_hash: --- 
   - :text: "Is this position eligible for incentive bonus?"
-    :question_type: "radio"
+    :response_type: "MultipleChoiceResponse"
     :options:
         - "Yes"
         - "No"
@@ -32,14 +32,14 @@ incentive_target_question:
     name: Questions pertaining to this position's incentive opportunity as a percent of base salary 
     question_hash: ---
     - :text: "What is this position's incentive target as percent of base salary?"
-      :question_type: "numerical_field"
+      :response_type: "NumericalResponse"
     - :text: Is there a maximum incentive that can be earned?
-      :question_type: "radio"
+      :response_type: "MultipleChoiceResponse"
       :options:
           - "Yes"
           - "No"
     - :text: If yes, what is the maximum incentive as a percent of base salary?
-      :question_type: "numerical_field"
+      :response_type: "NumericalResponse"
 bargaining_unit_question:
     id: 4
     position: 4
@@ -47,7 +47,7 @@ bargaining_unit_question:
     name: Whether the incumbents of this position are members of a collective bargaining unit 
     question_hash: ---
     - :text: "Is this position part of a bargaining unit?"
-      :question_type: "radio"
+      :response_type: "MultipleChoiceResponse"
       :options:
           - "Yes"
           - "No"
@@ -59,7 +59,7 @@ flsa_question:
     name: Whether this position is exempt or non-exempt 
     question_hash: ---
     - :text: "What is this position's FLSA status with regard to overtime provisions?"
-      :question_type: "radio"
+      :response_type: "MultipleChoiceResponse"
       :options:
           - "Exempt"
           - "Non-Exempt"

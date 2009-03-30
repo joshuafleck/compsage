@@ -3,13 +3,11 @@ class QuestionFormBuilder < ActionView::Helpers::FormBuilder
   
   # builds a form field for a survey question.
   def form_field
-    case question.question_type
-    when "text_field"
-      label(:response, question.text) + text_field(:response, :size => 40) + error_text
-    when "numerical_field"
-      label(:response, question.text) + text_field(:response, :size => 5) + error_text
-    when "wage_range","base_wage"
-      label(:response, question.text) + text_field(:response, :size => 5) + " " + select(:unit, question.units, :prompt => 'Select format') + error_text
+    response_class = question.response_class
+    puts response_class.field_type
+    case response_class.field_type
+    when "text_box"
+      label(:response, question.text) + text_field(:response, response_class.field_options) + unit_field + error_text
     when "radio"
       @template.content_tag(:div, question.text, :class => "label") +
       question.options.to_enum(:each_with_index).collect { |option, index|
@@ -50,7 +48,15 @@ class QuestionFormBuilder < ActionView::Helpers::FormBuilder
       ""
     end
   end
-  
+ 
+  # displays the units select box if the response type has any units defined
+  def unit_field
+    if units = question.response_class.units then
+      ' ' + select(:unit, units.form_values, :prompt => "Select #{units.name}") 
+    else
+      ''
+    end
+  end
   # checks for whether the response(s) include one where the specified option was checked.
   def checked_option?(option)
     object.response.include?(option.to_s) unless object.response.nil?

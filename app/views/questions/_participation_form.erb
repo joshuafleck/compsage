@@ -15,7 +15,7 @@
       <% f.fields_for @response, :index => question.id, :builder => QuestionFormBuilder do |q| %>
 				<li>
 					<%=q.form_field%>
-					<% if question.qualify? then %>
+					<% if question.response_class.accepts_qualification? then %>
 						<div class="qualifications">
 							<% if @response.qualifications.blank? %>
 								<div class="field" style="display: none;">
