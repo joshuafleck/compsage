@@ -10,15 +10,9 @@ class NumericalResponse < Response
   end
 
   def response=(value)
-    puts "Getting response of #{value}"
     self.numerical_response = sanitize_number(value)
   end
 
-  def valid?
-    puts "Getting asked about validity."
-
-    super
-  end
   private
   # removes dollar signs and commas
   def sanitize_number(value)

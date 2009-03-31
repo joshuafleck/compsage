@@ -106,9 +106,6 @@
       end
       
     else
-    @survey.questions.each do |question|
-      puts question.errors.full_messages
-    end
       respond_to do |wants|
         wants.html { render :action => "new" }
       end

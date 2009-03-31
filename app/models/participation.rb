@@ -26,7 +26,6 @@ class Participation < ActiveRecord::Base
         # didn't respond
         response[question.id].first.destroy if response[question.id] # So, destroy the previous response if it exists
       else
-        puts "Responded... question response type is #{question.response_type}"
         question_response =  (current_responses.nil? || current_responses.empty?) ? responses.build(:question => question, :type => question.response_type) : current_responses.first 
         question_response.attributes = attributes
         puts question_response.inspect
