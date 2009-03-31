@@ -16,6 +16,24 @@ class Response < ActiveRecord::Base
     self.accepts_qualification
   end
 
+  # Here we must override new in order to create an object of the proper type.
+  #
+  def self.new(*args, &block)
+    if args.first.is_a?(Hash) && args.first.has_key?(:type) then
+      begin
+        klass = args.first[:type].constantize
+        if klass < Response then # Don't want other models getting in on this action, just Response children.
+          return klass.new(*args, &block)
+        end
+      rescue
+        # Do nothing, can't constantize, that's ok.
+      end
+    end
+
+    # Otherwise go about our business 
+    return super
+  end
+
   belongs_to :question
   belongs_to :participation
   
@@ -55,18 +73,23 @@ class Response < ActiveRecord::Base
   def response
     self.textual_response
   end
-  
+ 
+  # default no formatting
+  def formatted_response
+    self.response
+  end
+
   private
 
   def convert_to_standard_units
     if self.class.units && self.unit then
-      self.numerical_response = self.unit.convert(self.numerical_response, :from => self.unit, :to => self.class.standard_unit) 
+      self.numerical_response = self.class.units.convert(self.numerical_response, :from => self.unit, :to => self.class.units.standard_unit) 
     end
   end
 
   def convert_from_standard_units
     if !self.unit.blank? && self.class.units then
-      self.numerical_response = self.unit.convert(self.numerical_response, :from => self.class.units.standard_unit, :to => self.unit) 
+      self.numerical_response = self.class.units.convert(self.numerical_response, :from => self.class.units.standard_unit, :to => self.unit) 
     end
   end
 

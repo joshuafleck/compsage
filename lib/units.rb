@@ -18,7 +18,7 @@ class Units
   def convert(value, options)
     from = options.delete(:from)
     to = options.delete(:to)
-    raise ArgumentError unless @values.has_key?(from) && @values.has_key?(to)
+    raise ArgumentError.new("Unit #{from} or #{to} not found") unless @values.has_key?(from) && @values.has_key?(to)
 
     return value * (@values[from] / @values[to].to_f)
   end

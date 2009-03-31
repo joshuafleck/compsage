@@ -1,10 +1,16 @@
 require 'enumerator'
 class QuestionFormBuilder < ActionView::Helpers::FormBuilder
   
+  def initialize(object_name, object, template, options, proc)
+    super
+    if @object.class < Response
+      @object_name.sub!(@object_name.match(/\[([\w\_]*\_)response/)[1], '')
+    end
+  end
+
   # builds a form field for a survey question.
   def form_field
     response_class = question.response_class
-    puts response_class.field_type
     case response_class.field_type
     when "text_box"
       label(:response, question.text) + text_field(:response, response_class.field_options) + unit_field + error_text
