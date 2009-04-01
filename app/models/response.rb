@@ -39,7 +39,10 @@ class Response < ActiveRecord::Base
   
   validates_presence_of :question
   validates_presence_of :response
-  validates_presence_of :unit, :if => Proc.new { |r| r.class.units }
+  validates_each :unit do |record, attr, value|
+    record.errors.add_to_base "#{record.class.units.name.capitalize} not provided" if record.class.units && value.blank?
+  end
+
   before_save :convert_to_standard_units
 
   # Enable after_find by defining this method
