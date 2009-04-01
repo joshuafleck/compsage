@@ -32,14 +32,14 @@ incentive_target_question:
     name: Questions pertaining to this position's incentive opportunity as a percent of base salary 
     question_hash: ---
     - :text: "What is this position's incentive target as percent of base salary?"
-      :response_type: "NumericalResponse"
+      :response_type: "PercentResponse"
     - :text: Is there a maximum incentive that can be earned?
       :response_type: "MultipleChoiceResponse"
       :options:
           - "Yes"
           - "No"
     - :text: If yes, what is the maximum incentive as a percent of base salary?
-      :response_type: "NumericalResponse"
+      :response_type: "PercentResponse"
 bargaining_unit_question:
     id: 4
     position: 4
