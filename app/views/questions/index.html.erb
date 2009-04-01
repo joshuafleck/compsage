@@ -1,3 +1,19 @@
 <% title "Responding to #{@survey.job_title}" %>
 <% highlight_tab("surveys") %>
 <%= render :partial => "questions/participation_form"%>
+<% content_for :initialize_js, 'createMasks();' %>
+<script type="text/javascript">
+  function createMasks() {
+    $$('input.WageResponse, input.BaseWageResponse').each(function(field) {
+      new inputMask(field, 'currency');
+    });
+
+    $$('input.NumericResponse').each(function(field) {
+      new inputMask(field, 'number');
+    });
+
+    $$('input.PercentResponse').each(function(field) {
+      new inputMask(field, 'percent');
+    });
+  }
+</script>
