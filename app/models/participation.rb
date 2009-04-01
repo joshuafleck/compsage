@@ -28,7 +28,6 @@ class Participation < ActiveRecord::Base
       else
         question_response =  (current_responses.nil? || current_responses.empty?) ? responses.build(:question => question, :type => question.response_type) : current_responses.first 
         question_response.attributes = attributes
-        puts question_response.inspect
       end
     end
   end

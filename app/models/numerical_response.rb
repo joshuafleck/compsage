@@ -10,7 +10,8 @@ class NumericalResponse < Response
   end
 
   def response=(value)
-    self.numerical_response = sanitize_number(value)
+    value = sanitize_number(value)
+    self.numerical_response = @response_before_type_cast = value
   end
 
   private

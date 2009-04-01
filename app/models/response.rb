@@ -67,6 +67,7 @@ class Response < ActiveRecord::Base
   end
 
   def response=(value)
+    @response_before_typecast = value
     self.textual_response = value
   end
 
