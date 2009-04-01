@@ -17,6 +17,6 @@ class NumericalResponse < Response
   private
   # removes dollar signs and commas
   def sanitize_number(value)
-    value.respond_to?(:gsub) ? value.gsub(/\$|\,/, '') : value
+    value.respond_to?(:gsub) ? value.gsub(/\$|\,|\%/, '') : value
   end
 end
