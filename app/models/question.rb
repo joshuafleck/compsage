@@ -34,7 +34,7 @@ class Question < ActiveRecord::Base
   }
 
   def answerable?
-    return !(self[:question_type] == 'text')
+    return !self.response_type.nil?
   end
  
   def grouped_responses
@@ -81,12 +81,12 @@ class Question < ActiveRecord::Base
   
   # returns true if the question received enough responses to be displayed in the report
   def adequate_responses?
-    self.response_count >= self.minimum_responses
+    self.response_count >= self.response_class.minimum_responses
   end
   
   # returns true if the question received enough responses from invitees to be displayed in the report
   def adequate_invitee_responses?
-    self.invitee_response_count >= self.minimum_responses
+    self.invitee_response_count >= self.response_class.minimum_responses
   end
   
   # returns the total number of responses

@@ -6,7 +6,7 @@ module QuestionSpecHelper
     {
       :text => "What is the meaning of life?",
       :position => 1,
-      :question_type => "radio",
+      :response_type => "MultipleChoiceResponse",
       :question_parameters => {},
       :html_parameters => {},
       :options => ['Yes', 'No'],
@@ -28,13 +28,7 @@ describe Question do
     @question.attributes = valid_question_attributes
     @question.should be_valid
   end
-  
-  #jf- commenting out, as removel of validation was necessary to allow saving of questions
-  #it "should be invalid without a survey" do
-  #  @question.attributes = valid_question_attributes.except(:survey)
-  #  @question.should have(1).error_on(:survey)
-  #end
-  
+ 
   it "should have many responses" do
     Question.reflect_on_association(:responses).should_not be_nil
   end
@@ -50,128 +44,29 @@ describe Question do
   end
 end
 
-describe Question, "with options", :shared => true do
+describe Question, "with options" do
   include QuestionSpecHelper
   
   before(:each) do
     @question = Question.new
-    @question.attributes = valid_question_attributes.with(:question_type => 'checkbox')
+    @question.attributes = valid_question_attributes.with(:response_type => 'MultipleChoiceResponse')
   end
   
   it "should be invalid without some options" do
     @question.attributes = @question.attributes.with(:options => [])
     @question.should have(1).error_on(:options)
   end
-  
-  it "should not save a numerical response" do
-    @question.should_not be_numerical_response
-  end
-  
-  it "should be answerable" do
-    @question.should be_answerable
-  end
 end
-
-describe Question, "without options with a textual response", :shared => true do
-  include QuestionSpecHelper
-  
-  before(:each) do
-    @question = Question.new
-    @question.attributes = valid_question_attributes.with(:question_type => 'text_area')
-  end  
-  it "should save a textual response" do
-    @question.should_not be_numerical_response
-  end
-  
-  it "should be answerable" do
-    @question.should be_answerable
-  end
-
-end
-
-describe Question, "without options with a numerical response", :shared => true do
-  include QuestionSpecHelper
-  
-  before(:each) do
-    @question = Question.new
-    @question.attributes = valid_question_attributes.with(:question_type => 'numerical_field')
-  end
-  it "should save a numerical response" do
-    @question.should be_numerical_response
-  end
-
-  it "should be invalid if it's not a number" #should this be handled by response model?
-  
-  it "should be answerable" do
-    @question.should be_answerable
-  end
-  
-end
-
-describe Question, "with radio buttons" do
-  
-  it_should_behave_like "Question with options"
-  
-  it "should only accept one response"
-  
-end
-
-
-describe Question, "with check boxes" do
-  
-  it_should_behave_like "Question with options"
-  
-  it "should accept multiple responses"
-  
-end
-
-  
-describe Question, "with select box" do
-  
-  it_should_behave_like "Question with options"
-  
-  it "should only accept one response"
-end
-
-describe Question, "with a text box of some sort" do
-  
-  it_should_behave_like "Question without options with a textual response"
-  
-  it "should only accept one response"
-  
-end
-
-describe Question, "with numerical input box" do
-  
-  it_should_behave_like "Question without options with a numerical response"
-  
-  it "should only accept one response"
-  
-end
-
 
 describe Question, "that is just plain old text (like instructions)" do
   include QuestionSpecHelper
   
   before(:each) do
     @question = Question.new
-    @question.attributes = valid_question_attributes.with(:question_type => 'text')
+    @question.attributes = valid_question_attributes.with(:response_type => nil)
   end
+
   it "should not be answerable" do
     @question.should_not be_answerable
-  end
-  
-end
-
-describe Question, "that has units" do
-  include QuestionSpecHelper
-
-  before do
-    @question = Question.new
-    @question.attributes = valid_question_attributes.with(:question_type => 'wage_range')
-  end
-
-  it "should have units" do
-    @question.has_units?.should be_true
   end
 end
