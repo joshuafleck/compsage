@@ -7,7 +7,7 @@
   <%= f.text_area :description, :rows => 4, :cols => 40 %>
   <% if @survey.new_record? then %>
   	<%=f.label :days_running, "Run length" %>
-  	<%=f.select :days_running, (3..7).to_a.collect {|i| ["#{i} days", i]} %>
+  	<%=f.select :days_running, (3..14).to_a.collect {|i| ["#{i} days", i]}, :selected => 7 %>
 	<% end %>
 	<h3>Standard questions</h3>
 	<div id="standard_questions">
