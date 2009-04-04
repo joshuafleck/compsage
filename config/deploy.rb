@@ -37,13 +37,18 @@ namespace :deploy do
   task :load_pdq, :roles => :app do
     run "cd #{current_path}; rake spec:db:fixtures:load FIXTURES=predefined_questions RAILS_ENV=#{rails_env}"
   end 
+  
+  desc "Link the logos directory"
+  task :link_logos, :role => :app do
+    run "ln -s #{shared_path}/logos/ #{current_path}/public/logos; ln -s #{shared_path}/attachment_fu/ #{current_path}/tmp/attachment_fu"
+  end
  
-  desc "Configure thinking_sphinx"
-  task :configure_ts, :roles => :app do
+  desc "Link thinking_sphinx data directory"
+  task :link_ts, :roles => :app do
     run "ln -s #{shared_path}/sphinx #{current_path}/db/sphinx"
   end  
 
 
 end
 
-after 'deploy', 'deploy:copy_database_yml', 'deploy:migrations', 'deploy:load_pdq', 'deploy:configure_ts'
+after 'deploy', 'deploy:link_logos', 'deploy:link_ts', 'deploy:copy_database_yml', 'deploy:migrations', 'deploy:load_pdq'
