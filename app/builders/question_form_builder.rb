@@ -60,7 +60,7 @@ class QuestionFormBuilder < ActionView::Helpers::FormBuilder
   # displays the units select box if the response type has any units defined
   def unit_field
     if units = question.response_class.units then
-      ' ' + select(:unit, units.form_values, :prompt => "Select #{units.name}") 
+      ' ' + select(:unit, units.form_values, {:prompt => "Select #{units.name}"}, {:class => "units #{units.name}"}) 
     else
       ''
     end

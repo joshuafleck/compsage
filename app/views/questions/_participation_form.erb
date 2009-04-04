@@ -48,5 +48,18 @@ function observeQualificationLinks() {
 		});
 	});
 }
+function observeUnitSelection() {
+  var unit_selects = $$('select.units')
+  unit_selects.each(function(select) {
+    select.observe('change', function(e) {
+      value = e.target.value;
+      class = e.target.class;
+      unit_selects.each(function(select) {
+        if(select.value == '' && select.class == class)
+          select.value = value;
+      });
+    });
+  });
+}
 </script>
-<% content_for :initialize_js, "observeQualificationLinks();"%>
+<% content_for :initialize_js, "observeQualificationLinks();observeUnitSelection();"%>
