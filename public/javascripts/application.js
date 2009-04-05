@@ -17,13 +17,18 @@ function inputMask(element, data_type) {
     data_template = "$#{number}";
     precision = 2;
   } else if(data_type == 'percent') {
-    char_mask = /^\d*\.?\d*\%?$/;
+    char_mask = /^\-?\d*\.?\d*\%?$/;
     data_template = "#{number}%";
   } else if(data_type == 'number') {
-    char_mask = /^\d*\.?\d*$/;
+    char_mask = /^\-?\d*\.?\d*$/;
     data_template = "#{number}";
   }
-  
+ 
+  element.observe('keydown', function(e) {
+    if(last_valid == "" && e.element.value != '')
+      last_valid = e.element().value;
+  })
+
   element.observe('keyup', function(e) {
     var new_value = e.element().value;
     if(!new_value.match(char_mask)) {
@@ -34,7 +39,7 @@ function inputMask(element, data_type) {
   })
 
   element.observe('change', function(e) {
-    var clean_value = e.element().value.match(/(\d+\.?\d*)|(\.\d+)/);
+    var clean_value = e.element().value.match(/(\-?\d+\.?\d*)|(\-?\.\d+)/);
     var number = parseFloat(clean_value);
 
     if(precision)
