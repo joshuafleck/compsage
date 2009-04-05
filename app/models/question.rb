@@ -21,11 +21,12 @@ class Question < ActiveRecord::Base
   end
                        
   CUSTOM_QUESTION_TYPES = {
+    'Agreement scale' => 'MultipleChoiceResponse',
     'Free response' => 'TextualResponse',
-    'Pay or wage response' => 'WageResponse',
     'Numeric response' => 'NumericalResponse', 
+    'Pay or wage response' => 'WageResponse',
+    'Percent' => 'PercentResponse',
     'Yes/No' => 'MultipleChoiceResponse', 
-    'Agreement scale' => 'MultipleChoiceResponse'
   }
                            
   CUSTOM_QUESTION_OPTIONS = {
