@@ -1,0 +1,3 @@
+class TextualResponse < Response
+
+end

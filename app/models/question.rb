@@ -16,16 +16,16 @@ class Question < ActiveRecord::Base
   validates_length_of :text, :within => 1..1000, :message => " is required for a question."
   
   def before_validation_on_create 
-     self[:question_type] = CUSTOM_QUESTION_TYPES[self[:custom_question_type]] if attribute_present?("custom_question_type")
+     self[:response_type] = CUSTOM_QUESTION_TYPES[self[:custom_question_type]] if attribute_present?("custom_question_type")
      self[:options] = CUSTOM_QUESTION_OPTIONS[self[:custom_question_type]] if attribute_present?("custom_question_type")
   end
                        
   CUSTOM_QUESTION_TYPES = {
-    'Free response' => 'text_area',
-    'Pay or wage response' => 'wage_range',
-    'Numeric response' => 'numerical_field', 
-    'Yes/No' => 'radio', 
-    'Agreement scale' => 'radio'
+    'Free response' => 'TextualResponse',
+    'Pay or wage response' => 'WageResponse',
+    'Numeric response' => 'NumericalResponse', 
+    'Yes/No' => 'MultipleChoiceResponse', 
+    'Agreement scale' => 'MultipleChoiceResponse'
   }
                            
   CUSTOM_QUESTION_OPTIONS = {
