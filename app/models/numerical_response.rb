@@ -4,6 +4,7 @@ class NumericalResponse < Response
   self.minimum_responses_for_report = 3
   self.field_options.merge!(:size => 8)
   self.accepts_qualification = true
+  self.report_type = 'numerical_field'
 
   validates_numericality_of :response, :allow_nil => true
 

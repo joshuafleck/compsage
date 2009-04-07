@@ -1,5 +1,6 @@
 class Response < ActiveRecord::Base
-  class_inheritable_accessor :units, :minimum_responses_for_report, :has_options, :field_type, :field_options, :accepts_qualification
+  class_inheritable_accessor :units, :minimum_responses_for_report, :has_options, :field_type, :field_options,
+                             :accepts_qualification, :report_type
 
   self.units = nil
   self.minimum_responses_for_report = 1
@@ -7,6 +8,7 @@ class Response < ActiveRecord::Base
   self.field_type = 'text_box'
   self.field_options = {:size => 40}
   self.accepts_qualification = false
+  self.report_type = 'text_field'
 
   def self.has_options?
     self.has_options

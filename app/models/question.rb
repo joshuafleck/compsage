@@ -109,4 +109,9 @@ class Question < ActiveRecord::Base
   def response_class
     self.response_type.constantize
   end
+
+  # Type of report to render
+  def report_type
+    response_class.report_type
+  end
 end

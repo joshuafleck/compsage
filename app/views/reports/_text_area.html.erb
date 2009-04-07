@@ -1,6 +1,0 @@
-<div class="report_item">
-  <h3><%=question.text%></h3>
-	<% question.send(@responses_method).each do |response| %>
-	<div><%= response.textual_response %></div>
-	<% end %>
-</div>
