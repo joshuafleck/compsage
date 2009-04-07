@@ -19,7 +19,7 @@ class Discussion < ActiveRecord::Base
   
   #This returns true if the discussion is under the abuse threshold
   def is_not_abuse
-    times_reported < 3
+    times_reported < 1
   end
   
   #This virtual method allows us to set the parent discusion id in the case of a reply
