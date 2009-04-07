@@ -39,7 +39,7 @@ function inputMask(element, data_type) {
   })
 
   element.observe('change', function(e) {
-    var clean_value = e.element().value.replace(',', '').match(/(\-?\d+\.?\d*)|(\-?\.\d+)/);
+    var clean_value = e.element().value.replace(/,/g,'').match(/(\-?\d+\.?\d*)|(\-?\.\d+)/);
     var number = parseFloat(clean_value);
 
     if(precision)
