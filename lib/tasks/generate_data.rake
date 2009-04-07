@@ -6,7 +6,7 @@ namespace :data_generator do
   desc "Generate a fake set of responses for a survey."
   task :finished_survey => :environment do
     sponsor = Organization.first
-    survey = Factory(:survey, :job_title => Faker::Company.catch_phrase, :sponsor => sponsor, :description => Faker::Lorem.paragraph, :questions => generate_questions)
+    survey = Factory(:survey, :job_title => Faker::Company.catch_phrase, :sponsor => sponsor, :description => Faker::Lorem.paragraph, :questions => generate_questions, :end_date => Time.now - 1.day)
     
     invitations = []
     current_org = 1
@@ -32,10 +32,12 @@ namespace :data_generator do
       survey.questions.each do |question|
         next if rand(5) == 0 # (80% chance of answering a question)
         
-        case question.question_type
-        when 'numerical_field'
+        case question.response_type
+        when 'NumericalResponse', 'WageResponse', 'BaseWageResponse'
           response = Factory.build(:response, :question => question, :numerical_response => 20000 + rand(60000))
-        when 'radio'
+        when 'PercentResponse'
+          response = Factory.build(:response, :question => question, :numerical_response => rand(100))
+        when 'MultipleChoiceResponse'
           response = Factory.build(:response, :question => question, :numerical_response => rand(question.options.size))
         else
           response = Factory.build(:response, :question => question, :textual_response => Faker::Lorem.sentence, :numerical_response => nil)
