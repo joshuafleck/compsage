@@ -13,14 +13,14 @@ function inputMask(element, data_type) {
   var precision = null;
 
   if(data_type == 'currency') {
-    char_mask = /^\$?\d*\.?\d{0,2}$/;
+    char_mask = /^\$?(\d*,?)*\.?\d{0,2}$/
     data_template = "$#{number}";
     precision = 2;
   } else if(data_type == 'percent') {
     char_mask = /^\-?\d*\.?\d*\%?$/;
     data_template = "#{number}%";
   } else if(data_type == 'number') {
-    char_mask = /^\-?\d*\.?\d*$/;
+    char_mask = /^\-?(\d*,)*\.?\d*$/;
     data_template = "#{number}";
   }
  
@@ -39,7 +39,7 @@ function inputMask(element, data_type) {
   })
 
   element.observe('change', function(e) {
-    var clean_value = e.element().value.match(/(\-?\d+\.?\d*)|(\-?\.\d+)/);
+    var clean_value = e.element().value.replace(',', '').match(/(\-?\d+\.?\d*)|(\-?\.\d+)/);
     var number = parseFloat(clean_value);
 
     if(precision)
@@ -47,8 +47,22 @@ function inputMask(element, data_type) {
     
     if(isNaN(number))
       e.element().value = "";
-    else
+    else {
+      parts = number.toString().split('.');
+      integer_part = parts[0];
+
+      if(parts.length > 1)
+        decimal_part = '.' + parts[1];
+      else
+        decimal_part = '';
+
+      need_comma_regex = /(\d+)(\d{3})/
+      while(integer_part.match(need_comma_regex))
+        integer_part = integer_part.replace(need_comma_regex, '$1,$2');
+      
+      number = integer_part + decimal_part;
       e.element().value = data_template.interpolate({'number': number});
+    }
 
     last_valid = e.element().value;
   })
