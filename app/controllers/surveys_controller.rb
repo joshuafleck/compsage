@@ -97,7 +97,6 @@
     
     update_predefined_questions(params[:predefined_questions]) unless params[:predefined_questions].blank?        
     update_questions(params[:questions]) unless params[:questions].blank?
- 
     if @survey.update_attributes(params[:survey])
                 
       respond_to do |wants|

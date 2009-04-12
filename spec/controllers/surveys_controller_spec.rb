@@ -870,8 +870,8 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
   before(:each) do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
-    @q1 = mock_model(Question, :id => 1, :attributes => "", :numerical_response? => false, :question_type => "text_field")
-    @q2 = mock_model(Question, :id => 2, :attributes => "", :numerical_response? => false, :question_type => "text_field")
+    @q1 = mock_model(Question, :id => 1, :attributes => "", :response_type => "TextualResponse")
+    @q2 = mock_model(Question, :id => 2, :attributes => "", :response_type => "TextualResponse")
     @questions = [@q1, @q2]
     @survey = mock_model(Survey, :id => 1)
     @survey.stub!(:questions).and_return(@questions)

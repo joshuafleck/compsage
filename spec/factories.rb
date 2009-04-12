@@ -121,7 +121,7 @@ Factory.define :question do |p|
   p.position { |a| a.object_id }
   #p.survey {|a| a.association(:survey)}
   p.text { Factory.next(:question) }
-  p.question_type "numerical_field"
+  p.response_type "NumericalResponse"
 end
 
 #definition and setup for predefined question
@@ -129,13 +129,18 @@ Factory.define :predefined_question do |p|
   p.position { |a| a.object_id }
   p.description {|a| "#{a.name} Description" }
   p.name { Factory.next(:question) }
-  p.question_hash {|a| [{:question_type => "numerical_field", :text =>  "#{a.name} text" }] }
+  p.question_hash {|a| [{:response_type => "NumericalResponse", :text =>  "#{a.name} text" }] }
 end
 
 #definition and setup for response
 Factory.define :response do |p|
   p.question  {|a| a.association(:question, :survey_id => -1)}
-  p.numerical_response { Factory.next(:counter) }
+  p.response { Factory.next(:counter).to_s }
+end
+
+Factory.define :numerical_response do |p|
+  p.question  {|a| a.association(:question, :survey_id => -1)}
+  p.response { Factory.next(:counter).to_s }
 end
 
 #definition and setup for network membership

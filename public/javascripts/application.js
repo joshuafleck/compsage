@@ -1,5 +1,72 @@
-// Place your application-specific JavaScript functions and classes here
-// This file is automatically included by javascript_include_tag :defaults
+/*
+ * inputMask creates a new mask object that will only allow certain inputs. Currently supports only currency, percent,
+ * and plain number.
+ * @element Form element to observe.
+ * @data_type Expected data type for the form element. Must be one of 'currency', 'percent', or 'number'
+ */
+function inputMask(element, data_type) {
+  var element = element;	
+  var data_type = data_type;
+  var char_mask	= /.*/;
+  var last_valid = "";
+  var data_template = "";	
+  var precision = null;
+
+  if(data_type == 'currency') {
+    char_mask = /^\$?(\d*,?)*\.?\d{0,2}$/
+    data_template = "$#{number}";
+    precision = 2;
+  } else if(data_type == 'percent') {
+    char_mask = /^\-?\d*\.?\d*\%?$/;
+    data_template = "#{number}%";
+  } else if(data_type == 'number') {
+    char_mask = /^\-?(\d*,)*\.?\d*$/;
+    data_template = "#{number}";
+  }
+ 
+  element.observe('keydown', function(e) {
+    if(last_valid == "" && e.element.value != '')
+      last_valid = e.element().value;
+  })
+
+  element.observe('keyup', function(e) {
+    var new_value = e.element().value;
+    if(!new_value.match(char_mask)) {
+      e.element().value = last_valid;
+    } else {
+      last_valid = e.element().value;
+    }
+  })
+
+  element.observe('change', function(e) {
+    var clean_value = e.element().value.replace(/,/g,'').match(/(\-?\d+\.?\d*)|(\-?\.\d+)/);
+    var number = parseFloat(clean_value);
+
+    if(precision)
+      number = number.toFixed(precision);
+    
+    if(isNaN(number))
+      e.element().value = "";
+    else {
+      parts = number.toString().split('.');
+      integer_part = parts[0];
+
+      if(parts.length > 1)
+        decimal_part = '.' + parts[1];
+      else
+        decimal_part = '';
+
+      need_comma_regex = /(\d+)(\d{3})/
+      while(integer_part.match(need_comma_regex))
+        integer_part = integer_part.replace(need_comma_regex, '$1,$2');
+      
+      number = integer_part + decimal_part;
+      e.element().value = data_template.interpolate({'number': number});
+    }
+
+    last_valid = e.element().value;
+  })
+}
 
 /*
  * This will add observers to all form inputs that will call the specified method when enter is pushed

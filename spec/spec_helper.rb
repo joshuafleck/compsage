@@ -102,7 +102,7 @@ def valid_question_attributes
   {
     :position => 1,
     :text => "question 1",
-    :question_type => "numerical_field"
+    :response_type => "NumericalResponse"
   }
 end
 

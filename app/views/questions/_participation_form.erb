@@ -15,7 +15,7 @@
       <% f.fields_for @response, :index => question.id, :builder => QuestionFormBuilder do |q| %>
 				<li>
 					<%=q.form_field%>
-					<% if question.qualify? then %>
+					<% if question.response_class.accepts_qualification? then %>
 						<div class="qualifications">
 							<% if @response.qualifications.blank? %>
 								<div class="field" style="display: none;">
@@ -48,5 +48,18 @@ function observeQualificationLinks() {
 		});
 	});
 }
+function observeUnitSelection() {
+  var unit_selects = $$('select.units')
+  unit_selects.each(function(select) {
+    select.observe('change', function(e) {
+      value = e.target.value;
+      class = e.target.class;
+      unit_selects.each(function(select) {
+        if(select.value == '' && select.class == class)
+          select.value = value;
+      });
+    });
+  });
+}
 </script>
-<% content_for :initialize_js, "observeQualificationLinks();"%>
+<% content_for :initialize_js, "observeQualificationLinks();observeUnitSelection();"%>
