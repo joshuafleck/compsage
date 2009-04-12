@@ -5,7 +5,7 @@
     <span><%=question.text%></span>
     <p>
       <span class='<%=question.adequate_responses? ? "adequate_responses" : "inadequate_responses" %>'>
-        <%=question.response_count%> of <%=question.minimum_responses%>
+        <%=question.responses.count%> of <%=question.minimum_responses%>
       </span>required responses
     </p>
   </li>

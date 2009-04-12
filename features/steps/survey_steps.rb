@@ -40,7 +40,7 @@ Given /there is a survey/ do
 end
 
 Given /I have responded to the survey/ do
-  @response = Factory.build(:response, :question => @question, :numerical_response => 1.4)
+  @response = Factory.build(:numerical_response, :question => @question, :response => "1.4")
   @participation = Factory.create(
     :participation, 
     :survey => @survey, 
@@ -128,20 +128,20 @@ Given /the survey has enough participants but partial report/ do
   # which we respond to 3 times, then the survey will have
   # adequate participation, but only a partial report
   @survey.questions.each do |question|
-    @response = Factory.build(:response, :question => question, :numerical_response => 1.4)
+    @response = Factory.build(:response, :question => question, :response => "1.4")
     @participation = Factory.create(
       :participation, 
       :survey => @survey, 
       :responses => [@response], 
       :participant => Factory.create(:organization)) 
-    @response = Factory.build(:response, :question => question, :numerical_response => 1.4)
+    @response = Factory.build(:response, :question => question, :response => "1.4")
     @participation = Factory.create(
       :participation, 
       :survey => @survey, 
       :responses => [@response], 
       :participant => Factory.create(:organization))        
   end
-  @response = Factory.build(:response, :question => @question, :numerical_response => 1.4)
+  @response = Factory.build(:response, :question => @question, :response => "1.4")
   @participation = Factory.create(
     :participation, 
     :survey => @survey, 

@@ -77,27 +77,17 @@ class Question < ActiveRecord::Base
   
   # returns the minimum number of responses required for the question type
   def minimum_responses
-    MINIMUM_RESPONSES[self.question_type] || 1 
+    self.response_class.minimum_responses_for_report
   end
   
   # returns true if the question received enough responses to be displayed in the report
   def adequate_responses?
-    self.response_count >= self.response_class.minimum_responses_for_report
+    self.responses.count >= self.response_class.minimum_responses_for_report
   end
   
   # returns true if the question received enough responses from invitees to be displayed in the report
   def adequate_invitee_responses?
-    self.invitee_response_count >= self.response_class.minimum_responses_for_report
-  end
-  
-  # returns the total number of responses
-  def response_count
-      self.responses.size
-  end
-  
-  # returns the number of responses from invitees
-  def invitee_response_count
-      self.invitee_responses.size
+    self.invitee_responses.count >= self.response_class.minimum_responses_for_report
   end
   
   # The qualifications for this question

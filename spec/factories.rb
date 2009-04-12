@@ -131,6 +131,11 @@ Factory.define :response do |p|
   p.response { Factory.next(:counter).to_s }
 end
 
+Factory.define :numerical_response do |p|
+  p.question  {|a| a.association(:question, :survey_id => -1)}
+  p.response { Factory.next(:counter).to_s }
+end
+
 #definition and setup for network membership
 Factory.define :network_membership do |p|
   p.network {|a| a.association(:network)}
