@@ -69,7 +69,7 @@ function observeDiscussions() {
         '<%=survey_discussion_path(@survey.id,discussion_topic.id)%>',
         {
           rows:4, 
-          cols:30, 
+          cols:30,
           callback: function(form, value) { return '_method=put&id=<%=discussion_topic.id%>&discussion[body]='+escape(value) }
         }
       );

@@ -97,6 +97,7 @@
     
     update_predefined_questions(params[:predefined_questions]) unless params[:predefined_questions].blank?        
     update_questions(params[:questions]) unless params[:questions].blank?
+ 
     if @survey.update_attributes(params[:survey])
                 
       respond_to do |wants|
@@ -225,13 +226,22 @@
   end
   
   def billing
-    @survey = current_organization.sponsored_surveys.pending.find(params[:id])
-    # For now, pretend we've received billing information.
-    @survey.billing_info_received!
+    @survey = current_organization.sponsored_surveys.find(params[:id])
     
-    respond_to do |wants|
-      wants.html do
-        redirect_to survey_invitations_path(@survey)
+    # For now, pretend we've received billing information.
+    if @survey.aasm_state == 'pending'
+      @survey.billing_info_received!
+      respond_to do |wants|
+        wants.html do
+          redirect_to survey_invitations_path(@survey)
+        end
+      end
+    
+    elsif 
+      respond_to do |wants|
+        wants.html do
+          redirect_to survey_invitations_path(@survey)
+        end
       end
     end
   end

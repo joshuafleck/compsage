@@ -49,7 +49,7 @@ class DiscussionsController < ApplicationController
           head :status => :ok
         end
         wants.js do
-          render :text => params[:discussion][:body].blank? ? @discussion.subject : @discussion.body
+          render :layout => false, :inline => params[:discussion][:body].blank? ? "<%= @discussion.subject %>" : "<%= link_and_format(@discussion.body) %>" 
         end
       end
     else
