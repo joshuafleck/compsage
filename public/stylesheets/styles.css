@@ -748,22 +748,37 @@ ul#external_invitation_form_errors {
 }
 
 /* Survey Questions Page */
-div.qualifications {
-	display: inline;
-}
+
 div.qualifications a {
-	font-size: 0.9em;
-	color: #666;
-	outline: none;
+  font-size: 0.9em;
+  color: #666;
+  outline: none;
 }
 
 div.qualifications .field {
-	display: inline;
+  display: inline;
 }
 
 ol#questions {
-	padding-left: 0em;
-	list-style-type: none;
+  font-size: 1.2em;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+ol#questions li {
+  margin: .5em 0;
+  padding: .5em;
+}
+
+ol#questions li.odd {
+  background-color: #e6f0e6;
+}
+
+ol#questions label, ol#questions div.label {
+  font-weight: normal;
+  font-size: 1em;
+  margin-top: 0.25em;
 }
 
 div#why_section {
