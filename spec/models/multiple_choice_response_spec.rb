@@ -2,11 +2,11 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe MultipleChoiceResponse do
   before(:each) do
-    @valid_attributes = {
-    }
+    @response = MultipleChoiceResponse.new
   end
 
-  it "should create a new instance given valid attributes" do
-    MultipleChoiceResponse.create!(@valid_attributes)
+  it "should save the response in numerical response" do
+    @response.response = 1
+    @response.numerical_response.should == 1
   end
 end

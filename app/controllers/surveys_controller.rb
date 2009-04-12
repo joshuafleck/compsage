@@ -273,7 +273,6 @@
   # need to sort questions based on created date to preserve order
   def update_questions(question_pairs)
     question_pairs.sort{|a,b| a[0].to_i <=> b[0].to_i}.each do |key,question|
-      puts "QUESTION: #{question.inspect}"
       existing_question = @survey.questions.find_by_id(question[:id]) unless question[:id].blank?
       if existing_question.nil? then
         @survey.questions.build(question).move_to_bottom if question[:included] == "1"

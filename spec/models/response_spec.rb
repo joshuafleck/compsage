@@ -4,7 +4,8 @@ module ResponseSpecHelper
   def valid_response_attributes
     {
       :question => mock_model(Question, {:numerical_response? => false, :has_units? => false}),
-      :response => "The response"
+      :response => "The response",
+      :participation => mock_model(Participation)
     }
   end
 end
@@ -40,4 +41,35 @@ describe Response do
     @response.should_not be_valid
   end
   
+  it 'should create a response of the proper type' do
+    response = Response.new(:type => 'NumericalResponse')
+    response.is_a?(NumericalResponse).should be_true
+  end
 end
+
+describe Response, "with units" do
+  include ResponseSpecHelper
+
+  before(:each) do
+    Response.stub!(:units).and_return(Units.new("format", {'Annually' => 1, 'Hourly' => 2080}, 'Annually'))
+    @response = Response.new(valid_response_attributes)
+  end
+
+  it "should convert units before saving" do
+    @response.numerical_response = 1
+    @response.unit = "Hourly"
+    @response.save!
+
+    @response.numerical_response.should == 2080
+  end
+
+  it "should convert to user specified units when finding" do
+    @response.numerical_response = 1
+    @response.unit = "Hourly"
+    @response.save!
+    
+    @response = Response.find(@response.id)
+    @response.numerical_response.should == 1
+  end
+end
+
