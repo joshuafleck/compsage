@@ -8,7 +8,10 @@
 	  <% end %>
 	  <span id="discussion_body_<%=discussion_topic.id%>"><%= link_and_format(discussion_topic.body) %></span>
   	<% if !current_organization_or_survey_invitation.eql?(discussion_topic.responder) then %>
-			<%=link_to "Report Abuse", report_survey_discussion_path(@survey,discussion_topic), :class => "abuse" %>  
+			<%=link_to "Report Abuse", 
+			   report_survey_discussion_path(@survey, discussion_topic), 
+			   :class => "abuse",
+			   :confirm => "Are you sure you want to report this discussion?" %>  
 	  <% end %>
   </p>	
   <div class="date"><%= I18n.localize discussion_topic.created_at %></div>  
