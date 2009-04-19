@@ -1,3 +1,37 @@
+
+/**
+ * This will sanity check a percentage response
+ * @response The numeric response entered by the user
+ */
+function checkPercentResponse(response) {
+  if(response < 1 && response > -1 && response != 0) {
+    return "Percentages should be entered in whole percents. Is this correct?";
+  }  
+}
+
+/**
+ * This will sanity check a numeric response
+ * @response The numeric response entered by the user
+ */
+function checkNumericResponse(response) {
+  if(response < 0) {
+    return "Response is negative. Is this correct?";
+  }
+}
+
+/**
+ * This will sanity check a wage response
+ * @response The numeric response entered by the user
+ */
+function checkWageResponse(response) {
+  if(response < 6.55) {
+    return "Response is below minimum wage. Is this correct?";
+  }
+  if(response > 1000000) {
+    return "Response exceeds one million dollars. Is this correct?";
+  }
+}
+
 /*
  * inputMask creates a new mask object that will only allow certain inputs. Currently supports only currency, percent,
  * and plain number.
@@ -11,17 +45,21 @@ function inputMask(element, data_type) {
   var last_valid = "";
   var data_template = "";	
   var precision = null;
+  var check_response = null;
 
   if(data_type == 'currency') {
     char_mask = /^\$?(\d*,?)*\.?\d{0,2}$/
     data_template = "$#{number}";
     precision = 2;
+    check_response = checkWageResponse;
   } else if(data_type == 'percent') {
     char_mask = /^\-?\d*\.?\d*\%?$/;
     data_template = "#{number}%";
+    check_response = checkPercentResponse;
   } else if(data_type == 'number') {
     char_mask = /^\-?(\d*,)*\.?\d*$/;
     data_template = "#{number}";
+    check_response = checkNumericResponse;
   }
  
   element.observe('keydown', function(e) {
@@ -60,8 +98,12 @@ function inputMask(element, data_type) {
       while(integer_part.match(need_comma_regex))
         integer_part = integer_part.replace(need_comma_regex, '$1,$2');
       
-      number = integer_part + decimal_part;
-      e.element().value = data_template.interpolate({'number': number});
+      var formatted_number = integer_part + decimal_part;
+      e.element().value = data_template.interpolate({'number': formatted_number});
+      
+      // sanity range checking will warn users if response is not plausible
+      question_id = e.element().id.match(/(\d+)/)[0];
+      $("warning_"+question_id).update(check_response(number));
     }
 
     last_valid = e.element().value;

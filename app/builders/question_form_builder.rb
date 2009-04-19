@@ -15,12 +15,13 @@ class QuestionFormBuilder < ActionView::Helpers::FormBuilder
     when "text_box"
       label(:response, question.text) +
       text_field(:response, response_class.field_options.merge(:class => question.response_type, :value => object.formatted_response)) +
-      unit_field + error_text
+      unit_field + error_text + warning_field(question.id)
     when "radio"
       @template.content_tag(:div, question.text, :class => "label") +
       question.options.to_enum(:each_with_index).collect { |option, index|
         @template.content_tag(:label, radio_button(:response, index.to_f) + " " + option, :class => 'option')
-      }.join("")
+      }.join("") + 
+      error_text # error should be displayed in the case that a qualification was entered, but no response
     when "text_area"
       label(:response, question.text) + text_area(:response, :rows => 5, :cols => 50)
     when "checkbox"
@@ -65,6 +66,12 @@ class QuestionFormBuilder < ActionView::Helpers::FormBuilder
       ''
     end
   end
+  
+  # Location where any range check warnings will be displayed
+  def warning_field(question_id)
+    @template.content_tag(:div, "", :class => 'error_description', :id => "warning_#{question_id}")
+  end
+  
   # checks for whether the response(s) include one where the specified option was checked.
   def checked_option?(option)
     object.response.include?(option.to_s) unless object.response.nil?

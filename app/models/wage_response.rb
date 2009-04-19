@@ -12,6 +12,10 @@ class WageResponse < NumericalResponse
   def response=(value)
     value = sanitize_number(value)
     @response_before_type_cast = value
-    self.numerical_response = (value.to_f * 100).to_i
+    if value.blank? then
+      self.numerical_response = nil
+    else
+      self.numerical_response = (value.to_f * 100).to_i # passing in a blank response here converts to 0.0
+    end
   end
 end
