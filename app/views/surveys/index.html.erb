@@ -3,7 +3,7 @@
 <% content_for :sidebar do %>
 	<div id="surveys_sidebar">
 		<h2>Recent Survey Results</h2>
-		<% if @my_results.empty? then %>
+		<% if @my_results.all.empty? then %>
 			<p>You currently don't have any survey results.  You can search for surveys to participate in to the right, as well
 				as <%=link_to "sponsor a survey", new_survey_path%>.</p>
 		<% else %>
