@@ -1,7 +1,11 @@
 <% title "New Survey" %>
 <% highlight_tab("surveys") %>
-<h2>New Survey</h2>
-
+<div class="breadcrumbs">
+  <%= image_tag 'step_1_active.gif' %>
+  <%= image_tag 'step_2_inactive.gif' %>
+  <%= image_tag 'step_3_inactive.gif' %>
+  <%= image_tag 'step_4_inactive.gif' %>
+</div>
 <%=render(:partial => "survey_form", :locals => { 
    :predefined_questions => @predefined_questions, 
    :custom_questions => @custom_questions

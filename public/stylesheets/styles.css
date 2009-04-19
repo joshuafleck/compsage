@@ -590,6 +590,17 @@ span.sponsor a:hover, div.sponsor a:hover {
 
 /* New Survey Form */
 
+div.breadcrumbs {
+  text-align: center;
+  overflow: hidden;
+}
+
+div.breadcrumbs img {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  float: left;
+}
 form.new_survey input, form.edit_survey input {
 	font-size: .9em;
 }
