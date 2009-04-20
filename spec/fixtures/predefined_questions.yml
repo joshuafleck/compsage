@@ -1,23 +1,21 @@
 salary_questions:
   id: 1
   position: 1
-  name: Questions pertaining to this position's salary and salary range
-  description: "Questions regarding salary for a positions"
+  name: Salary and salary range
   question_hash: --- 
   - :response_type: BaseWageResponse
-    :text: What is this position's average base salary/salary?
+    :text: "Average base salary:"
   - :response_type: WageResponse
-    :text: What is this position's salary range minimum?
+    :text: "Salary range minimum:"
   - :response_type: WageResponse
-    :text: What is this position's salary range midpoint?
+    :text: "Salary range midpoint:"
   - :response_type: WageResponse
-    :text: What is this position's salary range maximum?
+    :text: "Salary range maximum:"
   
 incentive_question:
   id: 2
   position: 2
-  description: Whether this position is eligible for an incentive bonus
-  name: Whether this position is eligible for an incentive bonus
+  name: Eligibility for incentive bonus
   question_hash: --- 
   - :text: "Is this position eligible for incentive bonus?"
     :response_type: "MultipleChoiceResponse"
@@ -28,8 +26,7 @@ incentive_question:
 incentive_target_question:
     id: 3
     position: 3
-    description: This positions target incentive as a percentage of base salary
-    name: Questions pertaining to this position's incentive opportunity as a percent of base salary 
+    name: Target incentive
     question_hash: ---
     - :text: "What is this position's incentive target as percent of base salary?"
       :response_type: "PercentResponse"
@@ -43,8 +40,7 @@ incentive_target_question:
 bargaining_unit_question:
     id: 4
     position: 4
-    description: Whether the position is part of a bargaining unit
-    name: Whether the incumbents of this position are members of a collective bargaining unit 
+    name: Membership in a collective bargaining unit 
     question_hash: ---
     - :text: "Is this position part of a bargaining unit?"
       :response_type: "MultipleChoiceResponse"
@@ -55,8 +51,7 @@ bargaining_unit_question:
 flsa_question:
     id: 5
     position: 5
-    description: Whether the position is FLSA Exempt or Non-Exempt
-    name: Whether this position is exempt or non-exempt 
+    name: FLSA status
     question_hash: ---
     - :text: "What is this position's FLSA status with regard to overtime provisions?"
       :response_type: "MultipleChoiceResponse"
