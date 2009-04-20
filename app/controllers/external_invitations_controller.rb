@@ -7,16 +7,10 @@ class ExternalInvitationsController < ApplicationController
     @invitations = current_organization.sent_global_invitations.find(:all, :order => 'created_at desc')
   
     respond_to do |wants|
-      wants.html
       wants.xml do
       	render :xml => @invitations.to_xml 
       end
     end    
-  end
-  
-  def new
-    
-    @invitation = ExternalInvitation.new  
   end
   
   def create
@@ -29,22 +23,13 @@ class ExternalInvitationsController < ApplicationController
     raise ExistingOrganization if !existing_organization.nil?
     
     if @invitation.save then
-      respond_to do |wants|
-        wants.html do
-          flash[:notice] = "Invitation sent to the following email addresses: #{params[:invitation][:email]}."
-          redirect_to external_invitations_path
-        end     
+      respond_to do |wants|  
         wants.xml do
-          render :status => :created
+          head :status => :created
         end
       end
     else
       respond_to do |wants|
-        wants.html do
-          #Retrieve the invitations for display on the index page
-          @invitations = current_organization.sent_global_invitations.find(:all, :order => 'created_at desc')  
-          render :action => 'index'
-        end
         wants.xml do
           render :xml => @invitation.errors.to_xml, :status => 422
         end
@@ -52,11 +37,7 @@ class ExternalInvitationsController < ApplicationController
     end  
     
   rescue ExistingOrganization
-    flash[:notice] = "<a href='#{organization_path(existing_organization.id)}'>#{existing_organization.name}</a> is already a member."
     respond_to do |wants|
-      wants.html do
-        redirect_to external_invitations_path()
-      end
       wants.xml do
         head :status => 422
       end

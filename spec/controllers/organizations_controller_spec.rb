@@ -5,12 +5,12 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe OrganizationsController, "#route_for" do
 
-  it "should map { :controller => 'organizations'} to /organizations" do
-    route_for(:controller => "organizations").should == "/organizations"
+  it "should map { :controller => 'organizations', :action => 'index'} to /organizations" do
+    route_for(:controller => "organizations", :action => "index").should == "/organizations"
   end
   
-  it "should map { :controller => 'organizations', :action => 'show', :id => 1 } to /organizations/1" do
-    route_for(:controller => "organizations", :action => "show", :id => 1).should == "/organizations/1"
+  it "should map { :controller => 'organizations', :action => 'show', :id => '1' } to /organizations/1" do
+    route_for(:controller => "organizations", :action => "show", :id => '1').should == "/organizations/1"
   end
   
   it "should map { :controller => 'organizations', :action => 'search'} to /organizations/search" do

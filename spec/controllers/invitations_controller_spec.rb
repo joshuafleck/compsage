@@ -6,8 +6,8 @@ describe InvitationsController, "#route_for" do
     route_for(:controller => "invitations", :action => "index").should == "/invitations"
   end
 
-  it "should map { :controller => 'invitations', :action => 'destroy', :id => 1} to /invitations/1" do
-    route_for(:controller => "invitations", :action => "destroy", :id => 1).should == "/invitations/1"    
+  it "should map { :controller => 'invitations', :action => 'destroy', :id => '1'} to /invitations/1" do
+    route_for(:controller => "invitations", :action => "destroy", :id => '1').should == {:path => "/invitations/1", :method => :delete }
   end
 
 end
@@ -102,10 +102,11 @@ describe InvitationsController, "handling POST /invitations" do
 
     @invitee = Factory(:organization)
     @params = {:organization => {:id => @invitee.id } }
-    request.env['HTTP_REFERER'] = "http://test.host/surveys"
+    #request.env['HTTP_REFERER'] = "http://test.host/surveys"
   end
 
   def do_post
+    @request.env["HTTP_ACCEPT"] = "application/xml"
     post :create, @params
   end
 
@@ -117,12 +118,6 @@ describe InvitationsController, "handling POST /invitations" do
   it 'should find the specified organization' do
     Organization.should_receive(:find).and_return(@invitee)
     do_post
-  end
-
-  it 'should redirect back' do
-    do_post
-    response.should be_redirect
-    response.should redirect_to("http://test.host/surveys")
   end
 
   describe 'when sending a network invitation' do

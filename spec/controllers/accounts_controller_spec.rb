@@ -15,7 +15,7 @@ describe AccountsController, "#route_for" do
   end
 
   it "should map { :controller => 'accounts', :action => 'update'} to /account" do
-    route_for(:controller => "accounts", :action => "update").should == "/account"
+    route_for(:controller => "accounts", :action => "update").should == { :path => "/account", :method => :put }
   end
 
 end
@@ -189,10 +189,6 @@ describe AccountsController, " handling POST /account" do
       flash[:notice].should eql("Your account was created successfully.")
   	end
   
-  end
-
-  it "should destroy the external invitation" do
-    pending
   end
 
 end

@@ -138,7 +138,36 @@ Factory.define :response do |p|
   p.response { Factory.next(:counter).to_s }
 end
 
+#definition and setup for response
+Factory.define :base_wage_response do |p|
+  p.question  {|a| a.association(:question, :survey_id => -1)}
+  p.response { Factory.next(:counter).to_s }
+end
+
+#definition and setup for response
+Factory.define :wage_response do |p|
+  p.question  {|a| a.association(:question, :survey_id => -1)}
+  p.response { Factory.next(:counter).to_s }
+end
+
+#definition and setup for response
 Factory.define :numerical_response do |p|
+  p.question  {|a| a.association(:question, :survey_id => -1)}
+  p.response { Factory.next(:counter).to_s }
+end
+
+#definition and setup for response
+Factory.define :percent_response do |p|
+  p.question  {|a| a.association(:question, :survey_id => -1)}
+  p.response { Factory.next(:counter).to_s }
+end
+
+Factory.define :textual_response do |p|
+  p.question  {|a| a.association(:question, :survey_id => -1)}
+  p.response { Factory.next(:counter).to_s }
+end
+
+Factory.define :multiple_choice_response do |p|
   p.question  {|a| a.association(:question, :survey_id => -1)}
   p.response { Factory.next(:counter).to_s }
 end

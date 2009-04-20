@@ -1,12 +1,12 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe ReportsController, "#route_for" do  
-  it "should map { :controller => 'reports', :action => 'show', :survey_id => 1 } to /surveys/1/report" do
-    route_for(:controller => "reports", :action => "show", :survey_id => 1 ).should == "/surveys/1/report"
+  it "should map { :controller => 'reports', :action => 'show', :survey_id => '1' } to /surveys/1/report" do
+    route_for(:controller => "reports", :action => "show", :survey_id => '1' ).should == "/surveys/1/report"
   end
   
-  it "should map { :controller => 'reports', :action => 'chart', :survey_id => 1} to /surveys/1/report/chart" do
-    route_for(:controller => "reports", :action => "chart", :survey_id => 1 ).should == "/surveys/1/report/chart"
+  it "should map { :controller => 'reports', :action => 'chart', :survey_id => '1'} to /surveys/1/report/chart" do
+    route_for(:controller => "reports", :action => "chart", :survey_id => '1' ).should == "/surveys/1/report/chart"
   end
   
 end
@@ -27,7 +27,8 @@ describe ReportsController, "handling GET /survey/1/report with current organiza
     @participation = mock_model(Participation)
     @participations = mock('participations proxy', :size => 5, :find_by_survey_id => @participation)
     
-    Survey.stub!(:find).and_return(@survey)
+    @finished_surveys_proxy = mock('finished_survey_proxy', :find => @survey)
+    Survey.stub!(:finished).and_return(@finished_surveys_proxy)
     @survey.stub!(:participations).and_return(@participations)
     @current_organization_or_survey_invitation.stub!(:participations).and_return(@participations)
     @participations.stub!(:belongs_to_invitee).and_return(@participations)
@@ -44,8 +45,8 @@ describe ReportsController, "handling GET /survey/1/report with current organiza
     response.should be_success
   end
   
-  it "should find the survey" do
-    Survey.should_receive(:find).and_return(@survey)
+  it "should find the finished survey" do
+    @finished_surveys_proxy.should_receive(:find).and_return(@survey)
     
     do_get
   end
@@ -184,9 +185,6 @@ describe ReportsController, "with access limits" do
     response.should_not be_success
   end
   
-  it "should return an error if the survey participation window is not finished" do
-    pending
-  end
 end
 
 describe ReportsController, "handling GET /survey/1/chart.xml" do

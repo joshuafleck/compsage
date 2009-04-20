@@ -3,19 +3,19 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe DiscussionsController, "#route_for" do
 
   it "should map { :controller => 'discussions', :action => 'index' } to surveys/1/discussions" do
-    route_for(:controller => "discussions", :action => "index", :survey_id => 1) .should == "/surveys/1/discussions"
+    route_for(:controller => "discussions", :action => "index", :survey_id => '1') .should == "/surveys/1/discussions"
   end
 
-  it "should map { :controller => 'discussions', :action => 'update', :id => 1} to surveys/1/discussions/1" do
-    route_for(:controller => "discussions", :action => "update", :id => 1, :survey_id => 1).should == "/surveys/1/discussions/1"
+  it "should map { :controller => 'discussions', :action => 'update', :id => '1'} to surveys/1/discussions/1" do
+    route_for(:controller => "discussions", :action => "update", :id => '1', :survey_id => '1').should == {:path => "/surveys/1/discussions/1", :method => :put}
   end
 
-  it "should map { :controller => 'discussions', :action => 'destroy', :id => 1} to surveys/1/discussions/1" do
-    route_for(:controller => "discussions", :action => "destroy", :id => 1, :survey_id => 1).should == "/surveys/1/discussions/1"
+  it "should map { :controller => 'discussions', :action => 'destroy', :id => '1'} to surveys/1/discussions/1" do
+    route_for(:controller => "discussions", :action => "destroy", :id => '1', :survey_id => '1').should == {:path => "/surveys/1/discussions/1", :method => :delete}
   end
 
-  it "should map { :controller => 'discussions', :action => 'report', :id => 1} to surveys/1/discussions/1/report" do
-    route_for(:controller => "discussions", :action => "report", :id => 1, :survey_id => 1).should == "/surveys/1/discussions/1/report"
+  it "should map { :controller => 'discussions', :action => 'report', :id => '1'} to surveys/1/discussions/1/report" do
+    route_for(:controller => "discussions", :action => "report", :id => '1', :survey_id => '1').should == "/surveys/1/discussions/1/report"
   end
 
 end
@@ -157,7 +157,7 @@ describe DiscussionsController, " handling PUT /discussions/1" do
     @current_organization_or_survey_invitation = mock_model(Organization, :id => 1)
     login_as(@current_organization_or_survey_invitation)
     
-    @discussion = mock_model(Discussion, :id => 1, :update_attributes => true)
+    @discussion = mock_model(Discussion, :id => 1, :update_attributes => true, :body => "body")
     @survey = mock_model(Survey, :id => 1)
     
     @organization_discussions_proxy = mock('organization discussions proxy', :find => @discussion)
@@ -165,10 +165,11 @@ describe DiscussionsController, " handling PUT /discussions/1" do
     
     Survey.stub!(:find).and_return(@survey)
     
-    @params = {:survey_id => @survey.id, :id => @discussion.id}
+    @params = {:survey_id => @survey.id, :id => @discussion.id, :discussion => {:subject => 'subject', :body => 'body'}}
   end
   
   def do_put
+    @request.env["HTTP_ACCEPT"] = "text/javascript"
     put :update, @params
   end
   
@@ -188,7 +189,8 @@ describe DiscussionsController, " handling PUT /discussions/1" do
   end
      
   it "should return the updated text" do
-    pending
+    do_put
+    response.body.should eql('body')
   end
   
 end
@@ -199,7 +201,7 @@ describe DiscussionsController, " handling PUT /discussions/1 with validation er
     @current_organization_or_survey_invitation = mock_model(Organization, :id => 1)
     login_as(@current_organization_or_survey_invitation)
     
-    @discussion = mock_model(Discussion, :id => 1, :update_attributes => false)
+    @discussion = mock_model(Discussion, :id => 1, :update_attributes => false, :errors => mock('full_messages', :full_messages => ['error_messages']))
     @survey = mock_model(Survey, :id => 1)
     
     @organization_discussions_proxy = mock('organization discussions proxy', :find => @discussion)
@@ -207,15 +209,17 @@ describe DiscussionsController, " handling PUT /discussions/1 with validation er
     
     Survey.stub!(:find).and_return(@survey)
     
-    @params = {:survey_id => @survey.id, :id => @discussion.id}
+    @params = {:survey_id => @survey.id, :id => @discussion.id, :discussion => {:subject => 'subject', :body => 'body'}}
   end
   
   def do_put
+    @request.env["HTTP_ACCEPT"] = "text/javascript"
     put :update, @params
   end
   
   it "should render the error" do
-    pending
+    do_put
+    response.body.should eql('error_messages')
   end
   
 end

@@ -9,28 +9,28 @@ describe NetworksController, "#route_for" do
     route_for(:controller => "networks", :action => "new").should == "/networks/new"
   end
 
-  it "should map { :controller => 'networks', :action => 'show', :id => 1 } to /networks/1" do
-    route_for(:controller => "networks", :action => "show", :id => 1).should == "/networks/1"
+  it "should map { :controller => 'networks', :action => 'show', :id => '1' } to /networks/1" do
+    route_for(:controller => "networks", :action => "show", :id => '1').should == "/networks/1"
   end
 
-  it "should map { :controller => 'networks', :action => 'edit', :id => 1 } to /networks/1/edit" do
-    route_for(:controller => "networks", :action => "edit", :id => 1).should == "/networks/1/edit"
+  it "should map { :controller => 'networks', :action => 'edit', :id => '1' } to /networks/1/edit" do
+    route_for(:controller => "networks", :action => "edit", :id => '1').should == "/networks/1/edit"
   end
 
-  it "should map { :controller => 'networks', :action => 'update', :id => 1} to /networks/1" do
-    route_for(:controller => "networks", :action => "update", :id => 1).should == "/networks/1"
+  it "should map { :controller => 'networks', :action => 'update', :id => '1'} to /networks/1" do
+    route_for(:controller => "networks", :action => "update", :id => '1').should == { :path => "/networks/1", :method => :put }
   end
 
-  it "should map { :controller => 'networks', :action => 'destroy', :id => 1} to /networks/1" do
-    route_for(:controller => "networks", :action => "destroy", :id => 1).should == "/networks/1" 
+  it "should map { :controller => 'networks', :action => 'destroy', :id => '1'} to /networks/1" do
+    route_for(:controller => "networks", :action => "destroy", :id => '1').should == { :path => "/networks/1", :method => :delete }
   end
   
-  it "should map { :controller => 'networks', :action => 'leave', :id => 1} to /networks/1/leave" do
-    route_for(:controller => "networks", :action => "leave", :id => 1).should == "/networks/1/leave"  
+  it "should map { :controller => 'networks', :action => 'leave', :id => '1'} to /networks/1/leave" do
+    route_for(:controller => "networks", :action => "leave", :id => '1').should == { :path => "/networks/1/leave", :method => :put }
   end
 
-  it "should map { :controller => 'networks', :action => 'join', :id => 1} to /networks/1/join" do
-    route_for(:controller => "networks", :action => "join", :id => 1).should == "/networks/1/join"
+  it "should map { :controller => 'networks', :action => 'join', :id => '1'} to /networks/1/join" do
+    route_for(:controller => "networks", :action => "join", :id => '1').should == { :path => "/networks/1/join", :method => :put }
   end
 end
 
@@ -40,8 +40,9 @@ describe NetworksController, " handling GET /networks" do
     login_as(@organization)
     
     @network = mock_model(Network)
-    @invitation = mock_model(NetworkInvitation)    
-    @organization.stub!(:networks).and_return([@network])
+    @invitation = mock_model(NetworkInvitation) 
+    @networks_proxy = mock('networks_proxy', :paginate => [@network])
+    @organization.stub!(:networks).and_return(@networks_proxy)
     @organization.stub!(:network_invitations).and_return([@invitation])
   end
   
@@ -65,7 +66,7 @@ describe NetworksController, " handling GET /networks" do
   end
   
   it "should find all networks the organization belongs to" do
-    @organization.should_receive(:networks).and_return([@network])
+    @organization.should_receive(:networks).and_return(@networks_proxy)
     do_get
   end
   
@@ -79,13 +80,10 @@ describe NetworksController, " handling GET /networks" do
     assigns[:networks].should == [@network]
     assigns[:network_invitations].should == [@invitation]
   end
-  
-  it "should support sorting..." do
-    pending
-  end
-    
-  it "should support pagination..." do
-    pending
+      
+  it "should support pagination" do
+    @networks_proxy.should_receive(:paginate).with(:page => params[:page], :order => "name")
+    do_get
   end
   
 end

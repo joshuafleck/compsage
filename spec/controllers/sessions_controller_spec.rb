@@ -2,16 +2,14 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 
 describe SessionsController do
-  before(:all) do
+  before(:each) do
     # set up an organization
-    @brian = Organization.new(valid_organization_attributes)
-    @brian.save
-    
+    @brian = Organization.create(valid_organization_attributes)    
     @invitation = Factory.create(:external_survey_invitation)
       
   end
   
-  after(:all) do
+  after(:each) do
     @brian.destroy
     @invitation.destroy
   end
@@ -48,17 +46,18 @@ describe SessionsController do
   
   it 'does not remember me' do
     post :create, :email => valid_organization_attributes[:email], :password => valid_organization_attributes[:password], :remember_me => "0"
-    response.cookies["auth_token"].should be_empty
+    response.cookies["auth_token"].should be_nil
   end
 
   it 'deletes token on logout' do
     login_as @brian
     get :destroy
-    response.cookies["auth_token"].should == []
+    response.cookies["auth_token"].should be_nil
   end
 
   it 'logs in with cookie' do
     @brian.remember_me
+    @brian.save
     request.cookies["auth_token"] = cookie_for(@brian)
     get :new
     controller.send(:logged_in?).should be_true
@@ -79,12 +78,8 @@ describe SessionsController do
     controller.send(:logged_in?).should_not be_true
   end
   
-  it 'Allows login via an invitation' do
-  	pending
-  end
-
   def auth_token(token)
-    CGI::Cookie.new('name' => 'auth_token', 'value' => token)
+    request.cookies['auth_token'] = token
   end
     
   def cookie_for(organization)
@@ -94,9 +89,13 @@ describe SessionsController do
 end
 
 describe SessionsController, "handling POST /sessions (logging in)" do
-  before do
+  before(:each) do
     @org = Factory.create(:organization)
     @params = {:email => @org.email, :password => 'test12'}
+  end
+  
+  after(:each) do
+    @org.destroy
   end
 
   def do_post

@@ -12,53 +12,6 @@ describe ExternalInvitationsController, "#route_for" do
   
 end
 
-
-describe ExternalInvitationsController, " handling GET external_invitations" do
-
-  before(:each) do
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
-    
-    @external_invitations_proxy = mock('external invitations proxy')
-    @external_invitation = mock_model(ExternalInvitation)
-    @external_invitations = [@external_invitation]
-    @external_invitations_proxy.stub!(:find).and_return(@external_invitations)
-    
-    @current_organization.stub!(:sent_global_invitations).and_return(@external_invitations_proxy)
-
-  end
-
-  def do_get
-    get :index
-  end
-
-  it "should require being logged in" do
-    controller.should_receive(:login_required)
-    do_get
-  end
-  
-  it "should be successful" do
-  	do_get
-  	response.should be_success
-  end
-  
-  it "should render show template" do
-  	do_get
-  	response.should render_template('index')
-  end
-  
-  it "should find all external_invitations by inviter" do
-  	@current_organization.should_receive(:sent_global_invitations).and_return(@external_invitations_proxy)
-  	do_get
-  end
-  
-  it "should assign the found external_invitations for the view" do
-  	do_get
-  	assigns[:invitations].should eql(@external_invitations)
-  end
-  
-end
-
 describe ExternalInvitationsController, " handling GET /external_invitations.xml" do
 
   before(:each) do
@@ -102,46 +55,7 @@ describe ExternalInvitationsController, " handling GET /external_invitations.xml
   
 end
 
-describe ExternalInvitationsController, " handling GET /external_invitations/new" do
-
-  before(:each) do
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
-    
-    @external_invitation = mock_model(ExternalInvitation)
-    @external_invitations = [@external_invitation]
-    
-    @current_organization.stub!(:sent_global_invitations).and_return(@external_invitations)
-    ExternalInvitation.stub!(:new).and_return(@external_invitation)
-    
-  end
-
-  def do_get
-    get :new
-  end
-
-  it "should require being logged in" do
-    controller.should_receive(:login_required)
-    do_get
-  end
-  
-  it "should be successful" do
-  	do_get
-  	response.should be_success
-  end
-  
-  it "should render new template" do
-  	do_get
-  	response.should render_template('new')
-  end
-  it "should assign the new external_invitation for the view" do
-  	do_get
-  	assigns[:invitation].should eql(@external_invitation)
-  end
-  
-end
-
-describe ExternalInvitationsController, " handling POST /external_invitations" do
+describe ExternalInvitationsController, " handling POST /external_invitations.xml" do
 
   before(:each) do
     @current_organization = mock_model(Organization)
@@ -159,6 +73,7 @@ describe ExternalInvitationsController, " handling POST /external_invitations" d
   end
 
   def do_post
+    @request.env["HTTP_ACCEPT"] = "application/xml"
     post :create, @params
   end
 
@@ -172,43 +87,5 @@ describe ExternalInvitationsController, " handling POST /external_invitations" d
   	do_post
   end
   
-  it "should notify the external organization of the invitation via email" do
-  	pending
-  end
-  
-  it "should redirect to the dashboard and flash a message regarding the success of the action when the request is HTML" do
-  	do_post
-  	response.should redirect_to(external_invitations_path)
-  	flash[:notice].should eql("Invitation sent to the following email addresses: test@test.com.")
-  end
-  
 end
-  
-describe ExternalInvitationsController, " handling POST /external_invitations with error" do
 
-  before(:each) do
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
-    
-    @external_invitation = mock_model(ExternalInvitation, :save => false)
-    @external_invitations_proxy = mock('external invitations proxy', :find => [])
-    
-    @current_organization.stub!(:sent_global_invitations).and_return(@external_invitations_proxy)
-    @external_invitations_proxy.stub!(:new).and_return(@external_invitation)
-    
-    Organization.stub!(:find_by_email).and_return(nil)
-    
-    @params = {:invitation => {:email => "test"}}
-    
-  end
-
-  def do_post
-    post :create, @params
-  end
-  
-  it "should redirect to the index view when the request is HTML" do
-  	do_post
-  	response.should render_template('index')
-  end
-  
-end
