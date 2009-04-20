@@ -3,20 +3,20 @@ require File.dirname(__FILE__) + '/../spec_helper'
 #specs specific to SurveyInvitationsController
 describe SurveyInvitationsController, " #route for" do
 
-    it "should map { :controller => 'invitations', :action => 'index', :survey_id => 1 } to /surveys/1/invitations" do
-      route_for(:controller => "survey_invitations", :action => "index", :survey_id => 1).should == "/surveys/1/invitations"
+    it "should map { :controller => 'invitations', :action => 'index', :survey_id => '1' } to /surveys/1/invitations" do
+      route_for(:controller => "survey_invitations", :action => "index", :survey_id => '1').should == "/surveys/1/invitations"
     end
 
-    it "should map { :controller => 'invitations', :action => 'new', :survey_id => 1 } to /surveys/1/invitations/new" do
-      route_for(:controller => "survey_invitations", :action => "new", :survey_id => 1).should == "/surveys/1/invitations/new"
+    it "should map { :controller => 'invitations', :action => 'new', :survey_id => '1' } to /surveys/1/invitations/new" do
+      route_for(:controller => "survey_invitations", :action => "new", :survey_id => '1').should == "/surveys/1/invitations/new"
     end
 
-    it "should map { :controller => 'invitations', :action => 'destroy', :id => 1, :survey_id => 1} to /surveys/1/invitations/1" do
-      route_for(:controller => "survey_invitations", :action => "destroy", :id => 1, :survey_id => 1).should == "/surveys/1/invitations/1"
+    it "should map { :controller => 'invitations', :action => 'destroy', :id => '1', :survey_id => '1'} to /surveys/1/invitations/1" do
+      route_for(:controller => "survey_invitations", :action => "destroy", :id => '1', :survey_id => '1').should == { :path => "/surveys/1/invitations/1", :method => :delete }
     end
     
-    it "should map { :controller => 'invitations', :action => 'decline', :id => 1, :survey_id => 1} to /surveys/1/invitations/1/decline" do
-      route_for(:controller => "survey_invitations", :action => "decline", :id => 1, :survey_id => 1).should == "/surveys/1/invitations/1/decline"
+    it "should map { :controller => 'invitations', :action => 'decline', :id => '1', :survey_id => '1'} to /surveys/1/invitations/1/decline" do
+      route_for(:controller => "survey_invitations", :action => "decline", :id => '1', :survey_id => '1').should == { :path => "/surveys/1/invitations/1/decline", :method => :put }
     end    
     
 end
@@ -368,20 +368,20 @@ end
   
 #specs specific to NetworkInvitationsController  
 describe NetworkInvitationsController, " #route for" do
-    it "should map { :controller => 'invitations', :action => 'index', :network_id => 1 } to /networks/1/invitations" do
-      route_for(:controller => "network_invitations", :action => "index", :network_id => 1).should == "/networks/1/invitations"
+    it "should map { :controller => 'invitations', :action => 'index', :network_id => '1' } to /networks/1/invitations" do
+      route_for(:controller => "network_invitations", :action => "index", :network_id => '1').should == "/networks/1/invitations"
     end
 
-    it "should map { :controller => 'invitations', :action => 'new', :network_id => 1 } to /networks/1/invitations/new" do
-      route_for(:controller => "network_invitations", :action => "new", :network_id => 1).should == "/networks/1/invitations/new"
+    it "should map { :controller => 'invitations', :action => 'new', :network_id => '1' } to /networks/1/invitations/new" do
+      route_for(:controller => "network_invitations", :action => "new", :network_id => '1').should == "/networks/1/invitations/new"
     end
 
-    it "should map { :controller => 'invitations', :action => 'destroy', :id => 1, :network_id => 1} to /networks/1/invitations/1" do
-      route_for(:controller => "network_invitations", :action => "destroy", :id => 1, :network_id => 1).should == "/networks/1/invitations/1"
+    it "should map { :controller => 'invitations', :action => 'destroy', :id => '1', :network_id => '1'} to /networks/1/invitations/1" do
+      route_for(:controller => "network_invitations", :action => "destroy", :id => '1', :network_id => '1').should == {:path => "/networks/1/invitations/1", :method => :delete }
     end    
     
-    it "should map { :controller => 'invitations', :action => 'decline', :id => 1, :network_id => 1} to /networks/1/invitations/1/decline" do
-      route_for(:controller => "network_invitations", :action => "decline", :id => 1, :network_id => 1).should == "/networks/1/invitations/1/decline"
+    it "should map { :controller => 'invitations', :action => 'decline', :id => '1', :network_id => '1'} to /networks/1/invitations/1/decline" do
+      route_for(:controller => "network_invitations", :action => "decline", :id => '1', :network_id => '1').should == { :path => "/networks/1/invitations/1/decline", :method => :put }
     end
 end
 

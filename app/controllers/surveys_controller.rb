@@ -119,7 +119,7 @@
     
     escaped_search_text = Riddle.escape(@search_text)
       
-    # TODO: Why is the search text duplicated?
+    # TODO: Why is the search text duplicated? JDF - because it allows us to weight results by industry
     search_query = "#{escaped_search_text} #{escaped_search_text} | @industry \"#{current_organization.industry}\""
 
     search_params = {

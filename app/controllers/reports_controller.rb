@@ -25,7 +25,7 @@ class ReportsController < ApplicationController
   protected
   
   def must_have_responded_or_sponsored
-    @survey = Survey.find(params[:survey_id])
+    @survey = Survey.finished.find(params[:survey_id])
     if (current_organization_or_survey_invitation.participations.find_by_survey_id(@survey.id).nil? &&
       current_organization != @survey.sponsor) 
     then
@@ -85,7 +85,6 @@ class ReportsController < ApplicationController
       @adequate_responses_method = 'adequate_responses?'
     end 
     
-  
   end
    
 end

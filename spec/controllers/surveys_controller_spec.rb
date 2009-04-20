@@ -14,32 +14,32 @@ describe SurveysController, "#route_for" do
     route_for(:controller => "surveys", :action => "new").should == "/surveys/new"
   end
 
-  it "should map { :controller => 'surveys', :action => 'show', :id => 1 } to /surveys/1" do
-    route_for(:controller => "surveys", :action => "show", :id => 1).should == "/surveys/1"
+  it "should map { :controller => 'surveys', :action => 'show', :id => '1' } to /surveys/1" do
+    route_for(:controller => "surveys", :action => "show", :id => '1').should == "/surveys/1"
   end
 
-  it "should map { :controller => 'surveys', :action => 'edit', :id => 1 } to /surveys/1/edit" do
-    route_for(:controller => "surveys", :action => "edit", :id => 1).should == "/surveys/1/edit"
+  it "should map { :controller => 'surveys', :action => 'edit', :id => '1' } to /surveys/1/edit" do
+    route_for(:controller => "surveys", :action => "edit", :id => '1').should == "/surveys/1/edit"
   end
 
-  it "should map { :controller => 'surveys', :action => 'update', :id => 1} to /surveys/1" do
-    route_for(:controller => "surveys", :action => "update", :id => 1).should == "/surveys/1"
+  it "should map { :controller => 'surveys', :action => 'update', :id => '1'} to /surveys/1" do
+    route_for(:controller => "surveys", :action => "update", :id => '1').should == {:path => "/surveys/1", :method => :put }
   end
   
-  it "should map { :controller => 'surveys', :action => 'destroy', :id => 1} to /surveys/1" do
-    route_for(:controller => "surveys", :action => "destroy", :id => 1).should == "/surveys/1"
+  it "should map { :controller => 'surveys', :action => 'destroy', :id => '1'} to /surveys/1" do
+    route_for(:controller => "surveys", :action => "destroy", :id => '1').should == {:path => "/surveys/1", :method => :delete }
   end  
   
-  it "should map { :controller => 'surveys', :action => 'respond', :id => 1} to /surveys/1/respond" do
-    route_for(:controller => "surveys", :action => "respond", :id => 1).should == "/surveys/1/respond"
+  it "should map { :controller => 'surveys', :action => 'respond', :id => '1'} to /surveys/1/respond" do
+    route_for(:controller => "surveys", :action => "respond", :id => '1').should == {:path => "/surveys/1/respond", :method => :put }
   end
   
   it "should map { :controller => 'surveys', :action => 'reports' } to /surveys/reports" do
     route_for(:controller => "surveys", :action => "reports").should == "/surveys/reports"
   end 
   
-  it "should map { :controller => 'surveys', :action => 'rerun' } to /surveys/1/rerun" do
-    route_for(:controller => "surveys", :action => "rerun", :id => "1").should == "/surveys/1/rerun"
+  it "should map { :controller => 'surveys', :action => 'rerun', :id => '1' } to /surveys/1/rerun" do
+    route_for(:controller => "surveys", :action => "rerun", :id => "1").should == {:path => "/surveys/1/rerun", :method => :put }
   end  
 end
 
@@ -60,7 +60,7 @@ describe SurveysController, " handling GET /surveys" do
     @survey_invitations_proxy.stub!(:running).and_return(@surveys)
     @survey_invitations_proxy.stub!(:pending).and_return(@survey_invitations_proxy)
   end
-  
+    
   def do_get
     get :index
   end
@@ -342,13 +342,18 @@ describe SurveysController, " handling GET /surveys/new with a pending survey" d
   end
 
   def do_get
-    get :new
+    get :new, :network_id => "1"
   end
 
     
   it "should render new template" do
     do_get
     response.should render_template('surveys/new')
+  end
+  
+  it "should assign the network to the session if coming from a survey network link" do
+    do_get
+    session[:survey_network_id].should eql("1")
   end
 end
 
@@ -506,42 +511,6 @@ describe SurveysController, " handling POST /surveys" do
   
 end
 
-describe SurveysController, " handling POST /surveys from a 'survey network' link" do
-  before(:each) do
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
-    @params = {:survey => {:job_title => 'That guy who yells "Scalpel, STAT!"' ,
-                 :end_date => Time.now + 1.week
-                 },
-               :predefined_question => {"1" => {'included' => "1"}, "2" => {'included' => "0"}, "3" => {'included' => "1"}}, :invite_network => "1",
-               :question => '[]'
-               }
-    @survey = mock_model(Survey, :id => 1, :save => true, :errors => [], :new_record? => true, :job_title => "test")
-    @surveys = []
-    @questions = []
-    @question_hash = [{'id' => 1, 'another' => 2, 'text' => 'asdf'}, {'id' => 2, 'another' => 2, 'text' => 'asdf'}]
-    @excluded_question_hash = {'another' => 2, 'text' => 'asdf'}
-    @pdq1 = mock_model(PredefinedQuestion, :id => 1, :question_hash => @question_hash, :included= => "1", :included => 1)
-    @pdq2 = mock_model(PredefinedQuestion, :id => 2, :question_hash => @question_hash, :included= => "1", :included => 0)
-    @pdq3 = mock_model(PredefinedQuestion, :id => 3, :question_hash => @question_hash, :included= => "1", :included => 0)
-    @question = mock_model(Question, :save! => :true, :predefined_question_id= => 1, :survey= => @survey, :included => 1)
-    
-    PredefinedQuestion.stub!(:all).and_return([@pdq1, @pdq2, @pdq3])
-    @current_organization.stub!(:sponsored_surveys).and_return(@surveys)
-    @surveys.stub!(:new).and_return(@survey)
-    @survey.stub!(:questions).and_return(@questions)
-    @questions.stub!(:new).and_return(@question)
-  end
-  
-  def do_post
-    post :create, @params
-  end
-
-  it "should create the invitation upon success" do
-    pending
-  end
-  
-end
 
 describe SurveysController, " handling POST /surveys, upon failure" do
   before(:each) do

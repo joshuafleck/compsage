@@ -38,20 +38,8 @@ class Question < ActiveRecord::Base
     return !self.response_type.nil?
   end
  
-  def grouped_responses
-  
-    if self[:question_type] == 'checkbox' then    
-            
-    # because we store multiple responses in a single textual response, 
-    # we must extract those out to build the grouped response 
-    # TODO: support for checkbox
-      
-    else
-    
-      @grouped_responses ||= responses.group_by(&:numerical_response)
-      
-    end
-    
+  def grouped_responses  
+    @grouped_responses ||= responses.group_by(&:numerical_response)     
   end
   
   # responses belonging to invitees of the survey
@@ -61,18 +49,7 @@ class Question < ActiveRecord::Base
   
   # grouped responses belonging to invitees of the survey
   def grouped_invitee_responses
-
-    if self[:question_type] == 'checkbox' then    
-  
-      # because we store multiple responses in a single textual response, 
-      # we must extract those out to build the grouped response 
-      # TODO: support for checkbox
-    
-    else
-    
-      @grouped_responses ||= invitee_responses.group_by(&:numerical_response)
-      
-    end
+    @grouped_responses ||= invitee_responses.group_by(&:numerical_response)
   end
   
   # returns the minimum number of responses required for the question type

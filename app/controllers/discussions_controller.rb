@@ -18,10 +18,11 @@ class DiscussionsController < ApplicationController
     
     if @discussion.save then
       respond_to do |wants|
-        wants.html {         
-          redirect_to survey_path(@survey) }      
+        wants.html do        
+          redirect_to survey_path(@survey) 
+        end
         wants.xml do
-          render :status => :created
+          head :status => :created
         end
       end
     else
@@ -45,7 +46,7 @@ class DiscussionsController < ApplicationController
     if @discussion.update_attributes(params[:discussion]) then    
       respond_to do |wants|
         wants.xml do
-          render :status => :ok
+          head :status => :ok
         end
         wants.js do
           render :text => params[:discussion][:body].blank? ? @discussion.subject : @discussion.body
@@ -72,7 +73,7 @@ class DiscussionsController < ApplicationController
           flash[:notice] = "The discussion was reported successfully."
           redirect_to survey_path(@survey) }      
         wants.xml do
-          render :status => :ok
+          head :status => :ok
         end
       end
     else
@@ -96,7 +97,7 @@ class DiscussionsController < ApplicationController
       wants.html {         
         redirect_to survey_path(@survey) }      
       wants.xml do
-        render :status => :ok
+        head :status => :ok
       end
     end
   end

@@ -33,14 +33,18 @@ namespace :data_generator do
         next if rand(5) == 0 # (80% chance of answering a question)
         
         case question.response_type
-        when 'NumericalResponse', 'WageResponse', 'BaseWageResponse'
-          response = Factory.build(:response, :question => question, :numerical_response => 20000 + rand(60000))
+        when 'NumericalResponse'
+          response = Factory.build(:numerical_response, :question => question, :numerical_response => 20000 + rand(60000))
+        when 'WageResponse'
+          response = Factory.build(:wage_response, :question => question, :numerical_response => 20000 + rand(60000))
+        when 'BaseWageResponse'
+          response = Factory.build(:base_wage_response, :question => question, :numerical_response => 20000 + rand(60000))
         when 'PercentResponse'
-          response = Factory.build(:response, :question => question, :numerical_response => rand(100))
+          response = Factory.build(:percent_response, :question => question, :numerical_response => rand(100))
         when 'MultipleChoiceResponse'
-          response = Factory.build(:response, :question => question, :numerical_response => rand(question.options.size))
+          response = Factory.build(:multiple_choice_response, :question => question, :numerical_response => rand(question.options.size))
         else
-          response = Factory.build(:response, :question => question, :textual_response => Faker::Lorem.sentence, :numerical_response => nil)
+          response = Factory.build(:textual_response, :question => question, :textual_response => Faker::Lorem.sentence, :numerical_response => nil)
         end
 
         responses << response
@@ -374,29 +378,24 @@ namespace :data_generator do
     questions = []
     (rand(QUESTIONS_PER_SURVEY) + 3).times do |index|
       
-      question_type = case rand(5)
+      question_type = case rand(6)
       when 0 # create numerical response
         'Numeric response'
       when 1 # create textual response
         'Free response'
-      when 2 # create multiple choice
+      when 2 # create wage response
         'Pay or wage response'
-      when 3 # create wage range
+      when 3 # create radio response
         'Yes/No'
-      when 4 # create base wage
+      when 4 # create agreement scale response
         'Agreement scale'
+      when 5 # create percent response
+        'Percent'
       end
       
-      if ['Yes/No','Agreement scale'].include?(question_type) then
-        options = Array.new(rand(4) + 2) { Faker::Lorem.words(rand(3) + 1).join(" ") } 
-      else
-        options = nil
-      end
-
       question = Factory.build(
         :question,
         :custom_question_type => question_type, 
-        :options => options, 
         :text => Faker::Lorem.sentence.gsub(/.$/, '?'), 
         :position => index)
       
@@ -426,30 +425,44 @@ namespace :data_generator do
       questions.each do |question|
         next if rand > RESPONSE_RATE # ((RESPONSE_RATE*100)% chance of answering a question)
         
-        case question.question_type
-        when 'wage_range','base_wage'
+        case question.response_type
+        when 'BaseWageResponse'
           response = Factory.build(
-            :response, 
+            :base_wage_response, 
             :question => question, 
-            :numerical_response => 20000 + rand(60000),
+            :response => 20000 + rand(60000),
             :unit => ['Annually', 'Hourly'][rand(2)],
             :qualifications => [nil,Faker::Lorem.sentence][rand(2)])
-        when 'numerical_field'
+        when 'WageResponse'
           response = Factory.build(
-            :response, 
+            :wage_response, 
             :question => question, 
-            :numerical_response => 20000 + rand(60000),
+            :response => 20000 + rand(60000),
+            :unit => ['Annually', 'Hourly'][rand(2)],
             :qualifications => [nil,Faker::Lorem.sentence][rand(2)])
-        when 'radio'
+        when 'MultipleChoiceResponse'
           response = Factory.build(
-            :response, 
+            :multiple_choice_response, 
             :question => question, 
-            :numerical_response => rand(question.options.size),
+            :response => 0 + rand(question.options.size),
+            :qualifications => [nil,Faker::Lorem.sentence][rand(2)])
+        when 'PercentResponse'
+          response = Factory.build(
+            :percent_response, 
+            :question => question, 
+            :response => 20000 + rand(60000),
+            :qualifications => [nil,Faker::Lorem.sentence][rand(2)])
+        when 'NumericResponse'
+          response = Factory.build(
+            :numerical_response, 
+            :question => question, 
+            :response => 20000 + rand(60000),
             :qualifications => [nil,Faker::Lorem.sentence][rand(2)])
         else
           response = Factory.build(
-            :response, :question => question, 
-            :textual_response => Faker::Lorem.sentence,
+            :textual_response, 
+            :question => question, 
+            :response => Faker::Lorem.sentence,
             :numerical_response => nil)
         end
 
