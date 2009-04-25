@@ -1,36 +1,30 @@
 <% title "Preview for #{@survey.job_title}" %>
 <% highlight_tab("surveys") if logged_in? %>
-<h2>Survey Preview</h2>
-<p>This is how your survey will look.  If you are not satisfied, you can make changes before the survey is published.
-  You may make changes to a survey at any time after the survey is published as well.</p>
-<p>
-<%= if @survey.aasm_state == 'pending' then
-   link_to "Continue", billing_survey_path(@survey) 
-   else
-    link_to "Finish", survey_path(@survey)
-end %>
-or 
-<%= link_to "Make changes", edit_survey_path(@survey) %>
-</p>  
-<div id="survey_preview_box">
-  <%= render :partial => "questions/participation_form"%>
+<div class="breadcrumbs">
+  <%= image_tag 'step_1_inactive.gif' %>
+  <%= image_tag 'step_2_active.gif' %>
+  <%= image_tag 'step_3_inactive.gif' %>
+  <%= image_tag 'step_4_inactive.gif' %>
 </div>
-<p>
-<%= if @survey.aasm_state == 'pending' then
-   link_to "Continue", billing_survey_path(@survey) 
-   else
-    link_to "Finish", survey_path(@survey)
-end %>
-or 
-<%= link_to "Make changes", edit_survey_path(@survey) %>
-</p>
+<div id="step_container">
+  <p>
+    This is how your survey will look.  If you are not satisfied, you can make changes before the survey is published.
+    You may make changes to a survey at any time after the survey is published as well.</p>
+  <p>
+  <div id="survey_preview_box">
+    <%= render :partial => "questions/participation_form"%>
+  </div>
+  <div class="submit_row">
+    <%= button_to "Enter Billing Information", billing_survey_path(@survey), :class => "next" %>
+    <%= button_to "Make Changes", new_survey_path, :class => "previous" %>
+  </div>
+</div>
 <script>
 function disableForm(){
   $('cancel_section').style.display = 'none';
-  var f = document.getElementsByTagName('input');
-  for(var i=0;i<f.length;i++){
-      f[i].setAttribute('disabled',true);
-  }
+  $$('#survey_preview_box input, #survey_preview_box select').each(function(input) {
+    input.setAttribute('disabled', true);
+  });
 }
 </script>
 <% content_for :initialize_js, "disableForm();"%>

@@ -64,14 +64,10 @@
   <% if !@network.nil? then %>
     <%=hidden_field_tag(:invite_network, @network.id ) %>
   <% end %>
-  <p><input id="form_submit" type="submit" value="<%=@survey.new_record? ? 'Create Survey' : 'Update' %>" /> or 
-  <%if @survey.aasm_state == 'pending' && !@survey.id.nil? then %>
-    <%= link_to("Cancel", { :action => "destroy", :id => @survey.id },
-	  :confirm => "This will delete the survey, do you want to continue?",
-	  :method => :delete) %>
-  <% else %>
-    <%=link_to "Cancel", surveys_path %></p>
-  <% end %>
+  <div class="submit_row">
+    <input id="form_submit" type="submit" value="Preview Survey" class="next" />
+    <input type="submit" value="Cancel" class="previous" />
+  </div>
 <% end %>
 <script type="text/javascript">
 

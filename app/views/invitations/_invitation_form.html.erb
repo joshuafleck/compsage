@@ -25,8 +25,8 @@
 		<% end %>
 	</ol>
 </div>
-<div id="send_invitations">
-	<% form_tag do %>
+<% form_tag do %>
+  <div id="send_invitations">
 	  <% if include_networks then %>
 		<h3>Invite Your Networks</h3>
 		<ul>
@@ -74,9 +74,13 @@
 				<input id="external_invitation_submit" type="button" value="Add" />
 			  </div>
       </div>
+      <input type="submit" value="Send Invitations" />
 		</div>
-		<p><input id="invitation_form_submit" type="submit" value="Send Invitations" /></p>
-	<% end %>
+  </div>
+<% end %>
+<div class="submit_row">
+  <%= button_to "Finish", survey_path(@survey), :class => "next", :method => :get %>
+  <%= button_to "Edit Billing Information", billing_survey_path(@survey), :class => "previous" %>
 </div>
 <script type="text/javascript">
 //The previous search text

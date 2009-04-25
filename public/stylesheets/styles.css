@@ -601,6 +601,11 @@ div.breadcrumbs img {
   padding: 0;
   float: left;
 }
+
+div#step_container {
+  margin:1em;
+}
+
 form.new_survey input, form.edit_survey input {
 	font-size: .9em;
 }
@@ -613,6 +618,19 @@ form.new_survey textarea, form.edit_survey textarea {
 	width: 500px;
 }
 
+div.submit_row {
+  margin-top: 1em;
+  padding: 10px;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #ddd;
+}
+
+div.submit_row .previous {
+}
+
+div.submit_row .next {
+  float: right;
+}
 #standard_questions h4, #custom_questions h4 {
   margin: 1em 0 0 0;
 }
