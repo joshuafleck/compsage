@@ -152,7 +152,7 @@ class AccountsController < ApplicationController
           end
         end
       else
-        flash[:notice] = "There was no account found for #{params[:email]}."
+        flash.now[:notice] = "There was no account found for #{params[:email]}."
       end
     end
   end
@@ -175,9 +175,7 @@ class AccountsController < ApplicationController
           render :action => :reset
         end
       else
-        respond_to do |wants|
-          flash[:notice] = "Password mismatch - Please try again."
-        end
+        flash.now[:notice] = "Password mismatch - Please try again."
       end
     #if we have a request, check to see if the key is valid, then grant access
     else

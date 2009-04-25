@@ -36,7 +36,6 @@ class SessionsController < ApplicationController
 
   def destroy
     logout_killing_session!
-    flash[:notice] = "You have been logged out."
     redirect_back_or_default('/')
   end
   
@@ -60,12 +59,12 @@ class SessionsController < ApplicationController
 protected
   # Track failed login attempts
   def note_failed_signin
-    flash[:error] = "Incorrect email or password."
+    flash.now[:error] = "Incorrect email or password."
     logger.warn "Failed login for '#{params[:email]}' from #{request.remote_ip} at #{Time.now.utc}"
   end
   # Track failed survey login attempts
   def note_failed_survey_signin
-    flash[:notice] = "We couldn't log you in using the key provided"
+    flash.now[:notice] = "We couldn't log you in using the key provided"
     logger.warn "Failed survey login for key:#{params[:key]} at #{Time.now.utc}"
   end  
 end
