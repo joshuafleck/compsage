@@ -4,7 +4,7 @@
 <h3>Job Description</h3>
 <%=link_and_format(@survey.description, :class => "description_box")%>
 <p>Effective date: <%=90.days.ago.to_date.to_s(:long_ordinal)%>. <%= link_to_function "Why?", "new Effect.toggle('why_section', 'blind', {duration: .5});return false;" %></p>
-<div id="why_section" style="display:none;">To comply with <%=link_to "Safe Harbor", 'http://www.usdoj.gov/atr/public/guidelines/0000.htm#CONTNUM_49' %> guidelines, information provided by survey participants must be based on data at least 90 days old. </div>
+<div id="why_section" style="display:none;">To comply with <%=link_to "Safe Harbor", 'http://www.usdoj.gov/atr/public/guidelines/0000.htm#CONTNUM_49' %> guidelines, responses must be based on data at least 90 days old. </div>
 <%=flash_messages%>
 <%= error_messages_for :participation %>
 <% form_for @participation, :url => respond_survey_path(@survey), :builder => QuestionFormBuilder do |f|%>
