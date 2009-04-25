@@ -46,33 +46,41 @@ function inputMask(element, data_type) {
   var data_template = "";	
   var precision = null;
   var check_response = null;
+  var error_message = "";
 
   if(data_type == 'currency') {
     char_mask = /^\$?(\d*,?)*\.?\d{0,2}$/
     data_template = "$#{number}";
     precision = 2;
+    error_message = "Response must be a valid wage or salary, e.g. $10.50, 20,000"
     check_response = checkWageResponse;
   } else if(data_type == 'percent') {
     char_mask = /^\-?\d*\.?\d*\%?$/;
     data_template = "#{number}%";
     check_response = checkPercentResponse;
+    error_message = "Response must be a valid percentage, e.g. 25%, 10.2%, -25%"
   } else if(data_type == 'number') {
-    char_mask = /^\-?(\d*,)*\.?\d*$/;
+    char_mask = /^\-?(\d*,?)*\.?\d*$/;
     data_template = "#{number}";
     check_response = checkNumericResponse;
+    error_message = "Response must be a valid number, e.g. 3, 23,000, -5.2"
   }
- 
+
   element.observe('keydown', function(e) {
-    if(last_valid == "" && e.element.value != '')
+    //need to check for match here in case of double-keydown
+    if(last_valid == "" && e.element.value != '' && e.element.value.match(char_mask))
       last_valid = e.element().value;
   })
 
   element.observe('keyup', function(e) {
+    question_id = e.element().id.match(/(\d+)/)[0];
     var new_value = e.element().value;
     if(!new_value.match(char_mask)) {
       e.element().value = last_valid;
+      $("warning_"+question_id).update(error_message);
     } else {
       last_valid = e.element().value;
+      $("warning_"+question_id).update('');
     }
   })
 
