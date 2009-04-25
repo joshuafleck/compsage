@@ -6,36 +6,36 @@
     <% if @survey.can_be_rerun? then %>
       <% if @survey.enough_responses? then %>
         <p>
-          Not all of the questions have adequate participation for results to be available. You may <%=link_to "finish", finish_partial_survey_path(@survey)%> the survey to view the partial results or re-run the survey and send additional invitations. The question response rates are below.
+The survey could not be successfully completed because some of the questions did not receive the required number of responses. You may <%=link_to "finish", finish_partial_survey_path(@survey)%> the survey now to view results for questions that met minimum response requirements (see below), or you may provide an extension to those already invited and invite additional participants. 
         </p>
       <% elsif @survey.enough_participations? %>
         <p>      
-          Unfortunately, none of the questions have adequate participation for results to be available.  You may re-run the survey and send additional invitations. 
+The survey could not be successfully completed because none of the questions received the required number of responses. If you are still interested in conducting this survey, you may provide an extension to those already invited and invite additional participants.
         </p>     
       <% else %>
         <p>
-          Unfortunately, you did not get the required number of participants for results to be available.  You may re-run the survey and send additional invitations.
+The survey could not be successfully completed because only <%=@survey.participations.count%> of <%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%> required organizations provided responses. If you are still interested in conducting this survey, you may provide an extension to those already invited and invite additional participants.
   		  </p>
       <% end %>
       <p>
         <% form_for(:survey, @survey, :url => rerun_survey_path(@survey), :html => { :method => :get }) do |f| %>  
           <%=error_messages_for :survey%>      
-          Re-run for <%=f.select :days_running, (Survey::MINIMUM_DAYS_TO_RERUN..(@survey.maximum_days_to_rerun)).to_a %> days.
-          <input type="submit" value="Re-Run" />
+          Extend <%=f.select :days_running, (Survey::MINIMUM_DAYS_TO_RERUN..(@survey.maximum_days_to_rerun)).to_a %> days.
+          <input type="submit" value="Submit" />
         <% end %>  
       </p>
       <%=render :partial => 'questions/response_rates', :locals => { :survey => @survey } %>
       <p><%=link_to "Cancel the survey", survey_path(@survey), :method => :delete %></p> 
     <% else %>
       <p>
-        Unfortunately, you did not get the required number of participants for results to be
-        available. This survey has exceeded <%=(Survey::MAXIMUM_DAYS_TO_RUN - Survey::MINIMUM_DAYS_TO_RERUN)%> days and may no longer be rerun.
+        The survey could not be successfully completed due to insufficient participation. This survey has exceeded <%=(Survey::MAXIMUM_DAYS_TO_RUN - Survey::MINIMUM_DAYS_TO_RERUN)%> days and may no longer be extended.
       </p>
       <p><%=link_to "Cancel the survey", survey_path(@survey), :method => :delete %></p> 
     <% end %>
   <% else %>
-    <p>Survey results are unavailable due to insufficient data.  The
-      survey sponsor may choose to re-run the survey in an effort to get increased participation.  If this is
-      the case, you will be notified.</p>      
+    <p>
+    The survey could not be successfully completed due to insufficient participation. The sponsor may provide an extension in order to increase participation. If so, you will notified via email.
+    </p>      
   <% end %>
+  
 

@@ -111,7 +111,7 @@ Feature: Manage surveys
     And I am the sponsor
     And the survey is stalled
     And I am on the survey show page
-    When I press "Re-Run"
+    When I press "Submit"
     Then I should see "Survey updated"
   
   Scenario: Not rerun survey
