@@ -5,6 +5,7 @@ class SurveyInvitation < Invitation
   
   validates_presence_of :invitee
   validates_presence_of :survey
+  validate_on_create :not_already_invited
   
   named_scope :running, :include => :survey, :conditions => ["surveys.end_date > ?", Time.now ]
   
@@ -21,20 +22,14 @@ class SurveyInvitation < Invitation
     transitions :to => :fulfilled, :from => :pending
   end    
   
- 
-  def validate_on_create
-    if invitee && survey then
-      validate_not_invited 
-    end 
-  end
-  
   def to_s
     invitee.name_and_location
   end
   
   private
   
-  def validate_not_invited  
-    errors.add_to_base "Invitee is already invited" if invitee.invited_surveys.include?(survey) || invitee == survey.sponsor
+  # adds an error if the invitee was already invited (or the sponsor)
+  def not_already_invited  
+    errors.add_to_base "Invitee is already invited" if invitee && survey && (invitee.invited_surveys.include?(survey) || invitee == survey.sponsor)
   end
 end
