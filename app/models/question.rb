@@ -33,6 +33,8 @@ class Question < ActiveRecord::Base
     'Yes/No' => ['Yes', 'No'],
     'Agreement scale' => ['Strongly Agree','Agree','Neutral','Disagree','Strongly Disagree']
   }
+  
+  named_scope :required, :conditions => "required = 1"
 
   def answerable?
     return !self.response_type.nil?

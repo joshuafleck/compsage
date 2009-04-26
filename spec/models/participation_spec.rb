@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 def valid_participation_attributes
   {
-    :survey => mock_model(Survey, :id => 1, :sponsor => mock_model(Organization)),
+    :survey => Factory.create(:survey),
     :participant => mock_model(Organization, :id => 1),
     :responses => [mock_model(Response, :valid? => true)]
   }
@@ -60,6 +60,18 @@ describe Participation do
     invitation.aasm_state.should == "fulfilled"
     @participation.destroy
     invitation.destroy
+  end
+  
+  it "should not be valid if required questions do not have responses" do
+    @survey = Factory.create(:survey)
+    @participant = Factory.create(:organization)
+    @required_question = Factory.create(:question, :survey => @survey, :required => 1)
+    @optional_question = Factory.create(:question, :survey => @survey, :required => 0)
+    @participation = Factory.build(:participation, :survey => @survey, :participant => @participant, :responses => [Factory.build(:numerical_response, :question => @optional_question, :response => 1)])
+    @participation.save
+    @participation.should_not be_valid
+    @participation.responses[1].should_not be_valid
+    @participation.responses[0].should be_valid
   end
   
 end

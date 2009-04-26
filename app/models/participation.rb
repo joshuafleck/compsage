@@ -7,6 +7,7 @@ class Participation < ActiveRecord::Base
   validates_presence_of :participant, :survey
   validates_presence_of :responses, :message => "must be provided"
   validates_associated :responses, :message => "may have errors. Check your responses for errors highlighted in red."
+  validate :required_responses_present
   
   after_create :create_participant_subscription, :fulfill_invitation
   
@@ -60,4 +61,15 @@ class Participation < ActiveRecord::Base
     # as we are validating the associated records.
     responses.each { |r| r.save! if r.changed? }
   end  
+  
+  private
+  
+  # adds a blank response to each required question to ensure validation fails if there is no response
+  def required_responses_present
+    self.survey.questions.required.each do |question|
+      if !self.responses.collect(&:question_id).include?(question.id) then
+        responses.build(:question => question, :type => question.response_type)
+      end
+    end if survey
+  end
 end

@@ -13,19 +13,19 @@ class QuestionFormBuilder < ActionView::Helpers::FormBuilder
     response_class = question.response_class
     case response_class.field_type
     when "text_box"
-      label(:response, question.text) +
+      label(:response, question_text) +
       text_field(:response, response_class.field_options.merge(:class => question.response_type, :value => object.formatted_response)) +
       unit_field + error_text + warning_field(question.id)
     when "radio"
-      @template.content_tag(:div, question.text, :class => "label") +
+      @template.content_tag(:div, question_text, :class => "label") +
       question.options.to_enum(:each_with_index).collect { |option, index|
         @template.content_tag(:label, radio_button(:response, index.to_f) + " " + option, :class => 'option')
       }.join("") + 
       error_text # error should be displayed in the case that a qualification was entered, but no response
     when "text_area"
-      label(:response, question.text) + text_area(:response, :rows => 5, :cols => 50)
+      label(:response, question_text) + text_area(:response, :rows => 5, :cols => 50)
     when "checkbox"
-      @template.content_tag(:label, question.text) +
+      @template.content_tag(:label, question_text) +
       question.options.to_enum(:each_with_index).collect { |option, index|
         @template.content_tag(:div,
           @template.check_box_tag(
@@ -55,6 +55,15 @@ class QuestionFormBuilder < ActionView::Helpers::FormBuilder
       @template.content_tag(:div, object.errors.full_messages.uniq.join(" &amp; "), :class => 'error_description')
     else
       ""
+    end
+  end
+  
+  # this will denote the required questions
+  def question_text
+    if question.required? then
+      question.text + "&nbsp;" + @template.image_tag("required.gif")
+    else
+      question.text
     end
   end
  
