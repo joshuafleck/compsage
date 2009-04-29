@@ -1,5 +1,7 @@
 class WageResponse < NumericalResponse
+  self.field_options.merge!(:size => 10)
   self.units = Units.new("format", {'Annually' => 1, 'Hourly' => 2080}, 'Annually')
+
   def formatted_response
     number_to_currency(self.response) if self.response
   end
