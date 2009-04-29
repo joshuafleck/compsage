@@ -68,7 +68,7 @@ function inputMask(element, data_type) {
 
   element.observe('keydown', function(e) {
     //need to check for match here in case of double-keydown
-    if(last_valid == "" && e.element.value != '' && e.element.value.match(char_mask))
+    if(last_valid == "" && e.element().value != '' && e.element().value.match(char_mask))
       last_valid = e.element().value;
   })
 
