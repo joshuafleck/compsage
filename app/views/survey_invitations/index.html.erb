@@ -1,12 +1,14 @@
 
 <% title "Invitations to #{@survey.job_title}" %>
 <% highlight_tab("surveys") %>
+<% if params[:processing] == '1' then%>
 <div class="breadcrumbs">
   <%= image_tag 'step_1_inactive.gif' %>
   <%= image_tag 'step_2_inactive.gif' %>
   <%= image_tag 'step_3_inactive.gif' %>
   <%= image_tag 'step_4_active.gif' %>
 </div>
+<% end %>
 <div class="step_container">
   <%= render :partial => "invitations/invitation_form", :locals => {:include_networks => true}%> 
 </div>

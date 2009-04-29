@@ -233,14 +233,14 @@
       @survey.billing_info_received!
       respond_to do |wants|
         wants.html do
-          redirect_to survey_invitations_path(@survey)
+          redirect_to survey_invitations_path(@survey, :processing => '1')
         end
       end
     
     elsif 
       respond_to do |wants|
         wants.html do
-          redirect_to survey_invitations_path(@survey)
+          redirect_to survey_invitations_path(@survey, :processing => '1')
         end
       end
     end
