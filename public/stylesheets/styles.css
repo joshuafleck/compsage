@@ -66,10 +66,10 @@ img {
 }
 
 input[type=text], input[type=password] {
-	padding: 5px;
-	font-size: 1em;
-	border: 1px solid #3f3f3e;
-	background-color: #fefdfb;
+  padding: 5px;
+  font-size: 1em;
+  border: 1px solid #3f3f3e;
+  background-color: #f4f6f3;
 }
 
 textarea {
@@ -80,7 +80,7 @@ textarea {
 	font-weight: normal;
 	font-size: 1em;
 	border: 1px solid #3f3f3e;
-	background-color: #fffefc;
+  background-color: #f4f6f3;
 }
 
 /* Specific element styles */
@@ -664,9 +664,6 @@ div.submit_row .next {
 #custom_questions input#question_text {
   width: 350px;
   padding: 5px;
-	font-size: 1em;
-	border: 1px solid #3f3f3e;
-	background-color: #fefdfb;
 }
 
 #custom_questions select#response_type {
@@ -791,23 +788,25 @@ div.qualifications .field {
 ol#questions {
   font-size: 1.2em;
   list-style-type: none;
-  margin: 0;
+  margin: 0 -5px;
   padding: 0;
 }
 
 ol#questions li {
   margin: .5em 0;
-  padding: .5em;
+  padding: .5em 1em;
 }
 
 ol#questions li.odd {
-  background-color: #e6f0e6;
+  background-color: #f1f3f0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
 }
 
 ol#questions label, ol#questions div.label {
   font-weight: normal;
   font-size: 1em;
-  margin-top: 0.25em;
+  margin-top: 0em;
 }
 
 div#why_section {
