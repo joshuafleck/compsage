@@ -48,7 +48,10 @@ class OrganizationsController < ApplicationController
        
     respond_to do |wants|
       wants.html # render template
-      wants.json { render :json => @organizations.to_json(:methods => 'name_and_location') }
+      wants.json do
+        render :json => @organizations.to_json(:only => [:name, :location, :id, :contact_name],
+                                               :methods => 'name_and_location')
+      end
     end
   end
 end
