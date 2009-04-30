@@ -382,7 +382,7 @@ namespace :data_generator do
       when 0 # create numerical response
         'Numeric response'
       when 1 # create textual response
-        'Free response'
+        'Text response'
       when 2 # create wage response
         'Pay or wage response'
       when 3 # create radio response
