@@ -8,6 +8,11 @@ class ReportsController < ApplicationController
     
     define_response_scope
     
+    respond_to do |wants|
+      wants.html
+      wants.pdf { render :layout => false }
+    end
+    
   end
   
   # for for flash charts

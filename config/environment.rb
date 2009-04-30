@@ -17,6 +17,7 @@ Rails::Initializer.run do |config|
   config.gem 'will_paginate', :version => '>=2.2.2'
   config.gem 'webrat', :version => '>=0.4.4'
   config.gem 'activemerchant', :version => '>=1.4.0', :lib => 'active_merchant'  
+  config.gem 'prawn', :version => '>=0.4.1'
   config.load_paths += ["app/workers", "app/builders"]
 end
 
