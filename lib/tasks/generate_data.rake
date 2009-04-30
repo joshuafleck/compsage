@@ -452,7 +452,7 @@ namespace :data_generator do
             :question => question, 
             :response => 20000 + rand(60000),
             :qualifications => [nil,Faker::Lorem.sentence][rand(2)])
-        when 'NumericResponse'
+        when 'NumericalResponse'
           response = Factory.build(
             :numerical_response, 
             :question => question, 
