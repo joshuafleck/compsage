@@ -16,7 +16,7 @@
   </div>
   <div class="submit_row">
     <%= button_to "Enter Billing Information", billing_survey_path(@survey), :class => "next" %>
-    <%= button_to "Make Changes", new_survey_path, :class => "previous" %>
+    <%= button_to "Make Changes", new_survey_path, :class => "previous", :method => :get %>
   </div>
 </div>
 <script>
