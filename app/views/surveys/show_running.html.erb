@@ -38,9 +38,9 @@
 	<div class="sponsor">Sponsored by <%=link_to_organization(@survey.sponsor)%></div></h2>
 
 	<div class="main_description"><%=link_and_format(@survey.description)%></div>
-	<h3>Discussion</h3>
+	<h3>Questions &amp; Clarifications</h3>
 	<% if @discussions.any? then %>
-		<p><a href="#" id="new_discussion_link">Start a new discussion topic</a></p>
+		<p><a href="#" id="new_discussion_link">Start a new topic</a></p>
 	<% else %>
 		There are currently no discussion topics.  <a href="#" id="new_discussion_link">Start one now</a>.
 	<% end %>

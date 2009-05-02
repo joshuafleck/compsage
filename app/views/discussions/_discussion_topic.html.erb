@@ -1,19 +1,17 @@
-<li>
-	<p class="subject">
+<li class="discussion_topic">
+	<div class="subject">
 	  <span id="discussion_subject_<%=discussion_topic.id%>"><%= discussion_topic.subject %></span>
-	</p>
-	<p class="body">
+	</div>
   	<% if discussion_topic.responder.eql?(@survey.sponsor) && !discussion_topic.body.blank? then %>
-	    <span class="sponsor">Sponsor: </span>
+	    <span class="sponsor">From the Survey Sponsor: </span>
 	  <% end %>
 	  <span id="discussion_body_<%=discussion_topic.id%>"><%= link_and_format(discussion_topic.body) %></span>
   	<% if !current_organization_or_survey_invitation.eql?(discussion_topic.responder) then %>
 			<%=link_to "Report Abuse", 
 			   report_survey_discussion_path(@survey, discussion_topic), 
 			   :class => "abuse",
-			   :confirm => "Are you sure you want to report this discussion?" %>  
+			   :confirm => "Would you like to report this post?" %>  
 	  <% end %>
-  </p>	
   <div class="date"><%= I18n.localize discussion_topic.created_at %></div>  
   <ul id="discussion_<%=discussion_topic.id%>_replies">
       <%= render :partial => "discussions/discussion", 
