@@ -8,7 +8,7 @@ inner_padding = 5
 
 # header
 pdf.header pdf.margin_box.top_left do
-  pdf.text "CompSage survey for: #{@survey.job_title}\n", :size => 16
+  pdf.text "CompSage survey for: #{@survey.job_title}", :size => 16
   pdf.stroke_horizontal_rule
 end
 
