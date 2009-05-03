@@ -145,6 +145,11 @@ class Survey < ActiveRecord::Base
   def price
     10000
   end
+  
+  # all data should be reported as of this date
+  def effective_date
+    (self.created_at - 90.days).to_date
+  end
 
   # determine if the survey had adequate invitations for providing results
   def enough_invitations?
