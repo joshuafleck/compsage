@@ -249,6 +249,23 @@ describe SurveyInvitation do
     @survey_invitation.should be_valid
   end  
  
+  it "should send a notification email when asked" do
+    Notifier.should_receive(:deliver_survey_invitation_notification)
+    @survey_invitation.aasm_state = :pending
+    @survey_invitation.send_invitation
+  end
+
+  it "should save as pending when the survey is pending" do
+    @survey_invitation.survey.stub!(:running?).and_return(false)
+    @survey_invitation.save
+    @survey_invitation.should be_pending
+  end
+  
+  it "should save as running when the survey is running" do
+    @survey_invitation.survey.stub!(:running?).and_return(true)
+    @survey_invitation.save
+    @survey_invitation.should be_sent
+  end
 end
 
 
@@ -400,4 +417,21 @@ describe ExternalSurveyInvitation do
   	@external_survey_invitation.key.should_not be_nil
   end
 
+  it "should send a notification email when asked" do
+    Notifier.should_receive(:deliver_external_survey_invitation_notification)
+    @external_survey_invitation.aasm_state = :pending
+    @external_survey_invitation.send_invitation
+  end
+
+  it "should save as pending when the survey is pending" do
+    @external_survey_invitation.survey.stub!(:running?).and_return(false)
+    @external_survey_invitation.save
+    @external_survey_invitation.should be_pending
+  end
+  
+  it "should save as running when the survey is running" do
+    @external_survey_invitation.survey.stub!(:running?).and_return(true)
+    @external_survey_invitation.save
+    @external_survey_invitation.should be_sent
+  end
 end 

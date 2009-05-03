@@ -117,6 +117,15 @@ describe Survey, "that is pending" do
     @survey.billing_info_received!
     @survey.should be_running
   end
+
+  it "should send all of its invitations when finalized" do
+    inv = @survey.invitations.build
+    external_inv = @survey.external_invitations.build
+    inv.should_receive(:send_invitation!).and_return(true)
+    external_inv.should_receive(:send_invitation!).and_return(true)
+
+    @survey.billing_info_received!
+  end
 end
 
 describe Survey, "that is stalled" do

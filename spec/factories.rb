@@ -52,7 +52,7 @@ Factory.define :survey do |s|
   s.end_date((Time.now + 5.days).to_s(:db))
   s.sponsor {|a| a.association(:organization)}
   s.aasm_state 'running'
-  s.questions {|a| [a.association(:question, :survey_id => a.id)]}
+  s.questions {|a| [a.association(:question, :survey_id => 1)]}
 end
 
 #definition and setup for discussion
