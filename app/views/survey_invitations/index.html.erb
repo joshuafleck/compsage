@@ -11,6 +11,6 @@
   <%= render :partial => "invitations/invitation_form", :locals => {:include_networks => true}%> 
 </div>
 <div class="submit_row">
-  <%= button_to "Enter Billing Information", billing_survey_path(@survey), :class => "next", :method => :get %>
+  <%= button_to "Enter Billing Information", billing_survey_path(@survey), :class => "next", :method => :get, :id => "invitation_form_submit" %>
   <%= button_to "Preview Survey", preview_survey_questions_path(@survey), :class => "previous" %>
 </div>

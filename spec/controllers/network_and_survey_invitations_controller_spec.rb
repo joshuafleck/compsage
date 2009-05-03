@@ -32,9 +32,7 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
     @invitations = [@invitation]
     @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :all_invitations => @invitations)
     @surveys_proxy = mock('surveys proxy')
-    @running_proxy = mock('running proxy')
-    @surveys_proxy.stub!(:running).and_return(@running_proxy)
-    @running_proxy.stub!(:find).and_return(@survey)
+    @surveys_proxy.stub!(:find).and_return(@survey)
     @network = mock_model(Network, :id => "1", :included= => "1")
     @networks = [@network]
     session[:survey_network_id] = "1"
@@ -121,9 +119,7 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations.xml"
       :job_title => "test", 
       :all_invitations =>  @invitations)
     @surveys_proxy = mock('surveys proxy')
-    @running_proxy = mock('running proxy')
-    @surveys_proxy.stub!(:running).and_return(@running_proxy)
-    @running_proxy.stub!(:find).and_return(@survey)
+    @surveys_proxy.stub!(:find).and_return(@survey)
     
     @networks = []
     

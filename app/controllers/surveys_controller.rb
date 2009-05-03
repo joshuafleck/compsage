@@ -223,7 +223,7 @@
   end
   
   def billing
-    @survey = current_organization.sponsored_surveys.find(params[:id])
+    @survey = current_organization.sponsored_surveys.pending.find(params[:id])
     
     # For now, pretend we've received billing information.
     if @survey.aasm_state == 'pending'

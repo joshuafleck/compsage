@@ -953,9 +953,9 @@ end
        get :billing, :id => @survey
      end
      
-     it "should render the survey invitations page" do
+     it "should render the survey show page" do
        do_billing
-       response.should redirect_to(survey_invitations_path(@survey))
+       response.should redirect_to(survey_path(@survey))
      end
      
      #this should happen once the billing gateway is set up

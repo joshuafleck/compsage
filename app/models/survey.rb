@@ -47,7 +47,7 @@ class Survey < ActiveRecord::Base
     
   aasm_initial_state :pending
   aasm_state :pending
-  aasm_state :running
+  aasm_state :running, :enter => :send_invitations
   aasm_state :stalled, :enter => :email_failed_message
   aasm_state :billing_error, :enter => :email_billing_error
   aasm_state :finished, :enter => :email_results_available
@@ -307,4 +307,9 @@ class Survey < ActiveRecord::Base
     self[:aasm_state_number] = AASM_STATE_NUMBER_MAP[self[:aasm_state]]
   end
 
+  private
+  # Once the survey is finalized, we need to send the invitations.
+  def send_invitations
+    (invitations + external_invitations).each {|s|  s.send_invitation! }
+  end
 end

@@ -14,13 +14,7 @@ class Invitation < ActiveRecord::Base
   end
   
   #This will locate invitees and send internal/external invitations
-  def self.create_internal_or_external_invitations(
-    external_invitees,
-    invitees,
-    networks,
-    inviter,
-    network_or_survey)
-    
+  def self.create_internal_or_external_invitations(external_invitees, invitees, networks, inviter, network_or_survey)
     invited_organizations = invitees
     sent_invitations = []
     invalid_invitations = []

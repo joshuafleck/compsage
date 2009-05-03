@@ -190,7 +190,7 @@ describe DiscussionsController, " handling PUT /discussions/1" do
      
   it "should return the updated text" do
     do_put
-    response.body.should eql('body')
+    response.body.should == '<p>body</p>'
   end
   
 end
