@@ -148,7 +148,7 @@ Feature: Manage surveys
     And I am on the survey report page
     Then I should see "Question 1 text"
     And I should see "1.40"
-    And I should see "Data hidden due to insufficient responses."
+    And I should see "Results not available due to insufficient responses."
   
   Scenario: View survey report without responding
     Given I am logged in

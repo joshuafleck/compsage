@@ -1,6 +1,7 @@
 <% title("Report for #{@survey.job_title}") %>
 <% highlight_tab("surveys") %>
 <%= link_to_function("Print this Report", "javascript:print()", :class => 'print_link') %>
+<%= link_to("Download PDF", survey_report_path(@survey)+".pdf", :class => 'print_link') %>
 <h2>Report on <%=@survey.job_title%></h2>
 <%if logged_in_from_survey_invitation? then%>
   <div class="top_join_link"><%= link_to "Sign Up for CompSage", new_account_path %></div>
@@ -28,7 +29,7 @@
   <% else %>
     <div class="report_item report_item_suppressed">
       <h3><%=question.text%></h3>
-      <p>Data hidden due to insufficient responses.</p>
+      <p>Results not available due to insufficient responses.</p>
     </div>
   <% end %>
 <% end %>
