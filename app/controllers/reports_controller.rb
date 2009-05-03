@@ -84,10 +84,12 @@ class ReportsController < ApplicationController
       @responses_method = 'invitee_responses'
       @grouped_responses_method = 'grouped_invitee_responses'
       @adequate_responses_method = 'adequate_invitee_responses?'
+      @qualifications_method = 'invitee_qualifications'
     else
       @responses_method = 'responses'
       @grouped_responses_method = 'grouped_responses'
       @adequate_responses_method = 'adequate_responses?'
+      @qualifications_method = 'qualifications'
     end 
     
   end

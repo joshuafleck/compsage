@@ -1,5 +1,0 @@
-<div class="report_item">
-  <h3><%=question.text%></h3>
-  <%=chart('bar', url_for(chart_survey_report_path(:question_id => question.id)))%>
-  <%= render :partial => "qualifications", :object => question.qualifications, :locals => {:question => question} %>
-</div>

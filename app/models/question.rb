@@ -51,7 +51,7 @@ class Question < ActiveRecord::Base
   
   # grouped responses belonging to invitees of the survey
   def grouped_invitee_responses
-    @grouped_responses ||= invitee_responses.group_by(&:numerical_response)
+    @grouped_invitee_responses ||= invitee_responses.group_by(&:numerical_response)
   end
   
   # returns the minimum number of responses required for the question type
@@ -73,6 +73,11 @@ class Question < ActiveRecord::Base
   def qualifications
     @qualifications ||= self.responses.collect(&:qualifications).compact
   end
+  
+  # The qualifications for this question - provided by invitees only
+  def invitee_qualifications
+    @invitee_qualifications ||= self.invitee_responses.collect(&:qualifications).compact
+  end  
 
   # The class of the type of response this question gathers
   def response_class
