@@ -10,29 +10,26 @@ Feature: Manage surveys
     And I check "Question 1"
     And I fill in "Question Text" with "Custom question 1"
     #And I press "Add Question"
-    And I press "Create Survey"
-    Then I should see "Survey Preview"
-    When I follow "Continue"
+    And I press "Preview Survey"
+    Then I should see "Responding to"
+    When I press "Create Invitation List"
     Then I should see "Invitations to Hard Worker"
-    When I follow "Respond Now"
-    Then I should see "Responding to Hard Worker"
-    And I should see "Question 1 text"
-    #And I should see "Custom question 1"
+    When I press "Enter billing information"
+    Then I should see "Hard Worker"
     
   Scenario: Create new survey with failure
     Given I am logged in
     And there is a predefined question
     And I am on the new survey page
-    And I press "Create Survey"
+    And I press "Preview Survey"
     Then I should see "Job title can't be blank"
     And I should see "You must choose at least one question to ask"
     When I fill in "Job title" with "Hard Worker"
     And I check "Question 1"
-    And I press "Create Survey"
-    When I follow "Continue"
-    When I follow "Respond Now"
-    Then I should see "Responding to Hard Worker"
-    And I should see "Question 1 text"  
+    And I press "Preview Survey"
+    When I press "Create Invitation List"
+    When I press "Enter billing information"
+    Then I should see "Hard Worker"
     
   Scenario: Edit a survey
     Given I am logged in
