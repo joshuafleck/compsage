@@ -1,9 +1,14 @@
 <li class="discussion_reply">
-  	<% if discussion.responder.eql?(@survey.sponsor) then %>
-	    <span class="sponsor">Reply from the Survey Sponsor: </span>
-	  <% end %>
-	  <span id="discussion_body_<%=discussion.id%>"><%= link_and_format(discussion.body) %></span>
-		<%= link_to_if !current_organization_or_survey_invitation.eql?(discussion.responder),
-          "Report Abuse", report_survey_discussion_path(@survey,discussion), :confirm => 'Would you like to report this post?', :class => "abuse" do end %>  
-  <div class="date"><%= I18n.localize discussion.created_at %></div>
+  <% if discussion.responder.eql?(@survey.sponsor) then %>
+    <span class="sponsor">Reply from the Survey Sponsor: </span>
+  <% end %>
+  <span id="discussion_body_<%=discussion.id%>"><%= link_and_format(discussion.body) %></span>
+  <div class="date"><%= I18n.localize discussion.created_at %>
+    <% if !current_organization_or_survey_invitation.eql?(discussion.responder) then %>
+      <%= link_to "Report Abuse", 
+                   report_survey_discussion_path(@survey, discussion), 
+                   :class => "abuse",
+                   :confirm => "Would you like to report this post?" %>  
+    <% end %>
+  </div>
 </li>
