@@ -17,7 +17,7 @@ config.action_controller.perform_caching             = false
 #http://matt.blogs.it/entries/00002655.html
   config.action_mailer.default_url_options = {:host => "localhost", :port => 3000}
 ActionMailer::Base.perform_deliveries = true
-ActionMailer::Base.raise_delivery_errors = true
+ActionMailer::Base.raise_delivery_errors = false
 ActionMailer::Base.delivery_method = :smtp
 ActionMailer::Base.smtp_settings = {
   :domain => "mydomain.net",
