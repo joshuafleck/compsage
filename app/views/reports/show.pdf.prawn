@@ -1,3 +1,5 @@
+require 'prawn/format'
+
 # document properties
 pdf.font "Times-Roman"
 pdf.font_size 12
@@ -6,7 +8,7 @@ inner_padding = 5
 
 # header
 pdf.header pdf.margin_box.top_left do
-  pdf.text "Report on #{@survey.job_title}\n", :size => 16
+  pdf.text "CompSage survey for: #{@survey.job_title}\n", :size => 16
   pdf.stroke_horizontal_rule
 end
 
@@ -14,7 +16,7 @@ end
 pdf.footer [pdf.margin_box.left, pdf.margin_box.bottom + 25] do
   pdf.stroke_horizontal_rule
   pdf.pad_top(inner_padding) do
-    pdf.text "Survey conducted at CompSage.com on behalf of: #{@survey.sponsor.name_and_location(false)}", 
+    pdf.text "CompSage survey sponsored by: #{@survey.sponsor.name_and_location(false)}", 
       :size => 10, 
       :style => :italic
     pdf.text "Page: #{pdf.page_count}", :align => :right
@@ -31,17 +33,20 @@ pdf.bounding_box(
   pdf.text "Job Description", :style => :bold
   pdf.text "#{@survey.description}"
   
-  pdf.pad_top(outer_padding) do
-    pdf.text "Effective Date", :style => :bold
-  end 
-  pdf.text "#{@survey.effective_date.to_s(:long_ordinal)}" 
-  
-  pdf.pad_top(outer_padding) do
-    pdf.text "Completion Date", :style => :bold
-  end
-  pdf.text "#{@survey.end_date.to_date.to_s(:long_ordinal)}"
+    pdf.table(
+      [[
+        "<b>Effective Date</b>",
+        "#{@survey.effective_date.to_s(:long_ordinal)}",
+        "<b>Completion Date</b>",
+        "#{@survey.end_date.to_date.to_s(:long_ordinal)}"
+      ]],  
+      :border_width => 0, 
+      :horizontal_padding => 0, 
+      :width => pdf.margin_box.width, 
+      :align => { 0=> :left, 1 => :left, 2 => :left, 3 => :left},
+      :column_widths => {0 => 80, 1 => 100, 2 => 95, 3 => 100})
 
-  pdf.pad_top(outer_padding) do 
+  pdf.pad_top(inner_padding) do 
     pdf.text "Invitation List", :style => :bold
   end    
   @invitations.each do |invitation| 
@@ -53,7 +58,9 @@ pdf.bounding_box(
   end
   
   # end: survey metadata
-  pdf.horizontal_rule 
+  pdf.pad_top(inner_padding) do 
+    pdf.horizontal_rule 
+  end
 
   # questions
   @survey.questions.each do |question|
@@ -61,9 +68,9 @@ pdf.bounding_box(
       pdf.text "#{question.text}", :style => :bold
     end   
     if question.send(@adequate_responses_method) then
-        pdf.pad_top(inner_padding) do
-          render :partial=> "#{question.report_type}.pdf.prawn",  :locals=>{:p_pdf=>pdf, :question => question}
-        end 
+      pdf.pad_top(inner_padding) do
+        render :partial=> "#{question.report_type}.pdf.prawn",  :locals=>{:p_pdf=>pdf, :question => question}
+      end 
       if question.send(@qualifications_method).count > 0 then
         pdf.pad_top(inner_padding) do
           pdf.text "Comments", :style => :bold, :size => 10
