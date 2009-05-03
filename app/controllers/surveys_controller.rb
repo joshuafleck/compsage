@@ -99,7 +99,7 @@
                 
       respond_to do |wants|
         wants.html do
-          redirect_to preview_survey_questions_path(@survey)
+          redirect_to survey_invitations_path(@survey)
         end
       end
       

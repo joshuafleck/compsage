@@ -3,14 +3,14 @@
 <% highlight_tab("surveys") %>
 <div class="breadcrumbs">
   <%= image_tag 'step_1_inactive.gif' %>
-  <%= image_tag 'step_2_inactive.gif' %>
-  <%= image_tag 'step_3_active.gif' %>
+  <%= image_tag 'step_2_active.gif' %>
+  <%= image_tag 'step_3_inactive.gif' %>
   <%= image_tag 'step_4_inactive.gif' %>
 </div>
 <div class="step_container">
   <%= render :partial => "invitations/invitation_form", :locals => {:include_networks => true}%> 
 </div>
 <div class="submit_row">
-  <%= button_to "Enter Billing Information", billing_survey_path(@survey), :class => "next", :method => :get, :id => "invitation_form_submit" %>
-  <%= button_to "Preview Survey", preview_survey_questions_path(@survey), :class => "previous" %>
+  <%= button_to "Preview Survey", preview_survey_questions_path(@survey), :class => "next", :method => :get, :id => "invitation_form_submit" %>
+  <%= button_to "Edit Survey Design", new_survey_path, :class => "previous", :method => :get %>
 </div>

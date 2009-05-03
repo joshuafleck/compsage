@@ -499,9 +499,9 @@ describe SurveysController, " handling POST /surveys" do
     do_post
   end  
   
-  it "should redirect to the survey preview page upon success" do
+  it "should redirect to the survey invitations page upon success" do
     do_post
-    response.should redirect_to(preview_survey_questions_path(@survey))
+    response.should redirect_to(survey_invitations_path(@survey))
   end
   
   it "should assign the questions and predefined questions to the view" do

@@ -57,9 +57,9 @@ Feature: Manage Networks
     When I follow "Survey Network"
     And I fill in "Job title" with "Survey network 1"
     And I check "Question 1"
-    And I press "Preview Survey"
     And I press "Create Invitation List"
-    And I press "Enter billing Information"
+    And I press "Preview Survey"
+    And I press "Enter Billing Information"
     Then I should see "Organization 1"
     And I should see "Organization 2"
     
