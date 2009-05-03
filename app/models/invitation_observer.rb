@@ -2,15 +2,12 @@ class InvitationObserver < ActiveRecord::Observer
   
   def after_create(invitation)
     # send emails
-    if invitation.is_a?(ExternalNetworkInvitation)
+    case invitation.class
+    when ExternalNetworkInvitation
       Notifier.deliver_external_network_invitation_notification(invitation)
-    elsif invitation.is_a?(ExternalSurveyInvitation)
-      Notifier.deliver_external_survey_invitation_notification(invitation)
-    elsif  invitation.is_a?(NetworkInvitation)
+    when NetworkInvitation
       Notifier.deliver_network_invitation_notification(invitation)
-    elsif  invitation.is_a?(SurveyInvitation)
-      Notifier.deliver_survey_invitation_notification(invitation)
-    elsif invitation.is_a?(ExternalInvitation)
+    when ExternalInvitation
       Notifier.deliver_external_invitation_notification(invitation)
     end
     
