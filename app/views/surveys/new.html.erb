@@ -7,9 +7,19 @@
   <%= image_tag 'step_4_inactive.gif' %>
 </div>
 <div class="step_container">
-  <%=render(:partial => "survey_form", :locals => { 
-     :predefined_questions => @predefined_questions, 
-     :custom_questions => @custom_questions
+  <%=flash_messages%>
+  <% form_for @survey, :url => surveys_path, :html => {:method => :post} do |f| %>
+    <%=render(:partial => "survey_form", :locals => { 
+       :predefined_questions => @predefined_questions, 
+       :custom_questions => @custom_questions,
+       :f => f
     }) %>
+
+    <div class="submit_row">
+      <input id="form_submit" type="submit" value="Create Invitation List" class="next" />
+      <input type="button" onclick="window.location='<%= surveys_path %>'" value="Cancel" class="previous" />
+    </div>
+
+  <% end %>
 </div>
   

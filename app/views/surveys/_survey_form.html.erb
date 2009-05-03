@@ -1,71 +1,64 @@
-<%=flash_messages%>
-<% form_for @survey do |f| %>
-  <%= error_messages_for :survey %>
-  <%= f.label :job_title, required("Job title") %>
-  <%= f.text_field :job_title, :size => 40 %>
-  <%= f.label :description, "Job description" %>
-  <%= f.text_area :description, :rows => 4, :cols => 40 %>
-  <% if @survey.new_record? then %>
-  	<%=f.label :days_running, "Run length" %>
-  	<%=f.select :days_running, (3..14).to_a.collect {|i| ["#{i} days", i]}, :selected => 7 %>
-	<% end %>
-	<h3>Standard questions</h3>
-	<div id="standard_questions">
-		<ul>
-		  <% @survey.predefined_questions.each do |predefined_question| %>
-		    <% fields_for "predefined_questions[#{predefined_question.id}]", predefined_question do |predefined_question_form| %>
-		      <li>
-  		        <%=predefined_question_form.check_box :included%>
-  		        <%=predefined_question_form.label :included, predefined_question.name%>
-					</li>
-		    <% end %>
-		  <% end %>
-		</ul>
-	</div>
-	<h3>Custom questions</h4>
-	<div id="custom_questions">
-	  <ul id="custom_question_list">
-		  <% @survey.custom_questions.each_with_index do |question, index| %>
-		    <% fields_for "questions[#{index}]", question do |question_form| %>
-		      <li>
-	          <%=question_form.check_box :included %>
-					  <%=question_form.label :included, question[:text]%>
-					  <span class="description"><%=question[:custom_question_type]%></span>
-		        <%=question_form.hidden_field :custom_question_type %>
-		        <%=question_form.hidden_field :text %>
-		        <%=question_form.hidden_field :id %>
-					</li>
-		    <% end %>
-		  <% end %>
-	  </ul>
-		<div class="box_container" id="custom_question_form">
-			<div class="box">
-				<label for="question_text">Question Text</label>
-				<input type="text" size="30" id="question_text" />
-			</div>
-			<div class="box">
-				<label for="response_type">Response Type</label>
-				<select id="response_type">
-          <option>Agreement scale</option>
-          <option>Text response</option>
-          <option>Numeric response</option>
-          <option>Pay or wage response</option>
-          <option>Percent</option>
-          <option>Yes/No</option>
-				</select>
-			</div>
-			<div class="box">
-				<label>&nbsp;</label>
-				<input type="button" value="Add Question" id="question_submit">
-			</div>
-		</div>
-	</div>
-	<br clear="both" />
-  <div class="submit_row">
-    <input id="form_submit" type="submit" value="Create Invitation List" class="next" />
-    <input type="button" onclick="window.location='<%= surveys_path %>'" value="Cancel" class="previous" />
-  </div>
+<%= error_messages_for :survey %>
+<%= f.label :job_title, required("Job title") %>
+<%= f.text_field :job_title, :size => 40 %>
+<%= f.label :description, "Job description" %>
+<%= f.text_area :description, :rows => 4, :cols => 40 %>
+<% if @survey.new_record? then %>
+  <%=f.label :days_running, "Run length" %>
+  <%=f.select :days_running, (3..14).to_a.collect {|i| ["#{i} days", i]}, :selected => 7 %>
 <% end %>
+<h3>Standard questions</h3>
+<div id="standard_questions">
+  <ul>
+    <% @survey.predefined_questions.each do |predefined_question| %>
+      <% fields_for "predefined_questions[#{predefined_question.id}]", predefined_question do |predefined_question_form| %>
+        <li>
+            <%=predefined_question_form.check_box :included%>
+            <%=predefined_question_form.label :included, predefined_question.name%>
+        </li>
+      <% end %>
+    <% end %>
+  </ul>
+</div>
+<h3>Custom questions</h4>
+<div id="custom_questions">
+  <ul id="custom_question_list">
+    <% @survey.custom_questions.each_with_index do |question, index| %>
+      <% fields_for "questions[#{index}]", question do |question_form| %>
+        <li>
+          <%=question_form.check_box :included %>
+          <%=question_form.label :included, question[:text]%>
+          <span class="description"><%=question[:custom_question_type]%></span>
+          <%=question_form.hidden_field :custom_question_type %>
+          <%=question_form.hidden_field :text %>
+          <%=question_form.hidden_field :id %>
+        </li>
+      <% end %>
+    <% end %>
+  </ul>
+  <div class="box_container" id="custom_question_form">
+    <div class="box">
+      <label for="question_text">Question Text</label>
+      <input type="text" size="30" id="question_text" />
+    </div>
+    <div class="box">
+      <label for="response_type">Response Type</label>
+      <select id="response_type">
+        <option>Agreement scale</option>
+        <option>Text response</option>
+        <option>Numeric response</option>
+        <option>Pay or wage response</option>
+        <option>Percent</option>
+        <option>Yes/No</option>
+      </select>
+    </div>
+    <div class="box">
+      <label>&nbsp;</label>
+      <input type="button" value="Add Question" id="question_submit">
+    </div>
+  </div>
+</div>
+<br clear="both" />
 <script type="text/javascript">
 
 function observeCustomQuestion() {
