@@ -57,9 +57,7 @@
   end
 
   def edit
-
     @survey = current_organization.sponsored_surveys.running_or_pending.find(params[:id])
-    
   end
   
   def update
@@ -86,9 +84,8 @@
   
   def new
     @survey = current_organization.sponsored_surveys.find_or_initialize_by_aasm_state('pending') 
-    
-    # if we came from a 'survey network' link, save the network in the session
-    #  to be accessed later when sending invitations
+    # if we came from a 'survey network' link, save the network in the session to be accessed later when sending
+    # invitations
     session[:survey_network_id] = params[:network_id] unless params[:network_id].blank?
   end
   
@@ -233,14 +230,14 @@
       @survey.billing_info_received!
       respond_to do |wants|
         wants.html do
-          redirect_to survey_invitations_path(@survey, :processing => '1')
+          redirect_to survey_path(@survey)
         end
       end
     
     elsif 
       respond_to do |wants|
         wants.html do
-          redirect_to survey_invitations_path(@survey, :processing => '1')
+          redirect_to survey_path(@survey)
         end
       end
     end

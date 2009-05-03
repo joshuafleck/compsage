@@ -3,7 +3,7 @@ class SurveyInvitationsController < ApplicationController
   layout 'logged_in'
   
   def index
-    @survey = current_organization.sponsored_surveys.running.find(params[:survey_id])
+    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
     @invitations = @survey.all_invitations
     @invalid_invitations = []
     @networks = current_organization.networks   
@@ -23,7 +23,7 @@ class SurveyInvitationsController < ApplicationController
   end
   
   def create
-    @survey = current_organization.sponsored_surveys.running.find(params[:survey_id])    
+    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
     
     invitees = []  
     external_invitees = []

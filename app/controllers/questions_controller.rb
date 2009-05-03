@@ -15,6 +15,7 @@ class QuestionsController < ApplicationController
   
   def preview
     @survey = Survey.find(params[:survey_id])
+    # Must create a participation object for the participation form to use.
     @participation = Participation.new
   end
     
