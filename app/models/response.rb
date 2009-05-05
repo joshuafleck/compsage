@@ -79,6 +79,14 @@ class Response < ActiveRecord::Base
   def response
     self.textual_response
   end
+  
+  def qualifications=(value)
+    if value.blank? then
+      self[:qualifications] = nil
+    else
+      self[:qualifications] = value
+    end
+  end
  
   # default no formatting
   def formatted_response
