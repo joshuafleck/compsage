@@ -4,10 +4,15 @@
 <%= link_to("Download PDF", survey_report_path(@survey)+".pdf", :class => 'print_link') %>
 <h2>Report on <%=@survey.job_title%></h2>
 <%if logged_in_from_survey_invitation? then%>
-  <div class="top_join_link"><%= link_to "Sign Up for CompSage", new_account_path %></div>
+  <div class="top_join_link"><%= link_to "Sign up for CompSage", new_account_path, :class => "print_link" %></div>
 <% end %>
 <h4>Job Description</h4>
 <div class="description_box"><%=link_and_format(@survey.description)%></div>
+<div class="report_date">
+	Completed on: <%= I18n.localize @survey.end_date.to_date %>
+	<br />
+	Effective Date: <%= I18n.localize @survey.effective_date %>
+</div>
 <%= link_to "Invitation List", '#', :id => "invitation_list_link" %>
 <div id="invitation_section" class="hidden">
   <ul id="invitations">
@@ -22,7 +27,9 @@
       <% end %>
     </ul>
 </div>
-
+<div id="formatting_section">
+	<%= link_to "Show me wages in annual format", '#', :id => "invitation_list_link" %>
+</div>
 <%@survey.questions.each do |question| %>
   <% if question.adequate_responses? then %>
     <%=render :partial => question.report_type, :locals => {:question => question, :survey => @survey}%>
@@ -33,13 +40,23 @@
     </div>
   <% end %>
 <% end %>
+<div id="suspect_results">
+	<p>If you suspect an error, or see results that do not match what you expect,  by <%= link_to "please report the anomoly to us.", '#', :id => "suspect_result_form_link" %></p>
+	<div id ="suspect_report_form" class="hidden">
+		<div id="success_notification" class="hidden">Successfully Reported!</div>
+		<label for="comment">Comment:</label>
+		<textarea id="comment"></textarea> <input id="suspect_result_submit" type="button" value="Report" %>
+		<%= link_to_function "Cancel", "$('suspect_report_form').toggleClassName('hidden'); return false;" %>
+	</div>
+</div>
 <% if logged_in_from_survey_invitation? then %>
   <p>If you want to start creating your own surveys, and participating in other surveys of interest,
     <%= link_to "sign up now!", new_account_path %></p>
 <% end %>
 
-<% content_for :initialize_js, "observeInvitationList()" %>
+<% content_for :initialize_js, "observeInvitationList();" %>
 <script type="text/javascript">
+
   function observeInvitationList() {
     $('invitation_list_link').observe('click', function(e) {
       e.preventDefault();
@@ -47,6 +64,14 @@
       $('invitation_section').highlight();
       return false;
     });
+
+	$('suspect_result_form_link').observe('click', function(e) {
+      e.preventDefault();
+      $('suspect_report_form').toggleClassName('hidden');
+      return false;
+    });
+
+    $('suspect_result_submit').observe('click', submitSuspectResults);
 
     $$('.show_comments').each(function(elem) {
       elem.observe('click', function(e) {
@@ -58,4 +83,31 @@
       })
     })
   }
+
+
+  function submitSuspectResults() {
+	new Ajax.Request('<%=suspect_survey_report_path%>', {
+		'method': 'post',
+		'parameters': 'comment=' + $('comment').value,
+		'requestHeaders': {'Accept':'application/json'},
+		'onSuccess': function(transport) {
+			flashSuccess();
+		}
+	});
+	return false;	
+  }
+
+  function flashSuccess(){
+	$('success_notification').toggleClassName('hidden');
+	$('success_notification').highlight();
+	
+	setTimeout( "hideForm();", 2000);
+	return false;
+  }
+
+  function hideForm(){
+	$('success_notification').toggleClassName('hidden');
+	$('suspect_report_form').toggleClassName('hidden');
+	return false;
+}
 </script>

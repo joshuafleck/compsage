@@ -18,3 +18,7 @@ a#invitation_list_link {
 a.print_link {
   display: none;
 }
+
+#suspect_results, #formatting_section, #top_join_link {
+	display :none;
+}

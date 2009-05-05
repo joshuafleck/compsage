@@ -119,4 +119,12 @@ class Notifier < ActionMailer::Base
     subject    "Your compsage.com account has been created"
     body       :organization => organization
   end
+  
+  def report_suspect_results_notification(survey, comment)
+    recipients "CompSage <support@compsage.com>"
+    from       "CompSage <support@compsage.com>"
+    reply_to   "support@compsage.com"
+    subject    "Suspect Results reported for survey #{survey.id.to_s}"
+    body       :survey => survey, :comment => comment
+  end
 end

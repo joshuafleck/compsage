@@ -854,6 +854,11 @@ div.top_join_link {
   padding-right: 10px;
 }
 
+.report_date {
+	float: right;
+    font-size: .9em;
+}
+
 /* Survey stalled */
 span.adequate_responses {
   color: green;

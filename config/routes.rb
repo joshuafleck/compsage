@@ -10,7 +10,7 @@ ActionController::Routing::Routes.draw do |map|
     survey.resources :questions, :collection => {:preview => :any}
     survey.resources :discussions, :member => {:report => :any}
     survey.resources :invitations, :controller => :survey_invitations, :member => {:decline => :put}
-    survey.resource :report, :member => {:chart => :get}
+    survey.resource :report, :member => {:chart => :get, :suspect => :any}
   end
   
   map.resources :networks, :member => {:join => :any, :leave => :any, :evict => :put} do |network|
