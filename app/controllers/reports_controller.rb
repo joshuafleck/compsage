@@ -5,8 +5,8 @@ class ReportsController < ApplicationController
   def show
     @survey = Survey.finished.find(params[:survey_id])
     @invitations = @survey.all_invitations(true)
-    
-    define_response_scope
+    @participations = @survey.participations
+    @total_participation_count = @participations.size
     
     respond_to do |wants|
       wants.html
@@ -19,9 +19,9 @@ class ReportsController < ApplicationController
   def chart
     @question = Question.find(params[:question_id])
     @survey = @question.survey
+    @participations = @survey.participations
+    @total_participation_count = @participations.size
     
-    define_response_scope
-  
     respond_to do |wants|
       wants.xml { render(:layout => false) }
     end
@@ -51,47 +51,5 @@ class ReportsController < ApplicationController
       return false
     end
   end
-  
-  private
-  
-  #This will look at the current user/invitation to determine whether or not
-  # the scope of responses should be limited to responses of invitees
-  def define_response_scope
-    @participations = @survey.participations
-
-    #Find the current organizations participation for the survey
-    current_organization_or_invitation_participation =
-      current_organization_or_survey_invitation.participations.find_by_survey_id(@survey.id)
-    
-    #Find the number of participations from invited users
-    invitee_participations = @participations.belongs_to_invitee
-            
-    #If the current organization was invited to the survey and 
-    # there were more than X participations from invited users,     
-    # then we will filter out any responses from uninvited participants
-    show_only_invitee_responses = invitee_participations.size >= Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS &&   
-      invitee_participations.include?(current_organization_or_invitation_participation)
-    
-    #Determine the number of participations based on the scope  
-    if show_only_invitee_responses then
-      @total_participation_count = invitee_participations.size
-    else
-      @total_participation_count = @participations.size
-    end    
-    
-    #Here we determine which methods in the question model will be called to retrieve responses
-    if show_only_invitee_responses then
-      @responses_method = 'invitee_responses'
-      @grouped_responses_method = 'grouped_invitee_responses'
-      @adequate_responses_method = 'adequate_invitee_responses?'
-      @qualifications_method = 'invitee_qualifications'
-    else
-      @responses_method = 'responses'
-      @grouped_responses_method = 'grouped_responses'
-      @adequate_responses_method = 'adequate_responses?'
-      @qualifications_method = 'qualifications'
-    end 
-    
-  end
-   
+     
 end

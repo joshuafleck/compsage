@@ -24,7 +24,7 @@
 </div>
 
 <%@survey.questions.each do |question| %>
-  <% if question.send(@adequate_responses_method) then %>
+  <% if question.adequate_responses? then %>
     <%=render :partial => question.report_type, :locals => {:question => question, :survey => @survey}%>
   <% else %>
     <div class="report_item report_item_suppressed">

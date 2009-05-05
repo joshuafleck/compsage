@@ -1,8 +1,8 @@
-percentiles = question.send(@responses_method).percentiles(:numerical_response, 25, 50, 75)
+percentiles = question.responses.percentiles(:numerical_response, 25, 50, 75)
 
 p_pdf.table(
   [
-    ["Average","#{number_with_precision(question.send(@responses_method).average(:numerical_response))}"],
+    ["Average","#{number_with_precision(question.responses.average(:numerical_response))}"],
     ["25th Percentile","#{number_with_precision(percentiles[0])}"],
     ["Median","#{number_with_precision(percentiles[1])}"],
     ["75th Percentile","#{number_with_precision(percentiles[2])}"]

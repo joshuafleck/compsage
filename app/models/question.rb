@@ -43,17 +43,7 @@ class Question < ActiveRecord::Base
   def grouped_responses  
     @grouped_responses ||= responses.group_by(&:numerical_response)     
   end
-  
-  # responses belonging to invitees of the survey
-  def invitee_responses
-    self.responses.from_invitee
-  end
-  
-  # grouped responses belonging to invitees of the survey
-  def grouped_invitee_responses
-    @grouped_invitee_responses ||= invitee_responses.group_by(&:numerical_response)
-  end
-  
+
   # returns the minimum number of responses required for the question type
   def minimum_responses
     self.response_class.minimum_responses_for_report
@@ -63,21 +53,11 @@ class Question < ActiveRecord::Base
   def adequate_responses?
     self.responses.count >= self.response_class.minimum_responses_for_report
   end
-  
-  # returns true if the question received enough responses from invitees to be displayed in the report
-  def adequate_invitee_responses?
-    self.invitee_responses.count >= self.response_class.minimum_responses_for_report
-  end
-  
+
   # The qualifications for this question
   def qualifications
     @qualifications ||= self.responses.collect(&:qualifications).compact
   end
-  
-  # The qualifications for this question - provided by invitees only
-  def invitee_qualifications
-    @invitee_qualifications ||= self.invitee_responses.collect(&:qualifications).compact
-  end  
 
   # The class of the type of response this question gathers
   def response_class

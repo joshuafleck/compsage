@@ -5,5 +5,5 @@
   <% else %>
     <%=chart('bar', url_for(chart_survey_report_path(:question_id => question.id)))%>
   <% end %>
-  <%= render :partial => "qualifications", :object => question.send(@qualifications_method), :locals => {:question => question} %>
+  <%= render :partial => "qualifications", :object => question.qualifications, :locals => {:question => question} %>
 </div>

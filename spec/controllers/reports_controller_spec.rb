@@ -60,103 +60,21 @@ describe ReportsController, "handling GET /survey/1/report with current organiza
     @participations.should_receive(:find_by_survey_id).and_return(@participation)
     do_get
   end  
-    
-  it "should find the participations from invited organizations" do
-    @participations.should_receive(:belongs_to_invitee).and_return(@participations)
-    do_get
-  end  
-
-  it "should determine if the current organization responded as an invitee" do
-    @participations.should_receive(:include?).with(@participation).and_return(false)
-    do_get
-  end
-  
+      
   it "should assign the total participation count" do
     do_get
     assigns[:total_participation_count].should eql(@participations.size)
   end
   
-  it "should assign the response methods for returning all responses" do
+  it "should assign the invitations, survey, and participations to the view" do
     do_get
-    assigns[:responses_method].should eql('responses')
-    assigns[:grouped_responses_method].should eql('grouped_responses')
-    assigns[:adequate_responses_method].should eql('adequate_responses?')
-  end  
-  
+    assigns[:invitations].should eql(@survey.all_invitations)
+    assigns[:survey].should eql(@survey)
+    assigns[:participations].should eql(@participations)
+  end   
+    
 end
 
-describe ReportsController, "handling GET /survey/1/report with current organization invited" do
-  before do
-
-    @current_organization_or_survey_invitation = mock_model(Organization, :id => 1)
-    login_as(@current_organization_or_survey_invitation)
-    
-    @survey = mock_model(Survey, :all_invitations => [], :required_number_of_participations => 5, 
-      :sponsor => mock_model(Organization))
-    @participation = mock_model(Participation)
-    @participations = mock('participations proxy', :size => 5, :find_by_survey_id => @participation)
-    
-    Survey.stub!(:find).and_return(@survey)
-    @survey.stub!(:participations).and_return(@participations)
-    @current_organization_or_survey_invitation.stub!(:participations).and_return(@participations)
-    @participations.stub!(:belongs_to_invitee).and_return(@participations)
-    @participations.stub!(:include?).and_return(true)
-  end
-  
-  def do_get
-    get :show, :survey_id => 1
-  end
-  
-  it "should be successful" do
-    do_get
-    
-    response.should be_success
-  end
-  
-  it "should assign the response methods for returning responses from invitees" do
-    do_get
-    assigns[:responses_method].should eql('invitee_responses')
-    assigns[:grouped_responses_method].should eql('grouped_invitee_responses')
-    assigns[:adequate_responses_method].should eql('adequate_invitee_responses?')
-  end  
-  
-end
-
-describe ReportsController, "handling GET /survey/1/report with inadequate participation for filtering uninvited responses" do
-  before do
-
-    @current_organization_or_survey_invitation = mock_model(Organization, :id => 1)
-    login_as(@current_organization_or_survey_invitation)
-    
-    @survey = mock_model(Survey, :all_invitations => [], :required_number_of_participations => 5, 
-      :sponsor => mock_model(Organization))
-    @participation = mock_model(Participation)
-    @participations = mock('participations proxy', :size => 1, :find_by_survey_id => @participation)
-    
-    Survey.stub!(:find).and_return(@survey)
-    @survey.stub!(:participations).and_return(@participations)
-    @current_organization_or_survey_invitation.stub!(:participations).and_return(@participations)
-    @participations.stub!(:belongs_to_invitee).and_return(@participations)
-    @participations.stub!(:include?).and_return(true)
-  end
-  
-  def do_get
-    get :show, :survey_id => 1
-  end
-  
-  it "should be successful" do
-    do_get
-    
-    response.should be_success
-  end
-  
-  it "should assign the response methods for returning all responses" do
-    do_get
-    assigns[:responses_method].should eql('responses')
-    assigns[:grouped_responses_method].should eql('grouped_responses')
-  end  
-  
-end
 
 describe ReportsController, "with access limits" do
   before do
@@ -223,6 +141,17 @@ describe ReportsController, "handling GET /survey/1/chart.xml" do
     
     do_get
   end
+  
+  it "should assign the total participation count" do
+    do_get
+    assigns[:total_participation_count].should eql(@participations.size)
+  end
+  
+  it "should assign the survey and participations to the view" do
+    do_get
+    assigns[:survey].should eql(@survey)
+    assigns[:participations].should eql(@participations)
+  end   
 end
 
 describe ReportsController, "handling GET /responses/1.xml" do

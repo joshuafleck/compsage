@@ -1,9 +1,9 @@
 dataset = []
-total_response_count = (question.send(@responses_method).count).to_f
+total_response_count = (question.responses.count).to_f
 question_response_count = 0.0
 question.options.each_with_index do |option, index|
 
-  question_response_count = question.send(@grouped_responses_method)[index.to_f].nil? ? 0 : question.send(@grouped_responses_method)[index.to_f].size
+  question_response_count = question.grouped_responses[index.to_f].nil? ? 0 : question.grouped_responses[index.to_f].size
   
   dataset[index] = 
     [

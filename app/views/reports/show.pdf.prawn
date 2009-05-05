@@ -67,14 +67,14 @@ pdf.bounding_box(
     pdf.pad_top(outer_padding) do   
       pdf.text "#{question.text}", :style => :bold
     end   
-    if question.send(@adequate_responses_method) then
+    if question.adequate_responses? then
       pdf.pad_top(inner_padding) do
         render :partial=> "#{question.report_type}.pdf.prawn",  :locals=>{:p_pdf=>pdf, :question => question}
       end 
-      if question.send(@qualifications_method).count > 0 then
+      if question.qualifications.any? then
         pdf.pad_top(inner_padding) do
           pdf.text "Comments", :style => :bold, :size => 10
-          question.send(@qualifications_method).each do |qualification|          
+          question.qualifications.each do |qualification|          
             pdf.text "#{qualification}", :size => 10
           end
         end
