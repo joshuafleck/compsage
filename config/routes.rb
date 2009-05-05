@@ -27,6 +27,12 @@ ActionController::Routing::Routes.draw do |map|
   
   map.login 'login', :controller => 'sessions', :action => 'new'
   map.survey_login 'survey_login', :controller => 'sessions', :action => 'create_survey_session'
-  
+
+  map.namespace 'admin' do |admin|
+    admin.resource :dashboard
+    admin.resources :surveys
+    admin.resources :pending_accounts
+  end
+
   map.path '', :controller => 'surveys', :action => 'index'
 end
