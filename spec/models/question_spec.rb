@@ -33,6 +33,10 @@ describe Question do
     Question.reflect_on_association(:responses).should_not be_nil
   end
   
+  it "should have many follow_up questions" do
+    Question.reflect_on_association(:follow_up_questions).should_not be_nil
+  end
+  
   it "should require question text" do
     @question.attributes = valid_question_attributes.except(:text)
     @question.should have(1).error_on(:text)

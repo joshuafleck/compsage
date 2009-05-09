@@ -1,5 +1,7 @@
 class Question < ActiveRecord::Base
   belongs_to :survey
+  has_many :follow_up_questions, :class_name => 'Question', :foreign_key => 'follow_up_question_id'
+  belongs_to :parent_question, :class_name => 'Question', :foreign_key => 'follow_up_question_id'
   has_many :responses, :dependent => :delete_all, :extend => StatisticsExtension
   has_many :participations, :through => :responses
   acts_as_list :scope => :survey_id
