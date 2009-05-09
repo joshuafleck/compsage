@@ -42,11 +42,6 @@ describe Survey do
     Survey.reflect_on_association(:subscribed_organizations).should_not be_nil
   end
   
-  it "should be invalid without an end date to be specified" do
-    @survey[:end_date] = nil
-    @survey.should have(1).error_on(:end_date)
-  end
-  
   it "should be invalid with a job title longer then 128 characters" do
     @survey[:job_title] = 'a'*129
     @survey.should have(1).error_on(:job_title)
@@ -81,12 +76,12 @@ describe Survey do
   end
 
   it "should have a rerun deadline of 21 days after it is created" do
-    @survey.created_at = Time.now
-    @survey.rerun_deadline.should == @survey.created_at + 21.days
+    @survey.start_date = Time.now
+    @survey.rerun_deadline.should == @survey.start_date + 21.days
   end
 
   it "should determine the number of days until the rerun deadline" do
-    @survey.created_at = Time.now
+    @survey.start_date = Time.now
     @survey.days_until_rerun_deadline.should == 21
   end
   
@@ -129,9 +124,11 @@ describe Survey, "that is pending" do
 end
 
 describe Survey, "that is stalled" do
-  before do
-    @survey = valid_survey(valid_survey_attributes.with(:end_date => Time.now - 1.day))
+  before(:each) do
+    @survey = valid_survey(valid_survey_attributes)
     @survey.billing_info_received!
+    @survey.start_date = Time.now - 7.days
+    @survey.end_date = Time.now - 1.second
     @survey.finish!
   end
   
@@ -139,19 +136,14 @@ describe Survey, "that is stalled" do
     @survey.should be_stalled
   end
   
-  it "should not rerun if the end date is in the past" do
-    @survey.rerun!
-    @survey.should be_stalled
-  end
-  
-  it "should rerun if end date is in the future" do
+  it "should rerun" do
     @survey.days_running = 3
     @survey.rerun!
     @survey.should be_running
   end
   
   it "should not rerun if the survey if the end date would be beyond 21 days from creation" do
-    @survey.created_at = @survey.end_date - 18.days
+    @survey.start_date = @survey.end_date - 18.6.days
     @survey.days_running = 3
     @survey.rerun!
     @survey.should be_stalled
@@ -170,16 +162,16 @@ end
 
 describe Survey, "maximum days to rerun" do
   before do
-    @survey = valid_survey(valid_survey_attributes.with(:end_date => Time.now + 1.day, :created_at => Time.now))
+    @survey = valid_survey(valid_survey_attributes.with(:end_date => Time.now + 1.day, :start_date => Time.now))
   end
   
   it "should not exceed 7 days even when more days are available" do
-    @survey.created_at = Time.now
+    @survey.start_date = Time.now
     @survey.maximum_days_to_rerun.should == 7 
   end
 
   it "should be the number of days before the run limit if the run limit is imminent" do
-    @survey.created_at = Time.now - 20.days
+    @survey.start_date = Time.now - 20.days
     @survey.maximum_days_to_rerun.should == 1
   end
 end

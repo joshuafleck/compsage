@@ -30,7 +30,7 @@ class Survey < ActiveRecord::Base
     
   validates_presence_of :job_title
   validates_length_of :job_title, :maximum => 128
-  validates_presence_of :end_date, :on => :create
+  validates_presence_of :days_running, :on => :create
   validates_presence_of :sponsor
   validate :questions_exist
 
@@ -41,13 +41,17 @@ class Survey < ActiveRecord::Base
   named_scope :running_or_pending, :conditions => ['aasm_state = ? OR aasm_state = ?', 'running', 'pending']
   named_scope :deletable, :conditions => ['aasm_state = ? OR aasm_state = ?', 'stalled', 'pending']
   
+  accepts_nested_attributes_for :questions, :allow_destroy => true
+  
   after_create :add_sponsor_subscription
   before_destroy :cancel_survey
   before_save :set_aasm_state_number
+  
+  ########### AASM Configuration: START ############
     
   aasm_initial_state :pending
   aasm_state :pending
-  aasm_state :running, :enter => :send_invitations
+  aasm_state :running
   aasm_state :stalled, :enter => :email_failed_message
   aasm_state :billing_error, :enter => :email_billing_error
   aasm_state :finished, :enter => :email_results_available
@@ -62,7 +66,7 @@ class Survey < ActiveRecord::Base
   }
   
   aasm_event :billing_info_received do
-    transitions :to => :running, :from => :pending
+    transitions :to => :running, :from => :pending, :on_transition => :send_invitations_and_calculate_end_date_and_set_start_date
   end
 
   aasm_event :finish do
@@ -73,7 +77,7 @@ class Survey < ActiveRecord::Base
   end
   
   aasm_event :rerun do
-    transitions :to => :running, :from => :stalled, :guard => :open_and_can_be_rerun?, :on_transition => :email_rerun_message
+    transitions :to => :running, :from => :stalled, :guard => :can_be_rerun?, :on_transition => :email_rerun_message_and_calculate_end_date
   end
 
   aasm_event :billing_error_resolved do
@@ -84,7 +88,9 @@ class Survey < ActiveRecord::Base
     transitions :to => :finished, :from => :stalled, :guard => :closed_and_enough_responses_and_billing_successful? 
     transitions :to => :billing_error, :from => :stalled, :guard => :closed_and_enough_responses?
   end
-   
+
+  ############### AASM Configuration: END ###################
+       
   # the minumum number of days a survey can be rerun
   MINIMUM_DAYS_TO_RERUN = 3
   # the maximum number of days a survey can be running for
@@ -92,21 +98,47 @@ class Survey < ActiveRecord::Base
   # the number of participations required to provide results for each question
   REQUIRED_NUMBER_OF_PARTICIPATIONS = 5
 
-  def days_running
-    @days_running
-  end
-  
-  def days_running=(days)
-    @days_running = days
-    self[:end_date] = Time.now + days.to_i.days
-  end
-  
   def closed?
     Time.now > end_date
   end
   
   def open?
     !closed?
+  end
+  
+  # Retrieve the number of days to run the survey, 7 is the default
+  def days_running
+    self[:days_running] || 7
+  end
+
+  # a survey can be rerun if there are enough days left to accomidate the minimum run length 
+  # (and the survey is currently stalled)
+  def can_be_rerun?
+    days_until_rerun_deadline >= MINIMUM_DAYS_TO_RERUN && stalled?
+  end
+  
+  # this will determine the maximum number of days the survey can be rerun for
+  # 7 days if default, but it may be less if nearing the rerun deadline
+  def maximum_days_to_rerun
+    [days_until_rerun_deadline, 7].min
+  end
+  
+  def rerun_deadline
+    self.start_date + MAXIMUM_DAYS_TO_RUN.days
+  end
+
+  def days_until_rerun_deadline
+    rerun_deadline.to_date - Date.today
+  end
+
+  # The date that the survey began running, it may not be set, so use the current time as a substitute
+  def start_date
+    self[:start_date] || Time.now
+  end
+  
+  # all data should be reported as of this date
+  def effective_date
+    (self.start_date - 90.days).to_date
   end
   
   # returns a sorted list of all (survey and external_survey) invitations
@@ -117,40 +149,6 @@ class Survey < ActiveRecord::Base
     invitations.sort    
   end
   
-  # a survey can be rerun if there are enough days left to accomidate the minimum run
-  # length
-  def can_be_rerun?
-    days_until_rerun_deadline >= MINIMUM_DAYS_TO_RERUN && stalled? 
-  end
-  
-  # this will determine the maximum number of days the survey can be rerun for
-  # 7 days if default, but it may be less if nearing the rerun deadline
-  def maximum_days_to_rerun
-    [days_until_rerun_deadline, 7].min
-  end
-  
-  def rerun_deadline
-    self.created_at + MAXIMUM_DAYS_TO_RUN.days
-  end
-
-  def days_until_rerun_deadline
-    rerun_deadline.to_date - Date.today
-  end
-
-  def to_s
-    job_title
-  end
-  
-  # Same price for all surveys for now.  This is in cents.
-  def price
-    10000
-  end
-  
-  # all data should be reported as of this date
-  def effective_date
-    (self.created_at - 90.days).to_date
-  end
-
   # determine if the survey had adequate invitations for providing results
   def enough_invitations?
     [self.all_invitations(true).size,self.participations.size].max >= REQUIRED_NUMBER_OF_PARTICIPATIONS
@@ -201,13 +199,28 @@ class Survey < ActiveRecord::Base
   def reportable_questions
     self.questions.find_all{|q| q.adequate_responses?}
   end
+
+  def to_s
+    job_title
+  end
   
+  # Same price for all surveys for now.  This is in cents.
+  def price
+    10000
+  end
+    
   private
     
   # TODO: Figure out who to email...
   def email_failed_message
     logger.info("Sending failed email message for survey #{self.id}")
     Notifier.deliver_survey_stalled_notification(self)
+  end
+  
+  #method called for re-running a survey
+  def email_rerun_message_and_calculate_end_date
+    calculate_end_date
+    email_rerun_message
   end
   
   # email all participants (so they know they may be receiving results), all pending invitees, external invitees
@@ -225,7 +238,8 @@ class Survey < ActiveRecord::Base
   
   # Send email informing respondants that the results are available.
   def email_results_available
-    participants = participations.collect { |p| p.participant } # because has_many :through doesn't work backwards w/ polymorphism :/
+    participants = participations.collect { |p| p.participant } 
+    # because has_many :through doesn't work backwards w/ polymorphism :/
     
     participants.each do |participant|
       Notifier.deliver_survey_results_available_notification(self, participant)
@@ -233,7 +247,18 @@ class Survey < ActiveRecord::Base
 
     Notifier.deliver_survey_results_available_notification(self, sponsor) unless participants.include?(sponsor)
   end
+
+  # notify the participants that the sponsor is not rerunning the survey
+  def email_not_rerunning_message
+    participations.collect(&:participant).each do |participant|
+      Notifier.deliver_survey_not_rerunning_notification(self, participant)
+    end
+  end
  
+  def email_billing_error
+    # TODO: Implement
+  end
+    
   # Handles what all needs to be done to cancel and then destroy a survey.
   # Participations are deleted manually here because otherwise the participations will be
   # destroyed before we actually enter this callback, so their dependent option cannot be
@@ -245,22 +270,17 @@ class Survey < ActiveRecord::Base
     external_invitations.destroy_all
   end
 
-  # notify the participants that the sponsor is not rerunning the survey
-  def email_not_rerunning_message
-    participations.collect(&:participant).each do |participant|
-      Notifier.deliver_survey_not_rerunning_notification(self, participant)
-    end
-  end
-  
-  def email_billing_error
-    # TODO: Implement
-  end
-  
   # Creates a survey subscription for the survey sponsor.
   def add_sponsor_subscription
     s = subscriptions.create!(:organization => sponsor, :relationship => 'sponsor')
   end
   
+  def send_invitations_and_calculate_end_date_and_set_start_date
+    set_start_date
+    calculate_end_date
+    send_invitations
+  end
+    
   # returns whether or not there are enough responses and the survey is closed
   def closed_and_enough_responses?
     closed? && enough_responses?
@@ -297,11 +317,6 @@ class Survey < ActiveRecord::Base
     end
   end
   
-  # determine whether the survey is open, and can be rerun
-  def open_and_can_be_rerun?
-    self.open? && self.can_be_rerun?
-  end
-  
   # Validates whether or not questions have been chosen.
   def questions_exist
     errors.add_to_base("You must choose at least one question to ask") if questions.empty?
@@ -312,9 +327,19 @@ class Survey < ActiveRecord::Base
     self[:aasm_state_number] = AASM_STATE_NUMBER_MAP[self[:aasm_state]]
   end
 
-  private
   # Once the survey is finalized, we need to send the invitations.
   def send_invitations
     (invitations + external_invitations).each {|s|  s.send_invitation! }
   end
+  
+  # This will set the end date to the current date plus the number of days to run
+  def calculate_end_date
+    self[:end_date] = Time.now + days_running.to_i.days
+  end
+  
+  # This will set the time the survey started running
+  def set_start_date
+    self[:start_date] = Time.now
+  end
+
 end

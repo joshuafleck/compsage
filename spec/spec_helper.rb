@@ -125,6 +125,8 @@ end
 def valid_survey_attributes
   {
     :end_date => Time.now + 1.day,
+    :days_running => 7,
+    :start_date => Time.now - 7.days,
     :job_title => 'TEST',
     :sponsor => organization_mock,
     :id => '1',
