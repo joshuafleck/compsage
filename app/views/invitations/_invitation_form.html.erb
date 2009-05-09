@@ -10,75 +10,84 @@
     </ul>
   </div>
 <% end %>
-<div id="current_invitation_list">
-	<h3>Current Invitation List</h3>
-	<ol id="invitations">
-		<li><%=link_to_organization(current_organization)%></li>
-		<% @invitations.each do |invitation| %>
-			<li>
-			  <%if invitation.is_a?(SurveyInvitation) || invitation.is_a?(NetworkInvitation) then%>
-			    <%=link_to_organization(invitation.invitee) %>
-			  <%else%>      
-			    <%=invitation.organization_name%> (<%=invitation.email%>)
-			  <%end%>
-			</li>
-		<% end %>
-	</ol>
+<div class="left_column third_column" id="invite_network_list">
+  <h3>Networks</h3>
+  <ul id="networks" class="entity_list">
+    <% @networks.each do |network|
+      next if network.organizations.count < 2
+      %>
+      <li id="network_<%= network.id %>">
+        <a href="#" class="expand_network">+</a>
+        <%= network.name %>
+        <a href="#" class="invite">Add</a>
+        <div class="description"><%= auto_link_new_window(truncate(network.description, :length => 50))%></div>
+          <div id="network_<%= network.id %>_members" class="network_members_container" style="display: none;">
+            <h4>Members</h4>
+            <ul class="network_members entity_list">
+              <% network.organizations.each do |member|
+                next if member == current_organization %>
+                <li><%= member.name_and_location %></li>
+              <% end %>
+            </ul>
+          </div>
+      </li>
+    <% end %>
+  </ul>
 </div>
-<% form_tag do %>
-  <div id="send_invitations">
-	  <% if include_networks then %>
-		<h3>Invite Your Networks</h3>
-		<ul>
-			<% @networks.each do |network| %>
-		    <% fields_for network, :index => network.id do |network_form| %>
-		      <li>
-  		        <%=network_form.check_box :included%>
-              <%=network_form.label :included, network.name%><%= ":" unless network.description.blank? %>
-              <span class="description"><%= auto_link_new_window(truncate(network.description, :length => 50))%></span>
-					</li>
-		    <% end %>			
-			<% end %>
-	 	</ul>
-	 	<% end %>
-	  <h3>Invite Individual Organizations</h3>
-		<ul id="organizations_to_invite">
-		</ul>
-		<div id="invite_organizations">
-		  <label>Organization name, contact, or email address</label>
-		  <input type="text" id="search" name="search_text" autocomplete="off" />
-			<p id="search_instructions">Type a company name, contact name, or email address above.  If the company
-				is a member, it will show up here.  If no companies matching the criteria are found, enter
-				the organization name and a contact's email address to send the invitation.</p>
+<div class="two_third_main_column">
+  <h3>Invitation List</h3>
+  <ul id="invitations" class="entity_list">
+    <li><%=link_to_organization(current_organization)%></li>
+    <li>
+      <a href="#" style="float: right;">Remove</a>
+      Fairview Health Systems
+    </li>
+    <li>
+      <a href="#" style="float: right;">Remove</a>
+      Shady Korean Clinic</li>
+    <% @invitations.each do |invitation| %>
+      <li>
+        <%if invitation.is_a?(SurveyInvitation) || invitation.is_a?(NetworkInvitation) then%>
+          <%=link_to_organization(invitation.invitee) %>
+        <%else%>      
+          <%=invitation.organization_name%> (<%=invitation.email%>)
+        <%end%>
+      </li>
+    <% end %>
+  </ul>
+
+  <% form_tag do %>
+    <div id="send_invitations">
+      <label>Invite by name or email address</label>
+      <input type="text" id="search" name="search_text" autocomplete="off" size="30" />
+      <p id="search_instructions">Type a company name, contact name, or email address above.  If the company
+        is a member, it will show up here.  If no companies matching the criteria are found, enter
+        the organization name and a contact's email address to send the invitation.</p>
       <div id="search_results">
 
-			</div>
-			<div id="external_invitation_form" style="display:none;">
-			  <p>No organizations found.  Enter contact details below.</p>
-			  <div class="box_container">
-				<div id="external_invitation_error_messages" class="errorExplanation" style="display:none;">
-          <h2>We could not send your invitation</h2>
-					<ul id="external_invitation_form_errors">
-						<li id="external_invitation_organization_error">Organization Name is required.</li> 
-						<li id="external_invitation_email_error">Email is required and should look like an email address.</li>
-					</ul>
-				</div>
-				<div id="external_invitation_organization_name_wrapper">
-          <label for="external_invitation_organization_name"><%= required("Organization Name") %></label>
-				  <input type="text" id="external_invitation_organization_name" size="25" />
-				</div>
-        <div id="external_invitation_email_wrapper">
-	        <label for="external_invitation_email"><%= required("Email Address") %></label>
-					<input type="text" id="external_invitation_email" size="30" />
-				</div>
-				<input id="external_invitation_submit" type="button" value="Add" />
-			  </div>
       </div>
-      <input type="submit" value="Send Invitations" />
-		</div>
-  </div>
-<% end %>
+      <div id="external_invitation_form" style="display:none;">
+        <div id="external_invitation_error_messages" class="errorExplanation" style="display:none;">
+          <h2>We could not send your invitation</h2>
+          <ul id="external_invitation_form_errors">
+            <li id="external_invitation_organization_error">Organization Name is required.</li> 
+            <li id="external_invitation_email_error">Email is required and should look like an email address.</li>
+          </ul>
+        </div>
+        <div id="external_invitation_organization_name_wrapper">
+          <label for="external_invitation_organization_name"><%= required("Organization Name") %></label>
+          <input type="text" id="external_invitation_organization_name" size="30" />
+        </div>
+        <div id="external_invitation_email_wrapper">
+          <label for="external_invitation_email"><%= required("Email Address") %></label>
+          <input type="text" id="external_invitation_email" size="30" />
+        </div>
 
+        <input id="external_invitation_submit" type="button" value="Add" />
+      </div>
+    </div>
+  <% end %>
+</div>
 <script type="text/javascript">
 //The previous search text
 var lastSearch = '';
@@ -88,12 +97,18 @@ function initializeObservers() {
   //This will check the search box for changes every .5 seconds
   new PeriodicalExecuter(liveOrganizationSearch, .5);
 
-	
-	$('external_invitation_submit').observe('click', addExternalInvite);
-	$('invitation_form_submit').observe('click', addExternalInviteOnSubmit);
-	
-	callFunctionOnEnterForm($('external_invitation_form'),addExternalInvite);
+  
+  $('external_invitation_submit').observe('click', addExternalInvite);
+  $('invitation_form_submit').observe('click', addExternalInviteOnSubmit);
+  
+  callFunctionOnEnterForm($('external_invitation_form'),addExternalInvite);
 
+  $$('#networks > li').each(function(network_li) {
+    var network_id = network_li.id.match(/\d+/)[0]
+    network_li.select('a').first().observe('click', function() {
+      $('network_' + network_id + '_members').toggle(); 
+    });
+  })
 }
 
 
@@ -105,22 +120,24 @@ function liveOrganizationSearch() {
   
   lastSearch = $F('search');
 
-	
-	if($F('search').match(/\@/)) {
-		populateExternalInvitationForm($F('search'), '');
-	}
-	else {
-		populateExternalInvitationForm('', $F('search'));
-	}	
-	
-	new Ajax.Request('<%=search_organizations_path%>', {
-		'method': 'get',
-		'parameters': $('search').serialize(),
-		'requestHeaders': {'Accept':'application/json'},
-		'onSuccess': function(transport) {
-			showResults(transport.responseText.evalJSON());
-		}
-	});
+  
+  if($F('search').match(/\@/)) {
+    $('external_invitation_organization_name_wrapper').show();
+    $('external_invitation_email_wrapper').hide();
+  }
+  else {
+    $('external_invitation_organization_name_wrapper').hide();
+    $('external_invitation_email_wrapper').show();
+  } 
+  
+  new Ajax.Request('<%=search_organizations_path%>', {
+    'method': 'get',
+    'parameters': $('search').serialize(),
+    'requestHeaders': {'Accept':'application/json'},
+    'onSuccess': function(transport) {
+      showResults(transport.responseText.evalJSON());
+    }
+  });
 }
 
 /*
@@ -129,45 +146,30 @@ function liveOrganizationSearch() {
  *  by the search
  */
 function showResults(organizations) {
-	var search_results = $('search_results');
-	$('search_instructions').hide();
-	
-	if(organizations.length == 0) {
+  var search_results = $('search_results');
+  $('search_instructions').hide();
+  
+  if(organizations.length == 0) {
     showExternalInvitationForm();
-	}
-	else {
-		hideExternalInvitationForm();
-		
-		var org_list = new Element('ul', {'id': "search_results_list"})
-		
-		organizations.each(function(organization) {
-		
-			var org_item = new Element('li', {'id':"invite_organization_" + organization.id});
-			
-			var checkbox = new Element('input', {
-			    'type': 'checkbox', 
-			    'id': "invite_organization_"+organization.id+"_included", 
-			    'name': "invite_organization["+organization.id+"][included]",
-			    'value': 1
-			  });
-			  
-			checkbox.onclick = function() {
-				addOrganizationToInvite(organization);
-			}
-			
-	    var label = new Element('label', {
-	        'for': "invite_organization_"+organization.id+"_included"
-	      }).update(organization.name_and_location);
-	      
-			org_item.update(checkbox);
-			org_item.insert(label)
-			org_item.insert("<span class='contact'>&nbsp;" + "Contact: " + organization.contact_name + "</span>");
-			organization.list_item = org_item;
-			org_list.insert(org_item);
-			
-		});
-		search_results.update(org_list);
-	}
+  }
+  else {
+    hideExternalInvitationForm();
+    
+    var org_list = new Element('ul', {'id': "search_results_list"})
+    
+    organizations.each(function(organization) {
+    
+      var org_item = new Element('li', {'id':"invite_organization_" + organization.id});
+      
+      org_item.insert(organization.name_and_location)
+      org_item.insert("<span class='contact'>&nbsp;" + "Contact: " + organization.contact_name + "</span>");
+      org_item.insert(" <a href='#'>Add</a>");
+      organization.list_item = org_item;
+      org_list.insert(org_item);
+      
+    });
+    search_results.update(org_list);
+  }
 }
 
 /*
@@ -175,52 +177,52 @@ function showResults(organizations) {
  *  organization to the included organizations list
  */
 function addOrganizationToInvite(organization) {
-	var invite_list = $('organizations_to_invite');
-	var item = organization.list_item.remove();
-	  
-	//This will ensure once the item is added to the included list that this function can not be called on the item
-	//Searching by ID was not working in IE6 - have to locate by child
-	item.childElements()[0].onclick = null;
-	
-	if(invite_list.select('#invite_organization_' + organization.id).length == 0) {
-		invite_list.insert(item);
-		//Hack for IE6 - must explicitely set the checked flag after inserting element into DOM
-		item.childElements()[0].checked = true;
+  var invite_list = $('organizations_to_invite');
+  var item = organization.list_item.remove();
+    
+  //This will ensure once the item is added to the included list that this function can not be called on the item
+  //Searching by ID was not working in IE6 - have to locate by child
+  item.childElements()[0].onclick = null;
+  
+  if(invite_list.select('#invite_organization_' + organization.id).length == 0) {
+    invite_list.insert(item);
+    //Hack for IE6 - must explicitely set the checked flag after inserting element into DOM
+    item.childElements()[0].checked = true;
   }
   
   $('search').select();
 }
 
 function populateExternalInvitationForm(email, org_name) {
-	$('external_invitation_organization_name').value = org_name;
-	$('external_invitation_email').value = email;
+  $('external_invitation_organization_name').value = org_name;
+  $('external_invitation_email').value = email;
 }
 
 function showExternalInvitationForm() {
-	$('search_results').hide();
-	$('external_invitation_form').show();
+  $('search_results').hide();
+  $('external_invitation_form').show();
 }
 
 function hideExternalInvitationForm() {
-	$('search_results').show();
-	$('external_invitation_form').hide();
-	removeErrorNotifications();
+  $('search_results').show();
+  $('external_invitation_form').hide();
+  removeErrorNotifications();
 }
 
 function hideAll() {
-	$('search_results').hide();
-	$('external_invitation_form').hide();
+  $('search_results').hide();
+  $('external_invitation_form').hide();
 }
 
 /*
  * This will remove hide the error notifications and reset the css classes
  */
 function removeErrorNotifications(){
-	$('external_invitation_organization_name_wrapper').className = '';
-	$('external_invitation_email_wrapper').className = '';
-	$('external_invitation_error_messages').hide();
-	$('external_invitation_organization_error').hide();
-	$('external_invitation_email_error').hide();
+  $('external_invitation_organization_name_wrapper').className = '';
+  $('external_invitation_email_wrapper').className = '';
+  $('external_invitation_error_messages').hide();
+  $('external_invitation_organization_error').hide();
+  $('external_invitation_email_error').hide();
 }
 
 /*
@@ -228,8 +230,8 @@ function removeErrorNotifications(){
  */
 function addExternalInviteOnSubmit() {
 
-	var email = $F('external_invitation_email');
-	var name = $F('external_invitation_organization_name');
+  var email = $F('external_invitation_email');
+  var name = $F('external_invitation_organization_name');
 
   if ($('external_invitation_form').visible() && email != '' && name != '') {
     return addExternalInvite();
@@ -243,27 +245,27 @@ function addExternalInviteOnSubmit() {
  */
 function addExternalInvite() {
 
-	var email = $F('external_invitation_email');
-	var name = $F('external_invitation_organization_name');
+  var email = $F('external_invitation_email');
+  var name = $F('external_invitation_organization_name');
     var invite_list = $('organizations_to_invite');
 
     removeErrorNotifications()
   
   // Don't want to submit if either field is blank, as this form is autosubmitted when invites are sent
   if (email == '' || name == '' || !isValidEmail(email)) {
-	if(name == ''){
-	  $('external_invitation_organization_name_wrapper').className = 'fieldWithErrors';
-	  $('external_invitation_organization_error').show();
-	  $('external_invitation_organization_name').focus();
-	}
-	
-	if(email == '' || !isValidEmail(email)){
-	  $('external_invitation_email_wrapper').className = 'fieldWithErrors';
-	  $('external_invitation_email_error').show();
-	  $('external_invitation_email').focus();
-	}
-	
-	$('external_invitation_error_messages').show();
+  if(name == ''){
+    $('external_invitation_organization_name_wrapper').className = 'fieldWithErrors';
+    $('external_invitation_organization_error').show();
+    $('external_invitation_organization_name').focus();
+  }
+  
+  if(email == '' || !isValidEmail(email)){
+    $('external_invitation_email_wrapper').className = 'fieldWithErrors';
+    $('external_invitation_email_error').show();
+    $('external_invitation_email').focus();
+  }
+  
+  $('external_invitation_error_messages').show();
     return;
   }
     
@@ -271,41 +273,41 @@ function addExternalInvite() {
 
   var invite_item = new Element('li');
   
-	var checkbox = new Element('input', {
-  	  'id': 'external_invite_' + invite_id + '_included', 
-  	  'type': 'checkbox', 
-  	  'value': 1, 
-  	  'name': 'external_invite[' + invite_id + '][included]'
-	  });
-	  
-	var label = new Element('label', {
-	  'for': 'external_invite_' + invite_id + '_included'
-	  }).update(" "+name+" ("+email+")");
-	  
-	var external_invite_email = new Element('input', {
-	    'type': 'hidden', 
-	    'value': email, 
-	    'name': 'external_invite[' + invite_id + '][email]'
-	  });
-	  
-	var external_invite_name = new Element('input', {
-	    'type': 'hidden', 
-	    'value': name, 
-	    'name': 'external_invite[' + invite_id + '][organization_name]'
-	  });	
-	
-	invite_item.update(checkbox); 
-	invite_item.insert(label);  
-	invite_item.insert(external_invite_email);   
-	invite_item.insert(external_invite_name); 
+  var checkbox = new Element('input', {
+      'id': 'external_invite_' + invite_id + '_included', 
+      'type': 'checkbox', 
+      'value': 1, 
+      'name': 'external_invite[' + invite_id + '][included]'
+    });
+    
+  var label = new Element('label', {
+    'for': 'external_invite_' + invite_id + '_included'
+    }).update(" "+name+" ("+email+")");
+    
+  var external_invite_email = new Element('input', {
+      'type': 'hidden', 
+      'value': email, 
+      'name': 'external_invite[' + invite_id + '][email]'
+    });
+    
+  var external_invite_name = new Element('input', {
+      'type': 'hidden', 
+      'value': name, 
+      'name': 'external_invite[' + invite_id + '][organization_name]'
+    }); 
+  
+  invite_item.update(checkbox); 
+  invite_item.insert(label);  
+  invite_item.insert(external_invite_email);   
+  invite_item.insert(external_invite_name); 
 
   invite_list.insert(invite_item, { 'position': 'bottom' });
   
   //IE6 hack - checkbox must be marked as checked after insertion into DOM
   checkbox.checked = true;
     
-	$('external_invitation_email').clear();
-	$('external_invitation_organization_name').clear();    
+  $('external_invitation_email').clear();
+  $('external_invitation_organization_name').clear();    
   $('search').clear();
   $('search').focus();
   
