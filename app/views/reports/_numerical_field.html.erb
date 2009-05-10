@@ -1,7 +1,9 @@
 <% percentiles = question.responses.percentiles(:numerical_response, 25, 50, 75) %>
 <div class="report_item">
   <h3><%= question.text %></h3>
-  <dl>
+  <% if question.response_type == "WageResponse" || question.response_type == "BaseWageResponse" then %>
+  <dl class="<%=question.response_type%> <%=format%>"><% else%>
+  <dl><% end %>
     <dt>Average</dt>
     <dd><%= number_with_precision(question.responses.average(:numerical_response))%></dd>
     <dt>25th Percentile</dt>

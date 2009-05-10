@@ -28,11 +28,11 @@
     </ul>
 </div>
 <div id="formatting_section">
-	<%= link_to "Show me wages in annual format", '#', :id => "invitation_list_link" %>
+	<%= link_to_function "Show me wages in annual format", 'toggleWageFormatAndLink();', :id => "wage_format_link" %>
 </div>
 <%@survey.questions.each do |question| %>
   <% if question.adequate_responses? then %>
-    <%=render :partial => question.report_type, :locals => {:question => question, :survey => @survey}%>
+    <%=render :partial => question.report_type, :locals => {:question => question, :survey => @survey, :format => @format}%>
   <% else %>
     <div class="report_item report_item_suppressed">
       <h3><%=question.text%></h3>
@@ -43,7 +43,7 @@
 <div id="suspect_results">
 	<p>If you suspect an error, or see results that do not match what you expect,  by <%= link_to "please report the anomoly to us.", '#', :id => "suspect_result_form_link" %></p>
 	<div id ="suspect_report_form" class="hidden">
-		<div id="success_notification" class="hidden">Successfully Reported!</div>
+		<div id="success_notification" class="hidden"><span id="success_report_message">Successfully Reported!</span></div>
 		<label for="comment">Comment:</label>
 		<textarea id="comment"></textarea> <input id="suspect_result_submit" type="button" value="Report" %>
 		<%= link_to_function "Cancel", "$('suspect_report_form').toggleClassName('hidden'); return false;" %>
@@ -99,7 +99,7 @@
 
   function flashSuccess(){
 	$('success_notification').toggleClassName('hidden');
-	$('success_notification').highlight();
+	$('success_report_message').highlight();
 	
 	setTimeout( "hideForm();", 2000);
 	return false;
@@ -108,6 +108,21 @@
   function hideForm(){
 	$('success_notification').toggleClassName('hidden');
 	$('suspect_report_form').toggleClassName('hidden');
+	return false;
+}
+
+function toggleWageFormatAndLink(){
+	//first update the link
+	$('wage_format_link').update($('wage_format_link').innerHTML.indexOf("annual") > 0 ? $('wage_format_link').innerHTML.replace("annual", "hourly") : $('wage_format_link').innerHTML.replace("hourly", "annual"));
+	//then update all of the values
+	$$('dl.WageResponse', 'dl.BaseWageResponse').each(function(elem) {
+		items = elem.select('dd');
+		items.each(function(x){
+			var digit = elem.hasClassName("Annual") ? x.innerHTML.replace(/,/g,'') / 2080 : x.innerHTML.replace(/,/g,'') * 2080;
+			x.innerHTML = addCommas(digit.toFixed(2));
+			});
+		elem.className = elem.hasClassName("Annual") ? elem.className.replace("Annual", "Hourly") : elem.className.replace("Hourly", "Annual");
+		});
 	return false;
 }
 </script>
