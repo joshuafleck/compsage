@@ -44,12 +44,14 @@ class OrganizationsController < ApplicationController
       :order => '@weight desc, @geodist asc' # sort by relevance, then distance
     }
         
-    @organizations = Organization.search @search_query, @search_params
        
     respond_to do |wants|
-      wants.html # render template
+      wants.html do
+        @organizations = Organization.search @search_query, @search_params
+      end
       wants.json do
-        render :json => @organizations.to_json(:only => [:name, :location, :id, :contact_name],
+        organizations = Organization.search @search_query, @search_params.merge(:per_page => 1000, :order => :name);
+        render :json => organizations.to_json(:only => [:name, :location, :id, :contact_name],
                                                :methods => 'name_and_location')
       end
     end

@@ -718,6 +718,9 @@ div.submit_row .next {
   margin-top: 0;
 }
 
+#invite_network_list #networks li.network {
+  margin-bottom: 1em;
+}
 #send_invitations ul {
   margin: 0;
   padding: 0;
@@ -739,10 +742,6 @@ div.submit_row .next {
 
 #send_invitations li label {
   display: inline;
-}
-
-#send_invitations #search_results {
-  margin-top: 1em;
 }
 
 #send_invitations .contact {
@@ -767,7 +766,7 @@ input#external_invitation_submit {
   margin: .5em 0;
 }
 
-ul#networks div.description {
+ul#networks div.description_box {
   margin-left: 15px;
 }
 
@@ -1178,4 +1177,32 @@ div.actions form select {
 }
 .hidden {
   display: none;
+}
+
+/* Autocomplete */
+div.autocomplete {
+  position: absolute;
+  background-color:white;
+  border:1px solid #888;
+  margin:0;
+  padding:0;
+}
+div.autocomplete ul {
+  list-style-type:none;
+  margin:0;
+  padding:0;
+}
+div.autocomplete ul li.selected { background-color: #ffb;}
+div.autocomplete ul li {
+  list-style-type:none;
+  display:block;
+  margin:0;
+  padding:2px;
+  cursor:pointer;
+}
+
+div.autocomplete .actions {
+  display: block;
+  float: right;
+  padding-right: 5px;
 }
