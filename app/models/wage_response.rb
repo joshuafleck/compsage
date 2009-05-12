@@ -13,12 +13,12 @@ class WageResponse < NumericalResponse
   end
   
   def hourly_unit_response
-    return self.response unless self.units != 'Hourly'
+    return self.response unless self.unit != 'Hourly'
     self.units.convert(self.response, {:from => "Annually", :to => "Hourly"})
   end
   
   def annually_unit_response
-    return self.units.convert(self.response, {:from => "Hourly", :to => "Annually"}) unless self.units != 'Annually'
+    return self.units.convert(self.response, {:from => "Hourly", :to => "Annually"}) if self.unit == 'Hourly'
     self.response
   end
 
