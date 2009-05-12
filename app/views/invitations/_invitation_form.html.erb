@@ -12,39 +12,37 @@
 <% end %>
 <div class="left_column third_column" id="invite_network_list">
   <h3>Networks</h3>
-  <ul id="networks" class="entity_list">
-    <% @networks.each do |network|
-      next if network.organizations.count < 2
-      %>
-      <li class="network" id="network_<%= network.id %>">
-        <a href="#" class="expand_network">+</a>
-        <%= network.name %>
-        <a href="#" class="invite">Add</a>
-        <div class="description_box"><%= auto_link_new_window(truncate(network.description, :length => 50))%></div>
-          <div id="network_<%= network.id %>_members" class="network_members_container" style="display: none;">
-            <h4>Members</h4>
-            <ul class="network_members entity_list">
-              <% network.organizations.each do |member|
-                next if member == current_organization %>
-                <li><%= member.name_and_location %></li>
-              <% end %>
-            </ul>
-          </div>
-      </li>
-    <% end %>
-  </ul>
+  <% if @networks.any? then %>
+    <ul id="networks" class="entity_list">
+      <% @networks.each do |network|
+        next if network.organizations.count < 2
+        %>
+        <li class="network" id="network_<%= network.id %>">
+          <a href="#" class="expand_network">+</a>
+          <%= network.name %>
+          <a href="#" class="invite">Add</a>
+          <div class="description_box"><%= auto_link_new_window(truncate(network.description, :length => 50))%></div>
+            <div id="network_<%= network.id %>_members" class="network_members_container" style="display: none;">
+              <h4>Members</h4>
+              <ul class="network_members entity_list">
+                <% network.organizations.each do |member|
+                  next if member == current_organization %>
+                  <li><%= member.name_and_location %></li>
+                <% end %>
+              </ul>
+            </div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>You're not in any networks! You can save time by <%= link_to "creating a network", new_network_path %> of
+    frequently used contacts.</p>
+  <% end %>
 </div>
 <div class="two_third_main_column">
   <h3>Invitation List</h3>
   <ul id="invitations" class="entity_list">
     <li><%=link_to_organization(current_organization)%></li>
-    <li>
-      <a href="#" style="float: right;">Remove</a>
-      Fairview Health Systems
-    </li>
-    <li>
-      <a href="#" style="float: right;">Remove</a>
-      Shady Korean Clinic</li>
     <% @invitations.each do |invitation| %>
       <li>
         <%if invitation.is_a?(SurveyInvitation) || invitation.is_a?(NetworkInvitation) then%>
@@ -56,7 +54,7 @@
     <% end %>
   </ul>
 
-  <% form_tag do %>
+  <form action="" method="post" id="invitation_form">
     <div id="send_invitations">
       <h3>New Invitation</h3>
       <div id="external_invitation_error_messages" class="errorExplanation" style="display:none;">
@@ -77,10 +75,10 @@
           <input type="text" id="external_invitation_email" size="30" />
         </div>
 
-        <input id="external_invitation_submit" type="button" value="Add" />
+        <input id="external_invitation_submit" type="submit" value="Add" />
       </div>
     </div>
-  <% end %>
+  </form>
 </div>
 <script type="text/javascript" src="/javascripts/fast_autocompleter.js"></script>
 <script type="text/javascript">
@@ -127,6 +125,7 @@ function initializeObservers() {
       $('network_' + network_id + '_members').toggle(); 
     });
   })
+  $('invitation_form').observe('submit', addInvitationByForm);
 }
 
 
@@ -146,11 +145,39 @@ function liveOrganizationSearch(value, suggest) {
 
 function addInvitation(organization) {
   $('external_invitation_organization_name').value = '';
-  var newListElement = new Element('li');
-  newListElement.insert(organization.name_and_location);
-  $('invitations').insert('<a href="#" style="float: right;">Remove</a>');
+  addInvitationToList(0, organization.name_and_location, organization.id);
+}
+
+function addInvitationByForm(e) {
+  e.stop();
+  var org_name = $F('external_invitation_organization_name');
+  addInvitationToList(0, org_name, null);
+}
+
+
+function addInvitationToList(invitation_id, organization_name, organization_id) {
+  var newListElement = new Element('li', {'id': 'invitation_' + invitation_id});
+  var removeLink = new Element('a', {'href':'#', 'style':'float:right;'});
+  removeLink.insert('Remove');
+  removeLink.observe('click', removeInvitation.curry(invitation_id));
+  newListElement.insert(removeLink);
+
+  if(organization_id)
+    newListElement.insert('<a href="<%= organizations_path %>/' + organization_id + '">' + organization_name + '</a>');
+  else
+    newListElement.insert(organization_name);
+
   $('invitations').insert(newListElement);
-  newListElement.highlight();
+  newListElement.highlight({'duration':2});
+}
+
+function removeInvitation(invitation_id, e) {
+  e.stop();
+  new Effect.Fade('invitation_' + invitation_id, {
+    'afterFinish': function() {
+      $('invitation_' + invitation_id).remove();
+    }
+  });
 }
 </script>
 
