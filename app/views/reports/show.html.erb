@@ -1,7 +1,7 @@
 <% title("Report for #{@survey.job_title}") %>
 <% highlight_tab("surveys") %>
 <%= link_to_function("Print this Report", "javascript:print()", :class => 'print_link') %>
-<%= link_to("Download PDF", survey_report_path(@survey)+".pdf", :class => 'print_link') %>
+<%= link_to("Download PDF", survey_report_path(@survey)+".pdf?wage_format=#{@format}", :id => 'pdf_link', :class => 'print_link') %>
 <h2>Report on <%=@survey.job_title%></h2>
 <%if logged_in_from_survey_invitation? then%>
   <div class="top_join_link"><%= link_to "Sign up for CompSage", new_account_path, :class => "print_link" %></div>
@@ -28,7 +28,7 @@
     </ul>
 </div>
 <div id="formatting_section">
-	<%= link_to_function "Show me wages in annual format", 'toggleWageFormatAndLink();', :id => "wage_format_link" %>
+	Show me wages: <%=link_to_function @format == "Hourly" ? "Annually" : "Hourly", 'toggleWageFormatAndLink();', :id => "wage_format_link"%>
 </div>
 <%@survey.questions.each do |question| %>
   <% if question.adequate_responses? then %>
@@ -112,16 +112,20 @@
 }
 
 function toggleWageFormatAndLink(){
-	//first update the link
-	$('wage_format_link').update($('wage_format_link').innerHTML.indexOf("annual") > 0 ? $('wage_format_link').innerHTML.replace("annual", "hourly") : $('wage_format_link').innerHTML.replace("hourly", "annual"));
+	//first update the format link
+	$('wage_format_link').innerHTML = $('wage_format_link').innerHTML.indexOf("Annually") > -1 ? "Hourly" : "Annually";
+	//then the pdf link
+	if ($('pdf_link').href.indexOf("Hourly") > -1){
+	    $('pdf_link').href = $('pdf_link').href.replace("Hourly", "Annually");
+	} else {
+		$('pdf_link').href = $('pdf_link').href.replace("Annually", "Hourly");
+	}
 	//then update all of the values
 	$$('dl.WageResponse', 'dl.BaseWageResponse').each(function(elem) {
 		items = elem.select('dd');
 		items.each(function(x){
-			var digit = elem.hasClassName("Annual") ? x.innerHTML.replace(/,/g,'') / 2080 : x.innerHTML.replace(/,/g,'') * 2080;
-			x.innerHTML = addCommas(digit.toFixed(2));
+			x.toggleClassName('hidden');
 			});
-		elem.className = elem.hasClassName("Annual") ? elem.className.replace("Annual", "Hourly") : elem.className.replace("Hourly", "Annual");
 		});
 	return false;
 }

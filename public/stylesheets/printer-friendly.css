@@ -19,6 +19,10 @@ a.print_link {
   display: none;
 }
 
+dd.hidden {
+	display :none;
+}
+
 #suspect_results, #formatting_section, #top_join_link {
 	display :none;
 }

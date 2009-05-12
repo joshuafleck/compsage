@@ -7,7 +7,7 @@ class ReportsController < ApplicationController
     @invitations = @survey.all_invitations(true)
     @participations = @survey.participations
     @total_participation_count = @participations.size
-    @format = params[:format] || "Annual"
+    @format = params[:wage_format] || "Annually"
     
     respond_to do |wants|
       wants.html
