@@ -632,6 +632,7 @@ div.submit_row {
   padding: 10px;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #ddd;
+  clear: both;
 }
 
 div.submit_row .previous {
@@ -764,10 +765,6 @@ input#external_invitation_submit {
 
 #invite_organizations p {
   margin: .5em 0;
-}
-
-ul#networks div.description_box {
-  margin-left: 15px;
 }
 
 ul#networks div.network_members_container {
@@ -975,6 +972,7 @@ ul#network_members {
   list-style-type: none;
   padding: 0;
   margin: 0 0 0 10px;
+  font-size: .9em;
 }
 
 h3#network_members_header {

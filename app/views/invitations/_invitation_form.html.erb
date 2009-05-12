@@ -21,13 +21,13 @@
           <a href="#" class="expand_network">+</a>
           <%= network.name %>
           <a href="#" class="invite">Add</a>
-          <div class="description_box"><%= auto_link_new_window(truncate(network.description, :length => 50))%></div>
             <div id="network_<%= network.id %>_members" class="network_members_container" style="display: none;">
+              <div class="description_box"><%= auto_link_new_window(truncate(network.description, :length => 50))%></div>
               <h4>Members</h4>
               <ul class="network_members entity_list">
                 <% network.organizations.each do |member|
                   next if member == current_organization %>
-                  <li><%= member.name_and_location %></li>
+                  <li><%= link_to_organization(member) %></li>
                 <% end %>
               </ul>
             </div>
@@ -121,9 +121,11 @@ function initializeObservers() {
 
   $$('#networks > li').each(function(network_li) {
     var network_id = network_li.id.match(/\d+/)[0]
-    network_li.select('a').first().observe('click', function() {
+    network_li.select('a').first().observe('click', function(e) {
+      e.stop();
       $('network_' + network_id + '_members').toggle(); 
     });
+    network_li.select('a.invite').first().observe('click', inviteNetwork.curry(network_id));
   })
   $('invitation_form').observe('submit', addInvitationByForm);
 }
@@ -178,6 +180,10 @@ function removeInvitation(invitation_id, e) {
       $('invitation_' + invitation_id).remove();
     }
   });
+}
+
+/* Stub for now */
+function inviteNetwork(network_id) {
 }
 </script>
 
