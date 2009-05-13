@@ -407,7 +407,6 @@ namespace :data_generator do
   
   # generates responses & participations for all surveys
   def generate_responses_and_participations
-    units = Units.new("format", {'Annually' => 1, 'Hourly' => 2080}, 'Annually')
     invitations = SurveyInvitation.all + ExternalSurveyInvitation.all
     
     puts "generating responses (about #{(RESPONSE_RATE*invitations.size.to_f).floor})..."   
@@ -435,7 +434,7 @@ namespace :data_generator do
             :unit => ['Annually', 'Hourly'][rand(2)],
             :qualifications => [nil,Faker::Lorem.sentence][rand(2)])
             
-            response.response = units.convert(response.response, {:to => "Hourly", :from => "Annually"}) if response.unit == "Hourly"
+            response.response = WageResponse.units.convert(response.response, {:to => "Hourly", :from => "Annually"}) if response.unit == "Hourly"
         when 'WageResponse'
           response = Factory.build(
             :wage_response, 
@@ -444,7 +443,7 @@ namespace :data_generator do
             :unit => ['Annually', 'Hourly'][rand(2)],
             :qualifications => [nil,Faker::Lorem.sentence][rand(2)])
             
-          response.response = units.convert(response.response, {:to => "Hourly", :from => "Annually"}) if response.unit == "Hourly"
+          response.response = WageResponse.units.convert(response.response, {:to => "Hourly", :from => "Annually"}) if response.unit == "Hourly"
         when 'MultipleChoiceResponse'
           response = Factory.build(
             :multiple_choice_response, 
