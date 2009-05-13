@@ -11,16 +11,6 @@ class WageResponse < NumericalResponse
   def response
     self.numerical_response.to_i / 100.0 if self.numerical_response
   end
-  
-  def hourly_unit_response
-    return self.response unless self.unit != 'Hourly'
-    self.units.convert(self.response, {:from => "Annually", :to => "Hourly"})
-  end
-  
-  def annually_unit_response
-    return self.units.convert(self.response, {:from => "Hourly", :to => "Annually"}) if self.unit == 'Hourly'
-    self.response
-  end
 
   def response=(value)
     value = sanitize_number(value)
