@@ -1,7 +1,7 @@
 <% title("Report for #{@survey.job_title}") %>
 <% highlight_tab("surveys") %>
 <%= link_to_function("Print this Report", "javascript:print()", :class => 'print_link') %>
-<%= link_to("Download PDF", survey_report_path(@survey)+".pdf?wage_format=#{@format}", :id => 'pdf_link', :class => 'print_link') %>
+<%= link_to("Download PDF", survey_report_path(@survey)+".pdf", :wage_format => @format, :id => 'pdf_link', :class => 'print_link') %>
 <h2>Report on <%=@survey.job_title%></h2>
 <%if logged_in_from_survey_invitation? then%>
   <div class="top_join_link"><%= link_to "Sign up for CompSage", new_account_path, :class => "print_link" %></div>
@@ -112,20 +112,17 @@
 }
 
 function toggleWageFormatAndLink(){
-	//first update the format link
-	$('wage_format_link').innerHTML = $('wage_format_link').innerHTML.indexOf("Annually") > -1 ? "Hourly" : "Annually";
-	//then the pdf link
-	if ($('pdf_link').href.indexOf("Hourly") > -1){
+	//update format links
+	if ($('pdf_link').href.include("Hourly")){
 	    $('pdf_link').href = $('pdf_link').href.replace("Hourly", "Annually");
+		$('wage_format_link').innerHTML = "Hourly";
 	} else {
 		$('pdf_link').href = $('pdf_link').href.replace("Annually", "Hourly");
+		$('wage_format_link').innerHTML = "Annually"
 	}
 	//then update all of the values
 	$$('dl.WageResponse', 'dl.BaseWageResponse').each(function(elem) {
-		items = elem.select('dd');
-		items.each(function(x){
-			x.toggleClassName('hidden');
-			});
+		items = elem.toggleClassName('hidden');
 		});
 	return false;
 }

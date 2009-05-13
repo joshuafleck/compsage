@@ -19,7 +19,7 @@ a.print_link {
   display: none;
 }
 
-dd.hidden {
+dl.hidden {
 	display :none;
 }
 

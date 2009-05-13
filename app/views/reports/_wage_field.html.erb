@@ -1,24 +1,27 @@
-<% annually_percentiles = question.responses.percentiles(:annually_unit_response, 25, 50, 75) 
-   hourly_percentiles = question.responses.percentiles(:hourly_unit_response, 25, 50, 75)
+<% percentiles = question.responses.percentiles(:numerical_response, 25, 50, 75) 
    average = question.responses.average(:numerical_response).to_i / 100.0
-   units = Units.new("format", {'Annually' => 1, 'Hourly' => 2080}, 'Annually')
 %>
 <div class="report_item">
   <h3><%= question.text %></h3>
-  <dl class="<%=question.response_type%>">
+  <dl class="<%=question.response_type%><% if format == "Hourly"%> hidden<% end %>">
     <dt>Average</dt>
-    <dd<% if format == "Hourly"%> class="hidden"<%end%>><%= number_with_precision(average)%></dd>
-	<dd<% if format == "Annually"%> class="hidden"<%end%>><%= number_with_precision(units.convert(average,{:from => "Annually", :to => "Hourly"}))%></dd>
-    <dd></dd>
+    <dd><%= number_to_currency(average)%></dd>
     <dt>25th Percentile</dt>
-    <dd<% if format == "Hourly"%> class="hidden"<%end%>><%= number_with_precision(annually_percentiles[0]) %></dd>
-	<dd<% if format == "Annually"%> class="hidden"<%end%>><%= number_with_precision(hourly_percentiles[0]) %></dd>
+    <dd><%= number_to_currency(percentiles[0].to_i / 100.0) %></dd>
     <dt>Median</dt>
-    <dd<% if format == "Hourly"%> class="hidden"<%end%>><%= number_with_precision(annually_percentiles[1]) %></dd>
-	<dd<% if format == "Annually"%> class="hidden"<%end%>><%= number_with_precision(hourly_percentiles[1]) %></dd>
+    <dd><%= number_to_currency(percentiles[1].to_i / 100.0) %></dd>
     <dt>75th Percentile</dt>
-    <dd<% if format == "Hourly"%> class="hidden"<%end%>><%= number_with_precision(annually_percentiles[2]) %></dd>
-	<dd<% if format == "Annually"%> class="hidden"<%end%>><%= number_with_precision(hourly_percentiles[2]) %></dd>
+    <dd><%= number_to_currency(percentiles[2].to_i / 100.0) %></dd>
+  </dl>
+  <dl class="<%=question.response_type%> <% if format == "Annually"%> hidden<% end %>">
+    <dt>Average</dt>
+	<dd><%= number_to_currency(WageResponse.units.convert(average,{:from => "Annually", :to => "Hourly"}))%></dd>
+    <dt>25th Percentile</dt>
+	<dd><%= number_to_currency(WageResponse.units.convert(percentiles[0].to_i / 100.0,{:from => "Annually", :to => "Hourly"})) %></dd>
+    <dt>Median</dt>
+	<dd><%= number_to_currency(WageResponse.units.convert(percentiles[1].to_i / 100.0,{:from => "Annually", :to => "Hourly"})) %></dd>
+    <dt>75th Percentile</dt>
+	<dd><%= number_to_currency(WageResponse.units.convert(percentiles[2].to_i / 100.0,{:from => "Annually", :to => "Hourly"})) %></dd>
   </dl>
   <%= render :partial => "qualifications", :object => question.qualifications, :locals => {:question => question} %>
 </div>
