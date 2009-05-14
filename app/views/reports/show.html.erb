@@ -1,7 +1,7 @@
 <% title("Report for #{@survey.job_title}") %>
 <% highlight_tab("surveys") %>
 <%= link_to_function("Print this Report", "javascript:print()", :class => 'print_link') %>
-<%= link_to("Download PDF", survey_report_path(@survey)+".pdf?format=#{@format}", :id => 'pdf_link', :class => 'print_link') %>
+<%= link_to("Download PDF", survey_report_path(@survey, :format => "pdf", :wage_format => @format ), :id => 'pdf_link', :class => 'print_link') %>
 <h2>Report on <%=@survey.job_title%></h2>
 <%if logged_in_from_survey_invitation? then%>
   <div class="top_join_link"><%= link_to "Sign up for CompSage", new_account_path, :class => "print_link" %></div>
