@@ -1,15 +1,4 @@
 <%=flash_messages%>
-<% if @invalid_invitations.size > 0 then %>
-  <div class="errorExplanation">
-    <h2><%=t :header, :scope => [:activerecord, :errors, :template], :model => "invitation", :count => @invalid_invitations.size %></h2>
-    <p><%=t :body, :scope => [:activerecord, :errors, :template] %></p>
-    <ul>
-      <% @invalid_invitations.each do |invite| %>
-        <li><%= invite.to_s %>: <%= invite.errors.full_messages.to_sentence %></li>
-      <% end %>
-    </ul>
-  </div>
-<% end %>
 <div class="left_column third_column" id="invite_network_list">
   <h3>Networks</h3>
   <% if @networks.any? then %>
@@ -27,7 +16,7 @@
               <ul class="network_members entity_list">
                 <% network.organizations.each do |member|
                   next if member == current_organization %>
-                  <li><%= link_to_organization(member) %></li>
+                  <li><%= link_to_organization(member, :include_location => false) %></li>
                 <% end %>
               </ul>
             </div>
@@ -44,12 +33,15 @@
   <ul id="invitations" class="entity_list">
     <li><%=link_to_organization(current_organization)%></li>
     <% @invitations.each do |invitation| %>
-      <li>
-        <%if invitation.is_a?(SurveyInvitation) || invitation.is_a?(NetworkInvitation) then%>
-          <%=link_to_organization(invitation.invitee) %>
-        <%else%>      
-          <%=invitation.organization_name%> (<%=invitation.email%>)
-        <%end%>
+      <li id="invitation_<%= invitation.id %>">
+        <% if invitation.pending? then %>
+          <a href="#" class="remove">Remove</a>
+        <% end %>
+        <% if invitation.is_a?(SurveyInvitation) then %>
+          <%= link_to_organization(invitation.invitee) %>
+        <% else %>      
+          <%= invitation.organization_name %>
+        <% end %>
       </li>
     <% end %>
   </ul>
@@ -57,22 +49,16 @@
   <form action="" method="post" id="invitation_form">
     <div id="send_invitations">
       <h3>New Invitation</h3>
-      <div id="external_invitation_error_messages" class="errorExplanation" style="display:none;">
-        <h2>We could not send your invitation</h2>
-        <ul id="external_invitation_form_errors">
-          <li id="external_invitation_organization_error">Organization Name is required.</li> 
-          <li id="external_invitation_email_error">Email is required and should look like an email address.</li>
-        </ul>
-      </div>
+      <div id="error_content"></div>
       <div id="external_invitation_organization_name_wrapper">
         <label><%= required('Organization Name') %></label>
-        <input type="text" id="external_invitation_organization_name" size="30" />
+        <%= text_field :external_invitation, :organization_name, :size => 30 %>
         <div id="search_results" class="autocomplete"></div>
       </div>
       <div id="external_invitation_form">
         <div id="external_invitation_email_wrapper">
           <label for="external_invitation_email"><%= required("Email Address") %></label>
-          <input type="text" id="external_invitation_email" size="30" />
+          <%= text_field :external_invitation, :email, :size => 30 %>
         </div>
 
         <input id="external_invitation_submit" type="submit" value="Add" />
@@ -82,10 +68,6 @@
 </div>
 <script type="text/javascript" src="/javascripts/fast_autocompleter.js"></script>
 <script type="text/javascript">
-//The previous search text
-var lastSearch = '';
-
-
 function initializeObservers() {
 
   var cachedBackend = new Autocompleter.Cache(liveOrganizationSearch, {
@@ -128,8 +110,18 @@ function initializeObservers() {
     network_li.select('a.invite').first().observe('click', inviteNetwork.curry(network_id));
   })
   $('invitation_form').observe('submit', addInvitationByForm);
-}
 
+  $$('ul#invitations > li').each(function(invitation_li) {
+    var id_match = invitation_li.id.match(/\d+/);
+    var invitation_id = '';
+    if(id_match == null)
+      return;
+    else
+      invitation_id = id_match[0];
+
+    invitation_li.select('a.remove').first().observe('click', removeInvitation.curry(invitation_id));
+  });
+}
 
 /*
  * This will send an ajax request to the server with the search text
@@ -146,20 +138,28 @@ function liveOrganizationSearch(value, suggest) {
 }
 
 function addInvitation(organization) {
-  $('external_invitation_organization_name').value = '';
-  addInvitationToList(0, organization.name_and_location, organization.id);
+  new Ajax.Request('<%= survey_invitations_path(@survey) %>', {
+    'method': 'post',
+    'parameters': {'organization_id': organization.id}
+  });
 }
 
 function addInvitationByForm(e) {
   e.stop();
   var org_name = $F('external_invitation_organization_name');
-  addInvitationToList(0, org_name, null);
+  new Ajax.Request('<%= survey_invitations_path(@survey) %>', {
+    'method': 'post',
+    'parameters': $('invitation_form').serialize()
+  });
 }
 
 
 function addInvitationToList(invitation_id, organization_name, organization_id) {
+  $('external_invitation_organization_name').value = '';
+  $('external_invitation_email').value = '';
+
   var newListElement = new Element('li', {'id': 'invitation_' + invitation_id});
-  var removeLink = new Element('a', {'href':'#', 'style':'float:right;'});
+  var removeLink = new Element('a', {'href':'#', 'class':'remove'});
   removeLink.insert('Remove');
   removeLink.observe('click', removeInvitation.curry(invitation_id));
   newListElement.insert(removeLink);
@@ -176,14 +176,24 @@ function addInvitationToList(invitation_id, organization_name, organization_id) 
 function removeInvitation(invitation_id, e) {
   e.stop();
   new Effect.Fade('invitation_' + invitation_id, {
+    'duration': 0.5,
     'afterFinish': function() {
       $('invitation_' + invitation_id).remove();
     }
   });
+
+  new Ajax.Request('<%= survey_invitations_path(@survey) %>/' + invitation_id, {
+    'method': 'delete'
+  });
 }
 
 /* Stub for now */
-function inviteNetwork(network_id) {
+function inviteNetwork(network_id, e) {
+  e.stop();
+  new Ajax.Request('<%= survey_invitations_path(@survey) %>/create_for_network', {
+    'method': 'post',
+    'parameters': {'network_id': network_id}
+  });
 }
 </script>
 

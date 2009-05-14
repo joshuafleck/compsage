@@ -5,7 +5,7 @@ Feature: Manage Invitations
     And there is a survey
     And I am invited to the survey
     And I am on the survey index page
-    When I follow "Decline"
+    When I follow "Decline Invitation"
     Then I should not see "Decline"
     And I should see "Survey 1"
     

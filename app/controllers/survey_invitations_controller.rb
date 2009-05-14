@@ -3,82 +3,78 @@ class SurveyInvitationsController < ApplicationController
   layout 'logged_in'
   
   def index
-    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
-    @invitations = @survey.all_invitations
-    @invalid_invitations = []
     @networks = current_organization.networks   
-    
-    # if this came from a survey network link, be sure to mark the network as selected
-    @networks.each do |network|
-      if network.id.to_s == session[:survey_network_id] then
-        network.included = "1"
-        session[:survey_network_id] = nil
-      end    
-    end unless session[:survey_network_id].blank?
-    
+    @survey   = current_organization.sponsored_surveys.find(params[:survey_id])
+
+    if session[:survey_network_id] then
+      # Why, it looks like we want to survey a network!
+      create_invitations_for_network(current_organization.networks.find(session[:survey_network_id]))
+      session.delete(:survey_network_id)
+    end
+
+    @invitations = @survey.all_invitations
+   
+
     respond_to do |wants|
-      wants.html {} # render the template
-      wants.xml { render :xml => @invitations.to_xml }
+      wants.html # render the template
     end
   end
   
   def create
     @survey = current_organization.sponsored_surveys.find(params[:survey_id])
     
-    invitees = []  
-    external_invitees = []
-    network_invitees = []
-       
-    # find all of the individual invited organizations    
-    params[:invite_organization].each do |id, invite|
-      if invite[:included] == "1" then
-        invitees << Organization.find_by_id(id) 
-      end
-    end unless params[:invite_organization].blank?
 
-    # find all of the invited networks
-    params[:network].each do |id, invite|
-      if invite[:included] == "1" then
-        network_invitees << current_organization.networks.find(id)
+    @invitation = if params[:organization_id] then
+      invite_organization
+    elsif params[:external_invitation] then
+      invite_external_organization
+    end
+
+    if @invitation.save then
+      respond_to do |wants|
+        wants.html do
+          redirect_to :action => :index
+        end
+        wants.js
       end
-    end unless params[:network].blank?
-    
-    # find the invited external invitations
-    params[:external_invite].each do |id, invite|
-      if !invite[:included].blank? then
-        external_invitees << invite
-      end
-    end unless params[:external_invite].blank?
-    
-    # the invitation model will take care of creating the invitations
-    sent_invitations, @invalid_invitations = Invitation.create_internal_or_external_invitations(
-      external_invitees,
-      invitees,
-      network_invitees,
-      current_organization,
-      @survey)
-    
-    respond_to do |wants|
-      wants.html do
-        @invitations = @survey.all_invitations
-        @networks = current_organization.networks
-        flash[:notice] = sent_invitations.size > 0 ? "Invitations sent!" : "No invitations were sent"
-        render :action => "index"
-      end
-      wants.js do
-        render :text => sent_invitations.size > 0 ? "Invitation sent!" : "Selected invitee was already invited."
+    else
+      respond_to do |wants|
+        wants.html do
+          flash[:error] = "This invitation couldn't be sent."
+          redirect_to :action => :index
+        end
+        wants.js
       end
     end
   end
+   
+  # Creates a set of survey invitations for a network. This will just do the best it can to invite the entire network
+  # (excluding, of course, the sponsor). If the invitation cannot be saved due to a validation error (eg., if the
+  # network member is already invited), the invitation will just be silently skipped.
+  #
+  # This action is currently only available via post, and will only respond to javascript, as it's currently used by
+  # the invitation list during survey creation only.
+  def create_for_network
+    @survey  = current_organization.sponsored_surveys.find(params[:survey_id])
+    @network = current_organization.networks.find(params[:network_id])
     
+
+    @invitations = create_invitations_for_network(@network)
+
+    respond_to do |wants|
+      wants.js
+    end
+  end
+
   def destroy
     survey = current_organization.sponsored_surveys.find(params[:survey_id])
-    invitation = survey.invitations.find(params[:id])
+    invitation = survey.internal_and_external_invitations.find(params[:id])
     invitation.destroy
     
     respond_to do |wants|
       wants.html { redirect_to survey_invitations_path(params[:survey_id]) }
       wants.xml { head :status => :ok }
+      wants.js { head :status => :ok }
     end
   end
   
@@ -90,5 +86,41 @@ class SurveyInvitationsController < ApplicationController
       wants.html { redirect_to surveys_path() }
       wants.xml { head :status => :ok }
     end    
+  end
+
+  private
+
+  # invite the organization contained in the organization_id param
+  #
+  def invite_organization
+    organization = Organization.find(params[:organization_id]) 
+
+    return @survey.invitations.new(:inviter => current_organization, :invitee => organization)
+  end
+  
+  # invite the organization contained in the external_invitation param. This is used to invite an organization by email
+  # address.
+  #
+  def invite_external_organization
+    invitation = Invitation.new_external_invitation_to(@survey, params[:external_invitation])
+    invitation.inviter = current_organization
+
+    return invitation
+  end
+
+  # Creates the a set of survey_invitations, one for each member of the network. Any invalid invitations will be
+  # skipped silently.
+  #
+  def create_invitations_for_network(network)
+    invitations = []
+    network.organizations.each do |organization|
+      next if organization == current_organization
+
+      invitation = @survey.invitations.create(:inviter => current_organization, :invitee => organization)
+
+      invitations << invitation if invitation.valid?
+    end
+
+    invitations
   end
 end

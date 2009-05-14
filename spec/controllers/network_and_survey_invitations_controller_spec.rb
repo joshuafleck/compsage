@@ -2,23 +2,25 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 #specs specific to SurveyInvitationsController
 describe SurveyInvitationsController, " #route for" do
+  it "should map { :controller => 'invitations', :action => 'index', :survey_id => '1' } to /surveys/1/invitations" do
+    route_for(:controller => "survey_invitations", :action => "index", :survey_id => '1').should == "/surveys/1/invitations"
+  end
 
-    it "should map { :controller => 'invitations', :action => 'index', :survey_id => '1' } to /surveys/1/invitations" do
-      route_for(:controller => "survey_invitations", :action => "index", :survey_id => '1').should == "/surveys/1/invitations"
-    end
+  it "should map { :controller => 'invitations', :action => 'new', :survey_id => '1' } to /surveys/1/invitations/new" do
+    route_for(:controller => "survey_invitations", :action => "new", :survey_id => '1').should == "/surveys/1/invitations/new"
+  end
 
-    it "should map { :controller => 'invitations', :action => 'new', :survey_id => '1' } to /surveys/1/invitations/new" do
-      route_for(:controller => "survey_invitations", :action => "new", :survey_id => '1').should == "/surveys/1/invitations/new"
-    end
+  it "should map { :controller => 'invitations', :action => 'destroy', :id => '1', :survey_id => '1'} to /surveys/1/invitations/1" do
+    route_for(:controller => "survey_invitations", :action => "destroy", :id => '1', :survey_id => '1').should == { :path => "/surveys/1/invitations/1", :method => :delete }
+  end
+  
+  it "should map { :controller => 'invitations', :action => 'decline', :id => '1', :survey_id => '1'} to /surveys/1/invitations/1/decline" do
+    route_for(:controller => "survey_invitations", :action => "decline", :id => '1', :survey_id => '1').should == { :path => "/surveys/1/invitations/1/decline", :method => :put }
+  end    
 
-    it "should map { :controller => 'invitations', :action => 'destroy', :id => '1', :survey_id => '1'} to /surveys/1/invitations/1" do
-      route_for(:controller => "survey_invitations", :action => "destroy", :id => '1', :survey_id => '1').should == { :path => "/surveys/1/invitations/1", :method => :delete }
-    end
-    
-    it "should map { :controller => 'invitations', :action => 'decline', :id => '1', :survey_id => '1'} to /surveys/1/invitations/1/decline" do
-      route_for(:controller => "survey_invitations", :action => "decline", :id => '1', :survey_id => '1').should == { :path => "/surveys/1/invitations/1/decline", :method => :put }
-    end    
-    
+  it "should map { :controller => 'invitations', :action => 'create_for_network', :survey_id => '1'} to /surveys/1/invitations/create_for_network" do
+    route_for(:controller => "survey_invitations", :action => "create_for_network", :survey_id => '1').should == { :path => "/surveys/1/invitations/create_for_network", :method => :post }
+  end 
 end
 
 describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
@@ -28,14 +30,11 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
     login_as(@current_organization)
     
     @invitation = mock_model(SurveyInvitation, :id => 1, :inviter => @current_organization)
-    @invalid_invitations = []
-    @invitations = [@invitation]
     @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :all_invitations => @invitations)
     @surveys_proxy = mock('surveys proxy')
     @surveys_proxy.stub!(:find).and_return(@survey)
     @network = mock_model(Network, :id => "1", :included= => "1")
     @networks = [@network]
-    session[:survey_network_id] = "1"
     @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
     @current_organization.stub!(:networks).and_return(@networks)
     
@@ -52,39 +51,29 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
   end
   
   it "should be successful" do
-  	do_get
-  	response.should be_success
+    do_get
+    response.should be_success
   end
   
   it "should render index template" do
-  	do_get
-  	response.should render_template('index')
+    do_get
+    response.should render_template('index')
   end
   
   it "should assign the found survey invitations for the view" do    
     do_get
     assigns(:invitations).should eql(@invitations)
-   end
-   
-  it "should assign the invalid invitations the view" do    
-    do_get
-    assigns(:invalid_invitations).should eql(@invalid_invitations)
-   end   
+  end
    
   it "should assign the networks for the view" do    
     do_get
     assigns(:networks).should eql(@networks)
-   end   
+  end   
    
   it "should find all invitations" do
     @survey.should_receive(:all_invitations).and_return(@invitations)
     do_get
   end
-  
-  it "should mark the surveyed network as selected" do
-    @network.should_receive(:included=).with("1")
-    do_get
-  end  
   
   it "should find all networks" do
     @current_organization.should_receive(:networks).and_return(@networks)
@@ -98,115 +87,14 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
    
 end
 
-describe SurveyInvitationsController, " handling GET /surveys/1/invitations.xml" do
-
- before do
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
-    
-    @invitation = mock_model(
-      SurveyInvitation, 
-      :id => 1, 
-      :inviter => @current_organization, 
-      :to_xml => 'XML')
-    @invitations = [@invitation]
-    
-    @survey = mock_model(
-      Survey, 
-      :id => 1, 
-      :update_attributes => false, 
-      :sponsor => @current_organization, 
-      :job_title => "test", 
-      :all_invitations =>  @invitations)
-    @surveys_proxy = mock('surveys proxy')
-    @surveys_proxy.stub!(:find).and_return(@survey)
-    
-    @networks = []
-    
-    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
-    @current_organization.stub!(:networks).and_return(@networks)
-    
-    @params = {:survey_id => 1}
-  end
- 
-  def do_get
-    @request.env["HTTP_ACCEPT"] = "application/xml"
-    get :index, @params
-  end
-  
-  it "should require being logged in" do
-    controller.should_receive(:login_required)
-    do_get
-  end
-   
-  it "should find all survey invitations" do
-    @survey.should_receive(:all_invitations).and_return(@invitations)
-    do_get
-   end
-   
-  it "should be successful" do
-  	do_get
-  	response.should be_success
-   end
-   
-  it "should render the found invitations as XML" do
-    @invitation.should_receive(:to_xml).at_least(:once).and_return("XML")
-    do_get
-   end
-   
-end
-
 describe SurveyInvitationsController, " handling POST /surveys/1/invitations" do
-
- before do
-    @current_organization = mock_model(Organization, :id => "1")
+  before do
+    @current_organization = Factory(:organization)
     login_as(@current_organization)
-    
-    @survey = mock_model(Survey, :sponsor => @current_organization, :id => "1")
-       
-    @network1 = mock_model(Network, :owner => @current_organization, :id => "1")
-    @network2 = mock_model(Network, :owner => @current_organization, :id => "2")
-    @network3 = mock_model(Network, :owner => @current_organization, :id => "3")
-    
-    @organization1 = mock_model(Organization, :id => "2")
-    @organization2 = mock_model(Organization, :id => "3")
-    @organization3 = mock_model(Organization, :id => "4")
-    
-    @networks_proxy = mock('networks_proxy')
-    @sponsored_surveys_proxy = mock('sponsored_surveys_proxy', :find => @survey)
-    @invitations_proxy = mock('invitations_proxy')
-    
-    @current_organization.stub!(:networks).and_return(@networks_proxy)
-    @current_organization.stub!(:sponsored_surveys).and_return(@sponsored_surveys_proxy)
-    @sponsored_surveys_proxy.stub!(:running).and_return(@sponsored_surveys_proxy)
-    
-    Organization.stub!(:find_by_id).with(@organization1.id).and_return(@organization1)
-    Organization.stub!(:find_by_id).with(@organization2.id).and_return(@organization2)
-    Organization.stub!(:find_by_id).with(@organization3.id).and_return(@organization3)
-    @networks_proxy.stub!(:find).with(@network1.id).and_return(@network1)
-    @networks_proxy.stub!(:find).with(@network2.id).and_return(@network2)
-    @networks_proxy.stub!(:find).with(@network3.id).and_return(@network3)
-    @survey.stub!(:all_invitations).and_return(@invitations_proxy)
-    
-    Invitation.stub!(:create_internal_or_external_invitations).and_return([[],@invitations_proxy])
-    
-    @params = {
-          :survey_id => @survey.id.to_s, 
-          :invite_organization => { 
-            @organization1.id.to_s => {:included => '1'}, 
-            @organization2.id.to_s => {:included => '1'}, 
-            @organization3.id.to_s => {}
-          },
-          :network => { 
-            @network1.id.to_s => {:included => '1'}, 
-            @network2.id.to_s => {:included => '1'}, 
-            @network3.id.to_s => {}
-          },
-          :external_invite => {
-            '1' => {"included" => '1', "organization_name" => 'ext1', "email" => 'ext1@ext1.com'}
-          }
-        }
-        
+    @survey = Factory(:survey, :sponsor => @current_organization)
+    @current_organization.sponsored_surveys.stub(:find).and_return(@survey)
+
+    @params = {:survey_id => @survey.id, :organization_id => @current_organization.id}
   end
  
   def do_post
@@ -217,61 +105,27 @@ describe SurveyInvitationsController, " handling POST /surveys/1/invitations" do
     controller.should_receive(:login_required)
     do_post
   end
-  
-  it "should find all of the invited organizations" do
-    Organization.should_receive(:find_by_id).with(@organization1.id).and_return(@organization1)
-    Organization.should_receive(:find_by_id).with(@organization2.id).and_return(@organization2)
-    do_post
-  end
-  
-  it "should find all of the invited networks" do
-    @networks_proxy.should_receive(:find).with(@network1.id).and_return(@network1)
-    @networks_proxy.should_receive(:find).with(@network2.id).and_return(@network2)
-    do_post
-  end
-  
-  it "should not create invitations for unselected organizations" do
-    Organization.should_not_receive(:find_by_id).with(@organization3.id)
-    do_post
-  end  
-  
-  it "should not create invitations for unselected networks" do
-    @networks_proxy.should_not_receive(:find_by_id).with(@network3.id)
-    do_post
-  end  
-  
-  it "should build the invitations" do
-    Invitation.should_receive(:create_internal_or_external_invitations).with([@params[:external_invite]["1"]],[@organization1,@organization2],[@network1,@network2],@current_organization,@survey)
-    do_post
-  end
-  
-  it "should assign the invalid invitations the view" do    
-    do_post
-    assigns(:invalid_invitations).should eql(@invitations_proxy)
-   end 
    
-  it "should assign the invitations to the view" do
-    @survey.should_receive(:all_invitations)
-    do_post
-  	assigns[:invitations].should_not be_nil
-  end  
-  
-  it "should assign the networks to the view" do
-    @current_organization.should_receive(:networks)
-    do_post
-  	assigns[:networks].should_not be_nil
-  end     
-  
-  it "should flash a message notiing if invitations were sent" do
-    do_post
-    flash[:notice].should eql("No invitations were sent")
+  describe "when inviting an organization by id" do
+    before do
+      @other_organization = Factory(:organization)
+      @params.merge!({:organization_id => @other_organization.id.to_s})
+    end
+
+    it "should find the organization to invite" do
+      Organization.should_receive(:find).at_least(:once).and_return(@other_organization)
+      do_post
+    end
+
+    it "should create an internal invitation to the survey" do
+      @survey.invitations.should_receive(:new).and_return(Invitation.new)
+      do_post
+    end
   end
-  
 end
 
 describe SurveyInvitationsController, " handling DELETE /surveys/1/invitations/1" do
-
- before do
+  before do
     @current_organization = mock_model(Organization, :name => "test")
     login_as(@current_organization)
     
@@ -279,7 +133,7 @@ describe SurveyInvitationsController, " handling DELETE /surveys/1/invitations/1
     @invitations_proxy = mock('invitations proxy')
     @invitations_proxy.stub!(:find).and_return(@invitation)
     
-    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :invitations => @invitations_proxy)
+    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :internal_and_external_invitations => @invitations_proxy)
     @surveys_proxy = mock('surveys proxy')
     @surveys_proxy.stub!(:find).and_return(@survey)
     
@@ -350,8 +204,8 @@ describe SurveyInvitationsController,  "handling PUT /surveys/1/invitations/1/de
   end
   
   it "should be successful" do
-  	do_put
-  	response.should redirect_to(surveys_path)
+        do_put
+        response.should redirect_to(surveys_path)
   end  
   
   it "should change the status of the invitation to 'declined'" do
@@ -403,13 +257,13 @@ describe NetworkInvitationsController, " handling GET /networks/1/invitations" d
   end
   
   it "should be successful" do
-  	do_get
-  	response.should be_success
+        do_get
+        response.should be_success
   end
   
   it "should render index template" do
-  	do_get
-  	response.should render_template('index')
+        do_get
+        response.should render_template('index')
   end
   
   it "should find the network" do
@@ -418,8 +272,8 @@ describe NetworkInvitationsController, " handling GET /networks/1/invitations" d
   end
   
   it "should find all the network's invitations" do
-  	@network.should_receive(:all_invitations).and_return(@invitations)
-  	do_get
+        @network.should_receive(:all_invitations).and_return(@invitations)
+        do_get
   end
   
   it "should assign the network for the view" do
@@ -428,8 +282,8 @@ describe NetworkInvitationsController, " handling GET /networks/1/invitations" d
   end
   
   it "should assign the found network invitations for the view" do
-  	do_get
-  	assigns[:invitations].should_not be_nil
+        do_get
+        assigns[:invitations].should_not be_nil
   end
      
   it "should assign the invalid invitations the view" do    
@@ -468,8 +322,8 @@ describe NetworkInvitationsController, " handling GET /networks/1/invitations.xm
   end
   
   it "should be successful" do
-  	do_get
-  	response.should be_success
+        do_get
+        response.should be_success
   end
   
   it "should render the found invitations as XML" do
@@ -548,7 +402,7 @@ describe NetworkInvitationsController, " handling POST /networks/1/invitations" 
   it "should assign the invitations to the view" do
     @network.should_receive(:all_invitations)
     do_post
-  	assigns[:invitations].should_not be_nil
+        assigns[:invitations].should_not be_nil
   end
   
   it "should assign the invalid invitations the view" do    
@@ -586,17 +440,17 @@ describe NetworkInvitationsController, " handling DELETE /network/1/invitations/
   
   it "should find the invitation requested" do
     @invitations_proxy.should_receive(:find).and_return(@invitation)
-  	do_delete
+        do_delete
   end
   
   it "should destroy the invitation requested" do
-  	@invitation.should_receive(:destroy)
-  	do_delete
+        @invitation.should_receive(:destroy)
+        do_delete
   end
   
   it "should redirect to the invitation index page" do
-  	do_delete
-  	response.should redirect_to(network_invitations_path(1))
+        do_delete
+        response.should redirect_to(network_invitations_path(1))
   end
 
 end
@@ -620,16 +474,16 @@ describe NetworkInvitationsController, " handling PUT /network/1/invitations/1/d
   
   it "should find the invitation requested" do
     @invitations_proxy.should_receive(:find).and_return(@invitation)
-  	do_put
+        do_put
   end
   
   it "should destroy the invitation requested" do
-  	@invitation.should_receive(:destroy)
-  	do_put
+        @invitation.should_receive(:destroy)
+        do_put
   end
   
   it "should redirect to the network index page" do
-  	do_put
-  	response.should redirect_to(networks_path())
+        do_put
+        response.should redirect_to(networks_path())
   end  
 end

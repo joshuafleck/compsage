@@ -51,4 +51,16 @@ class Invitation < ActiveRecord::Base
     
   end
    
+  # Makes a new external invitation, assuming the email address specified doesn't already belong to a compsage member.
+  # If the email address specified is a compsage member, this method will return an internal invitation.
+  #
+  def self.new_external_invitation_to(network_or_survey, params = {})
+    if organization = Organization.find_by_email(params[:email]) then
+      # Organization with this contact email is already in our database. Create internal invitation.
+      return network_or_survey.invitations.new(params)
+    else
+      return network_or_survey.external_invitations.new(params)
+    end
+  end
+
 end

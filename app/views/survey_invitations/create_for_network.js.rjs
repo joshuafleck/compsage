@@ -1,0 +1,3 @@
+@invitations.each do |invitation|
+  page.call :addInvitationToList, invitation.id, invitation.invitee.name_and_location, invitation.invitee_id
+end

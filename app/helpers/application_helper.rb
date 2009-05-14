@@ -25,9 +25,10 @@ module ApplicationHelper
     end
   end
   
-  def link_to_organization(organization)
-    link_to(organization.name_and_location, organization_path(organization),
-      :title => "Contact: #{organization.contact_name} #{organization.city + ", " + organization.state unless organization.city.blank?}")
+  def link_to_organization(organization, options = {})
+    include_location = options.delete(:include_location) != false
+    link_to(include_location ? organization.name_and_location : organization.name, organization_path(organization),
+        :title => "Contact: #{organization.contact_name} #{organization.city + ", " + organization.state unless organization.city.blank?}")
   end
 
   def link_to_network(network)
