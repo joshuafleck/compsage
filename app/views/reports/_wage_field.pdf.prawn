@@ -1,4 +1,4 @@
-percentiles = question.responses.percentiles(:numerical_response, 25, 50, 75)
+percentiles = question.responses.percentiles(:raw_numerical_response, 25, 50, 75)
 average = question.responses.average(:numerical_response).to_i / 100.0
 
 if format == "Hourly" then

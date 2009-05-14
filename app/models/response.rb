@@ -1,6 +1,7 @@
 class Response < ActiveRecord::Base
   class_inheritable_accessor :units, :minimum_responses_for_report, :has_options, :field_type, :field_options,
                              :accepts_qualification, :report_type
+  attr_accessor :raw_numerical_response
 
   self.units = nil
   self.minimum_responses_for_report = 1
@@ -92,6 +93,7 @@ class Response < ActiveRecord::Base
   def formatted_response
     self.response
   end
+  
 
   private
 
@@ -102,6 +104,7 @@ class Response < ActiveRecord::Base
   end
 
   def convert_from_standard_units
+    self.raw_numerical_response = self.numerical_response
     if !self.unit.blank? && self.class.units then
       self.numerical_response = self.class.units.convert(self.numerical_response, :from => self.class.units.standard_unit, :to => self.unit) 
     end
