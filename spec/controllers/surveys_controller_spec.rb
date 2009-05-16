@@ -488,25 +488,9 @@ describe SurveysController, " handling POST /surveys" do
     do_post
   end
   
-  it "should build any included custom questions" do
-    @questions_proxy.should_receive(:build).with(@params[:questions]["1"])
-    do_post
-  end
-  
-  it "should build any included predefined questions" do
-    PredefinedQuestion.should_receive(:find).with("1")
-    @pdq1.should_receive(:build_questions).with(@survey)
-    do_post
-  end  
-  
   it "should redirect to the survey invitations page upon success" do
     do_post
     response.should redirect_to(survey_invitations_path(@survey))
-  end
-  
-  it "should assign the questions and predefined questions to the view" do
-    do_post
-    assigns[:survey].should_not be_nil
   end
   
 end
@@ -613,37 +597,6 @@ describe SurveysController, " handling PUT /surveys/1" do
     do_update
     assigns(:survey).should equal(@survey)
   end
-
-  it "should check to see if the questions already exist" do
-    @question.should_receive(:nil?)
-    do_update
-  end   
-     
-  it "should destroy any unselected questions that exist" do
-    @question.should_receive(:destroy)
-    do_update
-  end  
-  
-  it "should create any selected questions that do not exist" do
-    @questions_proxy.should_receive(:build).with(@params[:questions]["3"])
-    do_update
-  end 
-  
-  it "should check to see if the predefined questions already exist" do
-    @predefined_questions.should_receive(:size).at_least(:once)
-    do_update
-  end   
-     
-  it "should destroy any unselected predefined questions that exist" do
-    @question.should_receive(:destroy)
-    do_update
-  end  
-  
-  it "should create any selected predefined questions that do not exist" do
-    PredefinedQuestion.should_receive(:find).with("3")
-    @pdq3.should_receive(:build_questions).with(@survey)
-    do_update
-  end   
 
   it "should assign the found survey to the view" do
     do_update

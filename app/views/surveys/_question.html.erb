@@ -1,0 +1,28 @@
+<% form.fields_for :questions, question, :child_index => index do |q_f| %>
+  <li class="<%= cycle("even", "odd") %>" id='<%="question_#{index}"%>'>
+    <div id='<%="question_display_#{index}"%>'>
+      <div id='<%="question_display_text_#{index}"%>' class="label"><%=q_f.object[:text]%></div>
+      <span id='<%="question_display_type_#{index}"%>' class="description"><%=q_f.object[:custom_question_type]%></span>
+      <div style="float: bottom; width: 100%">
+        <a id='<%="question_edit_#{index}"%>'>edit</a>
+        <a id='<%="question_delete_#{index}"%>'>delete</a>
+        <a id='<%="question_up_#{index}"%>'>move up</a>
+        <a id='<%="question_down_#{index}"%>'>move down</a>
+        <%= q_f.label :required, 'Require response', :style => 'display: inline;' %>
+        <%= q_f.check_box :required, :style => 'display: inline;' %>
+      </div>
+    </div>
+    <div id='<%="question_edit_display_#{index}"%>' style='display: none;'>
+      <%= q_f.label :text, 'Question Text' %>
+      <%= q_f.text_field :text %>    
+      <%= q_f.label :custom_question_type, 'Response Type' %>
+      <%= q_f.select :custom_question_type, Question::CUSTOM_QUESTION_TYPES.keys %>
+      <a id='<%="question_save_#{index}"%>'>Save</a>
+      <a id='<%="question_cancel_#{index}"%>'>Cancel</a>
+      <%= q_f.hidden_field :predefined_question_id %>
+      <%= q_f.hidden_field :position %>
+      <%= q_f.hidden_field :follow_up_question_id %>
+      <%= q_f.hidden_field :_delete, :value => '0' %>
+    </div>    
+  </li>
+<% end %>

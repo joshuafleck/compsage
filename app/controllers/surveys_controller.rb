@@ -63,9 +63,6 @@
   def update
     @survey = current_organization.sponsored_surveys.running_or_pending.find(params[:id])
      
-    update_predefined_questions(params[:predefined_questions]) unless params[:predefined_questions].blank?        
-    update_questions(params[:questions]) unless params[:questions].blank?
-
     #update the attributes for the survey
     if @survey.update_attributes(params[:survey])
        respond_to do |wants|  
@@ -84,6 +81,7 @@
   
   def new
     @survey = current_organization.sponsored_surveys.find_or_initialize_by_aasm_state('pending') 
+    
     # if we came from a 'survey network' link, save the network in the session to be accessed later when sending
     # invitations
     session[:survey_network_id] = params[:network_id] unless params[:network_id].blank?
@@ -92,9 +90,6 @@
   def create
     @survey = current_organization.sponsored_surveys.find_or_create_by_aasm_state('pending')
     
-    update_predefined_questions(params[:predefined_questions]) unless params[:predefined_questions].blank?        
-    update_questions(params[:questions]) unless params[:questions].blank?
- 
     if @survey.update_attributes(params[:survey])
                 
       respond_to do |wants|
@@ -256,37 +251,5 @@
       end
     end
   end  
-  
-  private
-  
-  # find all predefined questions, determine if they already exist
-  #  all selected non-existent questions are created
-  #  all un-selected existing questions are deleted
-  def update_predefined_questions(predefined_question_pairs)
-    predefined_question_pairs.each_pair do |predefined_question_id, params|
-      existing_questions = @survey.questions.find_all_by_predefined_question_id(predefined_question_id)
-      if existing_questions.size == 0 then
-        PredefinedQuestion.find(predefined_question_id).build_questions(@survey) if params[:included] == "1"
-      else
-        existing_questions.each do |q| 
-          q.destroy 
-        end if params[:included] == "0"
-      end    
-    end
-  end
-  # find all custom questions, determine if they already exist
-  #  all selected non-existent questions are created
-  #  all un-selected existing questions are deleted
-  # need to sort questions based on created date to preserve order
-  def update_questions(question_pairs)
-    question_pairs.sort{|a,b| a[0].to_i <=> b[0].to_i}.each do |key,question|
-      existing_question = @survey.questions.find_by_id(question[:id]) unless question[:id].blank?
-      if existing_question.nil? then
-        @survey.questions.build(question).move_to_bottom if question[:included] == "1"
-      else
-        existing_question.destroy if question[:included] == "0"
-      end
-    end
-  end
-
+ 
 end

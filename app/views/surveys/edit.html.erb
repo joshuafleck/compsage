@@ -1,10 +1,1 @@
-<%title "Editing Survey #{@survey.job_title}"%>
-<% highlight_tab("surveys") %>
-<h2>Edit Survey</h2>
-
-<%=render(:partial => "survey_form", :locals => { 
-   :predefined_questions => @predefined_questions, 
-   :custom_questions => @custom_questions
-  }) 
-%>
- 
+<%=render(:partial => "survey_form" )%>

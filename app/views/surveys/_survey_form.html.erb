@@ -1,126 +1,219 @@
-<%= error_messages_for :survey %>
-<%= f.label :job_title, required("Job title") %>
-<%= f.text_field :job_title, :size => 40 %>
-<%= f.label :description, "Job description" %>
-<%= f.text_area :description, :rows => 4, :cols => 40 %>
-<%=f.label :days_running, "Run length" %>
-<%=f.select :days_running, (3..14).to_a.collect {|i| ["#{i} days", i]} %>
-<h3>Standard questions</h3>
-<div id="standard_questions">
-  <ul>
-    <% @survey.predefined_questions.each do |predefined_question| %>
-      <% fields_for "predefined_questions[#{predefined_question.id}]", predefined_question do |predefined_question_form| %>
-        <li>
-            <%=predefined_question_form.check_box :included%>
-            <%=predefined_question_form.label :included, predefined_question.name%>
-        </li>
-      <% end %>
-    <% end %>
-  </ul>
+<% title "New Survey" %>
+<% highlight_tab("surveys") %>
+<div class="breadcrumbs">
+  <%= image_tag 'step_1_active.gif' %>
+  <%= image_tag 'step_2_inactive.gif' %>
+  <%= image_tag 'step_3_inactive.gif' %>
+  <%= image_tag 'step_4_inactive.gif' %>
 </div>
-<h3>Custom questions</h4>
-<div id="custom_questions">
-  <ul id="custom_question_list">
-    <% @survey.custom_questions.each_with_index do |question, index| %>
-      <% fields_for "questions[#{index}]", question do |question_form| %>
-        <li>
-          <%=question_form.check_box :included %>
-          <%=question_form.label :included, question[:text]%>
-          <span class="description"><%=question[:custom_question_type]%></span>
-          <%=question_form.hidden_field :custom_question_type %>
-          <%=question_form.hidden_field :text %>
-          <%=question_form.hidden_field :id %>
-        </li>
+<div class="step_container">
+  <%=flash_messages%>
+  <% form_for @survey, :url => surveys_path, :html => {:method => :post} do |f| %>
+    <%= error_messages_for :survey %>
+    <%= f.label :job_title, required("Job title") %>
+    <%= f.text_field :job_title, :size => 40 %>
+    <%= f.label :description, "Job description" %>
+    <%= f.text_area :description, :rows => 4, :cols => 40 %>
+    <%= f.label :days_running, "Run length" %>
+    <%= f.select :days_running, (3..14).to_a.collect {|i| ["#{i} days", i]} %>
+    <h3>Questions</h3>
+    <select id="predefined_questions">
+      <option value="" selected="selected">Select a question</option>
+      <option value="0">Custom question</option>
+      <%= options_from_collection_for_select(PredefinedQuestion.all, 'id', 'name') %>
+    </select>
+    <ol id="questions">
+      <% @survey.questions.each_with_index do |question, index| %>
+        <%=render(:partial => "question", :locals => { :form => f, :index => index.to_s }, :object => question )%>
       <% end %>
-    <% end %>
-  </ul>
-  <div class="box_container" id="custom_question_form">
-    <div class="box">
-      <label for="question_text">Question Text</label>
-      <input type="text" size="30" id="question_text" />
+      <%=render(:partial => "question", :locals => { :form => f, :index => 'blank_cq' }, :object => Question.new )%>
+    </ol>
+    <div class="submit_row">
+      <input id="form_submit" type="submit" value="Create Invitation List" class="next" />
+      <input type="button" onclick="window.location='<%= surveys_path %>'" value="Cancel" class="previous" />
     </div>
-    <div class="box">
-      <label for="response_type">Response Type</label>
-      <select id="response_type">
-        <option>Agreement scale</option>
-        <option>Text response</option>
-        <option>Numeric response</option>
-        <option>Pay or wage response</option>
-        <option>Percent</option>
-        <option>Yes/No</option>
-      </select>
-    </div>
-    <div class="box">
-      <label>&nbsp;</label>
-      <input type="button" value="Add Question" id="question_submit">
-    </div>
-  </div>
+  <% end %>
 </div>
 <br clear="both" />
 <script type="text/javascript">
 
-function observeCustomQuestion() {
-  $('question_submit').observe('click', createQuestion);
-  $('form_submit').observe('click', createQuestion);
-  callFunctionOnEnterForm($('custom_question_form'),createQuestion);
+function initializeObservers() {
 
+  <% @survey.questions.each_with_index do |question, index| %>
+    $('question_cancel_<%= index %>').observe('click', cancelEditQuestion.curry(<%= index %>));
+    $('question_edit_<%= index %>').observe('click', editQuestion.curry(<%= index %>));
+    $('question_delete_<%= index %>').observe('click', deleteQuestion.curry(<%= index %>));
+    $('question_up_<%= index %>').observe('click', moveQuestion.curry(<%= index %>,'up'));
+    $('question_down_<%= index %>').observe('click', moveQuestion.curry(<%= index %>, 'down'));
+    $('question_save_<%= index %>').observe('click', saveQuestion.curry(<%= index %>));
+  <% end %>
+
+  $('question_blank_cq').hide();
+  $('question_edit_display_blank_cq').show();
+  $('question_display_blank_cq').hide();
+  $('predefined_questions').observe('change', selectQuestion);
+  $('question_cancel_blank_cq').observe('click', cancelCustomQuestion);
+  $('question_save_blank_cq').observe('click', createCustomQuestion);
+  $('<%= @survey.new_record? ? "new_survey" : "edit_survey_#{@survey.id}" %>').observe('submit', removeCustomQuestion);
 }
 
-/*
- * This will validate the question, create a question object, store the question object, and render it in the DOM.
+/**
+ * Action taken when the user selects from the questions drop-down
+ * This will create a predefined question or expose the custom question form
  */
-function createQuestion() {
+function selectQuestion() {
 
-  var question_text = $F('question_text');
-  var response_type = $F('response_type');
-  var custom_question_list = $('custom_question_list');
+  var selectedQuestion = $F('predefined_questions');
   
-  if (question_text == '') {
-    return;
+  //The user selected custom question
+  if(selectedQuestion == "0") {
+    $('question_blank_cq').appear();
+  } 
+  //The user selected a predefined question
+  else if (selectedQuestion != '') {
+    alert('pending, try custom question');
   }
-    
-  var question_id = (new Date()).getTime();
-
-  var question_item = new Element('li');
   
-	var checkbox = new Element('input', {
-  	  'id': 'questions_' + question_id + '_included', 
-  	  'type': 'checkbox', 
-  	  'value': 1, 
-  	  'name': 'questions[' + question_id + '][included]'
-	  });
-	  
-	var label = new Element('label', {'for': 'questions_' + question_id + '_included'}).update(question_text);
-	
-	var descr = new Element('span', { 'class': "description" }).update(response_type);
-	
-	var text = new Element('input', {
-	  'type': 'hidden', 
-	  'value': question_text, 
-	  'name': 'questions[' + question_id + '][text]'
-	  });
-	
-	var type = new Element('input', {
-	    'type': 'hidden', 
-	    'value': response_type, 
-	    'name': 'questions[' + question_id + '][custom_question_type]'
-	  });	
-	
-	question_item.update(checkbox); 
-	question_item.insert(label);  
-	question_item.insert(descr); 
-	question_item.insert(text);
-	question_item.insert(type);    
-  custom_question_list.insert(question_item, { 'position': 'bottom' });
+  //Reset the select box
+  $('predefined_questions').clear();
   
-  //IE6 hack - checkbox must be marked as checked after insertion into DOM
-  checkbox.checked = true;
-  
-  $('question_text').clear();
 }
 
+/**
+ * Copies the contents of the custom question form into a new question element
+ * Adds observers to the new question
+ * Populates the new question fields
+ * Hides the custom question form
+ */
+function createCustomQuestion() {
+  var custom_question_form = $('question_blank_cq')
+  var index = (new Date()).getTime();
+  var question = copyElement(custom_question_form, 'blank_cq', index).hide();
+  custom_question_form.insert({ 'before':question });
+  
+  $('question_cancel_'+index).observe('click', cancelEditQuestion.curry(index));
+  $('question_edit_'+index).observe('click', editQuestion.curry(index));
+  $('question_delete_'+index).observe('click', deleteQuestion.curry(index));
+  $('question_up_'+index).observe('click', moveQuestion.curry(index,'up'));
+  $('question_down_'+index).observe('click', moveQuestion.curry(index, 'down'));
+  $('question_save_'+index).observe('click', saveQuestion.curry(index));
+  
+  saveQuestion(index);
+  question.appear();
+  cancelCustomQuestion(); 
+}
+
+/**
+ * Hides the question display and brings up the question edit form
+ */
+function editQuestion(index) {
+  $('question_display_'+index).hide();
+  $('question_edit_display_'+index).appear();
+}
+
+/**
+ *
+ * Hides the edit form, updates the question display, brings up the question display
+ */
+function saveQuestion(index) {
+
+  $('question_edit_display_'+index).hide();
+  
+  $('question_display_text_'+index).update($('survey_questions_attributes_'+index+'_text').value);
+  
+  var selectedIndex = $('survey_questions_attributes_'+index+'_custom_question_type').selectedIndex;
+  $('question_display_type_'+index).update($('survey_questions_attributes_'+index+'_custom_question_type').options[selectedIndex].text);
+  
+  $('question_display_'+index).appear();
+  
+}
+
+/**
+ *
+ * Hides the edit form, resets the form elements to their original values, brings up the question display
+ */
+function cancelEditQuestion(index) {
+  $('question_edit_display_'+index).hide();
+  
+  $('survey_questions_attributes_'+index+'_text').value = $('question_display_text_'+index).innerHTML;
+  
+  var selectedIndex = 0;
+  var options = $('survey_questions_attributes_'+index+'_custom_question_type').options;
+  for(i=0; i<options.length; i++) {
+    o = options[i];
+    if (o.text == $('question_display_type_'+index).text) {
+      selectedIndex = i;
+    }
+  };
+  
+  $('survey_questions_attributes_'+index+'_custom_question_type').selectedIndex = selectedIndex;
+  
+  $('question_display_'+index).appear();
+}
+
+/**
+ * Hides the question, sets the deleted flag
+ */
+function deleteQuestion(index) {
+  $('survey_questions_attributes_'+index+'__delete').value = true;
+  $('question_'+index).fade();
+}
+
+function moveQuestion(index,direction) {
+  alert('pending, try edit or delete');
+}
+
+/**
+ * Performs a deep copy of the element, returns the copy with updated names and IDs
+ */
+function copyElement(eId, originalID, replacingID)	{
+  var copyE    = eId.cloneNode(true); //does a deep copy of the node
+  copyE.id     = eId.id.replace(originalID,replacingID); //element needs a new ID
+  
+  //give all of the children new atrtribute names and ids
+  copyE.descendants().each( function(e) {
+    if(e.tagName=='SELECT') {
+      e.selectedIndex = $(e.id).selectedIndex;
+    }
+    if(e.id) {
+      e.id = e.id.replace(originalID,replacingID); 
+    }
+    if(e.name) {
+      e.name = e.name.replace(originalID,replacingID); 
+    }  
+    if(e.htmlFor) {
+      e.htmlFor = e.htmlFor.replace(originalID,replacingID); 
+    }  
+  });
+  
+  return copyE;
+}
+
+
+/**
+ * Clears the custom question form inputs and hides the form
+ *
+ */
+function cancelCustomQuestion() {
+
+  $('survey_questions_attributes_blank_cq_text').clear();
+  $('survey_questions_attributes_blank_cq_custom_question_type').clear();
+  $('question_blank_cq').fade();
+  
+}
+
+/**
+ * Removes the custom question from the form, unless there it looks like the user entered a question, 
+ *  but forgot to save it
+ *
+ */
+function removeCustomQuestion() {
+  if($('survey_questions_attributes_blank_cq_text').value == '') {
+    $('question_blank_cq').remove();
+  }
+}
 
 </script>
 
-<% content_for :initialize_js, "observeCustomQuestion();"%>
+<% content_for :initialize_js, "initializeObservers();"%>
 

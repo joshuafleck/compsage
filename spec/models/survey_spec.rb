@@ -143,7 +143,7 @@ describe Survey, "that is stalled" do
   end
   
   it "should not rerun if the survey if the end date would be beyond 21 days from creation" do
-    @survey.start_date = @survey.end_date - 18.6.days
+    @survey.start_date = @survey.end_date - 19.days
     @survey.days_running = 3
     @survey.rerun!
     @survey.should be_stalled
