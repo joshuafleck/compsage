@@ -15,7 +15,7 @@
         @invited_surveys = current_organization.survey_invitations.pending.running.find(
           :all,
           :order => 'invitations.created_at desc')
-        @my_surveys = current_organization.sponsored_surveys.not_finished.find(:all, :order => 'end_date DESC');
+        @my_surveys = current_organization.sponsored_surveys.running_or_stalled.find(:all, :order => 'end_date DESC');
         # Include surveys that are running and those that are stalled within the last day
         @survey_participations = current_organization.participations.find(:all,
           :include => :survey,

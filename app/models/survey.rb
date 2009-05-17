@@ -40,6 +40,7 @@ class Survey < ActiveRecord::Base
   named_scope :closed, :conditions => ['aasm_state = ? OR aasm_state = ?', 'finished', 'stalled']
   named_scope :not_finished, :conditions => "aasm_state <> 'finished'"
   named_scope :running_or_pending, :conditions => ['aasm_state = ? OR aasm_state = ?', 'running', 'pending']
+  named_scope :running_or_stalled, :conditions => 'aasm_state = "running" OR aasm_state = "stalled"'
   named_scope :deletable, :conditions => ['aasm_state = ? OR aasm_state = ?', 'stalled', 'pending']
   
   accepts_nested_attributes_for :questions, :allow_destroy => true

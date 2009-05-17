@@ -12,46 +12,46 @@
     <%end%>
 
     <% if @survey.sponsor == current_organization then %>
-			<h3>Manage Your Survey</h3>
-				<p><%=link_to "Edit Questions &amp; Job Description", edit_survey_path(@survey)%><br />
-				<%=link_to "Manage Invitation List", survey_invitations_path(@survey) %></p>
-		<% end %>
-		<h3>Invitation List</h3>
-		<ol>
-			<% @invitations.each do |invitation| %>
-				<li>
-					<% if invitation.is_a?(SurveyInvitation) then %>
-	          <%=link_to_organization(invitation.invitee)%>     
-	        <% else %>      
-	          <%=invitation.organization_name%> (<%=invitation.email%>)
-	        <% end %>
-				</li>
-			<% end %>
-		</ol>
+      <h3>Manage Your Survey</h3>
+        <p><%=link_to "Edit Questions &amp; Job Description", edit_survey_path(@survey)%><br />
+        <%=link_to "Manage Invitation List", survey_invitations_path(@survey) %></p>
+    <% end %>
+    <h3>Invitation List</h3>
+    <ol>
+      <% @invitations.each do |invitation| %>
+        <li>
+          <% if invitation.is_a?(SurveyInvitation) then %>
+            <%=link_to_organization(invitation.invitee)%>     
+          <% else %>      
+            <%=invitation.organization_name%>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
     <p>Participants: <%= @survey.participations.count %></p>
-		<% if @survey.sponsor == current_organization && !@survey.enough_invitations? then %>
-		  <p><%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%> participants are required to provide results. We recommend you invite at least <%=pluralize(@survey.recommended_number_of_invitations, 'additional organization')%>.</p>
-		<% end %>
-	</div>
+    <% if @survey.sponsor == current_organization && !@survey.enough_invitations? then %>
+      <p><%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%> participants are required to provide results. We recommend you invite at least <%=pluralize(@survey.recommended_number_of_invitations, 'additional organization')%>.</p>
+    <% end %>
+  </div>
 <% end %>
   <h2><%= @survey.job_title %><br />
-	<div class="sponsor">Sponsored by <%=link_to_organization(@survey.sponsor)%></div></h2>
+  <div class="sponsor">Sponsored by <%=link_to_organization(@survey.sponsor)%></div></h2>
 
-	<div class="main_description"><%=link_and_format(@survey.description)%></div>
-	<h3>Questions &amp; Clarifications</h3>
-	<% if @discussions.any? then %>
-		<p><a href="#" id="new_discussion_link">Start a new topic</a></p>
-	<% else %>
-		There are currently no discussion topics.  <a href="#" id="new_discussion_link">Start one now</a>.
-	<% end %>
-	<div id="new_discussion_form" style="<%='display: none;' unless @discussion.errors.size > 0%>">
-  	<%=render :partial => 'discussions/discussion_form', :locals => { :discussion => @discussion } %>
-	</div>
-	<ul id="discussions">
-	  <%=render :partial => 'discussions/discussion_topic', :collection => @discussions.sort %>
-	</ul>
-	<p class="discussion_warning">You must preserve your anonymity and the anonymity of the other participants. The posting of
-		compensation information is unlawful.</p>
+  <div class="main_description"><%=link_and_format(@survey.description)%></div>
+  <h3>Questions &amp; Clarifications</h3>
+  <% if @discussions.any? then %>
+    <p><a href="#" id="new_discussion_link">Start a new topic</a></p>
+  <% else %>
+    There are currently no discussion topics.  <a href="#" id="new_discussion_link">Start one now</a>.
+  <% end %>
+  <div id="new_discussion_form" style="<%='display: none;' unless @discussion.errors.size > 0%>">
+    <%=render :partial => 'discussions/discussion_form', :locals => { :discussion => @discussion } %>
+  </div>
+  <ul id="discussions">
+    <%=render :partial => 'discussions/discussion_topic', :collection => @discussions.sort %>
+  </ul>
+  <p class="discussion_warning">You must preserve your anonymity and the anonymity of the other participants. The posting of
+    compensation information is unlawful.</p>
 <script type="text/javascript">
 
 function observeDiscussions() {
