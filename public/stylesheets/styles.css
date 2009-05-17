@@ -1092,10 +1092,6 @@ ul.entity_list, ol.entity_list {
   list-style-type: none;
 }
 
-ul.entity_list li, ol.entity_list li {
-  margin-bottom: 1em;
-}
-
 ul.entity_list li.odd, ol.entity_list li.odd {
   background-color: #f1f3f0;
   border-top: 1px solid #eee;
