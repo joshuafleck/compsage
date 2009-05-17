@@ -1,14 +1,14 @@
 <% form.fields_for :questions, question, :child_index => index do |q_f| %>
   <li class="<%= cycle("even", "odd") %>" id='<%="question_#{index}"%>'>
     <div id='<%="question_display_#{index}"%>'>
-      <div id='<%="question_display_text_#{index}"%>' class="label"><%=q_f.object[:text]%></div>
-      <span id='<%="question_display_type_#{index}"%>' class="description"><%=q_f.object[:custom_question_type]%></span>
+      <div id='<%="question_display_text_#{index}"%>'><%=q_f.object[:text]%></div>
+      <div id='<%="question_display_type_#{index}"%>' class="description_box"><%=q_f.object[:custom_question_type]%></div>
       <div style="float: bottom; width: 100%">
-        <a id='<%="question_edit_#{index}"%>'>edit</a>
-        <a id='<%="question_delete_#{index}"%>'>delete</a>
-        <a id='<%="question_up_#{index}"%>'>move up</a>
-        <a id='<%="question_down_#{index}"%>'>move down</a>
-        <%= q_f.label :required, 'Require response', :style => 'display: inline;' %>
+        <a id='<%="question_up_#{index}"%>'><%= image_tag "up_button.gif" %></a>
+        <a id='<%="question_down_#{index}"%>'><%= image_tag "down_button.gif" %></a>
+        <a id='<%="question_edit_#{index}"%>'><%= image_tag "edit_button.gif" %></a>
+        <a id='<%="question_delete_#{index}"%>'><%= image_tag "remove_button.gif" %></a>
+        <%= q_f.label :required, 'Response required', :class => 'inline_option' %>
         <%= q_f.check_box :required, :style => 'display: inline;' %>
       </div>
     </div>

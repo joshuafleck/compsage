@@ -683,6 +683,15 @@ div.submit_row .next {
 #custom_questions input#question_submit {
   margin-top: 4px;
 }
+ol#new_questions {
+  margin-top: 1em;
+  border: 1px solid #eee;
+}
+
+ol#new_questions li {
+  padding: 10px 20px;
+  margin: 0;
+}
 
 /* Survey preview */
 #survey_preview_box {
@@ -1077,11 +1086,22 @@ div.flash_error {
 }
 
 /* Custom Elements */
-ul.entity_list {
+ul.entity_list, ol.entity_list {
   margin: 0;
   padding: 0;
   list-style-type: none;
 }
+
+ul.entity_list li, ol.entity_list li {
+  margin-bottom: 1em;
+}
+
+ul.entity_list li.odd, ol.entity_list li.odd {
+  background-color: #f1f3f0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
 label, div.label {
   display: block;
   font-weight: bold;
@@ -1096,6 +1116,13 @@ label.option {
   font-weight: normal;
   font-size: 0.875em;
   margin: 0;
+}
+
+label.inline_option {
+  font-weight: normal;
+  font-size: 0.875em;
+  margin: 0;
+  display: inline;
 }
 
 label img {
