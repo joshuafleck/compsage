@@ -29,19 +29,6 @@
   <% end %>
   <%=f.label :industry %> 
   <%=f.select :industry, AccountsHelper::INDUSTRIES, :include_blank => true %>
-  <% form_row do %>  
-    <% if !@organization.logo.nil? then %>
-      <% form_box do %>  
-        <%=image_tag @organization.logo.public_filename(:standard_thumbnail), :class => "thumbnail" %>
-      <% end %>    
-    <% end %>  
-    <% form_box do %>  
-      <% fields_for "organization[logo]",@organization.logo do |logo_form| %>
-          <%=logo_form.label :uploaded_data, 'Company logo'%>
-          <%=logo_form.file_field :uploaded_data%>
-      <% end %>  
-    <% end %>
-  <% end %>  
   <% if !@organization.new_record? then %>  
   <div id="change_password_link">
         <%= link_to_function "Change My Password", "new Effect.toggle('change_password', 'blind', {duration: .5});return false;" %>
@@ -51,11 +38,11 @@
   <% form_row do %>
     <% form_box do %>
       <%=f.label :password, required('Password') %> 
-      <%=f.password_field :password, :size => 15 %>
+      <%=f.password_field :password, :size => 20 %>
     <% end %>
     <% form_box do %>
-      <%=f.label :password_confirmation, 'Confirm password' %> 
-      <%=f.password_field :password_confirmation, :size => 15 %>
+      <%=f.label :password_confirmation, required('Confirm password') %> 
+      <%=f.password_field :password_confirmation, :size => 20 %>
     <% end %>
   <% end %>  
   </div>
