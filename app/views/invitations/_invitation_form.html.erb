@@ -7,9 +7,10 @@
         next if network.organizations.count < 2
         %>
         <li class="network" id="network_<%= network.id %>">
-          <a href="#" class="expand_network">+</a>
-          <%= network.name %>
-          <a href="#" class="invite">Add</a>
+        <a href="#" class="invite" title="Add network to invitation list"><%= image_tag "expand_button.gif", :alt => "Add network to invitation list" %></a>
+          <div class="network_info_container">
+            <%= network.name %><br />
+            <a href="#" class="expand_network">Show Members</a>
             <div id="network_<%= network.id %>_members" class="network_members_container" style="display: none;">
               <div class="description_box"><%= auto_link_new_window(truncate(network.description, :length => 50))%></div>
               <h4>Members</h4>
@@ -19,7 +20,9 @@
                   <li><%= link_to_organization(member, :include_location => false) %></li>
                 <% end %>
               </ul>
+              <a href="#" class="collapse_network">Hide Members</a>
             </div>
+          </div>
         </li>
       <% end %>
     </ul>
@@ -35,7 +38,7 @@
     <% @invitations.each do |invitation| %>
       <li id="invitation_<%= invitation.id %>">
         <% if invitation.pending? then %>
-          <a href="#" class="remove">Remove</a>
+          <a href="#" class="remove"><%= image_tag "remove_button.gif" %></a>
         <% end %>
         <% if invitation.is_a?(SurveyInvitation) then %>
           <%= link_to_organization(invitation.invitee) %>
@@ -83,7 +86,7 @@ function initializeObservers() {
 
       choices.each(function(choice) {
         var li = new Element('li');
-        li.insert('<div class="actions"><a href="javascript:;">Add Invitation</a></div>' + 
+        li.insert('<div class="actions"><a href="javascript:;"><%= image_tag "add_invitation_button.gif" %></a></div>' + 
           '<div class="name">' + choice.name + '</div>') 
         if(choice.location) {
           li.insert('<div class="location description_box">Location: ' + choice.location + '</div>');
@@ -103,12 +106,24 @@ function initializeObservers() {
 
   $$('#networks > li').each(function(network_li) {
     var network_id = network_li.id.match(/\d+/)[0]
-    network_li.select('a').first().observe('click', function(e) {
+    var expand_link = network_li.select('a.expand_network').first();
+    var collapse_link = network_li.select('a.collapse_network').first();
+
+    expand_link.observe('click', function(e) {
       e.stop();
-      $('network_' + network_id + '_members').toggle(); 
+      $('network_' + network_id + '_members').show(); 
+      this.hide();
     });
+
+    network_li.select('a.collapse_network').first().observe('click', function(e) {
+      e.stop();
+      $('network_' + network_id + '_members').hide(); 
+      expand_link.show();
+    });
+
     network_li.select('a.invite').first().observe('click', inviteNetwork.curry(network_id));
   })
+
   $('invitation_form').observe('submit', addInvitationByForm);
 
   $$('ul#invitations > li').each(function(invitation_li) {
@@ -160,7 +175,7 @@ function addInvitationToList(invitation_id, organization_name, organization_id) 
 
   var newListElement = new Element('li', {'id': 'invitation_' + invitation_id});
   var removeLink = new Element('a', {'href':'#', 'class':'remove'});
-  removeLink.insert('Remove');
+  removeLink.insert('<%= image_tag "remove_button.gif" %>');
   removeLink.observe('click', removeInvitation.curry(invitation_id));
   newListElement.insert(removeLink);
 

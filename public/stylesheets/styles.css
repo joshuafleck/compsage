@@ -720,8 +720,14 @@ div.submit_row .next {
 }
 
 #invite_network_list #networks li.network {
-  margin-bottom: 0.5em;
+  margin-bottom: 0.75em;
 }
+
+#invite_network_list #networks li.network a.invite {
+  border: 0;
+  float: left;
+}
+
 #send_invitations ul {
   margin: 0;
   padding: 0;
@@ -760,16 +766,23 @@ ul#external_invitation_form_errors {
 }
 
 input#external_invitation_submit {
-  margin-top: 1em;
-}
+  margin-top: 1em;75}
 
 #invite_organizations p {
   margin: .5em 0;
 }
 
+a.expand_network {
+  outline: none;
+  font-size: 0.9em;
+}
+
+ul#networks div.network_info_container {
+  margin-left: 25px;
+}
+
 ul#networks div.network_members_container {
   margin: 5px 0;
-  margin-left: 15px;
   font-size: 0.9em;
 }
 
@@ -777,6 +790,10 @@ ul#networks div.network_members_container h4 {
   margin-top: 0.25em;
   size: 1em;
   font-weight: bold;
+}
+
+ul#networks ul.network_members {
+  margin-bottom: 1em;
 }
 
 ul#invitations {
