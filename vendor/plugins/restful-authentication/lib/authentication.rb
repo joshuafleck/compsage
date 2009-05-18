@@ -9,8 +9,8 @@ module Authentication
     RE_NAME_OK      = /\A[^[:cntrl:]\\<>\/&]*\z/              # Unicode, permissive
     MSG_NAME_BAD    = "avoid non-printing characters and \\&gt;&lt;&amp;/ please."
 
-    RE_EMAIL_OK     = /\A[a-z0-9!#$\%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$\%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\Z/
-    MSG_EMAIL_BAD   = "should look like an email address."
+    RE_EMAIL_OK     = /\A[A-Za-z0-9!#$\%&'*+\/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$\%&'*+\/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\Z/
+    MSG_EMAIL_BAD   = "isn't formatted properly"
     
     CONSTANTS_DEFINED = 'yup' # sorry for the C idiom
   end
