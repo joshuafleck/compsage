@@ -33,7 +33,8 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace 'admin' do |admin|
     admin.resource :dashboard
     admin.resources :surveys
-    admin.resources :pending_accounts
+    admin.resources :pending_accounts, :member => {:approve => :any, :deny => :any}
+    admin.resources :billed_surveys
   end
 
   map.path '', :controller => 'surveys', :action => 'index'

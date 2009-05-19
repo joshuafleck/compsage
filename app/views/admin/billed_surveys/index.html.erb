@@ -1,0 +1,14 @@
+<% title "Billed Surveys Report" %>
+<%=link_to "Return to Dashboard", admin_dashboard_path %>
+<table>
+	<th>Job Title</th>
+	<th>Date Completed</th>
+	<th>Sponsor</th>
+<% @surveys.each do |survey| %>
+<tr>
+	<td><%=survey.job_title%></td>
+	<td><%=survey.end_date%></td>
+	<td><%=survey.sponsor.name%></td>
+</tr>
+<% end %>
+</table>

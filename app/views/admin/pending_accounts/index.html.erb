@@ -1,0 +1,20 @@
+<% title "Pending Accounts" %>
+<%=link_to "Return to Dashboard", admin_dashboard_path %>
+<table>
+	<th>Organization Name</th>
+	<th>Email</th>
+	<th>Contact Name</th>
+	<th>Phone #(Ext)</th>
+	<th>Date Applied</th>
+	<th>Actions</th>
+<% @pending_accounts.each do |account| %>
+<tr>
+	<td><%=account.organization_name%></td>
+	<td><%=account.email%></td>
+	<td><%=account.contact_first_name + " " + account.contact_last_name%></td>
+	<td><%=account.phone%><%if account.phone_extension%>(<%=account.phone_extension%>)<%end%></td>
+	<td><%=account.created_at%></td>
+	<td><%=link_to "Approve", approve_admin_pending_account_path(account)%> / <%=link_to "Deny", deny_admin_pending_account_path(account)%></td>
+</tr>
+<% end %>
+</table>
