@@ -735,6 +735,7 @@ ol#new_questions li {
 #invite_network_list #networks li.network a.invite {
   border: 0;
   float: left;
+  padding-top: 2px;
 }
 
 #send_invitations ul {
@@ -815,7 +816,7 @@ ul#invitations li {
   border-bottom: 1px solid #eee;
   border-top: 1px solid #fff;
   background-color: #f6f6f6;
-  padding: 2px 5px;
+  padding: 2px 5px 6px 5px;
 }
 
 ul#invitations a.remove {

@@ -4,8 +4,7 @@
   <% if @networks.any? then %>
     <ul id="networks" class="entity_list">
       <% @networks.each do |network|
-        next if network.organizations.count < 2
-        %>
+        next if network.organizations.count < 2 %>
         <li class="network" id="network_<%= network.id %>">
         <a href="#" class="invite" title="Add network to invitation list"><%= image_tag "expand_button.gif", :alt => "Add network to invitation list" %></a>
           <div class="network_info_container">
