@@ -327,6 +327,121 @@ describe AccountsController, " handling POST /account with an external network i
 
 end
 
+describe AccountsController, " handling GET /account/new with a Pending Account" do
+
+  before(:each) do
+  
+    @key = "1234"
+  
+    @organization = mock_model(Organization, :contact_name= => 'test test', :email= => 'test', :name= => 'test')
+    @pending_account = mock_model(PendingAccount, :name => 'test', :email => 'test', :organization_name => 'test', :contact_first_name => "test", :contact_last_name => "test")
+    
+    Organization.stub!(:new).and_return(@organization)    
+    PendingAccount.stub!(:find_by_key).with(@key).and_return(@pending_account) 
+    
+    @params = {:key => @key}
+    
+    login_as_survey_invitation(false)
+  end
+  
+  def do_get
+    get :new, @params
+  end
+
+  it "should require a valid external invitation key" do
+    ExternalNetworkInvitation.should_receive(:find_by_key).with(@key).and_return(@pending_account)
+    do_get
+  end
+  
+  it "should be successful" do
+  	do_get
+  	response.should be_success
+  end
+  
+  it "should render the new template" do
+    do_get
+    response.should render_template("new")
+  end
+  
+  it "should create a new organization" do
+    Organization.should_receive(:new).and_return(@organization)
+    do_get
+  end
+
+  it "should assign the new organization to the view" do
+    do_get
+    assigns[:organization].should eql(@organization)
+  end
+  
+end
+
+describe AccountsController, " handling POST /account with a Pending Account" do
+
+  before(:each) do
+  
+    @key = "1234"
+  
+    @organization = mock_model(Organization, :save => true, :email => 'test@test.com', :last_login_at= => true)
+    @pending_account = mock_model(PendingAccount, :name => 'test', :email => 'test', :organization_name => 'test', :contact_first_name => "test", :contact_last_name => "test", :destroy => true)
+    
+    PendingAccount.stub!(:find_by_key).with(@key).and_return(@pending_account) 
+    Organization.stub!(:new).and_return(@organization)
+    Organization.stub!(:authenticate).and_return(@organization)
+    
+    @organization.stub!(:set_logo).and_return(true)
+    
+    @params = {:key => @key, :organization => {:password => "test12"}}
+    
+  end
+  
+  def do_post
+    get :create, @params
+  end
+
+  it "should require a valid key" do
+    PendingAccount.should_receive(:find_by_key).with(@key).and_return(@pending_account)
+    do_post
+  end
+  
+	it "should create a new organization" do
+	  Organization.should_receive(:new).and_return(@organization)
+	  @organization.should_receive(:save).and_return(true)
+	  do_post
+	end
+	
+	it "should authenticate the organization" do
+	  Organization.should_receive(:authenticate).and_return(@organization)
+	  do_post
+	end	
+	
+	it "should set the last login date" do
+	  @organization.should_receive(:last_login_at=).and_return(true)
+	  @organization.should_receive(:save).and_return(true)
+	  do_post
+	end
+	
+	it "should destroy the pending account" do
+	  @pending_account.should_receive(:destroy).and_return(true)
+	  do_post
+  end
+
+  describe "when the requst is HTML" do
+  
+  	it "should redirect to the surveys page" do
+      do_post
+      response.should redirect_to(surveys_path)
+  	end
+  	
+  	it "should flash a message regarding the success of the action" do
+      do_post
+      flash[:notice].should eql("Your account was created successfully.")
+  	end
+  
+  end
+
+end
+
+
 describe AccountsController, " handling POST /account with validation error" do
 
   before(:each) do

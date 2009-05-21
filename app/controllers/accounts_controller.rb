@@ -24,6 +24,9 @@ class AccountsController < ApplicationController
 	  # otherwise, check the URL for a key
 	  @external_invitation = current_survey_invitation || session[:external_network_invitation]
 	  
+	  #if a key is provided, also check for a pending account
+	  @pending_account = PendingAccount.find_by_key(params[:key])
+	  
 	  if @external_invitation then
   	  #Prepopulate the name and email fields automagically
   	  @organization = Organization.new({
@@ -31,6 +34,12 @@ class AccountsController < ApplicationController
   	    :contact_name => @external_invitation.name,
   	    :email => @external_invitation.email
   	  }) 
+	  elsif @pending_account
+	    @organization = Organization.new({
+	      :name => @pending_account.organization_name,
+	      :email => @pending_account.email,
+	      :contact_name => @pending_account.contact_first_name + " " + @pending_account.contact_last_name,
+	    })
 	  else
 	    redirect_to new_session_path
 	  end
@@ -44,6 +53,7 @@ class AccountsController < ApplicationController
 	def create
 	
 	  @external_invitation = ExternalInvitation.find_by_key(params[:key])
+	  @pending_account = PendingAccount.find_by_key(params[:key])
 	  
 	  @organization = Organization.new(params[:organization])
         
@@ -100,6 +110,25 @@ class AccountsController < ApplicationController
           render :status => :created
         end
       end
+    #check for pending account
+    elsif @pending_account && @organization.save then
+      @pending_account.destroy
+      respond_to do |wants|
+        wants.html do
+          flash[:notice] = "Your account was created successfully."  
+          #Log the user in, and bring them to the surveys page        
+          organization = Organization.authenticate(@organization.email, params[:organization][:password])         
+          # Set first_login in the session so we can show a tutorial if the user is new.
+          session[:first_login] = true     
+          organization.last_login_at = Time.now
+          organization.save       
+          self.current_organization = organization if organization
+          redirect_to surveys_path
+        end   
+        wants.xml do
+          render :status => :created
+        end
+    end
     else
       respond_to do |wants|
         wants.html do

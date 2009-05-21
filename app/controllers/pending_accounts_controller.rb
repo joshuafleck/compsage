@@ -3,7 +3,6 @@ class PendingAccountsController < ApplicationController
   layout 'front'
 
   def new
-	  
     @pending_account = PendingAccount.new
   end
   
@@ -12,6 +11,7 @@ class PendingAccountsController < ApplicationController
     @pending_account = PendingAccount.new(params[:pending_account])
   
     if @pending_account.save then
+      Notifier.deliver_pending_account_creation_notification
       respond_to do |wants|
         wants.html {         
           flash[:notice] = "Your signup request was received."
