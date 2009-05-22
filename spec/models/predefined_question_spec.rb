@@ -8,11 +8,7 @@ describe PredefinedQuestion do
   
   it "should build questions" do
     @predefined_question.save!
-    survey = Factory.build(:survey)
-    survey.questions.destroy_all
-    @predefined_question.build_questions(survey)
-    survey.save
-    survey.questions[0].text.should eql("PQ 1 text")
+    @predefined_question.build_questions().size.should eql(1)
   end
   
 end

@@ -23,7 +23,7 @@ class Survey < ActiveRecord::Base
   has_many :invitations, :class_name => 'SurveyInvitation', :dependent => :destroy
   has_many :external_invitations, :class_name => 'ExternalSurveyInvitation'
   has_many :internal_and_external_invitations, :class_name => 'Invitation'
-  has_many :questions, :dependent => :destroy, :order => "IF(predefined_question_id IS NULL, 99999999999, predefined_question_id), position" # ensure predefined questions show up before custom questions, then sort by position
+  has_many :questions, :dependent => :destroy, :order => "position"
   has_many :responses, :through => :questions
   has_many :participations
   has_many :subscriptions, :class_name => 'SurveySubscription', :dependent => :destroy
@@ -161,14 +161,9 @@ class Survey < ActiveRecord::Base
     REQUIRED_NUMBER_OF_PARTICIPATIONS - [self.all_invitations(true).size,self.participations.size].max
   end
   
-  # find all predefined questions, mark any questions this survey uses as 'included'
-  def predefined_questions
-    all_predefined = PredefinedQuestion.all
-    selected_predefined = self.questions.collect(&:predefined_question_id)
-    all_predefined.each do |predefined_question|
-      predefined_question.included = selected_predefined.include?(predefined_question.id) ? "1" : "0"
-    end
-    all_predefined
+  # find all predefined questions used in this survey
+  def predefined_question_ids
+    self.questions.collect(&:predefined_question_id)
   end
   
   # find all custom questions, mark all as 'included'

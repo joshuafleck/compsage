@@ -149,13 +149,15 @@ describe Survey, "that is stalled" do
     @survey.should be_stalled
   end
     
-  it "should set the included flag on selected predefined questions" do
+  it "should find the selected predefined questions" do
      predefined_question = Factory.create(:predefined_question) 
      predefined_question2 = Factory.create(:predefined_question) 
-     predefined_question.build_questions(@survey)
+     questions = predefined_question.build_questions()
+     @survey.questions.delete_all
+     @survey.questions << questions[0]
      @survey.save!
-     @survey.predefined_questions[0].included.should eql("1")
-     @survey.predefined_questions[1].included.should eql("0")
+     @survey.predefined_question_ids.size.should eql(1)
+     @survey.predefined_question_ids[0].should eql(predefined_question.id)
      @survey.destroy
   end
 end
