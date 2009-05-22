@@ -1,4 +1,5 @@
 class WageResponse < NumericalResponse
+  self.minimum_responses_for_report = 5
   self.field_options.merge!(:size => 10)
   self.units = Units.new("format", {'Annually' => 1, 'Hourly' => 2080}, 'Annually')
   self.report_type = 'wage_field'

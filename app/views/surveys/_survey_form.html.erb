@@ -22,16 +22,16 @@
         <%=render(:partial => "question", :locals => { :form => f, :index => index.to_s }, :object => question )%>
       <% end %>
     </ol>
-    <h3>Add a Question</h3>
+    <label for='predefined_questions'>Add a Question</label>
     <select id="predefined_questions">
       <option value="" selected="selected">Select a question</option>
       <option value="0">Custom question</option>
       <%= options_from_collection_for_select(PredefinedQuestion.all, 'id', 'name') %>
     </select>
     <div id='custom_question_form' style='display: none;'>
-      <label for='custom_question_text'>Question Text</label>
-      <input id='custom_question_text' type='text'>    
-      <label for='custom_question_response'>Response Type</label>
+      <label for='custom_question_text' class='survey_question_label'>Question Text</label>
+      <input id='custom_question_text' type='text' size='30' />    
+      <label for='custom_question_response' class='survey_question_label'>Response Type</label>
       <select id='custom_question_response'><%=options_for_select Question::CUSTOM_QUESTION_TYPES.keys %></select>
     </div>
     <input id="question_submit" type="submit" value="Add" />
@@ -47,7 +47,7 @@
 </div>
 <br clear="both" />
 <script type="text/javascript">
-var numberOfQuestions = 0;
+var numberOfQuestions = 0; //The number of non-deleted questions
 
 function initializeObservers() {
 
@@ -59,7 +59,63 @@ function initializeObservers() {
   //hook up observers for the 'add question' form
   $('predefined_questions').observe('change', selectQuestion);
   $('question_submit').observe('click', addQuestion);
+  callFunctionOnEnterForm($('custom_question_form'), addQuestion);
+    
+  $$('ol#new_questions > li').each( function(question) {
+
+    // hide any questions already marked as deleted (refresh the page without this and deleted questions re-appear)
+    if(isDeleted(question)) {
+      question.hide();
+      setPosition(question, '');
+    }
+    // set the question position, recalculate the number of (non-deleted) questions
+    else {
+      setPosition(question, numberOfQuestions);
+      numberOfQuestions++;      
+    }
+    
+  });
   
+  restripeQuestions();
+  
+  //Reset the select box
+  $('predefined_questions').clear();  
+  
+}
+
+/**
+ * Checks the deleted flag of the question, returns true if the question is marked as deleted
+ */
+function isDeleted(question) {
+  if(question.select('input[id$=__delete]')[0].value) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+/**
+ * Sets the position field of the question
+ */
+function setPosition(question, position) {
+  question.select('input[id$=_position]')[0].value = position;
+}
+
+/**
+ * Increments the position field of the question
+ */
+function incrementPosition(question) {
+  var position = parseInt(question.select('input[id$=_position]')[0].value);
+  setPosition(question, position + 1);
+}
+
+/**
+ * Decrements the position field of the question
+ */
+function decrementPosition(question) {
+  var position = parseInt(question.select('input[id$=_position]')[0].value);  
+  setPosition(question, position - 1);
 }
 
 /**
@@ -73,6 +129,7 @@ function observeQuestion(index) {
   $('question_up_'+index).observe('click', moveQuestion.curry(index,'up'));
   $('question_down_'+index).observe('click', moveQuestion.curry(index, 'down'));
   $('question_save_'+index).observe('click', saveQuestion.curry(index));
+  callFunctionOnEnterForm($('question_edit_display_'+index), saveQuestion.curry(index));
   
 }
 
@@ -85,13 +142,13 @@ function selectQuestion() {
   //The user selected custom question, show the form
   if($F('predefined_questions') == "0") {
     if (!$('custom_question_form').visible()) {
-      $('custom_question_form').appear();
+      $('custom_question_form').blindDown();
     }
   } 
   //The user selected a non-custom question, hide the form
   else {
     if ($('custom_question_form').visible()) {
-      $('custom_question_form').fade();
+      $('custom_question_form').blindUp();
     }
   }
 
@@ -102,7 +159,9 @@ function selectQuestion() {
  * This will add a custom or predefined question, depending on what was selected
  */
 function addQuestion(e) {
-  e.stop();
+  if(e) {
+    e.stop();
+  }
 
   var selectedQuestion = $F('predefined_questions');
   
@@ -111,7 +170,7 @@ function addQuestion(e) {
     addCustomQuestion($F('custom_question_text'), $F('custom_question_response'));
     $('custom_question_text').clear();
     $('custom_question_response').clear();
-    $('custom_question_form').fade();
+    $('custom_question_form').blindUp();
   } 
   //The user selected a predefined question
   else if (selectedQuestion != '') {
@@ -120,6 +179,8 @@ function addQuestion(e) {
     
   //Reset the select box
   $('predefined_questions').clear();
+  
+  restripeQuestions();
       
 }
 
@@ -127,8 +188,6 @@ function addQuestion(e) {
  * This will locate the HTML for the predefined question, set the element IDs, insert the HTML into the document, and add observers
  */
 function addPredefinedQuestion(id) {
-  //TODO: add effect for increased visibility
-  //TODO: restripe list after a change
   
   var questions = predefined_question_html[id];
   questions.each( function(question) {
@@ -136,8 +195,11 @@ function addPredefinedQuestion(id) {
     var id = (new Date()).getTime();
     
     $('new_questions').insert(setQuestionID(question,id), { 'position':'bottom' });
-    
-    $('survey_questions_attributes_'+id+'_position').value = numberOfQuestions; 
+    question = $('question_'+id);
+    question.hide();
+    question.appear();
+
+    setPosition(question, numberOfQuestions);
     
     numberOfQuestions++;
     
@@ -151,22 +213,23 @@ function addPredefinedQuestion(id) {
  * This will prepare the HTML for the custom question, set the element IDs, insert the HTML into the document, and add observers
  */
 function addCustomQuestion(text, response_type) {
-  //TODO: add effect for increased visibility
-  //TODO: restripe list after a change
  
   var id = (new Date()).getTime();
   
   var question = setQuestionID(custom_question_html,id);
-  var question = question.replace(/<%=SurveysHelper::TEXT_PLACEHOLDER%>/g,text);
-  var question = question.replace(/<%=SurveysHelper::RESPONSE_TYPE_PLACEHOLDER%>/g,response_type);
+  question = question.replace(/<%=SurveysHelper::TEXT_PLACEHOLDER%>/g,text);
+  question = question.replace(/<%=SurveysHelper::RESPONSE_TYPE_PLACEHOLDER%>/g,response_type);
   
   $('new_questions').insert(question, { 'position':'bottom' });
+  question = $('question_'+id);
+  question.hide();
+  question.appear();
   
   //Set the value of the response type dropdown
   var selectedIndex = findResponseSelectedIndex(response_type);  
   $('survey_questions_attributes_'+id+'_custom_question_type').selectedIndex = selectedIndex;  
   
-  $('survey_questions_attributes_'+id+'_position').value = numberOfQuestions;  
+  setPosition(question, numberOfQuestions);  
   
   numberOfQuestions++;
     
@@ -184,30 +247,56 @@ function setQuestionID(question, id) {
 }
 
 /**
+ * This will ensure proper zebra-striping for the questions list
+ */
+function restripeQuestions() {
+
+  var i = 0;
+  
+  $$('ol#new_questions > li').each( function(question) {
+  
+    // dont include deleted questions in the striping
+    if(!isDeleted(question)) {
+      if (i % 2 == 0) {
+        question.className = 'even';
+      } else {
+        question.className = 'odd';
+      }
+      i++;
+    } 
+    
+  });
+  
+}
+
+/**
  * Hides the question display and brings up the question edit form
  */
-function editQuestion(index) {
+function editQuestion(index,e) {
+  e.stop();
 
-  $('question_display_'+index).hide();
-  $('question_edit_display_'+index).appear();
+  $('question_display_'+index).blindUp();
+  $('question_edit_display_'+index).blindDown();
   
 }
 
 /**
  * Hides the edit form, updates the question display, brings up the question display
  */
-function saveQuestion(index) {
+function saveQuestion(index,e) {
+  if(e) {
+    e.stop();
+  }
 
-  $('question_edit_display_'+index).hide();
-  
   //Update the display of the question text
   $('question_display_text_'+index).update($('survey_questions_attributes_'+index+'_text').value);
   
   //Update the display of the response type
   var selectedIndex = $('survey_questions_attributes_'+index+'_custom_question_type').selectedIndex;
   $('question_display_type_'+index).update($('survey_questions_attributes_'+index+'_custom_question_type').options[selectedIndex].text);
-  
-  $('question_display_'+index).appear();
+
+  $('question_edit_display_'+index).blindUp();    
+  $('question_display_'+index).blindDown();
   
 }
 
@@ -232,37 +321,106 @@ function findResponseSelectedIndex(response_text) {
 /**
  * Hides the edit form, resets the form elements to their original values, brings up the question display
  */
-function cancelEditQuestion(index) {
-
-  $('question_edit_display_'+index).hide();
-  
+function cancelEditQuestion(index,e) {
+  e.stop();
+ 
   //Set the value of the edit box back to the original question text (found in the text display)
   $('survey_questions_attributes_'+index+'_text').value = $('question_display_text_'+index).innerHTML;
   
   //Set the value of the response type dropdown back to the original response type text (found in the type display)
   var selectedIndex = findResponseSelectedIndex($('question_display_type_'+index).innerHTML);  
   $('survey_questions_attributes_'+index+'_custom_question_type').selectedIndex = selectedIndex;
-  
-  $('question_display_'+index).appear();
+
+  $('question_edit_display_'+index).blindUp();   
+  $('question_display_'+index).blindDown();
   
 }
 
 /**
  * Hides the question, sets the deleted flag
  */
-function deleteQuestion(index) {
+function deleteQuestion(index,e) {
+  e.stop();
+  var question = $('question_'+index);
 
   $('survey_questions_attributes_'+index+'__delete').value = true;
-  $('question_'+index).fade();
+  question.fade();
+  
+  setPosition(question, '');
+  
+  nonDeletedNextSiblings(question).each( function(question) {
+      decrementPosition(question);
+  });
+  
   numberOfQuestions--;
+  restripeQuestions();
   
 }
 
-function moveQuestion(index,direction) {
-  alert('pending, try edit or delete');
+/**
+ * Repsitions a question either 'up' or 'down' depending on the input
+ */
+function moveQuestion(index,direction,e) {
+  e.stop();
+  var question = $('question_'+index);
+  
+  if(direction == 'up' && nonDeletedPreviousSiblings(question).length > 0) {
+    var sibling = nonDeletedPreviousSiblings(question)[0];
+    
+    question.remove();
+
+    new Insertion.Before(sibling, question);
+    question.hide();
+    question.appear();
+    
+    incrementPosition(sibling);
+    decrementPosition(question);
+  }
+  else if (direction == 'down' && nonDeletedNextSiblings(question).length > 0) {
+    var sibling = nonDeletedNextSiblings(question)[0];
+    
+    question.remove();
+
+    new Insertion.After(sibling, question);   
+    question.hide();
+    question.appear();      
+    
+    incrementPosition(question);
+    decrementPosition(sibling);    
+  }
+  
+  restripeQuestions();
 }
 
+/**
+ * Finds all non deleted siblings after the current question
+ */
+function nonDeletedNextSiblings(question) {
+  var siblings = [];
+  
+  question.nextSiblings().each( function(sibling) {
+    if(sibling.tagName == 'LI' && !isDeleted(sibling)) {
+      siblings.push(sibling);
+    }
+  });
+  
+  return siblings;
+}
 
+/**
+ * Finds all non deleted siblings before the current question
+ */
+function nonDeletedPreviousSiblings(question) {
+  var siblings = [];
+  
+  question.previousSiblings().each( function(sibling) {
+    if(sibling.tagName == 'LI' && !isDeleted(sibling)) {
+      siblings.push(sibling);
+    }
+  });
+  
+  return siblings;
+}
 
 </script>
 

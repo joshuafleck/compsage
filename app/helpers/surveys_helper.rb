@@ -1,5 +1,6 @@
 module SurveysHelper
 
+  # these eventually get replaced with actual values in the javascript
   INDEX_PLACEHOLDER = 'replace_with_timestamp'
   TEXT_PLACEHOLDER = 'replace_with_text'
   RESPONSE_TYPE_PLACEHOLDER = 'replace_with_response_type'

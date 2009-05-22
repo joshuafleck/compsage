@@ -8,9 +8,7 @@ class Question < ActiveRecord::Base
   
   serialize :options
   serialize :textual_response
-  
-  attr_accessor :included
-  
+
   xss_terminate :except => [ :response_type, :question_parameters, :html_parameters, :options, :custom_question_type ]
   
   validates_presence_of :response_type

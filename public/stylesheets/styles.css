@@ -615,16 +615,24 @@ div#step_container .third_column {
   margin-left: 0;
 }
 
-form.new_survey input, form.edit_survey input {
-  font-size: .9em;
-}
-
 form.new_survey input#survey_job_title, form.edit_survey input#survey_job_title {
   width: 500px;
 }
 
 form.new_survey textarea, form.edit_survey textarea {
   width: 500px;
+}
+
+.survey_question_label {
+  margin: 0.5em 0 0 0;
+  font-size: 0.9em;
+  letter-spacing: .05em;
+  line-height: 20px;
+}
+
+input#question_submit {
+  display: block; 
+  margin-top: 5px;
 }
 
 div.submit_row {
@@ -641,48 +649,7 @@ div.submit_row .previous {
 div.submit_row .next {
   float: right;
 }
-#standard_questions h4, #custom_questions h4 {
-  margin: 1em 0 0 0;
-}
-#standard_questions, #custom_questions {
-  margin-left: 1em;
-}
 
-#standard_questions ul, #custom_questions ul {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-}
-
-#standard_questions ul li label, #custom_questions ul li label {
-  display: inline;
-  font-weight: normal;
-}
-
-#custom_questions ul span.description {
-  color: #666;
-  font-style: italic;
-  margin-left: 1em;
-}
-
-#custom_questions label {
-  margin: 0.5em 0 0 0;
-  line-height: 20px;
-  font-weight: normal;
-}
-
-#custom_questions input#question_text {
-  width: 350px;
-  padding: 5px;
-}
-
-#custom_questions select#response_type {
-  margin-top: 4px;
-}
-
-#custom_questions input#question_submit {
-  margin-top: 4px;
-}
 ol#new_questions {
   margin-top: 1em;
   border: 1px solid #eee;

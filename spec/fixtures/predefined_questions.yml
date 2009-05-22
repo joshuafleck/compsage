@@ -3,13 +3,13 @@ salary_questions:
   position: 1
   name: Salary and salary range
   question_hash: --- 
-  - :response_type: BaseWageResponse
+  - :custom_question_type: "Pay or wage response"
     :text: "Average base salary:"
-  - :response_type: WageResponse
+  - :custom_question_type: "Pay or wage response"
     :text: "Salary range minimum:"
-  - :response_type: WageResponse
+  - :custom_question_type: "Pay or wage response"
     :text: "Salary range midpoint:"
-  - :response_type: WageResponse
+  - :custom_question_type: "Pay or wage response"
     :text: "Salary range maximum:"
   
 incentive_question:
@@ -18,10 +18,7 @@ incentive_question:
   name: Eligibility for incentive bonus
   question_hash: --- 
   - :text: "Is this position eligible for incentive bonus?"
-    :response_type: "MultipleChoiceResponse"
-    :options:
-        - "Yes"
-        - "No"
+    :custom_question_type: "Yes/No"
 
 incentive_target_question:
     id: 3
@@ -29,32 +26,23 @@ incentive_target_question:
     name: Target incentive
     question_hash: ---
     - :text: "What is this position's incentive target as percent of base salary?"
-      :response_type: "PercentResponse"
+      :custom_question_type: "Percent"
     - :text: Is there a maximum incentive that can be earned?
-      :response_type: "MultipleChoiceResponse"
-      :options:
-          - "Yes"
-          - "No"
+      :custom_question_type: "Yes/No"
     - :text: If yes, what is the maximum incentive as a percent of base salary?
-      :response_type: "PercentResponse"
+      :custom_question_type: "Percent"
 bargaining_unit_question:
     id: 4
     position: 4
     name: Membership in a collective bargaining unit 
     question_hash: ---
     - :text: "Is this position part of a bargaining unit?"
-      :response_type: "MultipleChoiceResponse"
-      :options:
-          - "Yes"
-          - "No"
+      :custom_question_type: "Yes/No"
           
 flsa_question:
     id: 5
     position: 5
     name: FLSA status
     question_hash: ---
-    - :text: "What is this position's FLSA status with regard to overtime provisions?"
-      :response_type: "MultipleChoiceResponse"
-      :options:
-          - "Exempt"
-          - "Non-Exempt"
+    - :text: "Is this position exempt from FLSA overtime provisions?"
+      :custom_question_type: "Yes/No"
