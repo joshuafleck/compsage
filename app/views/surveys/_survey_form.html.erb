@@ -35,7 +35,7 @@
       <label for='custom_question_response' class='survey_question_label'>Response Type</label>
       <select id='custom_question_response'><%=options_for_select Question::CUSTOM_QUESTION_TYPES.keys %></select>
     </div>
-    <input id="question_submit" type="submit" value="Add" />
+    <input id="question_submit" class="question_submit" type="submit" value="Add" />
     <div class="submit_row">
       <input id="form_submit" type="submit" value="Create Invitation List" class="next" />
       <input type="button" onclick="window.location='<%= surveys_path %>'" value="Cancel" class="previous" />
@@ -143,13 +143,13 @@ function selectQuestion() {
   //The user selected custom question, show the form
   if($F('predefined_questions') == "0") {
     if (!$('custom_question_form').visible()) {
-      $('custom_question_form').blindDown();
+      $('custom_question_form').blindDown({'duration': 0.5});
     }
   } 
   //The user selected a non-custom question, hide the form
   else {
     if ($('custom_question_form').visible()) {
-      $('custom_question_form').blindUp();
+      $('custom_question_form').blindUp({'duration': 0.5});
       $('custom_question_warning').update('');
     }
   }
@@ -179,7 +179,7 @@ function addQuestion(e) {
     $('custom_question_text').clear();
     $('custom_question_response').clear();
     $('custom_question_warning').update('');
-    $('custom_question_form').blindUp();
+    $('custom_question_form').blindUp({'duration': 0.5});
   } 
   //The user selected a predefined question
   else if (selectedQuestion != '') {
@@ -206,7 +206,7 @@ function addPredefinedQuestion(id) {
     $('new_questions').insert(setQuestionID(question,id), { 'position':'bottom' });
     question = $('question_'+id);
     question.hide();
-    question.appear();
+    question.appear({'duration': 0.5});
     
     checkDefaultRequiredQuestions(id);
 
@@ -234,7 +234,7 @@ function addCustomQuestion(text, response_type) {
   $('new_questions').insert(question, { 'position':'bottom' });
   question = $('question_'+id);
   question.hide();
-  question.appear();
+  question.appear({'duration': 0.5});
   
   //Set the value of the response type dropdown
   var selectedIndex = findResponseSelectedIndex(response_type);  
@@ -259,6 +259,7 @@ function checkDefaultRequiredQuestions(id) {
   if($('survey_questions_attributes_'+id+'_custom_question_type').selectedIndex == findResponseSelectedIndex('Pay or wage response')) {
   
     $('survey_questions_attributes_'+id+'_required').checked = true;
+    $('question_display_required_'+id).update('Required');      
   
   }
   
@@ -302,8 +303,8 @@ function restripeQuestions() {
 function editQuestion(index,e) {
   e.stop();
 
-  $('question_display_'+index).blindUp();
-  $('question_edit_display_'+index).blindDown();
+  $('question_display_'+index).blindUp({'duration': 0.25});
+  $('question_edit_display_'+index).blindDown({'duration': 0.25});
   
 }
 
@@ -321,17 +322,18 @@ function saveQuestion(index,e) {
   //Update the display of the response type
   var selectedIndex = $('survey_questions_attributes_'+index+'_custom_question_type').selectedIndex;
   var new_response_type = $('survey_questions_attributes_'+index+'_custom_question_type').options[selectedIndex].text;
-  var previous_response_type = $('question_display_type_'+index).innerHTML;
-  
-  // if the response type changed, check for a response type required by default
-  if(new_response_type != previous_response_type) {
-    checkDefaultRequiredQuestions(index);
-  }
-  
   $('question_display_type_'+index).update(new_response_type);
+  
+  //Update the 'required' display if the user required response
+  if($('survey_questions_attributes_'+index+'_required').checked) {    
+    $('question_display_required_'+index).update('Required');      
+  }
+  else {
+    $('question_display_required_'+index).update(); 
+  }  
 
-  $('question_edit_display_'+index).blindUp();    
-  $('question_display_'+index).blindDown();
+  $('question_edit_display_'+index).blindUp({'duration': 0.25});    
+  $('question_display_'+index).blindDown({'duration': 0.25});
   
 }
 
@@ -365,9 +367,17 @@ function cancelEditQuestion(index,e) {
   //Set the value of the response type dropdown back to the original response type text (found in the type display)
   var selectedIndex = findResponseSelectedIndex($('question_display_type_'+index).innerHTML);  
   $('survey_questions_attributes_'+index+'_custom_question_type').selectedIndex = selectedIndex;
+  
+  //Revert the value of the 'required' checkbox
+  if($('question_display_required_'+index).innerHTML == 'Required') {    
+    $('survey_questions_attributes_'+index+'_required').checked = true;
+  }  
+  else {
+    $('survey_questions_attributes_'+index+'_required').checked = '';
+  }
 
-  $('question_edit_display_'+index).blindUp();   
-  $('question_display_'+index).blindDown();
+  $('question_edit_display_'+index).blindUp({'duration': 0.25});   
+  $('question_display_'+index).blindDown({'duration': 0.25});
   
 }
 
@@ -379,7 +389,7 @@ function deleteQuestion(index,e) {
   var question = $('question_'+index);
 
   $('survey_questions_attributes_'+index+'__delete').value = true;
-  question.fade();
+  question.fade({'duration': 0.5});
   
   setPosition(question, '');
   
@@ -405,8 +415,6 @@ function moveQuestion(index,direction,e) {
     question.remove();
 
     new Insertion.Before(sibling, question);
-    question.hide();
-    question.appear();
     
     incrementPosition(sibling);
     decrementPosition(question);
@@ -417,14 +425,13 @@ function moveQuestion(index,direction,e) {
     question.remove();
 
     new Insertion.After(sibling, question);   
-    question.hide();
-    question.appear();      
     
     incrementPosition(question);
     decrementPosition(sibling);    
   }
   
-  restripeQuestions();
+  restripeQuestions(); 
+  
 }
 
 /**

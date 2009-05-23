@@ -275,6 +275,7 @@ class Survey < ActiveRecord::Base
   def send_invitations_and_calculate_end_date_and_set_start_date
     set_start_date
     calculate_end_date
+    self.save # i noticed some trouble with sending invites without the save
     send_invitations
   end
     

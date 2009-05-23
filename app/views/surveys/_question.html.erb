@@ -2,14 +2,15 @@
   <li class="<%= cycle("even", "odd") %>" id='<%="question_#{index}"%>'>
     <div id='<%="question_display_#{index}"%>' style='<%= q_f.object.errors.empty? ? "" : "display: none;"%>'>
       <div id='<%="question_display_text_#{index}"%>'><%=q_f.object[:text]%></div>
-      <div id='<%="question_display_type_#{index}"%>' class="description_box"><%=q_f.object[:custom_question_type]%></div>
+      <div >
+        <span id='<%="question_display_type_#{index}"%>' class="description_box"><%=q_f.object[:custom_question_type]%></span>
+        <span id='<%="question_display_required_#{index}"%>' class="response_required_box"></span>
+      </div>      
       <div style="float: bottom; width: 100%">
         <a id='<%="question_up_#{index}"%>' href=''><%= image_tag "up_button.gif" %></a>
         <a id='<%="question_down_#{index}"%>' href=''><%= image_tag "down_button.gif" %></a>
         <a id='<%="question_edit_#{index}"%>' href=''><%= image_tag "edit_button.gif" %></a>
         <a id='<%="question_delete_#{index}"%>' href=''><%= image_tag "remove_button.gif" %></a>
-        <%= q_f.label :required, 'Response required', :class => 'inline_option' %>
-        <%= q_f.check_box :required, :style => 'display: inline;' %>
       </div>
     </div>
     <div id='<%="question_edit_display_#{index}"%>' style='<%= q_f.object.errors.empty? ? "display: none;" : ""%>'>
@@ -17,9 +18,12 @@
       <%= q_f.text_field :text %>    
       <%= q_f.label :custom_question_type, 'Response Type', :class => "survey_question_label" %>
       <%= q_f.select :custom_question_type, Question::CUSTOM_QUESTION_TYPES.keys %>
-      <br />
-      <a id='<%="question_save_#{index}"%>' href=''>Save</a>
-      <a id='<%="question_cancel_#{index}"%>' href=''>Cancel</a>
+      <%= q_f.label :required, 'Response required', :class => 'inline_option' %>
+      <%= q_f.check_box :required %>
+      <div class="question_submit">
+        <input type="submit" value="Save" id='<%="question_save_#{index}"%>' /> or 
+        <a id='<%="question_cancel_#{index}"%>' href=''>Cancel</a>
+      </div>
       <%= q_f.hidden_field :predefined_question_id %>
       <%= q_f.hidden_field :position %>
       <%= q_f.hidden_field :follow_up_question_id %>
