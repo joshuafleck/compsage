@@ -69,9 +69,14 @@ function initializeObservers() {
       question.hide();
       setPosition(question, '');
     }
-    // set the question position, recalculate the number of (non-deleted) questions
+    // set the question position, recalculate the number of (non-deleted) questions, denotes required questions
     else {
       setPosition(question, numberOfQuestions);
+      
+      if(question.select('input[id$=_required]')[0].checked) {
+        question.select('span[id^=question_display_required_]')[0].update('Required');  
+      }
+      
       numberOfQuestions++;      
     }
     
