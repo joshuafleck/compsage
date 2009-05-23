@@ -1,6 +1,6 @@
 <% form.fields_for :questions, question, :child_index => index do |q_f| %>
   <li class="<%= cycle("even", "odd") %>" id='<%="question_#{index}"%>'>
-    <div id='<%="question_display_#{index}"%>'>
+    <div id='<%="question_display_#{index}"%>' style='<%= q_f.object.errors.empty? ? "" : "display: none;"%>'>
       <div id='<%="question_display_text_#{index}"%>'><%=q_f.object[:text]%></div>
       <div id='<%="question_display_type_#{index}"%>' class="description_box"><%=q_f.object[:custom_question_type]%></div>
       <div style="float: bottom; width: 100%">
@@ -12,7 +12,7 @@
         <%= q_f.check_box :required, :style => 'display: inline;' %>
       </div>
     </div>
-    <div id='<%="question_edit_display_#{index}"%>' style='display: none;'>
+    <div id='<%="question_edit_display_#{index}"%>' style='<%= q_f.object.errors.empty? ? "display: none;" : ""%>'>
       <%= q_f.label :text, 'Question Text', :class => "survey_question_label" %>
       <%= q_f.text_field :text %>    
       <%= q_f.label :custom_question_type, 'Response Type', :class => "survey_question_label" %>

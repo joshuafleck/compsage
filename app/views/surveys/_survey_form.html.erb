@@ -29,8 +29,9 @@
       <%= options_from_collection_for_select(PredefinedQuestion.all, 'id', 'name') %>
     </select>
     <div id='custom_question_form' style='display: none;'>
-      <label for='custom_question_text' class='survey_question_label'>Question Text</label>
+      <label for='custom_question_text' class='survey_question_label'><%=required('Question Text')%></label>
       <input id='custom_question_text' type='text' size='30' />    
+      <div class="error_description" id="custom_question_warning"></div>
       <label for='custom_question_response' class='survey_question_label'>Response Type</label>
       <select id='custom_question_response'><%=options_for_select Question::CUSTOM_QUESTION_TYPES.keys %></select>
     </div>
@@ -149,6 +150,7 @@ function selectQuestion() {
   else {
     if ($('custom_question_form').visible()) {
       $('custom_question_form').blindUp();
+      $('custom_question_warning').update('');
     }
   }
 
@@ -167,9 +169,16 @@ function addQuestion(e) {
   
   //The user selected custom question
   if(selectedQuestion == "0") {
+    // don't add the question if the user did not enter any text
+    if($F('custom_question_text') == '') {
+      $('custom_question_warning').update('Question text is required');
+      return false;
+    }
+    
     addCustomQuestion($F('custom_question_text'), $F('custom_question_response'));
     $('custom_question_text').clear();
     $('custom_question_response').clear();
+    $('custom_question_warning').update('');
     $('custom_question_form').blindUp();
   } 
   //The user selected a predefined question
@@ -198,6 +207,8 @@ function addPredefinedQuestion(id) {
     question = $('question_'+id);
     question.hide();
     question.appear();
+    
+    checkDefaultRequiredQuestions(id);
 
     setPosition(question, numberOfQuestions);
     
@@ -229,6 +240,8 @@ function addCustomQuestion(text, response_type) {
   var selectedIndex = findResponseSelectedIndex(response_type);  
   $('survey_questions_attributes_'+id+'_custom_question_type').selectedIndex = selectedIndex;  
   
+  checkDefaultRequiredQuestions(id);
+  
   setPosition(question, numberOfQuestions);  
   
   numberOfQuestions++;
@@ -236,6 +249,20 @@ function addCustomQuestion(text, response_type) {
   observeQuestion(id);
   
 };
+
+/**
+ * Questions with pay or wage responses are required by default, 
+ *  this will check the response type and check the 'required' box if necessary
+ */
+function checkDefaultRequiredQuestions(id) {
+
+  if($('survey_questions_attributes_'+id+'_custom_question_type').selectedIndex == findResponseSelectedIndex('Pay or wage response')) {
+  
+    $('survey_questions_attributes_'+id+'_required').checked = true;
+  
+  }
+  
+}
 
 /**
  * Replaces the default ID text with the unique ID
@@ -293,7 +320,15 @@ function saveQuestion(index,e) {
   
   //Update the display of the response type
   var selectedIndex = $('survey_questions_attributes_'+index+'_custom_question_type').selectedIndex;
-  $('question_display_type_'+index).update($('survey_questions_attributes_'+index+'_custom_question_type').options[selectedIndex].text);
+  var new_response_type = $('survey_questions_attributes_'+index+'_custom_question_type').options[selectedIndex].text;
+  var previous_response_type = $('question_display_type_'+index).innerHTML;
+  
+  // if the response type changed, check for a response type required by default
+  if(new_response_type != previous_response_type) {
+    checkDefaultRequiredQuestions(index);
+  }
+  
+  $('question_display_type_'+index).update(new_response_type);
 
   $('question_edit_display_'+index).blindUp();    
   $('question_display_'+index).blindDown();
