@@ -184,7 +184,8 @@ function addInvitationToList(invitation_id, organization_name, organization_id) 
     newListElement.insert(organization_name);
 
   $('invitations').insert(newListElement);
-  newListElement.highlight({'duration':2});
+  newListElement.hide();
+  newListElement.appear({'duration':0.5});
 }
 
 function removeInvitation(invitation_id, e) {
