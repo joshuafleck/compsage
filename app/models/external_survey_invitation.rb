@@ -25,7 +25,7 @@ class ExternalSurveyInvitation < ExternalInvitation
   
   # adds an error if the email address was already invited
   def not_already_invited
-    errors.add_to_base "Invitee is already invited" if survey && survey.external_invitations.collect(&:email).include?(email)
+    errors.add_to_base "That organization is already invited" if survey && survey.external_invitations.collect(&:email).include?(email)
   end  
 
   def send_invitation_email

@@ -19,16 +19,16 @@ describe Invitation do
   end
   
   it "should belong to an invitee" do
-  	Invitation.reflect_on_association(:invitee).should_not be_nil
+    Invitation.reflect_on_association(:invitee).should_not be_nil
   end
   
   it "should belong to an inviter" do
-  	Invitation.reflect_on_association(:inviter).should_not be_nil
+    Invitation.reflect_on_association(:inviter).should_not be_nil
   end
   
   it "should be invalid without an inviter" do
-  	@invitation.attributes = valid_invitation_attributes.except(:inviter)
-  	@invitation.should have(1).errors_on(:inviter)
+    @invitation.attributes = valid_invitation_attributes.except(:inviter)
+    @invitation.should have(1).errors_on(:inviter)
   end
  
 end
@@ -129,24 +129,25 @@ end
 describe NetworkInvitation do
    
   before(:each) do
-    @network_invitation = Factory.build(:network_invitation)
+    @network = Factory.create(:network)
+    @network_invitation = Factory.build(:network_invitation, :network => @network)
   end
 
   it "should belong to a network" do
-  	NetworkInvitation.reflect_on_association(:network).should_not be_nil
+    NetworkInvitation.reflect_on_association(:network).should_not be_nil
   end
    
   it "should inherit from invitation" do
-  	@network_invitation.class.superclass.name.should == "Invitation"
+    @network_invitation.class.superclass.name.should == "Invitation"
   end    
      
   it "should be invalid if a network is not specified" do
-  	@network_invitation.network = nil
-  	@network_invitation.should have(1).error_on(:network)
+    @network_invitation.network = nil
+    @network_invitation.should have(1).error_on(:network)
   end  
    
   it "should be invalid without an invitee" do
-  	@network_invitation.invitee = nil
+    @network_invitation.invitee = nil
     @network_invitation.should have(1).error_on(:invitee)
   end
   
@@ -156,9 +157,13 @@ describe NetworkInvitation do
   end
   
   it "should be invalid if the invitee is already invited" do
-    @network_invitation.invitee.invited_networks << @network_invitation.network
-      
-    @network_invitation.should have(1).error_on(:base)
+    @network_invitation.save
+    @new_invitation = Factory.build(:network_invitation,
+                                     :network => @network,
+                                     :invitee => @network_invitation.invitee)
+
+    @new_invitation.should_not be_valid
+    @new_invitation.should have(1).error_on(:base)
   end  
   
   it "should be invalid if the invitee is already a member" do
@@ -211,15 +216,16 @@ end
 describe SurveyInvitation do
    
   before(:each) do
-    @survey_invitation = Factory.build(:survey_invitation)
+    @survey = Factory.build(:survey)
+    @survey_invitation = Factory.build(:survey_invitation, :survey => @survey)
   end
 
   it "should inherit from invitation" do
-  	@survey_invitation.class.superclass.name.should == "Invitation"
+    @survey_invitation.class.superclass.name.should == "Invitation"
   end    
  
   it "should belong to a survey" do
-  	SurveyInvitation.reflect_on_association(:survey).should_not be_nil
+    SurveyInvitation.reflect_on_association(:survey).should_not be_nil
   end
   
   it "should be invalid if a survey is not specified" do
@@ -233,9 +239,12 @@ describe SurveyInvitation do
   end
   
   it "should be invalid if the invitee is already invited" do
-    @survey_invitation.invitee.invited_surveys << @survey_invitation.survey
-      
-    @survey_invitation.should have(1).error_on(:base)
+    @survey_invitation.save
+    @new_invitation = Factory.build(:survey_invitation,
+                                    :survey => @survey,
+                                    :invitee => @survey_invitation.invitee)
+
+    @new_invitation.should have(1).error_on(:base)
   end  
   
   it "should be invalid if the invitee is the survey sponsor" do
@@ -245,7 +254,7 @@ describe SurveyInvitation do
     @survey_invitation.should have(1).error_on(:base)
   end   
      
-  it "should be valid" do  	
+  it "should be valid" do   
     @survey_invitation.should be_valid
   end  
  
@@ -290,44 +299,44 @@ describe ExternalInvitation do
   end
 
   it "should inherit from invitation" do
-  	@external_invitation = ExternalInvitation.new
-  	@external_invitation.class.superclass.name.should == "Invitation"
+    @external_invitation = ExternalInvitation.new
+    @external_invitation.class.superclass.name.should == "Invitation"
   end    
   
   it "should be invalid without an email" do
-  	@external_invitation.attributes = valid_external_invitation_attributes.except(:email)
-  	@external_invitation.should have(3).errors_on(:email)
+    @external_invitation.attributes = valid_external_invitation_attributes.except(:email)
+    @external_invitation.should have(3).errors_on(:email)
   end
  
   it "should be invalid when the email is less than 3 characters in length" do
-  	@external_invitation.attributes = valid_external_invitation_attributes.with(:email => "aa")
-  	@external_invitation.attributes.should have_at_least(1).errors_on(:email)
+    @external_invitation.attributes = valid_external_invitation_attributes.with(:email => "aa")
+    @external_invitation.attributes.should have_at_least(1).errors_on(:email)
   end
  
   it "should be invalid when the email is greater than 100 characters in length" do
-  	@external_invitation.attributes = valid_external_invitation_attributes.with(:email => "a"*100 + "@gmail.com")
-  	@external_invitation.attributes.should have_at_least(1).errors_on(:email)
+    @external_invitation.attributes = valid_external_invitation_attributes.with(:email => "a"*100 + "@gmail.com")
+    @external_invitation.attributes.should have_at_least(1).errors_on(:email)
   end
  
   it "should be invalid when the email not a valid email address" do
-  	@external_invitation.attributes = valid_external_invitation_attributes.with(:email => "This is not an email")
-  	@external_invitation.attributes.should have_at_least(1).errors_on(:email)
+    @external_invitation.attributes = valid_external_invitation_attributes.with(:email => "This is not an email")
+    @external_invitation.attributes.should have_at_least(1).errors_on(:email)
   end
   
   it "should be invalid when the name is less than 2 characters in length" do
-  	@external_invitation.attributes = valid_external_invitation_attributes.with(:name => "a")
-  	@external_invitation.valid?
-  	@external_invitation.attributes.should have_at_least(1).errors_on(:name)
+    @external_invitation.attributes = valid_external_invitation_attributes.with(:name => "a")
+    @external_invitation.valid?
+    @external_invitation.attributes.should have_at_least(1).errors_on(:name)
   end
  
   it "should be invalid when the name is greater than 100 characters in length" do
-  	@external_invitation.attributes = valid_external_invitation_attributes.with(:name => "a" * 101)
-  	@external_invitation.attributes.should have_at_least(1).errors_on(:name)
+    @external_invitation.attributes = valid_external_invitation_attributes.with(:name => "a" * 101)
+    @external_invitation.attributes.should have_at_least(1).errors_on(:name)
   end
   
   it "should be valid" do
-  	@external_invitation.attributes = valid_external_invitation_attributes
-  	@external_invitation.should be_valid
+    @external_invitation.attributes = valid_external_invitation_attributes
+    @external_invitation.should be_valid
   end
  
 end
@@ -335,25 +344,30 @@ end
 describe ExternalNetworkInvitation do
    
   before(:each) do
-    @external_network_invitation = Factory.build(:external_network_invitation)
+    @network = Factory.create(:network)
+    @external_network_invitation = Factory.build(:external_network_invitation,
+                                                 :network => @network)
   end
 
   it "should belong to a network" do
-  	ExternalNetworkInvitation.reflect_on_association(:network).should_not be_nil
+    ExternalNetworkInvitation.reflect_on_association(:network).should_not be_nil
   end
    
   it "should inherit from external_invitation" do
-  	 @external_network_invitation.class.superclass.name.should == "ExternalInvitation"
+    @external_network_invitation.class.superclass.name.should == "ExternalInvitation"
   end    
      
   it "should be invalid if a network is not specified" do
-  	 @external_network_invitation.network = nil
-  	 @external_network_invitation.should have(1).errors_on(:network)
+    @external_network_invitation.network = nil
+    @external_network_invitation.should have(1).errors_on(:network)
   end  
   
   it "should be invalid if the invitee is already invited" do
-  	 @external_network_invitation.network.external_invitations << @external_network_invitation
-  	 @external_network_invitation.should have(1).errors_on(:base)
+    @external_network_invitation.save
+    @new_invitation = Factory.build(:external_network_invitation,
+                                    :network => @network,
+                                    :email => @external_network_invitation.email)
+    @new_invitation.should have(1).errors_on(:base)
   end  
    
   it "should be valid" do
@@ -362,7 +376,7 @@ describe ExternalNetworkInvitation do
  
   it "should have a key" do
     @external_network_invitation.save!
-  	@external_network_invitation.key.should_not be_nil
+    @external_network_invitation.key.should_not be_nil
   end
 
 end 
@@ -374,47 +388,51 @@ describe ExternalSurveyInvitation do
   end
 
   it "should inherit from external_invitation" do
-  	@external_survey_invitation.class.superclass.name.should == "ExternalInvitation"
+    @external_survey_invitation.class.superclass.name.should == "ExternalInvitation"
   end    
  
   it "should belong to a survey" do
-  	ExternalSurveyInvitation.reflect_on_association(:survey).should_not be_nil 
+    ExternalSurveyInvitation.reflect_on_association(:survey).should_not be_nil 
   end
   
   it "should have many discussions" do
-  	ExternalSurveyInvitation.reflect_on_association(:discussions).should_not be_nil 
+    ExternalSurveyInvitation.reflect_on_association(:discussions).should_not be_nil 
   end
   
   it "should have many responses" do
-  	ExternalSurveyInvitation.reflect_on_association(:responses).should_not be_nil 
+    ExternalSurveyInvitation.reflect_on_association(:responses).should_not be_nil 
   end
   
   it "should have many participations" do
-  	ExternalSurveyInvitation.reflect_on_association(:participations).should_not be_nil 
+    ExternalSurveyInvitation.reflect_on_association(:participations).should_not be_nil 
   end
   
   it "should be invalid if a survey is not specified" do
-  	@external_survey_invitation.survey = nil
-  	@external_survey_invitation.should have(1).errors_on(:survey)
+    @external_survey_invitation.survey = nil
+    @external_survey_invitation.should have(1).errors_on(:survey)
   end
       
   it "should be invalid if an organization name is not specified" do
-  	@external_survey_invitation.organization_name = nil
-  	@external_survey_invitation.should have(1).errors_on(:organization_name)
+    @external_survey_invitation.organization_name = nil
+    @external_survey_invitation.should have(1).errors_on(:organization_name)
   end
   
   it "should be invalid if the invitee is already invited" do
-  	 @external_survey_invitation.survey.external_invitations << @external_survey_invitation
-  	 @external_survey_invitation.should have(1).errors_on(:base)
+    @external_survey_invitation.save
+    @new_invitation = Factory.create(:external_survey_invitation,
+                                     :survey => @external_survey_invitation.survey,
+                                     :email => @external_survey_invitation.email)
+
+    @new_invitation.should have(1).errors_on(:base)
   end  
         
   it "should be valid" do
-  	@external_survey_invitation.should be_valid
+    @external_survey_invitation.should be_valid
   end  
  
   it "should have a key" do
     @external_survey_invitation.save!
-  	@external_survey_invitation.key.should_not be_nil
+    @external_survey_invitation.key.should_not be_nil
   end
 
   it "should send a notification email when asked" do

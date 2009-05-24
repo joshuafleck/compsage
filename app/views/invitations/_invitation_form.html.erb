@@ -48,25 +48,7 @@
     <% end %>
   </ul>
 
-  <form action="" method="post" id="invitation_form">
-    <div id="send_invitations">
-      <h3>New Invitation</h3>
-      <div id="error_content"></div>
-      <div id="external_invitation_organization_name_wrapper">
-        <label><%= required('Organization Name') %></label>
-        <%= text_field :external_invitation, :organization_name, :size => 30 %>
-        <div id="search_results" class="autocomplete"></div>
-      </div>
-      <div id="external_invitation_form">
-        <div id="external_invitation_email_wrapper">
-          <label for="external_invitation_email"><%= required("Email Address") %></label>
-          <%= text_field :external_invitation, :email, :size => 30 %>
-        </div>
-
-        <input id="external_invitation_submit" type="submit" value="Add" />
-      </div>
-    </div>
-  </form>
+  <%= render :partial => 'invitations/invite_organization' %>
 </div>
 <script type="text/javascript" src="/javascripts/fast_autocompleter.js"></script>
 <script type="text/javascript">
@@ -202,7 +184,6 @@ function removeInvitation(invitation_id, e) {
   });
 }
 
-/* Stub for now */
 function inviteNetwork(network_id, e) {
   e.stop();
   new Ajax.Request('<%= survey_invitations_path(@survey) %>/create_for_network', {

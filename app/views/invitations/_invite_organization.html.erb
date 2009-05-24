@@ -1,0 +1,19 @@
+<form action="<%= defined?(form_action) ? form_action : "" %>" method="post" id="invitation_form">
+  <div id="send_invitations">
+    <h3><%= defined?(header) ? header : "New Invitation" %></h3>
+    <div id="error_content"></div>
+    <div id="external_invitation_organization_name_wrapper">
+      <label><%= required('Organization Name') %></label>
+      <%= text_field :external_invitation, :organization_name, :size => 30 %>
+      <div id="search_results" class="autocomplete" style="display:none;"></div>
+    </div>
+    <div id="external_invitation_form">
+      <div id="external_invitation_email_wrapper">
+        <label for="external_invitation_email"><%= required("Email Address") %></label>
+        <%= text_field :external_invitation, :email, :size => 30 %>
+      </div>
+
+      <input id="external_invitation_submit" type="submit" value="Add" />
+    </div>
+  </div>
+</form>

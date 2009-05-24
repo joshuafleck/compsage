@@ -1,12 +1,8 @@
 <% title "Invitations to #{@network.name}" %>
 <% highlight_tab("networks") %>
-<h2>Invitations to <%=@network.name%></h2>
-
-<%= render :partial => "invitations/invitation_form", :locals => {
-  :include_networks => false
-}%> 
+<h2>Send Invitations to <%=@network.name%></h2>
 
 <div class="separator"><%=image_tag 'embellish.gif' %></div>
 <div id="survey_finish_links">
-		<%=link_to "Finished", network_path(@network)%>
+  <%=link_to "Finished", network_path(@network)%>
 </div>

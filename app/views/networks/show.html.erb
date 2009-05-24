@@ -1,37 +1,100 @@
 <% title @network.name %>
 <% highlight_tab "networks" %>
-<%=flash_messages%>
 <div id="network_actions">
   <h3>Network Activities</h3>
   <ul id="network_menu">
     <li><%= link_to "Survey Network", new_survey_path(:network_id => @network.id) %></li>
     <% if @network.owner == current_organization then %>
-      <li><%= link_to "Invite Others", network_invitations_path(@network) %></li>
       <li><%= link_to "Edit Network", edit_network_path(@network) %></li>
     <% end %>
     <li><%= link_to "Leave Network", leave_network_path(@network) %></li>
   </ul>
-  <p>&nbsp;</p>
-  <p>&nbsp;</p>
 </div>
-<h2><%=@network.name%> <span class="manager">managed by <%=link_to_organization @network.owner%></span></h2>
-<% unless @network.description.blank? %>
-  <div class="main_description">
-    <%= auto_link_new_window(@network.description) %>
-  </div>
-<% end %>
-<% if @members.none? && @network.owner_id == current_organization.id then %>
-  <p>Your network doesn't have any members! <%= link_to "Send some invitations", network_invitations_path(@network) %>.</p>   
-<% else %>
-  <h3 id="network_members_header">Network Members</h3>
-  <ul id="network_members">
-    <% @members.each do |organization| %>
-      <li>
-        <%= link_to_organization(organization) %>
-        <% if @network.owner_id == current_organization.id && current_organization != organization then %>
-          <%=link_to "Remove", evict_network_path(@network, :organization_id => organization.id), :method => :put, :class => 'remove' %>
-        <% end %>
-      </li>
-    <% end %>
-  </ul>
-<% end %>
+<div id="network_content">
+  <h2><%=@network.name%> <span class="manager">managed by <%=link_to_organization @network.owner%></span></h2>
+  <% unless @network.description.blank? %>
+    <div class="description_box">
+      <%= auto_link_new_window(@network.description) %>
+    </div>
+  <% end %>
+  <% if @members.none? && @network.owner_id == current_organization.id then %>
+    <p>Your network doesn't have any members.</p>   
+  <% else %>
+    <h3 id="network_members_header">Network Members</h3>
+    <ul id="network_members">
+      <% @members.each do |organization| %>
+        <li>
+          <%= link_to_organization(organization) %>
+          <% if @network.owner_id == current_organization.id && current_organization != organization then %>
+            <%=link_to "Remove", evict_network_path(@network, :organization_id => organization.id), :method => :put, :class => 'remove' %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+  <%= flash_messages %>
+  <% if @network.owner_id == current_organization.id then %>
+    <%= render :partial => 'invitations/invite_organization', :locals => {:form_action => network_invitations_path(@network)} %>
+  <% end %>
+</div>
+<% content_for :initialize_js, "observeInvitationForm();" %>
+<script type="text/javascript" src="/javascripts/fast_autocompleter.js"></script>
+<script type="text/javascript">
+function observeInvitationForm() {
+  var cachedBackend = new Autocompleter.Cache(liveOrganizationSearch, {
+    choices: 10,
+    dataToQueryParam: function(data) { return data.name },
+  });
+
+  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+
+  new Autocompleter.Json('external_invitation_organization_name', 'search_results', cachedLookup, {
+    'list_generator': function(choices) {
+      var list = new Element('ul');
+
+      choices.each(function(choice) {
+        var li = new Element('li');
+        li.insert('<div class="actions"><a href="javascript:;"><%= image_tag "add_invitation_button.gif" %></a></div>' + 
+          '<div class="name">' + choice.name + '</div>') 
+        if(choice.location) {
+          li.insert('<div class="location description_box">Location: ' + choice.location + '</div>');
+        }
+        li.data = choice;
+        list.insert(li);
+      });
+
+      return list;
+      },
+    'minChars': 2,
+    'delay': 0.1,
+    'updateElement': function(li) {
+      addInvitation(li.data);
+    }
+  });
+}
+/*
+ * This will send an ajax request to the server with the search text
+ */
+function liveOrganizationSearch(value, suggest) {
+  new Ajax.Request('<%=search_organizations_path%>', {
+    'method': 'get',
+    'parameters': {'search_text': value},
+    'requestHeaders': {'Accept':'application/json'},
+    'onSuccess': function(transport) {
+      suggest(transport.responseText.evalJSON());
+    }
+  });
+}
+
+function addInvitation(organization) {
+  var org_id_field = $$('invitation_form #organization_id').first();
+  if(!org_id_field) {
+    org_id_field = new Element('input', {'type':'hidden', 'name':'organization_id'});
+    $('invitation_form').insert(org_id_field);
+  }
+  org_id_field.value = organization.id;
+  $('invitation_form').submit();
+}
+
+</script>
+

@@ -335,43 +335,13 @@ end
 
 describe NetworkInvitationsController, " handling POST /networks/1/invitations" do
 
- before do
-    @current_organization = mock_model(Organization, :id => "1")
+  before do
+    @current_organization = Factory(:organization)
     login_as(@current_organization)
-    
-    @network = mock_model(Network, :owner => @current_organization, :id => "1")
-       
-    @organization1 = mock_model(Organization, :id => "2", :networks => [])
-    @organization2 = mock_model(Organization, :id => "3", :networks => [])
-    @organization3 = mock_model(Organization, :id => "4", :networks => [])
-    
-    @owned_networks_proxy = mock('owned_networks_proxy', :find => @network)
-    @invitations_proxy = mock('invitations_proxy')
-    
-    @current_organization.stub!(:owned_networks).and_return(@owned_networks_proxy)
-    
-    Organization.stub!(:find_by_id).with(@organization1.id).and_return(@organization1)
-    Organization.stub!(:find_by_id).with(@organization2.id).and_return(@organization2)
-    Organization.stub!(:find_by_id).with(@organization3.id).and_return(@organization3)
-    @organization1.stub!(:invited_networks).and_return(@invited_networks_proxy_excl)
-    @organization2.stub!(:invited_networks).and_return(@invited_networks_proxy_incl)
-    @organization3.stub!(:invited_networks).and_return(@invited_networks_proxy_incl)
-    @network.stub!(:all_invitations).and_return(@invitations_proxy)
-    
-    Invitation.stub!(:create_internal_or_external_invitations).and_return([[],@invitations_proxy])
-    
-    @params = {
-          :network_id => @network.id.to_s, 
-          :invite_organization => { 
-            @organization1.id.to_s => {:included => '1'}, 
-            @organization2.id.to_s => {:included => '1'}, 
-            @organization3.id.to_s => {}
-          },
-          :external_invite => {
-            '1' => {"included" => '1', "organization_name" => 'ext1', "email" => 'ext1@ext1.com'}
-          }
-        }
-        
+    @network = Factory(:network, :owner => @current_organization)
+    @current_organization.owned_networks.stub(:find).and_return(@network)
+
+    @params = {:network_id => @network.id, :organization_id => @current_organization.id}
   end
  
   def do_post
@@ -382,39 +352,24 @@ describe NetworkInvitationsController, " handling POST /networks/1/invitations" 
     controller.should_receive(:login_required)
     do_post
   end
-  
-  it "should find all of the invited organizations" do
-    Organization.should_receive(:find_by_id).with(@organization1.id).and_return(@organization1)
-    Organization.should_receive(:find_by_id).with(@organization2.id).and_return(@organization2)
-    do_post
+ 
+  describe "when inviting by organization id" do
+    before do
+      @other_organization = Factory(:organization)
+      Organization.stub!(:find).and_return(@other_organization)
+      @params.merge!({:organization_id => @other_organization.id.to_s})
+    end
+
+    it "should find the organization to invite" do
+      Organization.should_receive(:find).at_least(:once).and_return(@other_organization)
+      do_post
+    end
+
+    it "should create an internal invitation to the network" do
+      @network.invitations.should_receive(:new).and_return(Invitation.new(:invitee => @other_organization))
+      do_post
+    end
   end
-    
-  it "should not create invitations for unselected organizations" do
-    Organization.should_not_receive(:find_by_id).with(@organization3.id)
-    do_post
-  end  
-  
-  it "should build the invitations" do
-    Invitation.should_receive(:create_internal_or_external_invitations).with([@params[:external_invite]["1"]],[@organization1,@organization2],[],@current_organization,@network)
-    do_post
-  end
-   
-  it "should assign the invitations to the view" do
-    @network.should_receive(:all_invitations)
-    do_post
-        assigns[:invitations].should_not be_nil
-  end
-  
-  it "should assign the invalid invitations the view" do    
-    do_post
-    assigns(:invalid_invitations).should eql(@invitations_proxy)
-   end   
-   
-  it "should flash a message notiing if invitations were sent" do
-    do_post
-    flash[:notice].should eql("No invitations were sent")
-  end   
-    
 end
 
 
