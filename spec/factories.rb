@@ -113,7 +113,7 @@ end
 Factory.define :participation do |p|
   p.survey {|a| a.association(:survey)}
   p.participant {|a| a.association(:organization)}
-  p.responses {|a| [a.association(:response, :participation_id => a.id)]}
+  p.responses {|a| [a.association(:response, :participation_id => 1)]}
 end
 
 #definition and setup for question
