@@ -12,7 +12,7 @@
     respond_to do |wants|
       wants.html {
         @surveys = Survey.running.paginate(:page => params[:page], :order => 'job_title')  
-        @invited_surveys = current_organization.survey_invitations.pending.running.find(
+        @invited_surveys = current_organization.survey_invitations.sent.running.find(
           :all,
           :order => 'invitations.created_at desc')
         @my_surveys = current_organization.sponsored_surveys.running_or_stalled.find(:all, :order => 'end_date DESC');
