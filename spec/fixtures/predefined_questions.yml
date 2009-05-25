@@ -1,28 +1,35 @@
 salary_questions:
   id: 1
   position: 1
-  name: Salary and salary range
+  name: Base salary
   question_hash: --- 
   - :custom_question_type: "Pay or wage response"
     :text: "Average base salary:"
+    :required: true
+    
+salary_range_questions:
+  id: 2
+  position: 2
+  name: Salary range
+  question_hash: --- 
   - :custom_question_type: "Pay or wage response"
     :text: "Salary range minimum:"
   - :custom_question_type: "Pay or wage response"
     :text: "Salary range midpoint:"
   - :custom_question_type: "Pay or wage response"
-    :text: "Salary range maximum:"
+    :text: "Salary range maximum:"    
   
 incentive_question:
-  id: 2
-  position: 2
+  id: 3
+  position: 3
   name: Eligibility for incentive bonus
   question_hash: --- 
   - :text: "Is this position eligible for incentive bonus?"
     :custom_question_type: "Yes/No"
 
 incentive_target_question:
-    id: 3
-    position: 3
+    id: 4
+    position: 4
     name: Target incentive
     question_hash: ---
     - :text: "What is this position's incentive target as percent of base salary?"
@@ -32,16 +39,16 @@ incentive_target_question:
     - :text: If yes, what is the maximum incentive as a percent of base salary?
       :custom_question_type: "Percent"
 bargaining_unit_question:
-    id: 4
-    position: 4
+    id: 5
+    position: 5
     name: Membership in a collective bargaining unit 
     question_hash: ---
     - :text: "Is this position part of a bargaining unit?"
       :custom_question_type: "Yes/No"
           
 flsa_question:
-    id: 5
-    position: 5
+    id: 6
+    position: 6
     name: FLSA status
     question_hash: ---
     - :text: "Is this position exempt from FLSA overtime provisions?"

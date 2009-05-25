@@ -75,6 +75,9 @@ function initializeObservers() {
       
       if(question.select('input[id$=_required]')[0].checked) {
         question.select('span[id^=question_display_required_]')[0].update('Required');  
+      } 
+      else {
+        question.select('span[id^=question_display_required_]')[0].update();
       }
       
       numberOfQuestions++;      
@@ -213,7 +216,7 @@ function addPredefinedQuestion(id) {
     question.hide();
     question.appear({'duration': 0.5});
     
-    checkDefaultRequiredQuestions(id);
+    //checkDefaultRequiredQuestions(id); --Default required questions are specified in the fixture
 
     setPosition(question, numberOfQuestions);
     

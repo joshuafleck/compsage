@@ -4,7 +4,7 @@
       <div id='<%="question_display_text_#{index}"%>'><%=q_f.object[:text]%></div>
       <div >
         <span id='<%="question_display_type_#{index}"%>' class="description_box"><%=q_f.object[:custom_question_type]%></span>
-        <span id='<%="question_display_required_#{index}"%>' class="response_required_box"></span>
+        <span id='<%="question_display_required_#{index}"%>' class="response_required_box"><%= q_f.object.required? ? "Required" : "" %></span>
       </div>      
       <div style="float: bottom; width: 100%">
         <a id='<%="question_up_#{index}"%>' href=''><%= image_tag "up_button.gif" %></a>
