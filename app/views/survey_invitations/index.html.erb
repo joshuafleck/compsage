@@ -1,17 +1,22 @@
 <% title "Invitations to #{@survey.job_title}" %>
 <% highlight_tab("surveys") %>
 <% if @survey.aasm_state == 'pending' %>
-<div class="breadcrumbs">
-  <%= image_tag 'step_1_inactive.gif' %>
-  <%= image_tag 'step_2_active.gif' %>
-  <%= image_tag 'step_3_inactive.gif' %>
-  <%= image_tag 'step_4_inactive.gif' %>
-</div>
+  <div class="breadcrumbs">
+    <%= image_tag 'step_1_inactive.gif' %>
+    <%= image_tag 'step_2_active.gif' %>
+    <%= image_tag 'step_3_inactive.gif' %>
+    <%= image_tag 'step_4_inactive.gif' %>
+  </div>
 <% end %>
 <div id="step_container">
   <%= render :partial => "invitations/invitation_form", :locals => {:include_networks => true}%> 
 </div>
-<div class="submit_row">
-  <%= button_to "Preview Survey", preview_survey_questions_path(@survey), :class => "next", :method => :get, :id => "invitation_form_submit" %>
-  <%= button_to "Edit Survey Design", new_survey_path, :class => "previous", :method => :get %>
-</div>
+<p>
+  <% if @survey.aasm_state == 'pending' then %>
+    <%= button_to "Preview Survey", preview_survey_questions_path(@survey), :class => "next", :method => :get, :id => "invitation_form_submit" %>
+    <%= button_to "Edit Survey Design", new_survey_path, :class => "previous", :method => :get %>
+  <% else %>
+    <%= button_to "Update Invitation List", send_pending_survey_invitations_path(@survey) %> or
+    <%= link_to "Back to Survey", survey_path(@survey) %>
+  <% end %>
+</p>

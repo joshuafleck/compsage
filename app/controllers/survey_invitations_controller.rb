@@ -88,6 +88,14 @@ class SurveyInvitationsController < ApplicationController
     end    
   end
 
+  def send_pending
+    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
+    @survey.internal_and_external_invitations.pending.each do |invitation|
+      invitation.send_invitation!
+    end
+
+    redirect_to survey_path(@survey)
+  end
   private
 
   # invite the organization contained in the organization_id param

@@ -9,7 +9,6 @@ class ExternalSurveyInvitation < ExternalInvitation
   validates_presence_of :survey
   validates_presence_of :organization_name
   validate_on_create :not_already_invited
-  before_create :set_state
 
   attr_accessible :survey, :disccusions, :responses
   
@@ -31,12 +30,4 @@ class ExternalSurveyInvitation < ExternalInvitation
   def send_invitation_email
     Notifier.deliver_external_survey_invitation_notification(self)
   end
-  
-  # If the survey we're inviting to is pending, the invitation needs to be pending, otherwise it needs to be sent.
-  def set_state
-    if survey.running? then
-      self.send_invitation
-    end
-  end
-
 end

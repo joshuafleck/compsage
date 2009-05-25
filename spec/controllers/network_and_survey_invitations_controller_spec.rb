@@ -215,6 +215,34 @@ describe SurveyInvitationsController,  "handling PUT /surveys/1/invitations/1/de
   
 end
 
+describe SurveyInvitationsController, "sending pending invitations" do
+  before do
+    @organization = Factory(:organization)
+    login_as(@organization)
+
+    @survey = Factory(:survey, :sponsor => @organization)
+    @pending_invitations = [Factory(:survey_invitation, :survey => @survey),
+                            Factory(:external_survey_invitation, :survey => @survey)]
+  end
+
+  def do_post
+    post :send_pending, :survey_id => @survey.id
+  end
+  
+  it "should send the invitations" do
+    do_post
+    @pending_invitations.each do |invitation|
+      invitation.reload
+      invitation.should be_sent
+    end
+  end
+
+  it "should redirect to the survey show page" do
+    do_post
+    response.should be_redirect
+    response.should redirect_to(survey_path(@survey))
+  end
+end
   
 #specs specific to NetworkInvitationsController  
 describe NetworkInvitationsController, " #route for" do

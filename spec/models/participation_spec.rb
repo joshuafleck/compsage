@@ -54,7 +54,8 @@ describe Participation do
     invitation = Factory.create(:survey_invitation,
       :inviter => @survey.sponsor, 
       :invitee => @participant, 
-      :survey => @survey)
+      :survey => @survey,
+      :aasm_state => 'sent')
     @participation = Factory.create(:participation, :survey => @survey, :participant => @participant)
     invitation.reload
     invitation.aasm_state.should == "fulfilled"

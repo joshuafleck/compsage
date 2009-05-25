@@ -6,7 +6,6 @@ class SurveyInvitation < Invitation
   validates_presence_of :invitee
   validates_presence_of :survey
   validate_on_create :not_already_invited
-  before_create :set_state
   
   named_scope :running, :include => :survey, :conditions => ["surveys.end_date > ?", Time.now ]
   
@@ -42,11 +41,4 @@ class SurveyInvitation < Invitation
   def send_invitation_email
     Notifier.deliver_survey_invitation_notification(self)
   end
-  
-  # If the survey we're inviting to is pending, the invitation needs to be pending, otherwise it needs to be sent.
-  def set_state
-    if survey.running? then
-      self.send_invitation
-    end
-  end
-end
+ end

@@ -115,7 +115,9 @@ function initializeObservers() {
     else
       invitation_id = id_match[0];
 
-    invitation_li.select('a.remove').first().observe('click', removeInvitation.curry(invitation_id));
+    var remove_link = invitation_li.select('a.remove').first();
+    if(remove_link)
+      remove_link.observe('click', removeInvitation.curry(invitation_id));
   });
 }
 

@@ -145,8 +145,7 @@ class Survey < ActiveRecord::Base
   
   # returns a sorted list of all (survey and external_survey) invitations
   def all_invitations(include_sponsor = false)
-    invitations = self.invitations.find(:all, :include => :invitee)
-    invitations += self.external_invitations.find(:all)
+    invitations = self.internal_and_external_invitations.not_pending.all
     invitations << SurveyInvitation.new(:invitee => self.sponsor) if include_sponsor
     invitations.sort    
   end

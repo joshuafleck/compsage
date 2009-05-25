@@ -1111,6 +1111,14 @@ form div.submit {
   margin-top: 1em;
 }
 
+form.button-to {
+  display: inline;
+}
+
+form.button-to div {
+  display: inline;
+}
+
 div.separator {
   margin-top: 1em;
   margin-bottom: 1em;

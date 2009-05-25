@@ -6,6 +6,8 @@ class Invitation < ActiveRecord::Base
   validates_presence_of :inviter
   
   named_scope :recent, :order => 'invitations.created_at DESC', :limit => 10
+  named_scope :pending, :conditions => {:aasm_state => 'pending'}
+  named_scope :not_pending, :conditions => 'aasm_state <> "pending"'
   
   #This will sort the invitations by invitee organization name, regardless of type
   def <=>(o)

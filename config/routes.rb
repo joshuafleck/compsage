@@ -6,12 +6,13 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resource :session
 
-  map.resources :surveys, :collection => {:search => :any, :reports => :get }, :member => {:respond => :any, :rerun => :any, :finish_partial => :any, :billing => :any} do |survey|
+  map.resources :surveys, :collection => { :search => :any, :reports => :get},
+                          :member => { :respond => :any, :rerun => :any, :finish_partial => :any, :billing => :any} do |survey|
     survey.resources :questions, :collection => {:preview => :any}
     survey.resources :discussions, :member => {:report => :any}
     survey.resources :invitations, :controller => :survey_invitations,
       :member => {:decline => :put},
-      :collection => {:create_for_network => :post}
+      :collection => {:create_for_network => :post, :send_pending => :post}
     survey.resource :report, :member => {:chart => :get, :suspect => :any}
   end
   

@@ -38,9 +38,9 @@
   def show
     @survey = Survey.find(params[:id], :include => [:invitations, :external_invitations])  
     @invitations = @survey.all_invitations(true) 
-	  @discussions = @survey.discussions.within_abuse_threshold.roots
-	  @discussion = @survey.discussions.new
-	  @participation = current_organization_or_survey_invitation.participations.find_by_survey_id(@survey)
+    @discussions = @survey.discussions.within_abuse_threshold.roots
+    @discussion = @survey.discussions.new
+    @participation = current_organization_or_survey_invitation.participations.find_by_survey_id(@survey)
 	  
     respond_to do |wants|
       wants.html do
