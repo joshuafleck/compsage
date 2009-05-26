@@ -24,9 +24,12 @@
     </ol>
     <label for='predefined_questions'>Add a Question</label>
     <select id="predefined_questions">
-      <option value="" selected="selected">Select a question</option>
-      <option value="0">Custom question</option>
-      <%= options_from_collection_for_select(PredefinedQuestion.all, 'id', 'name') %>
+      <option value="">Choose which question...</option>
+      <optgroup label="Standard Questions">
+        <%= options_from_collection_for_select(PredefinedQuestion.all, 'id', 'name') %>
+      </optgroup>
+      <optgroup label="&nbsp;"></optgroup>
+      <option value="0">Custom question...</option>
     </select>
     <div id='custom_question_form' style='display: none;'>
       <label for='custom_question_text' class='survey_question_label'><%=required('Question Text')%></label>
