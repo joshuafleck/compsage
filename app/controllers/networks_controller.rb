@@ -45,8 +45,7 @@ class NetworksController < ApplicationController
     
     if @network.save then
       respond_to do |wants|
-        wants.html { redirect_to network_invitations_path(@network) }
-      
+        wants.html { redirect_to network_path(@network) }
         wants.xml do
           head :status => :created
         end

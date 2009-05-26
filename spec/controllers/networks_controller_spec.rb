@@ -322,9 +322,9 @@ describe NetworksController, " handling POST /networks" do
     do_post
   end
   
-  it "should redirect to the show invitation view" do
+  it "should redirect to the show network view" do
     do_post
-    response.should redirect_to(network_invitations_path(@network.id))
+    response.should redirect_to(network_path(@network.id))
   end
 end
 

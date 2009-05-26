@@ -59,7 +59,7 @@ class Invitation < ActiveRecord::Base
   def self.new_external_invitation_to(network_or_survey, params = {})
     if organization = Organization.find_by_email(params[:email]) then
       # Organization with this contact email is already in our database. Create internal invitation.
-      return network_or_survey.invitations.new(params)
+      return network_or_survey.invitations.new(params.merge(:invitee => organization))
     else
       return network_or_survey.external_invitations.new(params)
     end
