@@ -17,7 +17,7 @@ class QuestionsController < ApplicationController
     @survey = Survey.find(params[:survey_id])
 
     # Make sure the user has sent enough invitations.
-    if @survey.all_invitations.count < 4 then
+    if @survey.internal_and_external_invitations.count < 4 then
       flash[:error] = "You must invite at least 4 organizations"
       redirect_to survey_invitations_path(@survey)
     end
