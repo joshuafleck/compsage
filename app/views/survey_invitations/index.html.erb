@@ -11,12 +11,14 @@
 <div id="step_container">
   <%= render :partial => "invitations/invitation_form", :locals => {:include_networks => true}%> 
 </div>
-<p>
-  <% if @survey.aasm_state == 'pending' then %>
-    <%= button_to "Preview Survey", preview_survey_questions_path(@survey), :class => "next", :method => :get, :id => "invitation_form_submit" %>
-    <%= button_to "Edit Survey Design", new_survey_path, :class => "previous", :method => :get %>
-  <% else %>
+<% if @survey.aasm_state == 'pending' then %>
+  <div class="submit_row">
+    <%= button_to "Next &ndash; Preview Survey", preview_survey_questions_path(@survey), :class => "next", :method => :get, :id => "invitation_form_submit" %>
+    <%= button_to "Back &ndash; Edit Survey Design", new_survey_path, :class => "previous", :method => :get %>
+  </div>
+<% else %>
+  <p>
     <%= button_to "Update Invitation List", send_pending_survey_invitations_path(@survey) %> or
     <%= link_to "Back to Survey", survey_path(@survey) %>
-  <% end %>
-</p>
+  </p>
+<% end %>

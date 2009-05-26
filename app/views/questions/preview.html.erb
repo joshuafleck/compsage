@@ -15,8 +15,8 @@
     <%= render :partial => "questions/participation_form"%>
   </div>
   <div class="submit_row">
-    <%= button_to "Enter Billing Information", billing_survey_path(@survey), :class => "next", :method => :get%>
-    <%= button_to "Edit Invitation List", survey_invitations_path(@survey), :class => "previous", :method => :get %>
+    <%= button_to "Next &ndash; Enter Billing Information", billing_survey_path(@survey), :class => "next", :method => :get%>
+    <%= button_to "Back &ndash; Edit Invitation List", survey_invitations_path(@survey), :class => "previous", :method => :get %>
   </div>
 </div>
 <script>
