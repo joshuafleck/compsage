@@ -41,12 +41,13 @@
   <% end %>
 <% end %>
 <div id="suspect_results">
-	<p>If you suspect an error, or see results that do not match what you expect,  by <%= link_to "please report the anomoly to us.", '#', :id => "suspect_result_form_link" %></p>
+	<p><%= link_to "Report Incorrect Data", '#', :id => "suspect_result_form_link" %></p>
 	<div id ="suspect_report_form" class="hidden">
 		<div id="success_notification" class="hidden"><span id="success_report_message">Successfully Reported!</span></div>
 		<label for="comment">Comment:</label>
-		<textarea id="comment"></textarea> <input id="suspect_result_submit" type="button" value="Report" %>
-		<%= link_to_function "Cancel", "$('suspect_report_form').toggleClassName('hidden'); return false;" %>
+		<textarea id="comment"></textarea>
+		<p><input id="suspect_result_submit" type="button" value="Report" %>
+		<%= link_to_function "Cancel", "$('suspect_report_form').toggleClassName('hidden'); return false;" %></p>
 	</div>
 </div>
 <% if logged_in_from_survey_invitation? then %>
