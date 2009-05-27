@@ -58,6 +58,7 @@
 
   def edit
     @survey = current_organization.sponsored_surveys.running_or_pending.find(params[:id])
+    #check for participations
     if @survey.has_participations? then
       respond_to do |wants|
         wants.html{
@@ -70,19 +71,28 @@
   
   def update
     @survey = current_organization.sponsored_surveys.running_or_pending.find(params[:id])
-     
+    #check for participations
+    if @survey.has_participations? then
+      respond_to do |wants|
+        wants.html{
+          flash[:notice] = "You cannot edit the questions for a survey once a response has been collected."
+          redirect_to survey_path(@survey)
+        }
+      end
+    else
     #update the attributes for the survey
-    if @survey.update_attributes(params[:survey])
-       respond_to do |wants|  
-         wants.html{
-           redirect_to preview_survey_questions_path(@survey) 
+      if @survey.update_attributes(params[:survey])
+         respond_to do |wants|  
+           wants.html{
+             redirect_to preview_survey_questions_path(@survey) 
+             }
+         end
+       else
+         respond_to do |wants|
+           wants.html{ 
+             render :action => :edit
            }
-       end
-     else
-       respond_to do |wants|
-         wants.html{ 
-           render :action => :edit
-         }
+         end
        end
      end
   end
