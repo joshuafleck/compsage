@@ -13,7 +13,9 @@
 
     <% if @survey.sponsor == current_organization then %>
       <h3>Manage Your Survey</h3>
-        <p><%=link_to "Edit Questions &amp; Job Description", edit_survey_path(@survey)%><br />
+        <% if !@survey.has_participations? %>        
+          <p><%=link_to "Edit Questions &amp; Job Description", edit_survey_path(@survey)%><br />
+	    <% end %>
         <%=link_to "Manage Invitation List", survey_invitations_path(@survey) %></p>
     <% end %>
     <h3>Invitation List</h3>
