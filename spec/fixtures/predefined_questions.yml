@@ -22,22 +22,20 @@ salary_range_questions:
 incentive_question:
   id: 3
   position: 3
-  name: Eligibility for incentive bonus
+  name: Eligibility and target incentive bonus
   question_hash: --- 
   - :text: "Is this position eligible for incentive bonus?"
     :custom_question_type: "Yes/No"
+  - :text: "What is this position's incentive target as percent of base salary?"
+    :custom_question_type: "Percent"
+    :parent_question_index: 0
+  - :text: Is there a maximum incentive that can be earned?
+    :custom_question_type: "Yes/No"
+    :parent_question_index: 0
+  - :text: If yes, what is the maximum incentive as a percent of base salary?
+    :custom_question_type: "Percent"
+    :parent_question_index: 2
 
-incentive_target_question:
-    id: 4
-    position: 4
-    name: Target incentive
-    question_hash: ---
-    - :text: "What is this position's incentive target as percent of base salary?"
-      :custom_question_type: "Percent"
-    - :text: Is there a maximum incentive that can be earned?
-      :custom_question_type: "Yes/No"
-    - :text: If yes, what is the maximum incentive as a percent of base salary?
-      :custom_question_type: "Percent"
 bargaining_unit_question:
     id: 5
     position: 5
