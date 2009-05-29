@@ -5,7 +5,8 @@
 <script type="text/javascript">
   function createMasks() {
     $$('input.WageResponse, input.BaseWageResponse').each(function(field) {
-      new inputMask(field, 'currency');
+      var units = field.adjacent('select.units').first();
+      new inputMask(field, 'currency', units);
     });
 
     $$('input.NumericalResponse').each(function(field) {

@@ -22,14 +22,28 @@ function checkNumericResponse(response) {
 /**
  * This will sanity check a wage response
  * @response The numeric response entered by the user
+ * @units The units dropdown element.
  */
-function checkWageResponse(response) {
-  if(response < 6.55) {
-    return "Response is below minimum wage. Is this correct?";
+function checkWageResponse(response, units) {
+  var unitsType = units.options[units.selectedIndex].text;
+  
+  if(unitsType == 'Annually') {
+    if(response < 10000) {
+      return "Response is below ten thousand dollars. Is this correct?";
+    }
+    if(response > 1000000) {
+      return "Response exceeds one million dollars. Is this correct?";
+    }   
+  } 
+  else if (unitsType == 'Hourly') {
+    if(response < 6.55) {
+      return "Response is below minimum wage. Is this correct?";
+    }
+    if(response > 500) {
+      return "Response exceeds 500 dollars per hour. Is this correct?";
+    }  
   }
-  if(response > 1000000) {
-    return "Response exceeds one million dollars. Is this correct?";
-  }
+
 }
 
 /*
@@ -37,8 +51,9 @@ function checkWageResponse(response) {
  * and plain number.
  * @element Form element to observe.
  * @data_type Expected data type for the form element. Must be one of 'currency', 'percent', or 'number'
+ * @units Form element containing units for currency questions (optional parameter)
  */
-function inputMask(element, data_type) {
+function inputMask(element, data_type, units) {
   var element = element;	
   var data_type = data_type;
   var char_mask	= /.*/;
@@ -47,6 +62,7 @@ function inputMask(element, data_type) {
   var precision = null;
   var check_response = null;
   var error_message = "";
+  var units = units;
 
   if(data_type == 'currency') {
     char_mask = /^\$?(\d*,?)*\.?\d{0,2}$/
@@ -84,15 +100,16 @@ function inputMask(element, data_type) {
     }
   })
 
-  element.observe('change', function(e) {
-    var clean_value = e.element().value.replace(/,/g,'').match(/(\-?\d+\.?\d*)|(\-?\.\d+)/);
+  //This will review the input to make sure it falls within expected range
+  var reviewer = function(e) {
+    var clean_value = element.value.replace(/,/g,'').match(/(\-?\d+\.?\d*)|(\-?\.\d+)/);
     var number = parseFloat(clean_value);
 
     if(precision)
       number = number.toFixed(precision);
     
     if(isNaN(number))
-      e.element().value = "";
+      element.value = "";
     else {
       parts = number.toString().split('.');
       integer_part = parts[0];
@@ -107,15 +124,21 @@ function inputMask(element, data_type) {
         integer_part = integer_part.replace(need_comma_regex, '$1,$2');
       
       var formatted_number = integer_part + decimal_part;
-      e.element().value = data_template.interpolate({'number': formatted_number});
+      element.value = data_template.interpolate({'number': formatted_number});
       
       // sanity range checking will warn users if response is not plausible
-      question_id = e.element().id.match(/(\d+)/)[0];
-      $("warning_"+question_id).update(check_response(number));
+      question_id = element.id.match(/(\d+)/)[0];
+      $("warning_"+question_id).update(check_response(number, units));
     }
 
-    last_valid = e.element().value;
-  })
+    last_valid = element.value;
+  };
+
+  element.observe('change', reviewer);
+  
+  if(units) {
+    units.observe('change',reviewer);
+  }
 }
 
 /*
