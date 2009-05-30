@@ -1,10 +1,10 @@
 class Question < ActiveRecord::Base
   belongs_to :survey
-  has_many :follow_up_questions, :class_name => 'Question', :foreign_key => 'follow_up_question_id'
-  belongs_to :parent_question, :class_name => 'Question', :foreign_key => 'follow_up_question_id'
+  has_many :child_questions, :class_name => 'Question', :foreign_key => 'parent_question_id', :order => "position"
+  belongs_to :parent_question, :class_name => 'Question'
   has_many :responses, :dependent => :delete_all, :extend => StatisticsExtension
   has_many :participations, :through => :responses
-  acts_as_list :scope => :survey_id
+  acts_as_list :scope => 'survey_id=#{survey_id} AND parent_question_id #{parent_question_id.nil? ? "IS NULL" : "="+parent_question_id.to_s}'
   
   serialize :options
   serialize :textual_response
