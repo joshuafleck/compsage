@@ -122,15 +122,15 @@ end
 
 describe NetworksController, " handling GET /networks/1" do
   before do
-    @organization = mock_model(Organization)
+    @organization = Factory(:organization)
     login_as(@organization)
     
-    @organizations_proxy = mock('org_proxy', :find => [])
-    @network = mock_model(Network, :name => "Network!", :organizations => @organizations_proxy)
-    @network_proxy = mock('Network Proxy', :find => @network)
-    @organization.stub!(:networks).and_return(@network_proxy)
-    
-    @params = {:id => "1"}
+    @network = Factory(:network, :owner => @organization)
+
+    @network_member = Factory(:organization)
+    @network.organizations << @network_member
+
+    @params = {:id => @network.id}
   end
   
   def do_get
@@ -147,25 +147,21 @@ describe NetworksController, " handling GET /networks/1" do
     response.should be_success
   end
 
-  it "should find the network requested" do
-    @network_proxy.should_receive(:find).and_return(@network)
-    do_get    
-  end  
-
-  it "should find the network members" do
-    @network.should_receive(:organizations).and_return(@organizations_proxy)
-    do_get
-  end
-
   it "should render the show template" do
     do_get
     response.should render_template("show")    
   end
   
-  it "should assign the found network to the view" do
+  it "should assign the network to the view" do
     do_get
     assigns[:network].should == @network    
-  end  
+  end
+
+  it "should assign the network's members to the view, minus the current organization" do
+    do_get
+    assigns[:members].should include(@network_member)
+    assigns[:members].should_not include(@organization)
+  end
 end
 
 describe NetworksController, " handling GET /networks/1.xml" do
