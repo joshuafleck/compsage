@@ -19,13 +19,15 @@
   <div class="submit"><input type="submit" value="<%=@network.new_record? ? 'Create' : 'Update' %>" /> or <%=link_to "Cancel", networks_path %></div>
 <% end %>
 
-<% content_for :initialize_js, "observeChangeNetwork();"%>
-<script type="text/javascript">
-function observeChangeNetwork() {
-  $('change_network_manager_link').observe('click', function(e) {
-    e.preventDefault();
-    $('change_network_manager').show();
-    $('change_network_manager_link').hide();
-  })
-}
-</script>
+<% unless @network.new_record? %>
+  <% content_for :initialize_js, "observeChangeNetwork();"%>
+  <script type="text/javascript">
+  function observeChangeNetwork() {
+    $('change_network_manager_link').observe('click', function(e) {
+      e.preventDefault();
+      $('change_network_manager').show();
+      $('change_network_manager_link').hide();
+    })
+  }
+  </script>
+<% end %>
