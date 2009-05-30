@@ -23,18 +23,19 @@ class NetworkInvitationsController < ApplicationController
       Invitation.new_external_invitation_to(@network, params[:external_invitation].merge(:inviter => current_organization))
     end
     
-    @invitation.save
- 
-    respond_to do |wants|
-      wants.html do
-        if @invitation.is_a?(ExternalNetworkInvitation) then
-          flash[:notice] = "Invitation sent to #{@invitation.organization_name}"
-        else
-          flash[:notice] = "Invitation sent to #{@invitation.invitee.name}"
-        end
-        redirect_to network_path(@network)
+    if @invitation.save then
+      if @invitation.is_a?(ExternalNetworkInvitation) then
+        flash[:notice] = "Invitation sent to #{@invitation.organization_name}"
+      else
+        flash[:notice] = "Invitation sent to #{@invitation.invitee.name}"
       end
-    end 
+
+      redirect_to network_path(@network)
+    else
+      # Load @members, required for the networks show view.
+      @members = @network.organizations
+      render :template => '/networks/show'
+    end
   end    
   
   def destroy
