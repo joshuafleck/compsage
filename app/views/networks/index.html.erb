@@ -24,7 +24,6 @@
     <label for="search_text">Find CompSage Members</label>
     <%= text_field_tag 'search_text', '', :size => 20 %> 
     <p><input type="submit" value="Search" /></p>
-    <p>You can also <%= link_to "browse CompSage members in your area", search_organizations_path %></p>
   <% end %>
 </div>
 <% if @networks.empty? then %>
