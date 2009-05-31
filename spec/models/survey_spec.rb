@@ -43,11 +43,13 @@ describe Survey do
   end
   
   it "should be invalid with a job title longer then 128 characters" do
+    @survey.save
     @survey[:job_title] = 'a'*129
     @survey.should have(1).error_on(:job_title)
   end
   
   it "should be invalid without a job title" do
+    @survey.save
     @survey[:job_title]= nil
     @survey.should have_at_least(1).error_on(:job_title)
   end

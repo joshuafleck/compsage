@@ -14,7 +14,7 @@
 <% if @survey.aasm_state == 'pending' then %>
   <div class="submit_row">
     <%= button_to "Next &ndash; Preview Survey", preview_survey_questions_path(@survey), :class => "next", :method => :get, :id => "invitation_form_submit" %>
-    <%= button_to "Back &ndash; Edit Survey Design", new_survey_path, :class => "previous", :method => :get %>
+    <%= button_to "Back &ndash; Edit Survey Design", edit_survey_path(@survey), :class => "previous", :method => :get %>
   </div>
 <% else %>
   <p>

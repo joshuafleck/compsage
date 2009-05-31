@@ -303,12 +303,17 @@ describe SurveysController, " handling GET /surveys/1.xml when survey is closed"
   end
 end
 
-describe SurveysController, " handling GET /surveys/new with no pending surveys" do
+describe SurveysController, " handling GET /surveys/new" do
   before(:each) do
     @surveys = []
-    @surveys.stub!(:find_or_initialize_by_aasm_state).and_return([])
-    @current_organization = mock_model(Organization, :sponsored_surveys => @surveys, :surveys => @surveys)
+    
+    @current_organization = Factory(:organization)
+    @current_organization.sponsored_surveys.stub!(:find).and_return(@surveys)
     login_as(@current_organization)
+    
+    @survey = Factory(:survey, :sponsor => @current_organization, :aasm_state => 'pending')
+    @surveys.stub!(:find_or_create_by_aasm_state).and_return(@survey)
+
     @params = {:network_id => "1"}
   end
 
@@ -316,10 +321,25 @@ describe SurveysController, " handling GET /surveys/new with no pending surveys"
     get :new, @params
   end
   
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_get
+  end  
+  
   it "should be successful" do
     do_get
     response.should be_success
   end
+
+  it "should check for an existing pending survey before creating a new survey" do
+    @surveys.should_receive(:find_or_create_by_aasm_state).and_return(@survey)
+    do_get
+  end
+  
+  it "should assign the survey to the view" do
+    do_get
+    assigns(:survey).should eql(@survey)
+  end  
   
   it "should save the survey network id in the session" do
     do_get
@@ -329,31 +349,6 @@ describe SurveysController, " handling GET /surveys/new with no pending surveys"
   it "should render new template" do
     do_get
     response.should render_template('surveys/new')
-  end
-end
-
-describe SurveysController, " handling GET /surveys/new with a pending survey" do
-  before(:each) do
-    @surveys = []
-    @survey = mock_model(Survey, :id => 1)
-    @surveys.stub!(:find_or_initialize_by_aasm_state).and_return([@survey])
-    @current_organization = mock_model(Organization, :sponsored_surveys => @surveys, :surveys => @surveys)
-    login_as(@current_organization)
-  end
-
-  def do_get
-    get :new, :network_id => "1"
-  end
-
-    
-  it "should render new template" do
-    do_get
-    response.should render_template('surveys/new')
-  end
-  
-  it "should assign the network to the session if coming from a survey network link" do
-    do_get
-    session[:survey_network_id].should eql("1")
   end
 end
 
@@ -428,55 +423,84 @@ describe SurveysController, " handling GET /surveys/1/edit, without access" do
   end
 end
 
+describe SurveysController, " handling POST /surveys.xml" do
+  before(:each) do
+    @surveys = []
+    
+    @current_organization = Factory(:organization)
+    @current_organization.sponsored_surveys.stub!(:find).and_return(@surveys)
+    login_as(@current_organization)
+    
+    @survey = Factory(:survey, :sponsor => @current_organization, :aasm_state => 'pending')
+    @surveys.stub!(:find_or_create_by_aasm_state).and_return(@survey)
+    @survey.stub!(:update_attributes).and_return(true)
+
+    @params = {}
+  end
+  
+  def do_post
+    @request.env["HTTP_ACCEPT"] = "application/xml"
+    post :create, @params
+  end
+
+  it "should create a new survey" do
+    @surveys.should_receive(:find_or_create_by_aasm_state).and_return(@survey)
+    do_post
+  end
+  
+  it "should update the survey attributes" do
+    @surveys.should_receive(:update_attributes).and_return(true)
+    do_post
+  end
+  
+  it "should return the survey XML upon success" do
+    do_post
+    response.body.should eql(@survey.to_xml)
+  end
+  
+end
+
+describe SurveysController, " handling POST /surveys.xml with failure" do
+  before(:each) do
+    @surveys = []
+    
+    @current_organization = Factory(:organization)
+    @current_organization.sponsored_surveys.stub!(:find).and_return(@surveys)
+    login_as(@current_organization)
+    
+    @survey = Factory(:survey, :sponsor => @current_organization, :aasm_state => 'pending')
+    @surveys.stub!(:find_or_create_by_aasm_state).and_return(@survey)
+    @survey.stub!(:update_attributes).and_return(false)
+    @survey.errors.stub!(:to_xml).and_return("XML")
+
+    @params = {}
+  end
+  
+  def do_post
+    @request.env["HTTP_ACCEPT"] = "application/xml"
+    post :create, @params
+  end
+
+  it "should return the survey errors as XML upon failure" do
+    do_post
+    response.body.should eql("XML")
+  end
+  
+end
+
 describe SurveysController, " handling POST /surveys" do
   before(:each) do
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
-    @params = {
-                :survey => {
-                   :job_title => 'That guy who yells "Scalpel, STAT!"',
-                   :end_date => Time.now + 1.week
-                 },
-                 :predefined_questions => {
-                    "1" => {'included' => "1"}, 
-                    "2" => {'included' => "0"}, 
-                    "3" => {'included' => "1"}
-                 },
-                 :questions => {
-                    "1" => {'included' => "1", 'text' => 'question_1', 'custom_question_type' => 'Free Response'}, 
-                    "2" => {'included' => "0", 'text' => 'question_2', 'custom_question_type' => 'Yes/No'}
-                 }
-               }
-    @survey = mock_model(Survey, :id => 1, :billing_info_received! => true, :save => true, :errors => [], :new_record? => true, :job_title => "test", :invite_network => true)
     @surveys = []
-    @questions_proxy = mock('questions_proxy')
-    @question_hash = [{'id' => 1, 'another' => 2, 'text' => 'asdf'}, {'id' => 2, 'another' => 2, 'text' => 'asdf'}]
-    @excluded_question_hash = {'another' => 2, 'text' => 'asdf'}
-    @pdq1 = mock_model(
-      PredefinedQuestion, 
-      :id => 1, 
-      :question_hash => @question_hash, 
-      :included= => "1", 
-      :included => "1", 
-      :build_questions => [])
-    @pdq2 = mock_model(PredefinedQuestion, :id => 2, :question_hash => @question_hash, :included= => "0", :included => "0")
-    @pdq3 = mock_model(PredefinedQuestion, :id => 3, :question_hash => @question_hash, :included= => "1", :included => "1")
-    @question = mock_model(
-      Question, 
-      :save! => true, 
-      :predefined_question_id= => 1, 
-      :survey= => @survey, 
-      :included => "1", 
-      :[]= => true,
-      :move_to_bottom => true)
     
-    PredefinedQuestion.stub!(:find).and_return(@pdq1)
-    @current_organization.stub!(:sponsored_surveys).and_return(@surveys)
+    @current_organization = Factory(:organization)
+    @current_organization.sponsored_surveys.stub!(:find).and_return(@surveys)
+    login_as(@current_organization)
+    
+    @survey = Factory(:survey, :sponsor => @current_organization, :aasm_state => 'pending')
     @surveys.stub!(:find_or_create_by_aasm_state).and_return(@survey)
-    @survey.stub!(:questions).and_return(@questions_proxy)
-    @survey.stub!(:update_attributes).and_return(:true)
-    @questions_proxy.stub!(:build).and_return(@question)
-    @questions_proxy.stub!(:find_all_by_predefined_question_id).and_return([])
+    @survey.stub!(:update_attributes).and_return(true)
+
+    @params = {}
   end
   
   def do_post
@@ -488,47 +512,44 @@ describe SurveysController, " handling POST /surveys" do
     do_post
   end
   
-  it "should redirect to the survey invitations page upon success" do
+  it "should update the survey attributes" do
+    @surveys.should_receive(:update_attributes).and_return(true)
+    do_post
+  end
+  
+  it "should redirect to the survey invitations page" do
     do_post
     response.should redirect_to(survey_invitations_path(@survey))
   end
   
 end
 
-
-describe SurveysController, " handling POST /surveys, upon failure" do
+describe SurveysController, " handling POST /surveys with failure" do
   before(:each) do
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
-    @params = {:job_title => 'That guy who yells "Scalpel, STAT!"' ,
-               :end_date => Time.now + 1.week ,
-               :sponsor => mock_model(Organization),
-               :question =>  {
-                    "1" => {'included' => "1", 'text' => 'question_1', 'custom_question_type' => 'Free Response'}, 
-                    "2" => {'included' => "0", 'text' => 'question_2', 'custom_question_type' => 'Yes/No'}
-                 }}
-    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :errors => ["asdfadsfdsa"], :job_title => "test")
     @surveys = []
-    @questions = []
-    @question = mock_model(Question, :save! => :true, :predefined_question_id= => 1, :survey= => @survey, :included => "1", :[]= => true)
     
-    @survey.stub!(:new_record?).and_return(true)
-    @current_organization.stub!(:sponsored_surveys).and_return(@surveys)
+    @current_organization = Factory(:organization)
+    @current_organization.sponsored_surveys.stub!(:find).and_return(@surveys)
+    login_as(@current_organization)
+    
+    @survey = Factory(:survey, :sponsor => @current_organization, :aasm_state => 'pending')
     @surveys.stub!(:find_or_create_by_aasm_state).and_return(@survey)
-    @survey.stub!(:questions).and_return(@questions)
-    @questions.stub!(:new).and_return(@question)
+    @survey.stub!(:update_attributes).and_return(false)
+
+    @params = {}
   end
   
   def do_post
-    post :create, :survey => @params
+    post :create, @params
+  end
+
+  it "should show the new surveys template upon failure" do
+    do_post
+    response.should render_template('new')
   end
   
-   it "should return to new page" do
-     do_post
-     response.should render_template('surveys/new')
-   end
-   
 end
+
 
 describe SurveysController, " handling PUT /surveys/1" do
   before(:each) do

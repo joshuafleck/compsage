@@ -98,7 +98,7 @@
   end
   
   def new
-    @survey = current_organization.sponsored_surveys.find_or_initialize_by_aasm_state('pending') 
+    @survey = current_organization.sponsored_surveys.find_or_create_by_aasm_state('pending') 
     
     # if we came from a 'survey network' link, save the network in the session to be accessed later when sending
     # invitations
@@ -111,15 +111,25 @@
     if @survey.update_attributes(params[:survey])
                 
       respond_to do |wants|
-        wants.html do
-          redirect_to survey_invitations_path(@survey)
+        wants.html do 
+          redirect_to survey_invitations_path(@survey)         
+        end
+        wants.xml do
+          render :xml => @survey, :status => :created 
         end
       end
       
     else
+    
       respond_to do |wants|
-        wants.html { render :action => "new" }
+        wants.html do
+          render :action => :new
+        end
+        wants.xml do
+          render :xml => @survey.errors.to_xml, :status => 422
+        end
       end
+      
     end
   end
 

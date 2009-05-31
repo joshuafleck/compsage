@@ -91,7 +91,7 @@ describe SurveyInvitationsController, " handling POST /surveys/1/invitations" do
     @current_organization = Factory(:organization)
     login_as(@current_organization)
     @survey = Factory(:survey, :sponsor => @current_organization)
-    @current_organization.sponsored_surveys.stub(:find).and_return(@survey)
+    @current_organization.sponsored_surveys.stub!(:find).and_return(@survey)
 
     @params = {:survey_id => @survey.id, :organization_id => @current_organization.id}
   end

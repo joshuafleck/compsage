@@ -29,11 +29,11 @@ class Survey < ActiveRecord::Base
   has_many :subscriptions, :class_name => 'SurveySubscription', :dependent => :destroy
   has_many :subscribed_organizations, :through => :survey_subscriptions, :source => :organization
     
-  validates_presence_of :job_title
-  validates_length_of :job_title, :maximum => 128
-  validates_presence_of :days_running, :on => :create
+  validates_presence_of :job_title, :on => :update
+  validates_length_of :job_title, :maximum => 128, :on => :update
+  validates_presence_of :days_running, :on => :update
   validates_presence_of :sponsor
-  validate :questions_exist
+  validate_on_update :questions_exist
 
   named_scope :since_last_week, Proc.new { {:conditions => ['end_date > ?', Time.now]} }
   named_scope :recent, :order => 'surveys.created_at DESC', :limit => 10
