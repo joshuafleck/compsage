@@ -14,7 +14,7 @@ class QuestionsController < ApplicationController
   end
   
   def preview
-    @survey = Survey.find(params[:survey_id])
+    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
 
     # Make sure the user has sent enough invitations.
     if @survey.internal_and_external_invitations.count < 4 then
@@ -24,6 +24,82 @@ class QuestionsController < ApplicationController
 
     # Must create a participation object for the participation form to use.
     @participation = Participation.new
+  end
+  
+  def create
+    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
+    @predefined_question_id = params[:predefined_question_id]
+    
+    if @predefined_question_id.blank? then # creating a custom question
+    
+      @question = @survey.questions.new(params[:question])
+      
+      if @question.save then
+        respond_to do |wants|
+          wants.js do
+            render(:partial => "question", :object => @question).to_json
+          end
+        end
+      end
+      
+    else # creating a predefined question (could result in multiple questions
+    
+      @questions = PredefinedQuestion.find(@predefined_question_id).build_questions(@survey)
+      
+      respond_to do |wants|
+        wants.js do
+          render(:partial => "question", :collection => @questions).to_json
+        end
+      end      
+    
+    end
+  
+  end
+  
+  def update
+    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
+    @question = @survey.questions.find(params[:id])    
+    
+    if @question.update_attributes(params[:question]) then
+      respond_to do |wants|
+        wants.js do
+          render(:partial => "question", :object => @question).to_json
+        end
+      end
+    end
+    
+  end  
+  
+  def destroy
+    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
+    @question = @survey.questions.find(params[:id])
+    
+    @question.destroy
+    
+    respond_to do |wants|
+      wants.xml do
+        head :status => :ok
+      end
+    end
+  end
+  
+  # changes the order of the question
+  def move
+    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
+    @question = @survey.questions.find(params[:id])
+    @direction = params[:direction]
+    
+    if (@direction == 'lower') then
+      @question.move_lower
+    elsif (@direction == 'higher') then
+      @question.move_higher
+    end
+    
+    respond_to do |wants|
+      wants.xml do
+        head :status => :ok
+      end
+    end
   end
     
 end

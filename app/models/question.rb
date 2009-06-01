@@ -6,6 +6,8 @@ class Question < ActiveRecord::Base
   has_many :participations, :through => :responses
   acts_as_list :scope => 'survey_id=#{survey_id} AND parent_question_id #{parent_question_id.nil? ? "IS NULL" : "="+parent_question_id.to_s}'
   
+  attr_accessor :parent_question_index
+  
   serialize :options
   serialize :textual_response
 
@@ -18,6 +20,8 @@ class Question < ActiveRecord::Base
   def before_validation_on_create 
      self[:response_type] = CUSTOM_QUESTION_TYPES[self[:custom_question_type]] if attribute_present?("custom_question_type")
      self[:options] = CUSTOM_QUESTION_OPTIONS[self[:custom_question_type]] if attribute_present?("custom_question_type")
+     # by default, set pay or wage response types as required for custom questions
+     self[:required] = true if !attribute_present?("predefined_question_id") && self[:custom_question_type] == 'Pay or wage response'
   end
                        
   CUSTOM_QUESTION_TYPES = {

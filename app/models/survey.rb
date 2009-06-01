@@ -43,8 +43,6 @@ class Survey < ActiveRecord::Base
   named_scope :running_or_stalled, :conditions => 'aasm_state = "running" OR aasm_state = "stalled"'
   named_scope :deletable, :conditions => ['aasm_state = ? OR aasm_state = ?', 'stalled', 'pending']
   
-  accepts_nested_attributes_for :questions, :allow_destroy => true
-  
   after_create :add_sponsor_subscription
   before_destroy :cancel_survey
   before_save :set_aasm_state_number
@@ -158,11 +156,6 @@ class Survey < ActiveRecord::Base
   # determine the recommended number of invitations necessary to provide results
   def recommended_number_of_invitations
     REQUIRED_NUMBER_OF_PARTICIPATIONS - [self.all_invitations(true).size,self.participations.size].max
-  end
-  
-  # find all predefined questions used in this survey
-  def predefined_question_ids
-    self.questions.collect(&:predefined_question_id)
   end
   
   # find all custom questions, mark all as 'included'

@@ -6,14 +6,32 @@ class PredefinedQuestion < ActiveRecord::Base
   xss_terminate :except => [ :question_hash ]
   
   # this will build questions based on the predefined question's attributes
-  def build_questions()
+  def build_questions(survey)
+  
     questions = [];
+    
     self[:question_hash].each do |question_attr|
+    
       question_attr = question_attr.except("id", :id)
       question_attr[:predefined_question_id] = self[:id]
-      questions << Question.new(question_attr)      
+      
+      questions << survey.questions.create(question_attr) 
+          
     end
+    
+    questions.each do |question|
+      
+      if !question.parent_question_index.blank? then
+      
+        question.parent_question_id = questions[question.parent_question_index].id
+        question.save
+        
+      end
+      
+    end
+    
     questions
+    
   end
 
 end

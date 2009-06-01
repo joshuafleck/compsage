@@ -18,8 +18,8 @@
     <%= f.select :days_running, (3..14).to_a.collect {|i| ["#{i} days", i]} %>
     <h3>Questions</h3>
     <ol id="new_questions" class="entity_list">
-      <% @survey.questions.each_with_index do |question, index| %>
-        <%=render(:partial => "question", :locals => { :form => f, :index => index.to_s }, :object => question )%>
+      <% @survey.questions.each do |question| %>
+        <%=render(:partial => "questions/question", :object => question )%>
       <% end %>
     </ol>
     <label for='predefined_questions'>Add a Question</label>
@@ -40,21 +40,16 @@
       <input id="form_submit" type="submit" value="Next &ndash; Create Invitation List" class="next" />
       <input type="button" onclick="window.location='<%= surveys_path %>'" value="Cancel" class="previous" />
     </div>
-    <script type="text/javascript">
-      var custom_question_html = <%= custom_question_html(f) %>;
-      var predefined_question_html = <%= predefined_question_html(f) %>;
-    </script>
   <% end %>
 </div>
 <br clear="both" />
 <script type="text/javascript">
-var numberOfQuestions = 0; //The number of non-deleted questions
 
 function initializeObservers() {
 
   //hook up observers for each question's actions
-  <% @survey.questions.each_with_index do |question, index| %>
-    observeQuestion('<%= index %>');
+  <% @survey.questions.each do |question| %>
+    observeQuestion('<%= question.id %>');
   <% end %>
   
   //hook up observers for the 'add question' form
@@ -62,83 +57,42 @@ function initializeObservers() {
   $('question_submit').observe('click', addQuestion);
   callFunctionOnEnterForm($('custom_question_form'), addQuestion);
     
-  $$('ol#new_questions > li').each( function(question) {
-
-    // hide any questions already marked as deleted (refresh the page without this and deleted questions re-appear)
-    if(isDeleted(question)) {
-      question.hide();
-      setPosition(question, '');
-    }
-    // set the question position, recalculate the number of (non-deleted) questions, denotes required questions
-    else {
-      setPosition(question, numberOfQuestions);
-      
-      if(question.select('input[id$=_required]')[0].checked) {
-        question.select('span[id^=question_display_required_]')[0].update('Required');  
-      } 
-      else {
-        question.select('span[id^=question_display_required_]')[0].update();
-      }
-      
-      numberOfQuestions++;      
-    }
-    
-  });
-  
-  restripeQuestions();
-  
   //Reset the select box
   $('predefined_questions').clear();  
   
 }
 
 /**
- * Checks the deleted flag of the question, returns true if the question is marked as deleted
- */
-function isDeleted(question) {
-  if(question.select('input[id$=__delete]')[0].value) {
-    return true;
-  }
-  else {
-    return false;
-  }
-}
-
-/**
- * Sets the position field of the question
- */
-function setPosition(question, position) {
-  question.select('input[id$=_position]')[0].value = position;
-}
-
-/**
- * Increments the position field of the question
- */
-function incrementPosition(question) {
-  var position = parseInt(question.select('input[id$=_position]')[0].value);
-  setPosition(question, position + 1);
-}
-
-/**
- * Decrements the position field of the question
- */
-function decrementPosition(question) {
-  var position = parseInt(question.select('input[id$=_position]')[0].value);  
-  setPosition(question, position - 1);
-}
-
-/**
  * Hooks up observers for all question actions
  */
 function observeQuestion(index) {
-  
   $('question_cancel_'+index).observe('click', cancelEditQuestion.curry(index));
   $('question_edit_'+index).observe('click', editQuestion.curry(index));
   $('question_delete_'+index).observe('click', deleteQuestion.curry(index));
-  $('question_up_'+index).observe('click', moveQuestion.curry(index,'up'));
-  $('question_down_'+index).observe('click', moveQuestion.curry(index, 'down'));
+  $('question_up_'+index).observe('click', moveQuestion.curry(index,'higher'));
+  $('question_down_'+index).observe('click', moveQuestion.curry(index, 'lower'));
   $('question_save_'+index).observe('click', saveQuestion.curry(index));
   callFunctionOnEnterForm($('question_edit_display_'+index), saveQuestion.curry(index));
+  
+}
+
+/**
+ * This will ensure proper zebra-striping for the questions list
+ */
+function restripeQuestions() {
+
+  var i = 1;
+  
+  $$('ol#new_questions > li').each( function(question) {  
+
+    if (i % 2 == 0) {
+      question.className = 'even';
+    } else {
+      question.className = 'odd';
+    }
+    i++;
+    
+  });
   
 }
 
@@ -177,21 +131,38 @@ function addQuestion(e) {
   
   //The user selected custom question
   if(selectedQuestion == "0") {
+  
     // don't add the question if the user did not enter any text
     if($F('custom_question_text') == '') {
       $('custom_question_warning').update('Question text is required');
       return false;
     }
     
-    addCustomQuestion($F('custom_question_text'), $F('custom_question_response'));
+    new Ajax.Request('<%= survey_questions_path(@survey) %>', {
+      'method': 'post',
+      'parameters': {'question[text]' : $F('custom_question_text'), 'question[custom_question_type]' : $F('custom_question_response')},
+      'onSuccess' : function(transport) {
+        insertQuestions(transport.responseText);
+      }
+    }); 
+    
     $('custom_question_text').clear();
     $('custom_question_response').clear();
     $('custom_question_warning').update('');
     $('custom_question_form').blindUp({'duration': 0.5});
+    
   } 
   //The user selected a predefined question
   else if (selectedQuestion != '') {
-    addPredefinedQuestion(selectedQuestion);
+    
+    new Ajax.Request('<%= survey_questions_path(@survey) %>', {
+      'method': 'post',
+      'parameters': {'predefined_question_id' : selectedQuestion},
+      'onSuccess' : function(transport) {
+        insertQuestions(transport.responseText);
+      }
+    });   
+      
   }  
     
   //Reset the select box
@@ -202,108 +173,26 @@ function addQuestion(e) {
 }
 
 /** 
- * This will locate the HTML for the predefined question, set the element IDs, insert the HTML into the document, and add observers
+ * This will handle the response of question_controller.create, which could be n number of list items.
+ * This will add the question items to the DOM, and initialize the observers
  */
-function addPredefinedQuestion(id) {
-  
-  var questions = predefined_question_html[id];
-  questions.each( function(question) {
-  
-    var id = (new Date()).getTime();
-    
-    $('new_questions').insert(setQuestionID(question,id), { 'position':'bottom' });
-    question = $('question_'+id);
-    question.hide();
-    question.appear({'duration': 0.5});
-    
-    //checkDefaultRequiredQuestions(id); --Default required questions are specified in the fixture
+function insertQuestions(questions) {
 
-    setPosition(question, numberOfQuestions);
-    
-    numberOfQuestions++;
-    
-    observeQuestion(id);
-  
-  });  
+    //Determine the IDs of the questions we have added
+    question_ids = [];
+    questions.match(/id\='question_\d+'/g).each( function(question) {
+      question_ids.push(question.match(/(\d+)/).first());
+    });
 
+    $('new_questions').insert(questions, { 'position':'bottom' });
+    
+    question_ids.each( function(question_id) {
+      $('question_'+question_id).hide();
+      $('question_'+question_id).appear({'duration': 0.5});
+      observeQuestion(question_id);
+    });
+          
 };
-
-/** 
- * This will prepare the HTML for the custom question, set the element IDs, insert the HTML into the document, and add observers
- */
-function addCustomQuestion(text, response_type) {
- 
-  var id = (new Date()).getTime();
-  
-  var question = setQuestionID(custom_question_html,id);
-  question = question.replace(/<%=SurveysHelper::TEXT_PLACEHOLDER%>/g,text);
-  question = question.replace(/<%=SurveysHelper::RESPONSE_TYPE_PLACEHOLDER%>/g,response_type);
-  
-  $('new_questions').insert(question, { 'position':'bottom' });
-  question = $('question_'+id);
-  question.hide();
-  question.appear({'duration': 0.5});
-  
-  //Set the value of the response type dropdown
-  var selectedIndex = findResponseSelectedIndex(response_type);  
-  $('survey_questions_attributes_'+id+'_custom_question_type').selectedIndex = selectedIndex;  
-  
-  checkDefaultRequiredQuestions(id);
-  
-  setPosition(question, numberOfQuestions);  
-  
-  numberOfQuestions++;
-    
-  observeQuestion(id);
-  
-};
-
-/**
- * Questions with pay or wage responses are required by default, 
- *  this will check the response type and check the 'required' box if necessary
- */
-function checkDefaultRequiredQuestions(id) {
-
-  if($('survey_questions_attributes_'+id+'_custom_question_type').selectedIndex == findResponseSelectedIndex('Pay or wage response')) {
-  
-    $('survey_questions_attributes_'+id+'_required').checked = true;
-    $('question_display_required_'+id).update('Required');      
-  
-  }
-  
-}
-
-/**
- * Replaces the default ID text with the unique ID
- */
-function setQuestionID(question, id) {
-
-  return question.replace(/<%=SurveysHelper::INDEX_PLACEHOLDER%>/g,id);
-  
-}
-
-/**
- * This will ensure proper zebra-striping for the questions list
- */
-function restripeQuestions() {
-
-  var i = 0;
-  
-  $$('ol#new_questions > li').each( function(question) {
-  
-    // dont include deleted questions in the striping
-    if(!isDeleted(question)) {
-      if (i % 2 == 0) {
-        question.className = 'even';
-      } else {
-        question.className = 'odd';
-      }
-      i++;
-    } 
-    
-  });
-  
-}
 
 /**
  * Hides the question display and brings up the question edit form
@@ -317,28 +206,21 @@ function editQuestion(index,e) {
 }
 
 /**
- * Hides the edit form, updates the question display, brings up the question display
+ * Hides the edit form, sends the update request to the server, handles the response from questions_controller.update
  */
 function saveQuestion(index,e) {
   if(e) {
     e.stop();
   }
-
-  //Update the display of the question text
-  $('question_display_text_'+index).update($('survey_questions_attributes_'+index+'_text').value);
   
-  //Update the display of the response type
-  var selectedIndex = $('survey_questions_attributes_'+index+'_custom_question_type').selectedIndex;
-  var new_response_type = $('survey_questions_attributes_'+index+'_custom_question_type').options[selectedIndex].text;
-  $('question_display_type_'+index).update(new_response_type);
-  
-  //Update the 'required' display if the user required response
-  if($('survey_questions_attributes_'+index+'_required').checked) {    
-    $('question_display_required_'+index).update('Required');      
-  }
-  else {
-    $('question_display_required_'+index).update(); 
-  }  
+  new Ajax.Request('<%= survey_questions_path(@survey) %>/'+index, {
+    'method': 'put',
+    'parameters': {'question[text]' : $F('question_'+index+'_text'), 'question[custom_question_type]' : $F('question_'+index+'_custom_question_type'), 'question[required]' : $('question_'+index+'_required').checked},
+    'onSuccess' : function(transport) {
+      Element.replace($('question_'+index), transport.responseText);
+      observeQuestion(index);  
+    }
+  });
 
   $('question_edit_display_'+index).blindUp({'duration': 0.25});    
   $('question_display_'+index).blindDown({'duration': 0.25});
@@ -346,130 +228,68 @@ function saveQuestion(index,e) {
 }
 
 /**
- * Determines the index of the response type, used for determining which response type option should be selected
- */
-function findResponseSelectedIndex(response_text) {
-  var response_types = <%=Question::CUSTOM_QUESTION_TYPES.keys.to_json%>;
-  
-  for(i=0; i<response_types.length; i++) {
-  
-    var response_type = response_types[i];
-    
-    if (response_type == response_text) {
-      return i;
-    }
-    
-  }
-    
-}
-
-/**
- * Hides the edit form, resets the form elements to their original values, brings up the question display
+ * Hides the edit form and brings up the question display
  */
 function cancelEditQuestion(index,e) {
   e.stop();
  
-  //Set the value of the edit box back to the original question text (found in the text display)
-  $('survey_questions_attributes_'+index+'_text').value = $('question_display_text_'+index).innerHTML;
-  
-  //Set the value of the response type dropdown back to the original response type text (found in the type display)
-  var selectedIndex = findResponseSelectedIndex($('question_display_type_'+index).innerHTML);  
-  $('survey_questions_attributes_'+index+'_custom_question_type').selectedIndex = selectedIndex;
-  
-  //Revert the value of the 'required' checkbox
-  if($('question_display_required_'+index).innerHTML == 'Required') {    
-    $('survey_questions_attributes_'+index+'_required').checked = true;
-  }  
-  else {
-    $('survey_questions_attributes_'+index+'_required').checked = '';
-  }
-
   $('question_edit_display_'+index).blindUp({'duration': 0.25});   
   $('question_display_'+index).blindDown({'duration': 0.25});
   
 }
 
 /**
- * Hides the question, sets the deleted flag
+ * Removed the question from the DOM, as well as sends the destroy request to the server
  */
 function deleteQuestion(index,e) {
   e.stop();
   var question = $('question_'+index);
 
-  $('survey_questions_attributes_'+index+'__delete').value = true;
-  question.fade({'duration': 0.5});
-  
-  setPosition(question, '');
-  
-  nonDeletedNextSiblings(question).each( function(question) {
-      decrementPosition(question);
+  question.fade({'duration': 0.5,
+    'afterFinish': function() {
+      question.remove();
+    }
   });
-  
-  numberOfQuestions--;
+
   restripeQuestions();
+  
+  new Ajax.Request('<%= survey_questions_path(@survey) %>/' + index, {
+    'method': 'delete'
+  });  
   
 }
 
 /**
- * Repsitions a question either 'up' or 'down' depending on the input
+ * Repsitions a question either 'higher' or 'lower' depending on the input, send the move request to the server
  */
 function moveQuestion(index,direction,e) {
   e.stop();
   var question = $('question_'+index);
   
-  if(direction == 'up' && nonDeletedPreviousSiblings(question).length > 0) {
-    var sibling = nonDeletedPreviousSiblings(question)[0];
+  if(direction == 'higher' && question.previousSiblings().length > 0) {
+    var sibling = question.previousSiblings().first();
     
     question.remove();
 
     new Insertion.Before(sibling, question);
     
-    incrementPosition(sibling);
-    decrementPosition(question);
   }
-  else if (direction == 'down' && nonDeletedNextSiblings(question).length > 0) {
-    var sibling = nonDeletedNextSiblings(question)[0];
+  else if (direction == 'lower' && question.nextSiblings().length > 0) {
+    var sibling = question.nextSiblings().first();
     
     question.remove();
 
     new Insertion.After(sibling, question);   
-    
-    incrementPosition(question);
-    decrementPosition(sibling);    
+     
   }
   
   restripeQuestions(); 
   
-}
-
-/**
- * Finds all non deleted siblings after the current question
- */
-function nonDeletedNextSiblings(question) {
-  var siblings = [];
+  new Ajax.Request('<%= survey_questions_path(@survey) %>/' + index + '/move', {
+    'method': 'put',
+    'parameters': {'direction': direction}
+  });    
   
-  question.nextSiblings().each( function(sibling) {
-    if(sibling.tagName == 'LI' && !isDeleted(sibling)) {
-      siblings.push(sibling);
-    }
-  });
-  
-  return siblings;
-}
-
-/**
- * Finds all non deleted siblings before the current question
- */
-function nonDeletedPreviousSiblings(question) {
-  var siblings = [];
-  
-  question.previousSiblings().each( function(sibling) {
-    if(sibling.tagName == 'LI' && !isDeleted(sibling)) {
-      siblings.push(sibling);
-    }
-  });
-  
-  return siblings;
 }
 
 </script>

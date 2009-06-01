@@ -34,8 +34,12 @@ describe Question do
   end
   
   it "should have many follow_up questions" do
-    Question.reflect_on_association(:follow_up_questions).should_not be_nil
+    Question.reflect_on_association(:child_questions).should_not be_nil
   end
+  
+  it "should have a perent question" do
+    Question.reflect_on_association(:parent_question).should_not be_nil
+  end  
   
   it "should require question text" do
     @question.attributes = valid_question_attributes.except(:text)

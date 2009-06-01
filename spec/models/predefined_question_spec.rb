@@ -8,7 +8,8 @@ describe PredefinedQuestion do
   
   it "should build questions" do
     @predefined_question.save!
-    @predefined_question.build_questions().size.should eql(1)
+    @survey = Factory.create(:survey)
+    @predefined_question.build_questions(@survey).size.should eql(1)
   end
   
 end
