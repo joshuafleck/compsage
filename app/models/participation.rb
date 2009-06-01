@@ -7,7 +7,7 @@ class Participation < ActiveRecord::Base
   validates_presence_of :participant, :survey
   validates_presence_of :responses, :message => "must be provided"
   validates_associated :responses, :message => "may have errors. Check your responses for errors highlighted in red."
-  validate :required_responses_present
+  before_validation :required_responses_present, :parent_responses_present
   
   after_create :create_participant_subscription, :fulfill_invitation
   
@@ -64,12 +64,36 @@ class Participation < ActiveRecord::Base
   
   private
   
-  # adds a blank response to each required question to ensure validation fails if there is no response
+  # Adds a blank response to each required question to ensure validation fails if there is no response
+  # 
   def required_responses_present
+    return if survey.nil?
+
+    questions_with_responses = self.responses.collect(&:question_id)
     self.survey.questions.required.each do |question|
-      if !self.responses.collect(&:question_id).include?(question.id) then
+      # Skip required questions where there's a parent question and it isn't answered.
+      next if !question.parent_question.nil? && questions_with_responses.include?(question.parent_question_id)
+
+      # If the current question isn't answered, create a dummy question that will fail validation.
+      if !questions_with_responses.include?(question.id) then
         responses.build(:question => question, :type => question.response_type)
       end
-    end if survey
+    end
+  end
+
+  # Create a blank response to each parent question of responses if they don't exist to ensure that the user cannot
+  # answer a follow-up question without it's parent.
+  #
+  def parent_responses_present
+    return if survey.nil?
+
+    questions_with_responses = self.responses.collect(&:question_id)
+    self.responses.each do |response|
+      if response.question.parent_question &&
+         !questions_with_responses.include?(response.question.parent_question_id) then
+        # There is a parent question and the current set of responses doesn't include the parent question.
+        responses.build(:question => response.question.parent_question, :type => response.question.parent_question.response_type)
+      end
+    end
   end
 end

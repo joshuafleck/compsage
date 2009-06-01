@@ -5,7 +5,6 @@ class NetworkInvitationsController < ApplicationController
   def index
     @network = current_organization.owned_networks.find(params[:network_id])
     @invitations = @network.all_invitations
-    @invalid_invitations = []
     
     respond_to do |wants|
       wants.html {} # render the template

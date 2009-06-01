@@ -224,10 +224,10 @@ describe Survey, "that is being cancelled (destroyed)" do
     
     @participation_1 = @survey.participations.create!(
       :participant => @org_2,
-      :responses => [mock_model(Response, :valid? => true, :[]= => true, :save => true)])
+      :responses => [mock_model(Response, :question_id => 1, :valid? => true, :[]= => true, :save => true)])
     @participation_2 = @survey.participations.create!(
       :participant => @inv_1, 
-      :responses => [mock_model(Response, :valid? => true, :[]= => true, :save => true)])
+      :responses => [mock_model(Response, :question_id => 1, :valid? => true, :[]= => true, :save => true)])
   end
   
   after do

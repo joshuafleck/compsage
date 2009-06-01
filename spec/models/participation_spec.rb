@@ -4,7 +4,7 @@ def valid_participation_attributes
   {
     :survey => Factory.create(:survey),
     :participant => mock_model(Organization, :id => 1),
-    :responses => [mock_model(Response, :valid? => true)]
+    :responses => [mock_model(Response, :question => mock_model(Question, :parent_question => nil), :question_id => 1, :valid? => true)]
   }
 end
 
@@ -62,17 +62,94 @@ describe Participation do
     @participation.destroy
     invitation.destroy
   end
+end
+
+
+module ParticipationCreationHelper
+  def participation_responding_to(*questions)
+    participation = Factory.build(:participation, :survey => @survey, :participant => @participant, :responses => [])
+    questions.each do |question|
+      participation.responses << Factory.build(:numerical_response, :question => question, :response => 1)
+    end
+
+    return participation
+  end
+end
+
+describe Participation, "in a survey with required questions" do
+  include ParticipationCreationHelper
   
-  it "should not be valid if required questions do not have responses" do
+  before do
     @survey = Factory.create(:survey)
     @participant = Factory.create(:organization)
     @required_question = Factory.create(:question, :survey => @survey, :required => 1)
     @optional_question = Factory.create(:question, :survey => @survey, :required => 0)
-    @participation = Factory.build(:participation, :survey => @survey, :participant => @participant, :responses => [Factory.build(:numerical_response, :question => @optional_question, :response => 1)])
-    @participation.save
+    @required_follow_up_to_optional_question = Factory.create(:question,
+                                                              :survey => @survey,
+                                                              :required => 1,
+                                                              :parent_question_id => @optional_question.id)
+    @required_follow_up_to_required_question = Factory.create(:question,
+                                                              :survey => @survey,
+                                                              :required => 1,
+                                                              :parent_question_id => @required_question.id)
+    @optional_follow_up_to_optional_question = Factory.create(:question,
+                                                              :survey => @survey,
+                                                              :required => 0,
+                                                              :parent_question_id => @optional_question.id)
+    @optional_follow_up_to_required_question = Factory.create(:question,
+                                                              :survey => @survey,
+                                                              :required => 0,
+                                                              :parent_question_id => @required_question.id)
+  end
+
+  it "should be valid when only the required questions have been answered" do
+    @participation = participation_responding_to(@required_question, @required_follow_up_to_required_question,
+                                                 @optional_question, @required_follow_up_to_optional_question)
+    @participation.should be_valid
+  end
+
+  it "should not be valid when not responding to a required question that is a follow-up to an optional question" do
+    @participation = participation_responding_to(@required_question, @required_follow_up_to_required_question)
     @participation.should_not be_valid
-    @participation.responses[1].should_not be_valid
-    @participation.responses[0].should be_valid
+  end
+
+  it "should not be valid if required questions do not have responses" do
+    @participation = participation_responding_to(@optional_question) # nothing
+    @participation.should_not be_valid
   end
   
+  it "should not be valid if a required follow-up has not been answered" do
+    @participation = participation_responding_to(@required_question)
+    @participation.should_not be_valid
+  end
+
+  it "should not be valid if a follow-up question has been answered and the parent question has not" do
+    @participation = participation_responding_to(@required_question, @required_follow_up_to_required_question,
+                                                 @required_follow_up_to_optional_question)
+    @participation.should_not be_valid
+  end
+end
+
+describe Participation, "in a survey with no required questions" do
+  include ParticipationCreationHelper
+
+  before do
+    @survey = Factory.create(:survey)
+    @participant = Factory.create(:organization)
+    @optional_question = Factory.create(:question, :survey => @survey, :required => 0)
+    @optional_follow_up_to_optional_question = Factory.create(:question,
+                                                              :survey => @survey,
+                                                              :required => 0,
+                                                              :parent_question_id => @optional_question.id)
+  end
+
+  it "should be valid with a single response" do
+    @participation = participation_responding_to(@optional_question)
+    @participation.should be_valid
+  end
+
+  it "should not be valid with no response" do
+    @participation = participation_responding_to()  # nothing
+    @participation.should_not be_valid
+  end
 end
