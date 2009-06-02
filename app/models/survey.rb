@@ -24,6 +24,10 @@ class Survey < ActiveRecord::Base
   has_many :external_invitations, :class_name => 'ExternalSurveyInvitation'
   has_many :internal_and_external_invitations, :class_name => 'Invitation'
   has_many :questions, :dependent => :destroy, :order => "position"
+  has_many :top_level_questions,
+    :class_name => 'Question',
+    :order => 'position',
+    :conditions => {:parent_question_id => nil}
   has_many :responses, :through => :questions
   has_many :participations
   has_many :subscriptions, :class_name => 'SurveySubscription', :dependent => :destroy
@@ -206,7 +210,6 @@ class Survey < ActiveRecord::Base
     
   # TODO: Figure out who to email...
   def email_failed_message
-    logger.info("Sending failed email message for survey #{self.id}")
     Notifier.deliver_survey_stalled_notification(self)
   end
   
