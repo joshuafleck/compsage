@@ -10,7 +10,7 @@
 <% form_for @participation, :url => respond_survey_path(@survey), :builder => QuestionFormBuilder do |f|%>
   <ol id="questions">
     <% @survey.top_level_questions.each do |question| %>
-      <%= render :partial => 'participation_form_question', :object => question,
+      <%= render :partial => 'questions/participation_form_question', :object => question,
         :locals => {:f => f, :level => 0} %>
     <% end %>
     </ol>   
