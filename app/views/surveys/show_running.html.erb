@@ -13,7 +13,7 @@
 
     <% if @survey.sponsor == current_organization then %>
       <h3>Manage Your Survey</h3>
-        <% if !@survey.has_participations? %>        
+        <% if !@survey.participations.any? %>        
           <p><%=link_to "Edit Questions &amp; Job Description", edit_survey_path(@survey)%><br />
 	    <% end %>
         <%=link_to "Manage Invitation List", survey_invitations_path(@survey) %></p>
@@ -44,7 +44,7 @@
   <% if @discussions.any? then %>
     <p><a href="#" id="new_discussion_link">Start a new topic</a></p>
   <% else %>
-    There are currently no discussion topics.  <a href="#" id="new_discussion_link">Start one now</a>.
+    There are currently no discussion topics.  <a href="#" id="new_discussion_link">Start one now.</a>
   <% end %>
   <div id="new_discussion_form" style="<%='display: none;' unless @discussion.errors.size > 0%>">
     <%=render :partial => 'discussions/discussion_form', :locals => { :discussion => @discussion } %>
@@ -79,11 +79,13 @@ function observeDiscussions() {
 
 function startNewDiscussion(elem, e) {
   elem.show();
+  $('new_discussion_link').hide();
   e.stop();
 }
 
 function cancelNewDiscussion(elem, e) {
   elem.hide();
+  $('new_discussion_link').show();
   e.stop();
 }
 

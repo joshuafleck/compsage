@@ -59,7 +59,7 @@
   def edit
     @survey = current_organization.sponsored_surveys.running_or_pending.find(params[:id])
     #check for participations
-    if @survey.has_participations? then
+    if @survey.participations.any? then
       respond_to do |wants|
         wants.html{
           flash[:notice] = "You cannot edit the questions for a survey once a response has been collected."
@@ -72,7 +72,7 @@
   def update
     @survey = current_organization.sponsored_surveys.running_or_pending.find(params[:id])
     #check for participations
-    if @survey.has_participations? then
+    if @survey.participations.any? then
       respond_to do |wants|
         wants.html{
           flash[:notice] = "You cannot edit the questions for a survey once a response has been collected."

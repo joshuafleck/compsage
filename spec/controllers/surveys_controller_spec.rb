@@ -362,7 +362,7 @@ describe SurveysController, " handling GET /surveys/1/edit" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => 1, :sponsor => @current_organization, :job_title => "Slave")
+    @survey = mock_model(Survey, :id => 1, :sponsor => @current_organization, :job_title => "Slave", :participations => [])
 
     @question = mock_model(Question, :predefined_question_id => 1, :custom_question_type => "Free Response", :included= => "1")
     @predefined_question = mock_model(PredefinedQuestion, :id => 1, :included= => "1")
@@ -425,6 +425,28 @@ describe SurveysController, " handling GET /surveys/1/edit, without access" do
   it "should error if requesting organization is not the sponsor" do
     lambda{ do_get }.should raise_error(ActiveRecord::RecordNotFound)
   end
+end
+
+describe SurveysController, " handling GET /surveys/1/edit, with participations" do
+  before(:each) do
+    @surveys = []
+    
+    @current_organization = Factory(:organization)
+    @current_organization.sponsored_surveys.stub!(:find).and_return(@surveys)
+    login_as(@current_organization)
+    
+    @survey = Factory(:survey, :sponsor => @current_organization, :aasm_state => 'pending')
+    @surveys.stub!(:find_or_create_by_aasm_state).and_return(@survey)
+    @survey.stub!(:update_attributes).and_return(true)
+
+    @params = {}
+  end
+
+  def do_get
+    get :edit, :id => 1
+  end
+  
+  it "should redirect to the survey index"
 end
 
 describe SurveysController, " handling POST /surveys.xml" do
@@ -560,7 +582,7 @@ describe SurveysController, " handling PUT /surveys/1" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => 1, :update_attributes => true, :sponsor => @current_organization, :job_title => "test")
+    @survey = mock_model(Survey, :id => 1, :update_attributes => true, :sponsor => @current_organization, :job_title => "test", :participations => [])
     @surveys_proxy = mock('surveys proxy')
     @open_surveys = []
     @question_hash = [{'id' => 1, 'another' => 2, 'text' => 'asdf'}, {'id' => 2, 'another' => 2, 'text' => 'asdf'}]
@@ -639,7 +661,7 @@ end
       @current_organization = mock_model(Organization)
       login_as(@current_organization)
 
-      @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :questions => [])
+      @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :questions => [], :participations => [])
       @surveys_proxy = mock('surveys proxy')
       @open_surveys = []
       @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
@@ -662,7 +684,7 @@ describe SurveysController, " handling PUT /surveys/1, with failure" do
     @current_organization = mock_model(Organization)
     login_as(@current_organization)
 
-    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => mock_model(Organization), :job_title => "test")
+    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => mock_model(Organization), :job_title => "test", :participations => [])
     @surveys_proxy = mock('surveys proxy')
     @open_surveys = []
     
@@ -677,6 +699,18 @@ describe SurveysController, " handling PUT /surveys/1, with failure" do
   it "should error if requesting organization is not the sponsor"  do
     lambda{ do_update }.should raise_error(ActiveRecord::RecordNotFound)
   end
+end
+
+describe SurveysController, " handling PUT /surveys/1, with participations" do
+  before(:each) do
+
+  end
+
+  def do_update
+    put :update, :id => 1
+  end
+  
+  it "should redirect to the surveys index"
 end
 
 describe SurveysController, "handling GET /surveys/search" do

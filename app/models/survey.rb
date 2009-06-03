@@ -167,10 +167,6 @@ class Survey < ActiveRecord::Base
     self.questions.find_all{|q| !q.custom_question_type.blank?}.each{|q| q.included = "1"}
   end
   
-  def has_participations?
-    participations.count > 0
-  end
-  
   def enough_participations?
     participations.count >= REQUIRED_NUMBER_OF_PARTICIPATIONS
   end
