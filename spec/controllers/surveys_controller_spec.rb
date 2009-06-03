@@ -30,6 +30,10 @@ describe SurveysController, "#route_for" do
     route_for(:controller => "surveys", :action => "destroy", :id => '1').should == {:path => "/surveys/1", :method => :delete }
   end  
   
+  it "should map { :controller => 'surveys', :action => 'create' } to /surveys" do
+    route_for(:controller => "surveys", :action => "create").should == {:path => "/surveys", :method => :post }
+  end  
+  
   it "should map { :controller => 'surveys', :action => 'respond', :id => '1'} to /surveys/1/respond" do
     route_for(:controller => "surveys", :action => "respond", :id => '1').should == {:path => "/surveys/1/respond", :method => :put }
   end

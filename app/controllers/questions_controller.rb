@@ -6,10 +6,13 @@ class QuestionsController < ApplicationController
 
   def index
     @survey = Survey.running.find(params[:survey_id])
-    @participation = current_organization_or_survey_invitation.participations.find_or_initialize_by_survey_id(@survey.id)
     respond_to do |wants|
-      wants.html
-      wants.xml { render :xml => @survey.questions.to_xml }
+      wants.html do
+        @participation = current_organization_or_survey_invitation.participations.find_or_initialize_by_survey_id(@survey.id)
+      end
+      wants.xml do 
+        render :xml => @survey.questions.to_xml 
+      end
     end
   end
   
@@ -42,7 +45,7 @@ class QuestionsController < ApplicationController
         end
       end
       
-    else # creating a predefined question (could result in multiple questions
+    else # creating a predefined question (could result in multiple questions created)
     
       @questions = PredefinedQuestion.find(@predefined_question_id).build_questions(@survey)
       

@@ -50,6 +50,18 @@ describe Question do
     @question.attributes = valid_question_attributes.with(:text => "a" * 1001)
     @question.should have(1).error_on(:text)
   end
+  
+  it "should set custom questions with wage responses as required by default" do
+    @question.attributes = valid_question_attributes.with(:custom_question_type => "Pay or wage response")
+    @question.valid?
+    @question.required?.should == true
+  end
+  
+  it "should not set predefined questions with wage responses as required by default" do
+    @question.attributes = valid_question_attributes.with(:custom_question_type => "Pay or wage response", :predefined_question_id => "1")
+    @question.valid?
+    @question.required?.should == false
+  end  
 end
 
 describe Question, "with options" do

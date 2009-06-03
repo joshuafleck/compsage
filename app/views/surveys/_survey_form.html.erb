@@ -168,8 +168,6 @@ function addQuestion(e) {
   //Reset the select box
   $('predefined_questions').clear();
   
-  restripeQuestions();
-      
 }
 
 /** 
@@ -248,10 +246,9 @@ function deleteQuestion(index,e) {
   question.fade({'duration': 0.5,
     'afterFinish': function() {
       question.remove();
+      restripeQuestions();
     }
   });
-
-  restripeQuestions();
   
   new Ajax.Request('<%= survey_questions_path(@survey) %>/' + index, {
     'method': 'delete'

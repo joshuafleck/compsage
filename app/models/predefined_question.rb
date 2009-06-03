@@ -19,6 +19,7 @@ class PredefinedQuestion < ActiveRecord::Base
           
     end
     
+    # now that all of the questions have been created, set up the parent/child dependancies
     questions.each do |question|
       
       if !question.parent_question_index.blank? then
