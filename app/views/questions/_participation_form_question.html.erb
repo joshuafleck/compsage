@@ -1,18 +1,24 @@
 <% response = *@participation.response[participation_form_question.id] || participation_form_question.responses.new %>
 <% f.fields_for response.class.name.underscore, response, :index => participation_form_question.id, :builder => QuestionFormBuilder do |q| %>
-  <li class="<%= cycle("even", "odd") %>"<% if level > 0 then %>style="padding-left:<%= 1+level*2 %>em"<% end %>>
-    <%= q.form_field %>
-    <% if participation_form_question.response_class.accepts_qualification? then %>
-      <div class="qualifications">
-        <div class="field">
-          <label>Comment:</label>
-          <%=q.text_field :qualifications %>
+  <li class="<%= cycle("even", "odd") %>">
+    <div style="padding-left:<%= level*2 %>em"> 
+      <%= q.form_field %>
+      <% if participation_form_question.response_class.accepts_qualification? then %>
+        <div class="qualifications">
+          <div class="field">
+            <label>Comment:</label>
+            <%=q.text_field :qualifications %>
+          </div>
+          <span class="label"><a href="#"></a></span>
         </div>
-        <span class="label"><a href="#"></a></span>
-      </div>
+      <% end %>
+    </div>
+    <% if participation_form_question.child_questions.any? then %>
+      <ol class="questions">
+        <%= render :collection => participation_form_question.child_questions,
+          :partial => 'participation_form_question',
+          :locals => {:f => f, :level => level + 1} %>
+      </ol>
     <% end %>
   </li>
-  <%= render :collection => participation_form_question.child_questions,
-        :partial => 'participation_form_question',
-        :locals => {:f => f, :level => level + 1} %>
 <% end %>

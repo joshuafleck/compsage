@@ -73,6 +73,10 @@ input[type=text], input[type=password] {
   background-color: #f4f6f3;
 }
 
+input[disabled=true] {
+  background-color: #ccc;
+}
+
 textarea {
   font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
   font-size: 1.25em;
@@ -836,6 +840,12 @@ ol#questions label, ol#questions div.label {
 
 div#why_section {
   margin-top: -1em;
+}
+
+ol.questions {
+  margin: 0 -1em;
+  padding: 0;
+  list-style-type: none;
 }
 /* Survey Reports */
 div.report_item h3 {

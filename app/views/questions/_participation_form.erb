@@ -53,5 +53,47 @@ function observeUnitSelection() {
     });
   });
 }
+
+function setupFollowups() {
+  var root_list = $('questions');
+  setupFollowupForList(root_list, null);
+}
+
+function setupFollowupForList(list, parent_questions) {
+  list.childElements().each(function(item) {
+    var sub_list = item.select('ol').first();
+    var questions = item.childElements().first().select('input');
+    if(sub_list) {
+      questions.invoke('observe', 'click', function(e) {
+        if(parseInt(e.target.value) == 0)
+          enableList(sub_list);
+        else
+          disableList(sub_list);
+      });
+      if(!questions.any(function(q) {return q.checked && parseInt(q.value) == 0}))
+        disableList(sub_list);
+      setupFollowupForList(sub_list, questions);
+    }
+  });
+}
+
+function enableList(list) {
+  list.childElements().each(function(li) {
+    li.select('div').first().select('input').invoke('removeAttribute', 'disabled');
+  })
+}
+
+function disableList(list) {
+  list.childElements().each(function(li) {
+    var elements = li.select('div').first().select('input');
+    elements.each(function(input) {
+      if(input.getAttribute('type').match(/checkbox|radio/))
+        input.checked = false;
+      else
+        input.value = '';
+      input.setAttribute('disabled', 'true');
+    });
+  })
+}
 </script>
-<% content_for :initialize_js, "observeQualificationLinks();observeUnitSelection();"%>
+<% content_for :initialize_js, "observeQualificationLinks();observeUnitSelection();setupFollowups();"%>
