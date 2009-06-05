@@ -1,6 +1,7 @@
 <% title @organization.name %>
 <% highlight_tab "networks" %>
 <h2><%=@organization.name%></h2>
+<%= link_to 'Go Back', request.env['HTTP_REFERER'] %>
 <%= flash_messages %>
 <% if !@organization.logo.nil? then %>
   <p><%=image_tag @organization.logo.public_filename %></p>
