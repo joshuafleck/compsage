@@ -2,6 +2,8 @@ if !defined?(RAILS_ROOT) then
   ENV['RAILS_ENV'] = ARGV.first || ENV['RAILS_ENV'] || 'development'
   require File.dirname(__FILE__) + '/../config/environment.rb'
   
+  Dir.chdir(RAILS_ROOT)
+
   # Ensure workers are loaded...
   Dir.glob(File.join(RAILS_ROOT, 'app/workers/*.rb')).each {|f| require f }
 else
