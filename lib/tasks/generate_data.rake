@@ -14,10 +14,10 @@ namespace :data_generator do
     (rand(6)+5).times do
       if current_org < Organization.count && rand(2) > 0 then
         invitee = Organization.all[current_org]
-        invite = Factory(:survey_invitation, :inviter => sponsor, :invitee => invitee, :survey => survey)
+        invite = Factory(:survey_invitation, :inviter => sponsor, :invitee => invitee, :survey => survey, :aasm_state => 'sent')
         current_org += 1
       else
-        invite = Factory(:external_survey_invitation, :inviter => sponsor, :survey => survey)
+        invite = Factory(:external_survey_invitation, :inviter => sponsor, :survey => survey, :aasm_state => 'sent')
       end
 
       invitations << invite
@@ -30,15 +30,15 @@ namespace :data_generator do
       # build responses.
       responses = []
       survey.questions.each do |question|
-        next if rand(5) == 0 # (80% chance of answering a question)
+        next if !question.required? && question.parent_question.nil? && rand(5) == 0 # (80% chance of answering a question)
         
         case question.response_type
         when 'NumericalResponse'
           response = Factory.build(:numerical_response, :question => question, :numerical_response => 20000 + rand(60000))
         when 'WageResponse'
-          response = Factory.build(:wage_response, :question => question, :numerical_response => 20000 + rand(60000))
+          response = Factory.build(:wage_response, :question => question, :numerical_response => 20000 + rand(60000), :unit => 'Annually')
         when 'BaseWageResponse'
-          response = Factory.build(:base_wage_response, :question => question, :numerical_response => 20000 + rand(60000))
+          response = Factory.build(:base_wage_response, :question => question, :numerical_response => 20000 + rand(60000), :unit => 'Annually')
         when 'PercentResponse'
           response = Factory.build(:percent_response, :question => question, :numerical_response => rand(100))
         when 'MultipleChoiceResponse'
@@ -353,6 +353,7 @@ namespace :data_generator do
         organization = Organization.find :first, :offset => (Organization.count * rand).to_i
         Factory(
           :survey_invitation,
+          :aasm_state => 'sent',
           :survey => survey,
           :inviter => survey.sponsor,
           :invitee => organization) unless survey.sponsor == organization || invitees.include?(organization)
@@ -362,6 +363,7 @@ namespace :data_generator do
       (rand(EXTERNAL_INVITATIONS_PER_SURVEY)+2).times do |index|
         Factory(
           :external_survey_invitation,
+          :aasm_state => 'sent',
           :survey => survey,
           :inviter => survey.sponsor,
           :email => Faker::Internet.email,
@@ -423,7 +425,7 @@ namespace :data_generator do
       # build responses.
       responses = []
       questions.each do |question|
-        next if rand > RESPONSE_RATE # ((RESPONSE_RATE*100)% chance of answering a question)
+        next if !question.required? && question.parent_question.nil? && rand > RESPONSE_RATE # ((RESPONSE_RATE*100)% chance of answering a question)
         
         case question.response_type
         when 'BaseWageResponse'
