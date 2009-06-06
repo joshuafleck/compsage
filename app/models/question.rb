@@ -76,7 +76,7 @@ class Question < ActiveRecord::Base
   
   # Determines the level of nesting for the question
   def level
-    if parent_question_id.blank? then
+    if !parent_question then
       0 
     else
       parent_question.level + 1
