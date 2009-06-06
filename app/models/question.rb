@@ -1,6 +1,6 @@
 class Question < ActiveRecord::Base
   belongs_to :survey
-  has_many :child_questions, :class_name => 'Question', :foreign_key => 'parent_question_id', :order => "position"
+  has_many :child_questions, :class_name => 'Question', :foreign_key => 'parent_question_id', :order => "position", :dependent => :destroy 
   belongs_to :parent_question, :class_name => 'Question'
   has_many :responses, :dependent => :delete_all, :extend => StatisticsExtension
   has_many :participations, :through => :responses
@@ -39,6 +39,7 @@ class Question < ActiveRecord::Base
   }
   
   named_scope :required, :conditions => "required = 1"
+  named_scope :can_be_parent, :conditions => ['custom_question_type = ?', 'Yes/No']
 
   def answerable?
     return !self.response_type.nil?
@@ -71,5 +72,14 @@ class Question < ActiveRecord::Base
   # Type of report to render
   def report_type
     response_class.report_type
+  end
+  
+  # Determines the level of nesting for the question
+  def level
+    if parent_question_id.blank? then
+      0 
+    else
+      parent_question.level + 1
+    end
   end
 end

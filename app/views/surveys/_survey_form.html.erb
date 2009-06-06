@@ -18,9 +18,7 @@
     <%= f.select :days_running, (3..14).to_a.collect {|i| ["#{i} days", i]} %>
     <h3>Questions</h3>
     <ol id="new_questions" class="entity_list">
-      <% @survey.questions.each do |question| %>
-        <%=render(:partial => "questions/question", :object => question )%>
-      <% end %>
+      <%=render(:partial => "questions/question", :collection => @survey.top_level_questions, :locals => {:level => 0, :include_children => true})%>
     </ol>
     <label for='predefined_questions'>Add a Question</label>
     <select id="predefined_questions">
@@ -34,6 +32,13 @@
       <div class="error_description" id="custom_question_warning"></div>
       <label for='custom_question_response' class='survey_question_label'>Response Type</label>
       <select id='custom_question_response'><%=options_for_select Question::CUSTOM_QUESTION_TYPES.keys %></select>
+    </div>
+    <div id='follow_up_question' style='<%=@survey.questions.can_be_parent.size > 0 ? "" : "display:none;"%>'>
+      <label for='follow_up_question_select' class='survey_question_label'>Add as a follow-up to</label>
+      <select id='follow_up_question_select'>
+        <option value=''>Select another question</option>
+        <%= options_from_collection_for_select(@survey.questions.can_be_parent,'id','text')%>
+    </select>
     </div>
     <input id="question_submit" class="question_submit" type="submit" value="Add" />
     <div class="submit_row">
@@ -59,6 +64,7 @@ function initializeObservers() {
     
   //Reset the select box
   $('predefined_questions').clear();  
+  $('follow_up_question_select').clear();
   
 }
 
@@ -81,9 +87,9 @@ function observeQuestion(index) {
  */
 function restripeQuestions() {
 
-  var i = 1;
+  var i = 0;
   
-  $$('ol#new_questions > li').each( function(question) {  
+  $$('ol#new_questions li').each( function(question) {  
 
     if (i % 2 == 0) {
       question.className = 'even';
@@ -128,6 +134,7 @@ function addQuestion(e) {
   }
 
   var selectedQuestion = $F('predefined_questions');
+  var selectedParentQuestion = $F('follow_up_question_select');
   
   //The user selected custom question
   if(selectedQuestion == "0") {
@@ -140,9 +147,9 @@ function addQuestion(e) {
     
     new Ajax.Request('<%= survey_questions_path(@survey) %>', {
       'method': 'post',
-      'parameters': {'question[text]' : $F('custom_question_text'), 'question[custom_question_type]' : $F('custom_question_response')},
+      'parameters': {'question[text]' : $F('custom_question_text'), 'question[custom_question_type]' : $F('custom_question_response'), 'question[parent_question_id]' : selectedParentQuestion},
       'onSuccess' : function(transport) {
-        insertQuestions(transport.responseText);
+        insertQuestions(transport.responseText, selectedParentQuestion);
       }
     }); 
     
@@ -157,9 +164,9 @@ function addQuestion(e) {
     
     new Ajax.Request('<%= survey_questions_path(@survey) %>', {
       'method': 'post',
-      'parameters': {'predefined_question_id' : selectedQuestion},
+      'parameters': {'predefined_question_id' : selectedQuestion, 'parent_question_id' : selectedParentQuestion},
       'onSuccess' : function(transport) {
-        insertQuestions(transport.responseText);
+        insertQuestions(transport.responseText, selectedParentQuestion);
       }
     });   
       
@@ -167,14 +174,15 @@ function addQuestion(e) {
     
   //Reset the select box
   $('predefined_questions').clear();
-  
+  $('follow_up_question_select').clear();
+    
 }
 
 /** 
  * This will handle the response of question_controller.create, which could be n number of list items.
  * This will add the question items to the DOM, and initialize the observers
  */
-function insertQuestions(questions) {
+function insertQuestions(questions, parent_question_id) {
 
     //Determine the IDs of the questions we have added
     question_ids = [];
@@ -182,13 +190,22 @@ function insertQuestions(questions) {
       question_ids.push(question.match(/(\d+)/).first());
     });
 
-    $('new_questions').insert(questions, { 'position':'bottom' });
+    if(parent_question_id) {    
+      $('question_children_'+parent_question_id).insert(questions, { 'position':'bottom' });
+    }
+    else {
+      $('new_questions').insert(questions, { 'position':'bottom' });
+    }
     
     question_ids.each( function(question_id) {
       $('question_'+question_id).hide();
       $('question_'+question_id).appear({'duration': 0.5});
       observeQuestion(question_id);
     });
+    
+    restripeQuestions();
+    
+    updateParentCandidateQuestions();
           
 };
 
@@ -217,6 +234,8 @@ function saveQuestion(index,e) {
     'onSuccess' : function(transport) {
       Element.replace($('question_'+index), transport.responseText);
       observeQuestion(index);  
+      restripeQuestions();
+      updateParentCandidateQuestions();
     }
   });
 
@@ -242,18 +261,26 @@ function cancelEditQuestion(index,e) {
 function deleteQuestion(index,e) {
   e.stop();
   var question = $('question_'+index);
-
-  question.fade({'duration': 0.5,
-    'afterFinish': function() {
-      question.remove();
-      restripeQuestions();
-    }
-  });
+  var question_children = $('question_children_'+index);
+  
+  new Effect.Parallel([
+    new Effect.Fade(question),
+    new Effect.Fade(question_children),
+  ],
+  {'duration': 0.5,
+   'afterFinish': function() {
+    question.remove();
+    question_children.remove();
+    restripeQuestions();
+   }
+  }
+  );
   
   new Ajax.Request('<%= survey_questions_path(@survey) %>/' + index, {
-    'method': 'delete'
+    'method': 'delete',
+    'onSuccess': updateParentCandidateQuestions
   });  
-  
+    
 }
 
 /**
@@ -262,30 +289,89 @@ function deleteQuestion(index,e) {
 function moveQuestion(index,direction,e) {
   e.stop();
   var question = $('question_'+index);
+  var moveCompleted = false;
   
-  if(direction == 'higher' && question.previousSiblings().length > 0) {
-    var sibling = question.previousSiblings().first();
+  if(direction == 'higher' && question.previousSiblings().length > 1) {
+    moveCompleted = true;
+    
+    var sibling = question.previousSiblings()[1];
+    var sibling_children = question.previousSiblings()[0];
+    var question_children = question.nextSiblings()[0];
     
     question.remove();
+    question_children.remove();
 
     new Insertion.Before(sibling, question);
+    new Insertion.After(question, question_children);
     
   }
-  else if (direction == 'lower' && question.nextSiblings().length > 0) {
-    var sibling = question.nextSiblings().first();
+  else if (direction == 'lower' && question.nextSiblings().length > 2) {
+    moveCompleted = true;
+    
+    var sibling = question.nextSiblings()[1];
+    var sibling_children = question.nextSiblings()[2];
+    var question_children = question.nextSiblings()[0];
     
     question.remove();
+    question_children.remove();
 
-    new Insertion.After(sibling, question);   
+    new Insertion.After(sibling_children, question);   
+    new Insertion.After(question, question_children);
      
   }
   
-  restripeQuestions(); 
+  if(moveCompleted) {
   
-  new Ajax.Request('<%= survey_questions_path(@survey) %>/' + index + '/move', {
-    'method': 'put',
-    'parameters': {'direction': direction}
-  });    
+    restripeQuestions(); 
+    
+    new Ajax.Request('<%= survey_questions_path(@survey) %>/' + index + '/move', {
+      'method': 'put',
+      'parameters': {'direction': direction}
+    }); 
+       
+  }
+  
+}
+
+/**
+ * This will check the survey for questions that can have follow-up questions.
+ * If questions are allowed to have follow-ups, a select box will be made visible,
+ * with the parent candidates as options.
+ */
+function updateParentCandidateQuestions() {
+
+  //Retrieve the parent candidate questions from the server
+  new Ajax.Request('<%= survey_questions_path(@survey) %>/parent_candidates', {
+    'method': 'get',
+    'onSuccess' : function(transport) {
+    
+      var questions = transport.responseText.evalJSON();
+      var followUpQuestionsDiv = $('follow_up_question');
+      
+      //Add all of the parent candidates as follow-up options
+      if(questions.length > 0) {
+        var selectBox = $('follow_up_question_select');
+        
+        //Remove any existing options
+        for(i = selectBox.length - 1; i > 0; i--) {
+          selectBox.remove(i);
+        }
+        
+        questions.each( function(question) {          
+          selectBox.options.add(new Element('option', { 'value':question.id }).update(question.text));          
+        });
+      
+        if(!followUpQuestionsDiv.visible()) {
+          followUpQuestionsDiv.appear({'duration': 0.5});
+        }
+      } 
+      else {
+        if(followUpQuestionsDiv.visible()) {
+          followUpQuestionsDiv.fade({'duration': 0.5});
+        }      
+      }
+    }
+  });
   
 }
 

@@ -40,18 +40,18 @@ class QuestionsController < ApplicationController
       if @question.save then
         respond_to do |wants|
           wants.js do
-            render(:partial => "question", :object => @question).to_json
+            render(:partial => "question", :object => @question, :locals => {:level => @question.level, :include_children => true}).to_json
           end
         end
       end
       
     else # creating a predefined question (could result in multiple questions created)
-    
-      @questions = PredefinedQuestion.find(@predefined_question_id).build_questions(@survey)
+      @parent_question_id = params[:parent_question_id]
+      @questions = PredefinedQuestion.find(@predefined_question_id).build_questions(@survey, @parent_question_id)
       
       respond_to do |wants|
         wants.js do
-          render(:partial => "question", :collection => @questions).to_json
+          render(:partial => "question", :collection => @questions, :locals => {:level => @questions.first.level, :include_children => true}).to_json
         end
       end      
     
@@ -66,7 +66,7 @@ class QuestionsController < ApplicationController
     if @question.update_attributes(params[:question]) then
       respond_to do |wants|
         wants.js do
-          render(:partial => "question", :object => @question).to_json
+          render(:partial => "question", :object => @question, :locals => {:level => @question.level, :include_children => false}).to_json
         end
       end
     end
@@ -80,7 +80,7 @@ class QuestionsController < ApplicationController
     @question.destroy
     
     respond_to do |wants|
-      wants.xml do
+      wants.any do
         head :status => :ok
       end
     end
@@ -101,6 +101,18 @@ class QuestionsController < ApplicationController
     respond_to do |wants|
       wants.xml do
         head :status => :ok
+      end
+    end
+  end
+  
+  # questions that could have follow-up questions
+  def parent_candidates
+    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
+    @parent_candidates = @survey.questions.can_be_parent
+    
+    respond_to do |wants|
+      wants.js do
+        render :text => @parent_candidates.to_json
       end
     end
   end

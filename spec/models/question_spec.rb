@@ -62,6 +62,17 @@ describe Question do
     @question.valid?
     @question.required?.should == false
   end  
+
+  it "should determine the number of nested levels for the question when the question is a parent" do
+    @question.level.should eql(0)
+  end
+  
+  it "should determine the number of nested levels for the question when the question is a child" do
+    @survey = Factory.create(:survey)
+    @parent_question = Factory.create(:question, :survey => @survey)
+    @question.parent_question = @parent_question
+    @question.level.should eql(1)
+  end
 end
 
 describe Question, "with options" do

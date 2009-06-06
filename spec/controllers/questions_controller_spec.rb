@@ -25,7 +25,11 @@ describe QuestionsController, "#route_for" do
   
   it "should map { :controller => 'questions', :action => 'move', :survey_id => '1', :id => '1' } to /surveys/1/questions/1/move" do
     route_for(:controller => "questions", :action => "move", :survey_id => '1', :id => '1' ).should == { :path => "/surveys/1/questions/1/move", :method => :put }
-  end          
+  end     
+  
+  it "should map { :controller => 'questions', :action => 'parent_candidates', :survey_id => '1' } to /surveys/1/questions/parent_candidates" do
+    route_for(:controller => "questions", :action => "parent_candidates", :survey_id => '1' ).should == { :path => "/surveys/1/questions/parent_candidates", :method => :get }
+  end        
     
 end
 
@@ -144,7 +148,7 @@ describe QuestionsController, "handling POST /questions" do
   describe "when creating a predefined question" do
     before do
       @predefined_question = Factory(:predefined_question)
-      @predefined_question.stub!(:build_questions).and_return(@question)
+      @predefined_question.stub!(:build_questions).and_return([@question])
       
       PredefinedQuestion.stub!(:find).and_return(@predefined_question)
       
@@ -320,5 +324,43 @@ describe QuestionsController, "handling PUT /questions/1/move" do
     end   
     
   end
+  
+end  
+  
+describe QuestionsController, "handling GET /questions/parent_candidates" do
+  before(:each) do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
+    
+    @survey = Factory(:survey)
+    @question = Factory(:question, :survey => @survey)
+    @survey.questions.stub!(:can_be_parent).and_return([@question])
+
+    @sponsored_surveys_mock = mock(:sponsored_surveys_mock, :find => @survey)
+    @current_organization.stub!(:sponsored_surveys).and_return(@sponsored_surveys_mock)
+    
+    @params = {:survey_id => @survey.id}
+  end
+  
+  def do_get
+    @request.env["HTTP_ACCEPT"] = "application/javascript"
+    get :parent_candidates, @params
+  end
+  
+  it "should find the survey" do
+    @sponsored_surveys_mock.should_receive(:find).and_return(@survey)
+    do_get
+  end
+  
+  it "should find the questions that can have follow-up questions" do
+    @survey.questions.should_receive(:can_be_parent).and_return([@question])
+    do_get
+  end  
+  
+  it "should render the questions as JSON" do
+    do_get
+    response.body.should eql([@question].to_json)
+  end
+    
 
 end

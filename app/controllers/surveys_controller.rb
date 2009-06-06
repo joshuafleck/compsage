@@ -275,7 +275,7 @@
       wants.html {         
         redirect_to surveys_path() }      
       wants.xml do
-        render :status => :ok
+        head :status => :ok
       end
     end
   end  

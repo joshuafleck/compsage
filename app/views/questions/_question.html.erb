@@ -1,4 +1,4 @@
-<li class='<%=question.position % 2 == 0 ? "even" : "odd"%>' id='<%="question_#{question.id}"%>'>
+<li class="<%= cycle("even", "odd") %>"<% if level > 0 then %>style="padding-left:<%= 1+level*2 %>em"<% end %> id='<%="question_#{question.id}"%>'>
   <div id='<%="question_display_#{question.id}"%>' style='<%= question.errors.empty? ? "" : "display: none;"%>'>
     <div id='<%="question_display_text_#{question.id}"%>'><%=question.text%></div>
     <div >
@@ -25,3 +25,8 @@
     </div>
   </div>    
 </li>
+<% if include_children then %>
+  <div id='<%="question_children_#{question.id}"%>'>
+    <%=render(:partial => "questions/question", :collection => question.child_questions, :locals => {:level => level+1, :include_children => true})%>
+  </div>
+<% end %>
