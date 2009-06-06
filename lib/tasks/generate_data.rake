@@ -34,17 +34,17 @@ namespace :data_generator do
         
         case question.response_type
         when 'NumericalResponse'
-          response = Factory.build(:numerical_response, :question => question, :numerical_response => 20000 + rand(60000))
+          response = Factory.build(:numerical_response, :question => question, :response => 20000 + rand(60000))
         when 'WageResponse'
-          response = Factory.build(:wage_response, :question => question, :numerical_response => 20000 + rand(60000), :unit => 'Annually')
+          response = Factory.build(:wage_response, :question => question, :response => 20000 + rand(60000), :unit => 'Annually')
         when 'BaseWageResponse'
-          response = Factory.build(:base_wage_response, :question => question, :numerical_response => 20000 + rand(60000), :unit => 'Annually')
+          response = Factory.build(:base_wage_response, :question => question, :response => 20000 + rand(60000), :unit => 'Annually')
         when 'PercentResponse'
-          response = Factory.build(:percent_response, :question => question, :numerical_response => rand(100))
+          response = Factory.build(:percent_response, :question => question, :response => rand(100))
         when 'MultipleChoiceResponse'
-          response = Factory.build(:multiple_choice_response, :question => question, :numerical_response => rand(question.options.size))
+          response = Factory.build(:multiple_choice_response, :question => question, :response => rand(question.options.size))
         else
-          response = Factory.build(:textual_response, :question => question, :textual_response => Faker::Lorem.sentence, :numerical_response => nil)
+          response = Factory.build(:textual_response, :question => question, :response => Faker::Lorem.sentence)
         end
 
         responses << response
