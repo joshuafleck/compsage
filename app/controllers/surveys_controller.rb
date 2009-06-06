@@ -210,7 +210,6 @@
     #Set the new end date, attempt to reset the state of the survey
     if @survey.update_attributes(params[:survey]) && @survey.rerun!
        respond_to do |wants|  
-         flash[:notice] = 'Survey updated.'
          wants.html do
            redirect_to survey_invitations_path(@survey) 
          end
