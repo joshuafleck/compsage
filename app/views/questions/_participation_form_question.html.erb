@@ -16,7 +16,7 @@
     <% if participation_form_question.child_questions.any? then %>
       <ol class="questions">
         <%= render :collection => participation_form_question.child_questions,
-          :partial => 'participation_form_question',
+          :partial => '/questions/participation_form_question',
           :locals => {:f => f, :level => level + 1} %>
       </ol>
     <% end %>

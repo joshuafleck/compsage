@@ -42,14 +42,15 @@ function observeQualificationLinks() {
   });
 }
 function observeUnitSelection() {
-  var unit_selects = $$('select.units')
+  var unit_selects = $$('select.units');
   unit_selects.each(function(select) {
     select.observe('change', function(e) {
-      value = e.target.value;
-      class = e.target.class;
+      var value = e.target.value;
+      var css_class = e.target.className;
       unit_selects.each(function(select) {
-        if(select.value == '' && select.class == class)
+        if(select.value == '' && select.className == css_class) {
           select.value = value;
+        }
       });
     });
   });
