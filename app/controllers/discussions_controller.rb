@@ -1,4 +1,4 @@
-class DiscussionsController < ApplicationController
+  class DiscussionsController < ApplicationController
 	before_filter :login_or_survey_invitation_required, :find_survey
 	layout 'logged_in'
 	
@@ -31,7 +31,7 @@ class DiscussionsController < ApplicationController
           @invitations = @survey.all_invitations(true) 
       	  @discussions = @survey.discussions.within_abuse_threshold.roots
       	  @participation = current_organization_or_survey_invitation.participations.find_by_survey_id(@survey)          
-          render :template => "surveys/show"
+          render :template => "surveys/show_running"
         end
         wants.xml do
           render :xml => @discussion.errors.to_xml, :status => 422
