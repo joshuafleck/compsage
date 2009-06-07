@@ -22,7 +22,7 @@ Autocompleter.Json = Class.create(Autocompleter.Base, {
 
   jsonChoiceToListChoice: function(choice, mark) {
     return '<li>' + choice.escapeHTML() + '</li>';
-  },
+  }
 });
 
 Autocompleter.Cache = Class.create({
@@ -32,7 +32,7 @@ Autocompleter.Cache = Class.create({
     this.options = Object.extend({
       choices: 10,
       fuzzySearch: false,
-      dataToQueryParam: function(data){ data },
+      dataToQueryParam: function(data){ data; }
     }, options || {});
   },
   

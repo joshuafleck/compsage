@@ -52,12 +52,7 @@
 <script type="text/javascript" src="/javascripts/fast_autocompleter.js"></script>
 <script type="text/javascript">
 function initializeObservers() {
-
-  var cachedBackend = new Autocompleter.Cache(liveOrganizationSearch, {
-    choices: 10,
-    dataToQueryParam: function(data) { return data.name },
-  });
-
+  var cachedBackend = new Autocompleter.Cache(liveOrganizationSearch,{'choices': 10, 'dataToQueryParam': function(data) {return data.name;}});
   var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
 
   new Autocompleter.Json('external_invitation_organization_name', 'search_results', cachedLookup, {
