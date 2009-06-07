@@ -50,7 +50,7 @@ end
 describe SurveysController, " handling GET /surveys" do
   
   before(:each) do
-    @current_organization = Factory.create(:organization) #mock_model(Organization)
+    @current_organization = Factory.create(:organization)
     login_as(@current_organization)
     
     @survey_invitations_proxy = mock('survey invitations proxy')
@@ -429,24 +429,30 @@ end
 
 describe SurveysController, " handling GET /surveys/1/edit, with participations" do
   before(:each) do
-    @surveys = []
-    
-    @current_organization = Factory(:organization)
-    @current_organization.sponsored_surveys.stub!(:find).and_return(@surveys)
+    @current_organization = Factory.create(:organization)
     login_as(@current_organization)
+        
+    @survey = Factory.create(:survey)
+    @surveys = [@survey]
     
-    @survey = Factory(:survey, :sponsor => @current_organization, :aasm_state => 'pending')
-    @surveys.stub!(:find_or_create_by_aasm_state).and_return(@survey)
-    @survey.stub!(:update_attributes).and_return(true)
+    @surveys_proxy = mock('surveys proxy')
 
-    @params = {}
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
+    @surveys_proxy.stub!(:running_or_pending).and_return(@surveys)
+    @surveys.stub!(:find).and_return(@survey)
+    @participation = Factory.create(:participation)
+    @participations = [@participation]
+    @survey.stub!(:participations).and_return(@participations)
   end
 
   def do_get
-    get :edit, :id => 1
+    get :edit, :id => @survey.id
   end
   
-  it "should redirect to the survey index"
+  it "should redirect to the survey index" do
+    do_get
+    response.should redirect_to(survey_path(@survey))
+  end
 end
 
 describe SurveysController, " handling POST /surveys.xml" do
@@ -703,14 +709,30 @@ end
 
 describe SurveysController, " handling PUT /surveys/1, with participations" do
   before(:each) do
+    @current_organization = Factory.create(:organization)
+    login_as(@current_organization)
+        
+    @survey = Factory.create(:survey)
+    @surveys = [@survey]
+    
+    @surveys_proxy = mock('surveys proxy')
 
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
+    @surveys_proxy.stub!(:running_or_pending).and_return(@surveys)
+    @surveys.stub!(:find).and_return(@survey)
+    @participation = Factory.create(:participation)
+    @participations = [@participation]
+    @survey.stub!(:participations).and_return(@participations)
   end
 
   def do_update
-    put :update, :id => 1
+    put :update, :id => @survey.id
   end
   
-  it "should redirect to the surveys index"
+  it "should redirect to the survey show page" do
+    do_update
+    response.should redirect_to(survey_path(@survey))
+  end
 end
 
 describe SurveysController, "handling GET /surveys/search" do
