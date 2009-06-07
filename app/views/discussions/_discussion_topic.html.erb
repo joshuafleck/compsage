@@ -17,9 +17,8 @@
   <ul id="discussion_<%=discussion_topic.id%>_replies">
       <%= render :partial => "discussions/discussion", 
                  :collection => discussion_topic.all_children.find_all{|discussion| discussion.is_not_abuse}.sort %>
-      <li>
-        <a id="discussion_reply_<%=discussion_topic.id%>" href="#">Reply</a>
-        <div id="discussion_reply_box_<%=discussion_topic.id%>" style='display: none;'>
+      <li class="discussion_reply_link">
+        <div id="discussion_reply_box_<%=discussion_topic.id%>" style='display: none;' class="discussion_reply_box">
           <% form_tag survey_discussions_url(@survey), :method => :post do %>
             <%=text_area_tag(
               'discussion[body]',
@@ -38,6 +37,7 @@
             </div>
           <% end %>
         </div>
+        <a id="discussion_reply_<%=discussion_topic.id%>" href="#">Reply</a>
       </li>
   </ul>
 </li>

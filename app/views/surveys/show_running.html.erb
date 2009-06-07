@@ -59,33 +59,33 @@
 function observeDiscussions() {
 
   /* Show/hide the new discussion form */
-  $('new_discussion_link').observe('click', startNewDiscussion.curry($('new_discussion_form')));
-  $('new_discussion_link_cancel').observe('click', cancelNewDiscussion.curry($('new_discussion_form')));
+  $('new_discussion_link').observe('click', startNewDiscussion.curry($('new_discussion_form'), $('new_discussion_link')));
+  $('new_discussion_link_cancel').observe('click', cancelNewDiscussion.curry($('new_discussion_form'), $('new_discussion_link')));
   
   <% @discussions.each do | discussion_topic | %>
   
      /* Show/hide the reply form */
     $('discussion_reply_<%=discussion_topic.id%>').observe(
       'click', 
-      startNewDiscussion.curry($('discussion_reply_box_<%=discussion_topic.id%>'))
+      startNewDiscussion.curry($('discussion_reply_box_<%=discussion_topic.id%>'), $('discussion_reply_<%=discussion_topic.id%>'))
     );
     $('discussion_reply_<%=discussion_topic.id%>_cancel').observe(
       'click', 
-      cancelNewDiscussion.curry($('discussion_reply_box_<%=discussion_topic.id%>'))
+      cancelNewDiscussion.curry($('discussion_reply_box_<%=discussion_topic.id%>'), $('discussion_reply_<%=discussion_topic.id%>'))
     );
   <% end %>  
   
 }
 
-function startNewDiscussion(elem, e) {
-  elem.show();
-  $('new_discussion_link').hide();
+function startNewDiscussion(form, link, e) {
+  form.show();
+  link.hide();
   e.stop();
 }
 
-function cancelNewDiscussion(elem, e) {
-  elem.hide();
-  $('new_discussion_link').show();
+function cancelNewDiscussion(form, link, e) {
+  form.hide();
+  link.show();
   e.stop();
 }
 

@@ -402,11 +402,6 @@ describe NetworksController, " handling PUT /networks/1/leave" do
     response.should redirect_to(networks_path)
   end
   
-  it "should flash a message regarding the success of the action" do
-    do_put
-    flash[:notice].should == "You have successfully left the network."
-  end
-
 end
 
 describe NetworksController, " handling PUT /networks/1/join" do

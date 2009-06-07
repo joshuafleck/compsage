@@ -6,7 +6,7 @@
     <%= error_messages_for :invitation %>
     <div id="error_content"></div>
     <div id="external_invitation_organization_name_wrapper">
-      <label><%= required('Organization Name') %></label>
+      <label for="external_invitation_organization_name"><%= required('Organization Name') %></label>
       <%= f.text_field :organization_name, :size => 30 %>
       <div id="search_results" class="autocomplete" style="display:none;"></div>
     </div>

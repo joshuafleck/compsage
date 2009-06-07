@@ -20,11 +20,6 @@
       <% end %>
     </ul>
   <% end %>  
-  <% form_tag search_organizations_path do %>
-    <label for="search_text">Find CompSage Members</label>
-    <%= text_field_tag 'search_text', '', :size => 20 %> 
-    <p><input type="submit" value="Search" /></p>
-  <% end %>
 </div>
 <% if @networks.empty? then %>
   <p id="networks_description">Contact Networks make it easy for you to send surveys to and receive surveys from a group of peers. When you join a

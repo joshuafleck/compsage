@@ -42,11 +42,12 @@
   <script type="text/javascript" src="/javascripts/fast_autocompleter.js"></script>
   <script type="text/javascript">
   function observeInvitationForm() {
-    var cachedBackend = new Autocompleter.Cache(liveOrganizationSearch, {
-      choices: 10,
-      dataToQueryParam: function(data) { return data.name },
-    });
 
+    var cachedBackend = new Autocompleter.Cache(liveOrganizationSearch, {
+      'choices': 10,
+      'dataToQueryParam': function(data) { return data.name; }
+    });
+  
     var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
 
     new Autocompleter.Json('external_invitation_organization_name', 'search_results', cachedLookup, {
@@ -56,16 +57,16 @@
         choices.each(function(choice) {
           var li = new Element('li');
           li.insert('<div class="actions"><a href="javascript:;"><%= image_tag "add_invitation_button.gif" %></a></div>' + 
-            '<div class="name">' + choice.name + '</div>') 
+            '<div class="name">' + choice.name + '</div>');
           if(choice.location) {
             li.insert('<div class="location description_box">Location: ' + choice.location + '</div>');
           }
           li.data = choice;
           list.insert(li);
         });
-
+        
         return list;
-        },
+      },
       'minChars': 2,
       'delay': 0.1,
       'updateElement': function(li) {
@@ -73,6 +74,7 @@
       }
     });
   }
+
   /*
    * This will send an ajax request to the server with the search text
    */

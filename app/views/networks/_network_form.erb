@@ -4,22 +4,19 @@
   <%= f.text_field :name, :size => 30 %>
   <%= f.label :description %>
   <%= f.text_area :description, :rows => 4, :cols => 30 %>
-  <% unless @network.new_record? %>
+  <% if !@network.new_record? && @network.organizations.count > 1 then %>
     <p><a href="#" id="change_network_manager_link">Change network manager</a></p>
     <div id="change_network_manager" style="display: none;">
-      <% if !@network.new_record? && @network.organizations.count > 1 then %>
-        <%=f.label "Change Network Manager" %>
-          <% @network.organizations.each do |organization| %>
-                <%=f.label "owner_id_#{organization.id}", f.radio_button("owner_id", organization.id) + organization.name, :class => "option"%>
-          <% end %>
-        </ul>
+      <%=f.label "Change Network Manager" %>
+      <% @network.organizations.each do |organization| %>
+        <%=f.label "owner_id_#{organization.id}", f.radio_button("owner_id", organization.id) + organization.name, :class => "option"%>
       <% end %>
     </div>
   <% end %>
-  <div class="submit"><input type="submit" value="<%=@network.new_record? ? 'Create' : 'Update' %>" /> or <%=link_to "Cancel", networks_path %></div>
+  <div class="submit"><input type="submit" value="<%=@network.new_record? ? 'Create' : 'Update' %>" /> or <%=link_to "Cancel", @network.new_record? ? networks_path : network_path(@network) %></div>
 <% end %>
 
-<% unless @network.new_record? %>
+<% if !@network.new_record? && @network.organizations.count > 1 then %>
   <% content_for :initialize_js, "observeChangeNetwork();"%>
   <script type="text/javascript">
   function observeChangeNetwork() {

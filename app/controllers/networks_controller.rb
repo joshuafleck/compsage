@@ -45,7 +45,9 @@ class NetworksController < ApplicationController
     
     if @network.save then
       respond_to do |wants|
-        wants.html { redirect_to network_path(@network) }
+        wants.html do
+          redirect_to network_path(@network) 
+        end
         wants.xml do
           head :status => :created
         end
@@ -97,7 +99,6 @@ class NetworksController < ApplicationController
     
     respond_to do |wants|
       wants.html do
-        flash[:notice] = "You have successfully left the network."
         redirect_to networks_path
       end
       wants.xml do
