@@ -37,64 +37,65 @@
     <%= render :partial => 'invitations/invite_organization', :locals => {:form_action => network_invitations_path(@network)} %>
   <% end %>
 </div>
-<% content_for :initialize_js, "observeInvitationForm();" %>
-<script type="text/javascript" src="/javascripts/fast_autocompleter.js"></script>
-<script type="text/javascript">
-function observeInvitationForm() {
-  var cachedBackend = new Autocompleter.Cache(liveOrganizationSearch, {
-    choices: 10,
-    dataToQueryParam: function(data) { return data.name },
-  });
+<% if @network.owner == current_organization then %>
+  <% content_for :initialize_js, "observeInvitationForm();" %>
+  <script type="text/javascript" src="/javascripts/fast_autocompleter.js"></script>
+  <script type="text/javascript">
+  function observeInvitationForm() {
+    var cachedBackend = new Autocompleter.Cache(liveOrganizationSearch, {
+      choices: 10,
+      dataToQueryParam: function(data) { return data.name },
+    });
 
-  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+    var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
 
-  new Autocompleter.Json('external_invitation_organization_name', 'search_results', cachedLookup, {
-    'list_generator': function(choices) {
-      var list = new Element('ul');
+    new Autocompleter.Json('external_invitation_organization_name', 'search_results', cachedLookup, {
+      'list_generator': function(choices) {
+        var list = new Element('ul');
 
-      choices.each(function(choice) {
-        var li = new Element('li');
-        li.insert('<div class="actions"><a href="javascript:;"><%= image_tag "add_invitation_button.gif" %></a></div>' + 
-          '<div class="name">' + choice.name + '</div>') 
-        if(choice.location) {
-          li.insert('<div class="location description_box">Location: ' + choice.location + '</div>');
-        }
-        li.data = choice;
-        list.insert(li);
-      });
+        choices.each(function(choice) {
+          var li = new Element('li');
+          li.insert('<div class="actions"><a href="javascript:;"><%= image_tag "add_invitation_button.gif" %></a></div>' + 
+            '<div class="name">' + choice.name + '</div>') 
+          if(choice.location) {
+            li.insert('<div class="location description_box">Location: ' + choice.location + '</div>');
+          }
+          li.data = choice;
+          list.insert(li);
+        });
 
-      return list;
-      },
-    'minChars': 2,
-    'delay': 0.1,
-    'updateElement': function(li) {
-      addInvitation(li.data);
-    }
-  });
-}
-/*
- * This will send an ajax request to the server with the search text
- */
-function liveOrganizationSearch(value, suggest) {
-  new Ajax.Request('<%=search_organizations_path%>', {
-    'method': 'get',
-    'parameters': {'search_text': value},
-    'requestHeaders': {'Accept':'application/json'},
-    'onSuccess': function(transport) {
-      suggest(transport.responseText.evalJSON());
-    }
-  });
-}
-
-function addInvitation(organization) {
-  var org_id_field = $$('invitation_form #organization_id').first();
-  if(!org_id_field) {
-    org_id_field = new Element('input', {'type':'hidden', 'name':'organization_id'});
-    $('invitation_form').insert(org_id_field);
+        return list;
+        },
+      'minChars': 2,
+      'delay': 0.1,
+      'updateElement': function(li) {
+        addInvitation(li.data);
+      }
+    });
   }
-  org_id_field.value = organization.id;
-  $('invitation_form').submit();
-}
+  /*
+   * This will send an ajax request to the server with the search text
+   */
+  function liveOrganizationSearch(value, suggest) {
+    new Ajax.Request('<%=search_organizations_path%>', {
+      'method': 'get',
+      'parameters': {'search_text': value},
+      'requestHeaders': {'Accept':'application/json'},
+      'onSuccess': function(transport) {
+        suggest(transport.responseText.evalJSON());
+      }
+    });
+  }
 
-</script>
+  function addInvitation(organization) {
+    var org_id_field = $$('invitation_form #organization_id').first();
+    if(!org_id_field) {
+      org_id_field = new Element('input', {'type':'hidden', 'name':'organization_id'});
+      $('invitation_form').insert(org_id_field);
+    }
+    org_id_field.value = organization.id;
+    $('invitation_form').submit();
+  }
 
+  </script>
+<% end %>
