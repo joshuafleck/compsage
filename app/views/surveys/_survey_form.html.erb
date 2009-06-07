@@ -43,7 +43,10 @@
     <input id="question_submit" class="question_submit" type="submit" value="Add" />
     <div class="submit_row">
       <input id="form_submit" type="submit" value="Next &ndash; Create Invitation List" class="next" />
-      <input type="button" onclick="window.location='<%= surveys_path %>'" value="Cancel" class="previous" />
+      <%= link_to "Cancel", { :action => "destroy", :id => @survey.id },
+	            :confirm => "This will delete the survey and any progress you have made. Are you sure?",
+				:method => :delete
+	  %>
     </div>
   <% end %>
 </div>
