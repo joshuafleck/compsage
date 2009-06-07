@@ -619,14 +619,14 @@ form.new_survey textarea, form.edit_survey textarea {
   width: 500px;
 }
 
-.survey_question_label {
+.survey_question_label, .discussion_label {
   margin: 0.5em 0 0 0;
   font-size: 0.9em;
   letter-spacing: .05em;
   line-height: 20px;
 }
 
-.question_submit {
+.question_submit, .discussion_submit {
   display: block; 
   margin-top: 5px;
 }

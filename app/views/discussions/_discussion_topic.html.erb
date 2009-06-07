@@ -33,9 +33,9 @@
               discussion_topic.id, 
               :id => "discussion_reply_#{discussion_topic.id}_parent_id")
              %>
-            <p>
+            <div class="discussion_submit">
               <%= submit_tag 'Post' %> or <a id="discussion_reply_<%=discussion_topic.id%>_cancel" href="#">Cancel</a>
-            </p>
+            </div>
           <% end %>
         </div>
       </li>

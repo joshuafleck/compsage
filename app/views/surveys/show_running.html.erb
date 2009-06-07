@@ -42,7 +42,7 @@
   <div class="main_description"><%=link_and_format(@survey.description)%></div>
   <h3>Questions &amp; Clarifications</h3>
   <% if @discussions.any? then %>
-    <p><a href="#" id="new_discussion_link">Start a new topic</a></p>
+    <a href="#" id="new_discussion_link">Start a new topic</a>
   <% else %>
     There are currently no discussion topics.  <a href="#" id="new_discussion_link">Start one now.</a>
   <% end %>

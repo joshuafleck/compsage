@@ -1,11 +1,11 @@
 <%=error_messages_for :discussion%>
 <% form_for [@survey, discussion] do |f| %>
-    <%=f.label :subject %>
+    <%=f.label :subject, nil, :class => 'discussion_label' %>
     <%=f.text_field :subject %>
-    <%=f.label :body %>
+    <%=f.label :body, nil, :class => 'discussion_label' %>
     <%=f.text_area :body, :rows => 4, :cols => 30 %>
     <%=f.hidden_field :parent_discussion_id %>
-    <div class="submit">
+    <div class="discussion_submit">
       <input type="submit"  value="<%=discussion.new_record? ? 'Post Discussion' : 'Update Discussion' %>" /> or <a href="#" id='new_discussion_link_cancel'>Cancel</a>
     </div>
 <% end %>
