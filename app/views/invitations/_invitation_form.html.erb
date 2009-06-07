@@ -5,7 +5,7 @@
     <ul id="networks" class="entity_list">
       <% @networks.each do |network| %>
         <li class="network" id="network_<%= network.id %>">
-        <a href="#" class="invite" title="Add network to invitation list"><%= image_tag "expand_button.gif", :alt => "Add network to invitation list" %></a>
+          <a href="#" class="invite" title="Add network to invitation list"><%= image_tag "expand_button.gif", :alt => "Add network to invitation list" %></a>
           <div class="network_info_container">
             <%= network.name %><br />
             <a href="#" class="expand_network">Show Members</a>

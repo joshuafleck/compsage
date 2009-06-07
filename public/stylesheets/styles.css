@@ -701,9 +701,9 @@ ol#new_questions li {
 }
 
 #invite_network_list #networks li.network a.invite {
-  border: 0;
   float: left;
   padding-top: 2px;
+  clear: left;
 }
 
 #send_invitations ul {
@@ -756,7 +756,10 @@ a.expand_network {
 }
 
 ul#networks div.network_info_container {
-  margin-left: 25px;
+  margin-left: 5px;
+  float: left;
+  width: 215px;
+  margin-bottom: 5px;
 }
 
 ul#networks div.network_members_container {
@@ -1161,8 +1164,9 @@ div.third_column {
 }
 
 div.two_third_main_column {
+  padding: 0;
   margin: 0 10px;
-  width: 502px;
+  width: 493px;
   margin-left: 266px;
 }
 div.left_column {
