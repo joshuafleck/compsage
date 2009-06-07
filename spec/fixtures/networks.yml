@@ -12,3 +12,10 @@ joshs_network:
   created_at: <%=8.days.ago.to_s(:db)%>
   owner_id: 2
   
+test_network:
+  id: 3
+  name: Compsage Testers
+  description: Use this for testing compsage.
+  created_at: <%=8.days.ago.to_s(:db)%>
+  owner_id: 2  
+  

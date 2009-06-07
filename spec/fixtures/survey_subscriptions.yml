@@ -1,11 +1,1 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
-brians_subscription:
-  organization_id: 1
-  survey_id: 1
-  relationship: sponsor
-  
-joshs_subscription:
-  organization_id: 2
-  survey_id: 2
-  relationship: sponsor

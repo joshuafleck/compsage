@@ -11,7 +11,7 @@ brian:
   city: Minneapolis
   state: MN
   zip_code: 55407
-  industry: "Healthcare: Managed Care"
+  industry: "Healthcare"
   latitude: 0.784271815164674
   longitude: -1.62758974208052
 
@@ -26,7 +26,7 @@ josh:
   city: Lakeville
   state: MN
   zip_code: 55044
-  industry: "Healthcare: Managed Care"
+  industry: "Healthcare"
   latitude: 0.77900015287878
   longitude: -1.62766124821997
   
@@ -41,134 +41,72 @@ dave:
   city: St. Paul
   state: MN
   zip_code: 55108
-  industry: "Healthcare: Managed Care"
+  industry: "Healthcare"
   latitude: 0.785059813868657
   longitude: -1.62624756643244
   
-mike:
+compsage1:
   id: 4
-  email: mike@umn.edu
+  email: compsage1@hotmail.com
   crypted_password: 27e5532e75526ff4574e3e8c8c2a48fb97415765
   salt: asdf
   created_at: <%=20.days.ago.to_s(:db)%>
-  name: Mike's Construction
-  contact_name: Mike johnson
-  location: Scranton Branch
-  city: Roseville
-  state: MN
-  zip_code: 55123
-  industry: "Construction"
-  latitude: 0.785059813868657
-  longitude: -1.62624756643244  
-    
-steve:
+  name: Microsoft Corp
+  contact_name: Bill Gates
+  location: Headquarters
+  city: Redmond
+  state: WA
+  zip_code: 98000
+  industry: "Technology"
+  latitude: 0.8319887581520747
+  longitude: -2.13146395645083  
+  
+compsage2:
   id: 5
-  email: steve@umn.edu
+  email: compsage2@hotmail.com
   crypted_password: 27e5532e75526ff4574e3e8c8c2a48fb97415765
   salt: asdf
-  created_at: <%=1.days.ago.to_s(:db)%>
-  name: Apple Inc.
+  created_at: <%=20.days.ago.to_s(:db)%>
+  name: Apple Inc
   contact_name: Steve Jobs
-  city: Burnsville
-  state: MN
-  zip_code: 54123
+  location: Main Office
+  city: Cupertino
+  state: CA
+  zip_code: 95014
   industry: "Technology"
-  latitude: 0.785059813868657
-  longitude: -1.62624756643244 
+  latitude: 0.6513132436129839
+  longitude: -2.1300337560915574  
   
-steve2:
+compsage3:
   id: 6
-  email: steve2@umn.edu
+  email: compsage3@hotmail.com
   crypted_password: 27e5532e75526ff4574e3e8c8c2a48fb97415765
   salt: asdf
-  created_at: <%=1.days.ago.to_s(:db)%>
-  name: Apple Inc.
-  location: Rochester Office
-  contact_name: Steve Jobs
-  city: Rochester
-  state: MN
-  zip_code: 54123
+  created_at: <%=20.days.ago.to_s(:db)%>
+  name: Oracle Corp
+  contact_name: Larry Ellison
+  location: Homebase
+  city: Redwood Shores
+  state: CA
+  zip_code: 94059
   industry: "Technology"
-  latitude: 0.785059813868657
-  longitude: -1.62624756643244    
-    
-mike2:
+  latitude: 0.6541978850155856
+  longitude: -2.133422603722513    
+  
+compsage4:
   id: 7
-  email: mike2@umn.edu
+  email: compsage4@hotmail.com
   crypted_password: 27e5532e75526ff4574e3e8c8c2a48fb97415765
   salt: asdf
-  created_at: <%=365.days.ago.to_s(:db)%>
-  name: Mike's Construction
-  contact_name: Mike johnson
-  city: Buffalo
-  location: Liberty Island Branch
-  state: MN
-  zip_code: 55125
-  industry: "Construction"
-  latitude: 0.785059813868657
-  longitude: -1.62624756643244  
-  
-mike3:
-  id: 8
-  email: mike3@umn.edu
-  crypted_password: 27e5532e75526ff4574e3e8c8c2a48fb97415765
-  salt: asdf
-  created_at: <%=700.days.ago.to_s(:db)%>
-  name: Mike's Construction
-  contact_name: Mike johnson
-  city: Owatonna
-  location: 3 Mile Island Branch
-  state: MN
-  zip_code: 55125
-  industry: "Construction"
-  latitude: 0.785059813868657
-  longitude: -1.62624756643244   
-  
-william:
-  id: 9
-  email: william@umn.edu
-  crypted_password: 27e5532e75526ff4574e3e8c8c2a48fb97415765
-  salt: asdf
-  created_at: <%=700.days.ago.to_s(:db)%>
-  name: Microsoft
-  contact_name: Bill Gates
-  city: Tower
-  location: Tower
-  state: MN
-  zip_code: 55425
+  created_at: <%=20.days.ago.to_s(:db)%>
+  name: Sun Microsystems
+  contact_name: Scott McNealy
+  location: 
+  city: Santa Clara
+  state: CA
+  zip_code: 95050
   industry: "Technology"
-  latitude: 0.785059813868657
-  longitude: -1.62624756643244   
-
-william2:
-  id: 10
-  email: william2@umn.edu
-  crypted_password: 27e5532e75526ff4574e3e8c8c2a48fb97415765
-  salt: asdf
-  created_at: <%=700.days.ago.to_s(:db)%>
-  name: Microsoft
-  contact_name: Bill Gates
-  city: Ely
-  location: Ely
-  state: MN
-  zip_code: 52425
-  industry: "Technology"
-  latitude: 0.785059813868657
-  longitude: -1.62624756643244  
+  latitude: 0.6519580458088596
+  longitude: -2.1287635442470503 
   
-william3:
-  id: 11
-  email: william3@umn.edu
-  crypted_password: 27e5532e75526ff4574e3e8c8c2a48fb97415765
-  salt: asdf
-  created_at: <%=701.days.ago.to_s(:db)%>
-  name: Microsoft
-  contact_name: Bill Gates
-  city: Tofte
-  location: Tofte
-  state: MN
-  zip_code: 22425
-  industry: "Technology"
-  latitude: 0.785059813868657
-  longitude: -1.62624756643244      
-     
+ 

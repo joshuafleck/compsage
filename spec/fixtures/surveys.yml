@@ -1,17 +1,1 @@
-open_survey:
-  id: 1
-  sponsor_id: 1
-  job_title: Programmer
-  description: Code monkey like doritos and mountain dew
-  created_at: <%=(Time.now - 2.days).to_s(:db) %>
-  end_date: <%=(Time.now + 5.days).to_s(:db) %>
-  aasm_state: running
-  
-closed_survey:
-  id: 2
-  sponsor_id: 2
-  job_title: Assistant to Daves
-  description: Assists people named dave with various tasks
-  created_at: <%=(Time.now - 8.days).to_s(:db) %>
-  end_date: <%=(Time.now - 2.day).to_s(:db)%>
-  aasm_state: running
+
