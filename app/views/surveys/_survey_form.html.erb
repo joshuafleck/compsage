@@ -8,7 +8,7 @@
 </div>
 <div id="step_container">
   <%=flash_messages%>
-  <% form_for @survey, :url => surveys_path, :html => {:method => :post} do |f| %>
+  <% form_for(@survey) do |f| %>
     <%= error_messages_for :survey %>
     <%= f.label :job_title, required("Job title") %>
     <%= f.text_field :job_title, :size => 40 %>
