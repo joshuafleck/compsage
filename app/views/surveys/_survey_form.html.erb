@@ -1,11 +1,13 @@
 <% title "New Survey" %>
 <% highlight_tab("surveys") %>
-<div class="breadcrumbs">
-  <%= image_tag 'step_1_active.gif' %>
-  <%= image_tag 'step_2_inactive.gif' %>
-  <%= image_tag 'step_3_inactive.gif' %>
-  <%= image_tag 'step_4_inactive.gif' %>
-</div>
+<% if @survey.pending? %>
+  <div class="breadcrumbs">
+    <%= image_tag 'step_1_active.gif' %>
+    <%= image_tag 'step_2_inactive.gif' %>
+    <%= image_tag 'step_3_inactive.gif' %>
+    <%= image_tag 'step_4_inactive.gif' %>
+  </div>
+<% end %>
 <div id="step_container">
   <%=flash_messages%>
   <% form_for(@survey) do |f| %>
@@ -42,14 +44,13 @@
     </div>
     <input id="question_submit" class="question_submit" type="submit" value="Add" />
     <div class="submit_row">
-      <input id="form_submit" type="submit" value="Next &ndash; Create Invitation List" class="next" />
-      <% if @survey.aasm_state == 'pending'%>
-	    <%= link_to "Cancel", { :action => "destroy", :id => @survey.id },
-	            :confirm => "This will delete the survey and any progress you have made. Are you sure?",
-				:method => :delete %>
-	  <%else%>
-	    <input type="button" onclick="window.location='<%= surveys_path %>'" value="Cancel" class="previous" />
-	  <%end%>
+      <% if @survey.pending? %>
+        <input id="form_submit" type="submit" value="Next &ndash; Create Invitation List" class="next" />
+	      <%= link_to "Cancel", { :action => "destroy", :id => @survey.id }, :confirm => "This will delete the survey and any progress you have made. Are you sure?", :method => :delete %>
+      <%else%>
+        <%= button_to "Next &ndash; Preview Survey", preview_survey_questions_path(@survey), :class => "next", :method => :get, :id => "invitation_form_submit" %>
+	      <input type="button" onclick="window.location='<%= survey_path(@survey) %>'" value="Cancel" class="previous" />
+	    <%end%>
     </div>
   <% end %>
 </div>

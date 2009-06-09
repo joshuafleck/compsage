@@ -1,11 +1,13 @@
 <% title "Preview for #{@survey.job_title}" %>
 <% highlight_tab("surveys") if logged_in? %>
-<div class="breadcrumbs">
-  <%= image_tag 'step_1_inactive.gif' %>
-  <%= image_tag 'step_2_inactive.gif' %>
-  <%= image_tag 'step_3_active.gif' %>
-  <%= image_tag 'step_4_inactive.gif' %>
-</div>
+<% if @survey.pending? %>
+  <div class="breadcrumbs">
+    <%= image_tag 'step_1_inactive.gif' %>
+    <%= image_tag 'step_2_inactive.gif' %>
+    <%= image_tag 'step_3_active.gif' %>
+    <%= image_tag 'step_4_inactive.gif' %>
+  </div>
+<% end %>
 <div id="step_container">
   <p>
     This is how your survey will look.  If you are not satisfied, you can make changes before the survey is published.
@@ -15,8 +17,13 @@
     <%= render :partial => "questions/participation_form"%>
   </div>
   <div class="submit_row">
-    <%= button_to "Next &ndash; Enter Billing Information", billing_survey_path(@survey), :class => "next", :method => :get%>
-    <%= button_to "Back &ndash; Edit Invitation List", survey_invitations_path(@survey), :class => "previous", :method => :get %>
+    <% if @survey.pending? then %>
+      <%= button_to "Next &ndash; Enter Billing Information", billing_survey_path(@survey), :class => "next", :method => :get%>
+      <%= button_to "Back &ndash; Edit Invitation List", survey_invitations_path(@survey), :class => "previous", :method => :get %>
+    <% else %>
+      <%= button_to "Finish", survey_path(@survey), :class => "next", :method => :get %>   
+      <%= button_to "Back &ndash; Edit Survey Design", edit_survey_path(@survey), :class => "previous", :method => :get %> 
+    <% end %> 
   </div>
 </div>
 <script>

@@ -61,10 +61,10 @@
     #check for participations
     if @survey.participations.any? then
       respond_to do |wants|
-        wants.html{
+        wants.html do
           flash[:notice] = "You cannot edit the questions for a survey once a response has been collected."
           redirect_to survey_path(@survey)
-        }
+        end
       end
     end
   end
@@ -74,24 +74,25 @@
     #check for participations
     if @survey.participations.any? then
       respond_to do |wants|
-        wants.html{
+        wants.html do
           flash[:notice] = "You cannot edit the questions for a survey once a response has been collected."
           redirect_to survey_path(@survey)
-        }
+        end
       end
     else
     #update the attributes for the survey
       if @survey.update_attributes(params[:survey])
          respond_to do |wants|  
-           wants.html{
-             redirect_to preview_survey_questions_path(@survey) 
-             }
+           wants.html do
+             redirect_to preview_survey_questions_path(@survey) if @survey.running?
+             redirect_to survey_invitations_path(@survey) if @survey.pending?
+           end
          end
        else
          respond_to do |wants|
-           wants.html{ 
+           wants.html do
              render :action => :edit
-           }
+           end
          end
        end
      end
@@ -111,9 +112,6 @@
     if @survey.update_attributes(params[:survey])
                 
       respond_to do |wants|
-        wants.html do 
-          redirect_to survey_invitations_path(@survey)         
-        end
         wants.xml do
           render :xml => @survey, :status => :created 
         end
@@ -122,9 +120,6 @@
     else
     
       respond_to do |wants|
-        wants.html do
-          render :action => :new
-        end
         wants.xml do
           render :xml => @survey.errors.to_xml, :status => 422
         end
@@ -248,7 +243,7 @@
     @survey = current_organization.sponsored_surveys.pending.find(params[:id])
     
     # For now, pretend we've received billing information.
-    if @survey.aasm_state == 'pending'
+    if @survey.pending?
       @survey.billing_info_received!
       respond_to do |wants|
         wants.html do
