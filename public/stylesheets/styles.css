@@ -1183,7 +1183,8 @@ div.two_third_main_column {
   padding: 0;
   margin: 0 10px;
   width: 493px;
-  margin-left: 266px;
+  float: right; /* Had to add this for IE6 to ensure proper lineup of contained elements */
+  /* margin-left: 266px; had to remove this for IE6, was overflowing */
 }
 div.left_column {
   float: left;

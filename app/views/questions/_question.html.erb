@@ -1,11 +1,11 @@
-<li class="<%= cycle("even", "odd") %>"<% if level > 0 then %>style="padding-left:<%= 1+level*2 %>em"<% end %> id='<%="question_#{question.id}"%>'>
+<li class="<%= cycle("even", "odd") %>" <% if level > 0 then %>style="padding-left:<%= 1+level*2 %>em;"<% end %> id='<%="question_#{question.id}"%>'>
   <div id='<%="question_display_#{question.id}"%>' style='<%= question.errors.empty? ? "" : "display: none;"%>'>
     <div id='<%="question_display_text_#{question.id}"%>'><%=question.text%></div>
-    <div >
+    <div>
       <span id='<%="question_display_type_#{question.id}"%>' class="description_box"><%=question.custom_question_type%></span>
       <span id='<%="question_display_required_#{question.id}"%>' class="response_required_box"><%= question.required? ? "Required" : "" %></span>
     </div>      
-    <div style="float: bottom; width: 100%">
+    <div style="float: bottom; width: 100%;">
       <a id='<%="question_up_#{question.id}"%>' href=''><%= image_tag "up_button.gif" %></a>
       <a id='<%="question_down_#{question.id}"%>' href=''><%= image_tag "down_button.gif" %></a>
       <a id='<%="question_edit_#{question.id}"%>' href=''><%= image_tag "edit_button.gif" %></a>

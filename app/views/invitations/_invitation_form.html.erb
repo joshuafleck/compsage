@@ -97,7 +97,7 @@ function initializeObservers() {
     });
 
     network_li.select('a.invite').first().observe('click', inviteNetwork.curry(network_id));
-  })
+  });
 
   $('invitation_form').observe('submit', addInvitationByForm);
 
