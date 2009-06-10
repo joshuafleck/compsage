@@ -81,7 +81,10 @@ function setupFollowupForList(list, parent_questions) {
 
 function enableList(list) {
   list.childElements().each(function(li) {
-    li.select('div').first().select('input').invoke('removeAttribute', 'disabled');
+	var elements = li.select('div').first().select('input');
+	 elements.each(function(input) {
+		input.removeAttribute('disabled');
+		});
   })
 }
 
@@ -93,7 +96,7 @@ function disableList(list) {
         input.checked = false;
       else
         input.value = '';
-      input.setAttribute('disabled', 'true');
+      input.setAttribute('disabled', true);
     });
   })
 }
