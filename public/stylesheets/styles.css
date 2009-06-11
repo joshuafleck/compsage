@@ -905,7 +905,7 @@ div.top_join_link {
 }
 
 .report_date {
-  float: right;
+	padding-bottom: 3px;
     font-size: .9em;
 }
 
