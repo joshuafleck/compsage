@@ -1,35 +1,37 @@
 <% title("Report for #{@survey.job_title}") %>
 <% highlight_tab("surveys") %>
-<%= link_to_function("Print this Report", "javascript:print()", :class => 'print_link') %>
-<%= link_to("Download PDF", survey_report_path(@survey, :format => "pdf", :wage_format => @format ), :id => 'pdf_link', :class => 'print_link') %>
-<h2>Report on <%=@survey.job_title%></h2>
+<%= link_to_function("Print", "javascript:print()", :class => 'print_link') %>
+<h2><%=@survey.job_title%></h2>
 <%if logged_in_from_survey_invitation? then%>
   <div class="top_join_link"><%= link_to "Sign up for CompSage", new_account_path, :class => "print_link" %></div>
 <% end %>
-<h4>Job Description</h4>
+<h3>Job Description</h3>
 <div class="description_box"><%=link_and_format(@survey.description)%></div>
-<div class="report_date">
-	Completed on: <%= I18n.localize @survey.end_date.to_date %>
-	<br />
-	Effective Date: <%= I18n.localize @survey.effective_date %>
+<div id="invitation_section_container">
+  <div id="invitation_section" class="hidden">
+    <h3>Invitations</h3>
+    <ul class="invitations">
+        <% @invitations.each do |invitation| %>
+          <li>
+            <%if invitation.is_a?(SurveyInvitation) then%>
+              <%= link_to_organization(invitation.invitee) %>
+            <%else%>      
+              <%=invitation.organization_name%>
+            <%end%>          
+          </li>
+        <% end %>
+      </ul>
+  </div>
+  <%= link_to "Invitation List", '#', :id => "invitation_list_link" %>
 </div>
-<%= link_to "Invitation List", '#', :id => "invitation_list_link" %>
-<div id="invitation_section" class="hidden">
-  <ul id="invitations">
-      <% @invitations.each do |invitation| %>
-        <li>
-          <%if invitation.is_a?(SurveyInvitation) then%>
-            <%= link_to_organization(invitation.invitee) %>
-          <%else%>      
-            <%=invitation.organization_name%> (<%=invitation.email%>)
-          <%end%>          
-        </li>
-      <% end %>
-    </ul>
-</div>
+<h3>Report Data</h3>
 <div id="formatting_section">
-	Show me wages: <%=link_to_function @format == "Hourly" ? "Annually" : "Hourly", 'toggleWageFormatAndLink();', :id => "wage_format_link"%>
+  Show wages in <%= link_to_function @format == "Hourly" ? "Annual Format" : "Hourly Format", 'toggleWageFormatAndLink();', :id => "wage_format_link"%>
 </div>
+<div class="pdf_link_container">
+  <%= link_to("Download as PDF", survey_report_path(@survey, :format => "pdf", :wage_format => @format ), :id => 'pdf_link') %>
+</div>
+
 <%@survey.questions.each do |question| %>
   <% if question.adequate_responses? then %>
     <%=render :partial => question.report_type, :locals => {:question => question, :survey => @survey, :format => @format}%>
@@ -40,33 +42,44 @@
     </div>
   <% end %>
 <% end %>
-<div id="suspect_results">
-	<p><%= link_to "Report Incorrect Data", '#', :id => "suspect_result_form_link" %></p>
-	<div id ="suspect_report_form" class="hidden">
-		<div id="success_notification" class="hidden"><span id="success_report_message">Successfully Reported!</span></div>
-		<label for="comment">Comment:</label>
-		<textarea id="comment"></textarea>
-		<p><input id="suspect_result_submit" type="button" value="Report" %>
-		<%= link_to_function "Cancel", "$('suspect_report_form').toggleClassName('hidden'); return false;" %></p>
-	</div>
-</div>
 <% if logged_in_from_survey_invitation? then %>
   <p>If you want to start creating your own surveys, and participating in other surveys of interest,
     <%= link_to "sign up now!", new_account_path %></p>
 <% end %>
 
+<div class="report_date">
+  Completed on <%= I18n.localize @survey.end_date.to_date %><br />
+  Effective date <%= I18n.localize @survey.effective_date %>
+</div>
+
+<div id="suspect_results">
+  <p><%= link_to "Report Incorrect Data", '#', :id => "suspect_result_form_link" %></p>
+  <div id ="suspect_report_form" class="hidden">
+    <div id="success_notification" class="hidden"><span id="success_report_message">Successfully Reported!</span></div>
+    <label for="comment">Comment:</label>
+    <textarea id="comment"></textarea>
+    <p><input id="suspect_result_submit" type="button" value="Report" %>
+    <%= link_to_function "Cancel", "$('suspect_report_form').toggleClassName('hidden'); return false;" %></p>
+  </div>
+</div>
+
 <% content_for :initialize_js, "observeInvitationList();" %>
 <script type="text/javascript">
 
   function observeInvitationList() {
-    $('invitation_list_link').observe('click', function(e) {
+    var link = $('invitation_list_link');
+    link.observe('click', function(e) {
       e.preventDefault();
+      if(link.innerHTML == 'Invitation List')
+        link.innerHTML = 'Hide Invitation List';
+      else
+        link.innerHTML = 'Invitation List';
       $('invitation_section').toggleClassName('hidden');
       $('invitation_section').highlight();
       return false;
     });
 
-	$('suspect_result_form_link').observe('click', function(e) {
+  $('suspect_result_form_link').observe('click', function(e) {
       e.preventDefault();
       $('suspect_report_form').toggleClassName('hidden');
       return false;
@@ -87,44 +100,44 @@
 
 
   function submitSuspectResults() {
-	new Ajax.Request('<%=suspect_survey_report_path%>', {
-		'method': 'post',
-		'parameters': 'comment=' + $('comment').value,
-		'requestHeaders': {'Accept':'application/json'},
-		'onSuccess': function(transport) {
-			flashSuccess();
-		}
-	});
-	return false;	
+  new Ajax.Request('<%=suspect_survey_report_path%>', {
+    'method': 'post',
+    'parameters': 'comment=' + $('comment').value,
+    'requestHeaders': {'Accept':'application/json'},
+    'onSuccess': function(transport) {
+      flashSuccess();
+    }
+  });
+  return false; 
   }
 
   function flashSuccess(){
-	$('success_notification').toggleClassName('hidden');
-	$('success_report_message').highlight();
-	
-	setTimeout( "hideForm();", 2000);
-	return false;
+  $('success_notification').toggleClassName('hidden');
+  $('success_report_message').highlight();
+  
+  setTimeout( "hideForm();", 2000);
+  return false;
   }
 
   function hideForm(){
-	$('success_notification').toggleClassName('hidden');
-	$('suspect_report_form').toggleClassName('hidden');
-	return false;
+  $('success_notification').toggleClassName('hidden');
+  $('suspect_report_form').toggleClassName('hidden');
+  return false;
 }
 
 function toggleWageFormatAndLink(){
-	//update format links
-	if ($('pdf_link').href.include("Hourly")){
-	    $('pdf_link').href = $('pdf_link').href.replace("Hourly", "Annually");
-		$('wage_format_link').innerHTML = "Hourly";
-	} else {
-		$('pdf_link').href = $('pdf_link').href.replace("Annually", "Hourly");
-		$('wage_format_link').innerHTML = "Annually"
-	}
-	//then update all of the values
-	$$('dl.WageResponse', 'dl.BaseWageResponse').each(function(elem) {
-		items = elem.toggleClassName('hidden');
-		});
-	return false;
+  //update format links
+  if ($('pdf_link').href.include("Hourly")){
+      $('pdf_link').href = $('pdf_link').href.replace("Hourly", "Annually");
+    $('wage_format_link').innerHTML = "Hourly Format";
+  } else {
+    $('pdf_link').href = $('pdf_link').href.replace("Annually", "Hourly");
+    $('wage_format_link').innerHTML = "Annual Format"
+  }
+  //then update all of the values
+  $$('dl.WageResponse', 'dl.BaseWageResponse').each(function(elem) {
+    items = elem.toggleClassName('hidden');
+    });
+  return false;
 }
 </script>
