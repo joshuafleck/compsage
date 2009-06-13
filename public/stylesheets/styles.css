@@ -675,8 +675,12 @@ ol#new_questions {
 }
 
 ol#new_questions li {
-  padding: 10px 20px;
   margin: 0;
+}
+
+/* In IE6, with nested lists, the child li inherits from the parent li styles, thus we need to ensure the padding only applies within the li, but not to its children (otherwise the padding compounds) */
+ol#new_questions div.contents {
+  padding: 10px 20px; 
 }
 
 /* Survey preview */
