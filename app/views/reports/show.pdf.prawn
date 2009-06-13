@@ -36,19 +36,19 @@ pdf.bounding_box(
     pdf.table(
       [[
         "<b>Effective Date</b>",
-        "#{@survey.effective_date.to_s(:long_ordinal)}",
+        " #{@survey.effective_date.to_s(:long_ordinal)}",
         "<b>Completion Date</b>",
-        "#{@survey.end_date.to_date.to_s(:long_ordinal)}"
+        " #{@survey.end_date.to_date.to_s(:long_ordinal)}"
       ]],  
       :border_width => 0, 
       :horizontal_padding => 0, 
       :width => pdf.margin_box.width, 
-      :align => { 0=> :left, 1 => :left, 2 => :left, 3 => :left},
-      :column_widths => {0 => 80, 1 => 100, 2 => 95, 3 => 100})
+      :align => { 0=> :left, 1 => :left, 2 => :right, 3 => :left},
+      :column_widths => {0 => 73, 1 => 110, 2 => 90, 3 => 110})
 
   pdf.pad_top(inner_padding) do 
     pdf.text "Invitation List", :style => :bold
-  end    
+  end
   @invitations.each do |invitation| 
     if invitation.is_a?(SurveyInvitation) then
       pdf.text "#{invitation.invitee.name_and_location(false)}"
