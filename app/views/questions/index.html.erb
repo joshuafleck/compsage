@@ -5,7 +5,11 @@
 <script type="text/javascript">
   function createMasks() {
     $$('input.WageResponse, input.BaseWageResponse').each(function(field) {
-      var units = field.adjacent('select.units').first();
+      <% if @participation.errors.any? then %>
+        var units = field.up().adjacent('select.units').first();
+      <% else %>
+        var units = field.adjacent('select.units').first();
+      <% end %>
       new inputMask(field, 'currency', units);
     });
 

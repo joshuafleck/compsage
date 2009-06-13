@@ -125,7 +125,7 @@ function inputMask(element, data_type, units) {
       
       var formatted_number = integer_part + decimal_part;
       element.value = data_template.interpolate({'number': formatted_number});
-      
+
       // sanity range checking will warn users if response is not plausible
       question_id = element.id.match(/(\d+)/)[0];
       $("warning_"+question_id).update(check_response(number, units));
