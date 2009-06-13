@@ -99,7 +99,7 @@ function restripeQuestions() {
 
   var i = 0;
   
-  $$('ol#new_questions li').each( function(question) {  
+  $$('ol#new_questions li:not([id^="question_children"])').each( function(question) {  
 
     if (i % 2 == 0) {
       question.className = 'even';
@@ -297,7 +297,7 @@ function moveQuestion(index,direction,e) {
   e.stop();
   var question = $('question_'+index);
   var moveCompleted = false;
-  
+
   if(direction == 'higher' && question.previousSiblings().length > 1) {
     moveCompleted = true;
     

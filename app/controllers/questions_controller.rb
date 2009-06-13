@@ -63,11 +63,11 @@ class QuestionsController < ApplicationController
     @survey = current_organization.sponsored_surveys.find(params[:survey_id])
     @question = @survey.questions.find(params[:id])    
     
-    if @question.update_attributes(params[:question]) then
-      respond_to do |wants|
-        wants.js do
-          render(:partial => "question", :object => @question, :locals => {:level => @question.level, :include_children => false}).to_json
-        end
+    @question.update_attributes(params[:question]) 
+
+    respond_to do |wants|
+      wants.js do
+        render(:partial => "question", :object => @question, :locals => {:level => @question.level, :include_children => false}).to_json
       end
     end
     
