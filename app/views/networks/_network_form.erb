@@ -3,7 +3,7 @@
   <%= f.label :name, required("Network Name") %>
   <%= f.text_field :name, :size => 30 %>
   <%= f.label :description %>
-  <%= f.text_area :description, :rows => 4, :cols => 30 %>
+  <%= f.text_area :description %>
   <% if !@network.new_record? && @network.organizations.count > 1 then %>
     <p><a href="#" id="change_network_manager_link">Change network manager</a></p>
     <div id="change_network_manager" style="display: none;">

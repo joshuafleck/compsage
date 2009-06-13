@@ -23,9 +23,7 @@
             <%=text_area_tag(
               'discussion[body]',
               '', 
-              :id => "discussion_reply_#{discussion_topic.id}_body", 
-              :rows => 4, 
-              :cols => 30)
+              :id => "discussion_reply_#{discussion_topic.id}_body")
             %>
             <%=hidden_field_tag(
               'discussion[parent_discussion_id]',
