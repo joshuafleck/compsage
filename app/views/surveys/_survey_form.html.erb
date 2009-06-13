@@ -273,19 +273,16 @@ function deleteQuestion(index,e) {
   var question = $('question_'+index);
   var question_children = $('question_children_'+index);
   
-  new Effect.Parallel([
-    new Effect.Fade(question),
-    new Effect.Fade(question_children),
-  ],
-  {'duration': 0.5,
+  /* Parallel effects are erroring out in IE6, otherwise it would be nice to use them here */
+  new Effect.Fade(question,  {'duration': 0.5});
+   
+  new Effect.Fade(question_children,  {'duration': 0.5,
    'afterFinish': function() {
     question.remove();
     question_children.remove();
     restripeQuestions();
-   }
-  }
-  );
-  
+   }});
+   
   new Ajax.Request('<%= survey_questions_path(@survey) %>/' + index, {
     'method': 'delete',
     'onSuccess': updateParentCandidateQuestions
