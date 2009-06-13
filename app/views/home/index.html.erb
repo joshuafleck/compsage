@@ -3,7 +3,7 @@
    highlight_tab "home" %>
 <div id="banner">
   <div id="login">
-    <% form_tag session_path do %>
+    <% form_tag session_path(@form_options) do %>
       <label for="email">Email Address</label>
       <%= text_field_tag 'email', '', :class => 'email' %>
       <label for="password">Password</label>

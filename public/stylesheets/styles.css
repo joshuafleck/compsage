@@ -906,7 +906,7 @@ div.top_join_link {
   padding: 0 1em 0 1em;
 }
 
-.print_link {
+#print_link, #pdf_link {
   float: right;
   padding-right: 10px;
 }
@@ -916,7 +916,6 @@ div.top_join_link {
 }
 
 div#invitation_section_container {
-  margin-top: -1em;
   margin-bottom: 1em;
 }
 
@@ -926,9 +925,6 @@ div#invitation_section ul.invitations {
   padding: 0;
 }
 
-div#invitation_section h3 {
-  margin-top: 0;
-}
 /* Survey stalled */
 span.adequate_responses {
   color: green;

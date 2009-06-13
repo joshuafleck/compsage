@@ -2,9 +2,11 @@
 class SessionsController < ApplicationController
   layout 'front'
   filter_parameter_logging :password  
+  ssl_required :create
   # render new.rhtml
   def new
     @login = params[:email]
+    @form_options = Rails.env.production? ? {:protocol => 'https://', :only_path => false} : {}
   end
 
   def create
