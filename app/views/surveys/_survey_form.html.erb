@@ -20,7 +20,7 @@
     <%= f.select :days_running, (3..14).to_a.collect {|i| ["#{i} days", i]} %>
     <h3>Questions</h3>
     <ol id="new_questions" class="entity_list">
-      <%=render(:partial => "questions/question", :collection => @survey.top_level_questions, :locals => {:level => 0, :include_children => true})%>
+      <%=render(:partial => "questions/question", :collection => @survey.top_level_questions, :locals => {:level => 0})%>
     </ol>
     <label for='predefined_questions'>Add a Question</label>
     <select id="predefined_questions">
@@ -99,7 +99,7 @@ function restripeQuestions() {
 
   var i = 0;
   
-  $$('ol#new_questions li:not([id^="question_children"])').each( function(question) {  
+  $$('ol#new_questions li').each( function(question) {  
 
     if (i % 2 == 0) {
       question.className = 'even';
@@ -189,10 +189,10 @@ function addQuestion(e) {
 }
 
 /** 
- * This will handle the response of question_controller.create, which could be n number of list items.
+ * This will handle the response of question_controller.create/update, which could be n number of list items.
  * This will add the question items to the DOM, and initialize the observers
  */
-function insertQuestions(questions, parent_question_id) {
+function insertQuestions(questions, parent_question_id, replacing_question_id) {
 
     //Determine the IDs of the questions we have added
     question_ids = [];
@@ -200,23 +200,30 @@ function insertQuestions(questions, parent_question_id) {
       question_ids.push(question.match(/(\d+)/).first());
     });
 
-    if(parent_question_id) {    
-      $('question_children_'+parent_question_id).insert(questions, { 'position':'bottom' });
+    var isInsertion = false;
+    if (replacing_question_id) {
+      Element.replace($('question_'+replacing_question_id), questions);
+    } else {
+      isInsertion = true;
+      if(parent_question_id) {    
+        $('question_children_'+parent_question_id).insert(questions, { 'position':'bottom' });
+      } else {
+        $('new_questions').insert(questions, { 'position':'bottom' });
+      }
     }
-    else {
-      $('new_questions').insert(questions, { 'position':'bottom' });
-    }
-    
-    question_ids.each( function(question_id) {
-      $('question_'+question_id).hide();
-      $('question_'+question_id).appear({'duration': 0.5});
-      observeQuestion(question_id);
-    });
     
     restripeQuestions();
-    
+
     updateParentCandidateQuestions();
-          
+         
+    question_ids.each( function(question_id) {
+      if(isInsertion) {
+        $('question_'+question_id).hide();
+        $('question_'+question_id).appear({'duration': 0.5});
+      }
+      observeQuestion(question_id);
+    });
+         
 };
 
 /**
@@ -242,10 +249,7 @@ function saveQuestion(index,e) {
     'method': 'put',
     'parameters': {'question[text]' : $F('question_'+index+'_text'), 'question[custom_question_type]' : $F('question_'+index+'_custom_question_type'), 'question[required]' : $('question_'+index+'_required').checked},
     'onSuccess' : function(transport) {
-      Element.replace($('question_'+index), transport.responseText);
-      observeQuestion(index);  
-      restripeQuestions();
-      updateParentCandidateQuestions();
+      insertQuestions(transport.responseText, null, index)
     }
   });
 
@@ -271,21 +275,16 @@ function cancelEditQuestion(index,e) {
 function deleteQuestion(index,e) {
   e.stop();
   var question = $('question_'+index);
-  var question_children = $('question_children_'+index);
   
-  /* Parallel effects are erroring out in IE6, otherwise it would be nice to use them here */
-  new Effect.Fade(question,  {'duration': 0.5});
-   
-  new Effect.Fade(question_children,  {'duration': 0.5,
+  new Effect.Fade(question, {'duration': 0.5,
    'afterFinish': function() {
     question.remove();
-    question_children.remove();
     restripeQuestions();
+    updateParentCandidateQuestions();
    }});
    
   new Ajax.Request('<%= survey_questions_path(@survey) %>/' + index, {
-    'method': 'delete',
-    'onSuccess': updateParentCandidateQuestions
+    'method': 'delete'
   });  
     
 }
@@ -297,33 +296,25 @@ function moveQuestion(index,direction,e) {
   e.stop();
   var question = $('question_'+index);
   var moveCompleted = false;
-
-  if(direction == 'higher' && question.previousSiblings().length > 1) {
+  
+  if(direction == 'higher' && question.previousSiblings().length > 0) {
     moveCompleted = true;
     
-    var sibling = question.previousSiblings()[1];
-    var sibling_children = question.previousSiblings()[0];
-    var question_children = question.nextSiblings()[0];
+    var sibling = question.previousSiblings().first();
     
     question.remove();
-    question_children.remove();
 
     new Insertion.Before(sibling, question);
-    new Insertion.After(question, question_children);
     
   }
-  else if (direction == 'lower' && question.nextSiblings().length > 2) {
+  else if (direction == 'lower' && question.nextSiblings().length > 0) {
     moveCompleted = true;
     
-    var sibling = question.nextSiblings()[1];
-    var sibling_children = question.nextSiblings()[2];
-    var question_children = question.nextSiblings()[0];
+    var sibling = question.nextSiblings().first();
     
     question.remove();
-    question_children.remove();
 
-    new Insertion.After(sibling_children, question);   
-    new Insertion.After(question, question_children);
+    new Insertion.After(sibling, question);  
      
   }
   
@@ -347,38 +338,52 @@ function moveQuestion(index,direction,e) {
  */
 function updateParentCandidateQuestions() {
 
-  //Retrieve the parent candidate questions from the server
-  new Ajax.Request('<%= survey_questions_path(@survey) %>/parent_candidates', {
-    'method': 'get',
-    'onSuccess' : function(transport) {
+  var parentCandidates = [];
+  
+  //Search for questions that can have follow-ups
+  $$('ol#new_questions li').each( function(question) {  
+
+    var id = question.id.match(/(\d+)/).first();
     
-      var questions = transport.responseText.evalJSON();
-      var followUpQuestionsDiv = $('follow_up_question');
-      
-      //Add all of the parent candidates as follow-up options
-      if(questions.length > 0) {
-        var selectBox = $('follow_up_question_select');
-        
-        //Remove any existing options
-        for(i = selectBox.length - 1; i > 0; i--) {
-          selectBox.remove(i);
-        }
-        
-        questions.each( function(question) {          
-          selectBox.options.add(new Element('option', { 'value':question.id }).update(question.text));          
-        });
-      
-        if(!followUpQuestionsDiv.visible()) {
-          followUpQuestionsDiv.appear({'duration': 0.5});
-        }
-      } 
-      else {
-        if(followUpQuestionsDiv.visible()) {
-          followUpQuestionsDiv.fade({'duration': 0.5});
-        }      
-      }
+    var isParentCandidate = $('question_display_type_'+id).innerHTML == 'Yes/No';
+    
+    if (isParentCandidate) {
+      parentCandidates.push([id,$('question_display_text_'+id).innerHTML]);
     }
+    
   });
+
+  var followUpQuestionsDiv = $('follow_up_question');
+      
+  //Add all of the parent candidates as follow-up options
+  if(parentCandidates.length > 0) {
+  
+    var selectBox = $('follow_up_question_select');
+    
+    //Remove any existing options
+    for(i = selectBox.length - 1; i > 0; i--) {
+      selectBox.remove(i);
+    }
+    
+    parentCandidates.each( function(question) {      
+      var optn = document.createElement("OPTION");
+      optn.text = question[1];
+      optn.value = question[0];
+      selectBox.options.add(optn);       
+    });
+  
+    if(!followUpQuestionsDiv.visible()) {
+      followUpQuestionsDiv.appear({'duration': 0.5});
+    }
+    
+  } 
+  else {
+  
+    if(followUpQuestionsDiv.visible()) {
+      followUpQuestionsDiv.fade({'duration': 0.5});
+    }  
+        
+  }
   
 }
 

@@ -26,9 +26,7 @@
     </div>
   </div>  
   </div>  
+  <ol id='<%="question_children_#{question.id}"%>' class='entity_list'>
+    <%=render(:partial => "questions/question", :collection => question.child_questions, :locals => {:level => level+1})%>
+  </ol>
 </li>
-<% if include_children then %>
-  <li id='<%="question_children_#{question.id}"%>'>
-    <%=render(:partial => "questions/question", :collection => question.child_questions, :locals => {:level => level+1, :include_children => true})%>
-  </li>
-<% end %>

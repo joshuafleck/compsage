@@ -188,6 +188,7 @@ textarea {
 
 #main_content {
   padding: 5px;
+  overflow: hidden; /* required for IE6, causes container to misalign otherwise */
 }
 
 #main_content.with_side_bar {
@@ -1110,10 +1111,12 @@ ul.entity_list, ol.entity_list {
   list-style-type: none;
 }
 
+ul.entity_list li.even, ol.entity_list li.even {
+  background-color: #FBFAF8;
+}
+
 ul.entity_list li.odd, ol.entity_list li.odd {
   background-color: #f1f3f0;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
 }
 
 label, div.label {

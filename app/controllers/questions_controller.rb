@@ -40,7 +40,7 @@ class QuestionsController < ApplicationController
       if @question.save then
         respond_to do |wants|
           wants.js do
-            render(:partial => "question", :object => @question, :locals => {:level => @question.level, :include_children => true}).to_json
+            render(:partial => "question", :object => @question, :locals => {:level => @question.level})
           end
         end
       end
@@ -51,7 +51,7 @@ class QuestionsController < ApplicationController
       
       respond_to do |wants|
         wants.js do
-          render(:partial => "question", :collection => @questions, :locals => {:level => @questions.first.level, :include_children => true}).to_json
+          render(:partial => "question", :collection => @questions, :locals => {:level => @questions.first.level})
         end
       end      
     
@@ -67,7 +67,7 @@ class QuestionsController < ApplicationController
 
     respond_to do |wants|
       wants.js do
-        render(:partial => "question", :object => @question, :locals => {:level => @question.level, :include_children => false}).to_json
+        render(:partial => "question", :object => @question, :locals => {:level => @question.level})
       end
     end
     
@@ -101,18 +101,6 @@ class QuestionsController < ApplicationController
     respond_to do |wants|
       wants.xml do
         head :status => :ok
-      end
-    end
-  end
-  
-  # questions that could have follow-up questions
-  def parent_candidates
-    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
-    @parent_candidates = @survey.questions.can_be_parent
-    
-    respond_to do |wants|
-      wants.js do
-        render :text => @parent_candidates.to_json
       end
     end
   end
