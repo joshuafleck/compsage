@@ -69,7 +69,7 @@ pdf.bounding_box(
     end   
     if question.adequate_responses? then
       pdf.pad_top(inner_padding) do
-        render :partial=> "#{question.report_type}.pdf.prawn",  :locals=>{:p_pdf=>pdf, :question => question}
+        render :partial=> "#{question.report_type}.pdf.prawn",  :locals=>{:p_pdf=>pdf, :question => question, :format => @format}
       end 
       if question.qualifications.any? then
         pdf.pad_top(inner_padding) do
