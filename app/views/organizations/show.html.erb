@@ -25,26 +25,55 @@
   <% if current_organization.owned_networks.any? then %>
     <% form_tag invitations_path do %>
       <label>Invite to a Network</label>
+      <div id="network_success" class="hidden">Invitation Sent</div>
       <%= hidden_field :organization, :id, :value => @organization.id %>
       <%= collection_select(:network, 
           :id, 
           current_organization.owned_networks, 
           :id, 
           :name) %>
-      <%= submit_tag "Send Network Invitation" %>
+      <input id="network_invitation_submit" type="submit" onclick="return false;" value="Send Network Invitation" />
     <% end %>
   <% end %>
   
   <% if current_organization.sponsored_surveys.running.any? then %>
     <% form_tag invitations_path do %>
       <label>Invite to a Survey</label>
+      <div id="survey_success" class="hidden">Invitation Sent</div>
+      <%= error_messages_for :invitation %>
       <%= hidden_field :organization, :id, :value => @organization.id %>
       <%= collection_select(:survey, 
           :id, 
           current_organization.sponsored_surveys.running, 
           :id, 
           :job_title) %>
-      <%= submit_tag "Send Survey Invitation" %>
+      <input id="survey_invitation_submit" type="submit" onclick="return false;" value="Send Survey Invitation" />
     <% end %>
   <% end %>
+<script type="text/javascript">
+function initializeObservers() {
+	 $('network_invitation_submit').observe('click', addNetworkInvitation);
+	 $('survey_invitation_submit').observe('click', addSurveyInvitation);
+}
+
+function addSurveyInvitation() {
+  $('network_success').addClassName('hidden');
+  new Ajax.Request('<%= surveys_path %>/' + $('survey_id').value + '/invitations', {
+    'method': 'post',
+    'parameters': {'organization_id':<%=@organization.id %>},
+    onFailure: function(){ alert('Something went wrong...') }
+  });
+  $('network_success').removeClassName('hidden');
+}
+
+function addNetworkInvitation() {
+  $('network_success').addClassName('hidden');
+  new Ajax.Request('<%= networks_path %>/' + $('network_id').value + '/invitations', {
+    'method': 'post',
+    'parameters': {'organization_id':<%=@organization.id %>}
+  });
+  $('network_success').removeClassName('hidden');
+}
+</script>
+<% content_for :initialize_js, "initializeObservers();"%>
 <% end %>
