@@ -40,6 +40,7 @@
     <% form_tag invitations_path do %>
       <label>Invite to a Survey</label>
       <div id="survey_success" class="hidden">Invitation Sent</div>
+      <div id="error_content"></div>
       <%= error_messages_for :invitation %>
       <%= hidden_field :organization, :id, :value => @organization.id %>
       <%= collection_select(:survey, 
@@ -57,13 +58,12 @@ function initializeObservers() {
 }
 
 function addSurveyInvitation() {
-  $('network_success').addClassName('hidden');
+  $('survey_success').addClassName('hidden');
   new Ajax.Request('<%= surveys_path %>/' + $('survey_id').value + '/invitations', {
     'method': 'post',
     'parameters': {'organization_id':<%=@organization.id %>},
-    onFailure: function(){ alert('Something went wrong...') }
+    onSuccess: function(e) { $('survey_success').removeClassName('hidden'); }
   });
-  $('network_success').removeClassName('hidden');
 }
 
 function addNetworkInvitation() {
