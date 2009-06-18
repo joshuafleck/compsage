@@ -15,7 +15,7 @@ function checkPercentResponse(response) {
  */
 function checkNumericResponse(response) {
   if(response < 0) {
-    return "Response is negative. Is this correct?";
+    return "Your response is negative. Is this correct?";
   }
 }
 
@@ -29,18 +29,18 @@ function checkWageResponse(response, units) {
   
   if(unitsType == 'Annually') {
     if(response < 10000) {
-      return "Response is below ten thousand dollars. Is this correct?";
+      return "Your response is below minimum wage. Is this correct?";
     }
     if(response > 1000000) {
-      return "Response exceeds one million dollars. Is this correct?";
+      return "Your response appears too large. Is this correct?";
     }   
   } 
   else if (unitsType == 'Hourly') {
     if(response < 6.55) {
-      return "Response is below minimum wage. Is this correct?";
+      return "Your response is below minimum wage. Is this correct?";
     }
     if(response > 500) {
-      return "Response exceeds 500 dollars per hour. Is this correct?";
+      return "Response appears too large. Is this correct?";
     }  
   }
 

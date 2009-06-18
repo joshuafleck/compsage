@@ -41,7 +41,7 @@
     <div id='follow_up_question' style='<%=@survey.questions.can_be_parent.size > 0 ? "" : "display:none;"%>'>
       <label for='follow_up_question_select' class='survey_question_label'>Add as a follow-up to</label>
       <select id='follow_up_question_select'>
-        <option value=''>Select another question</option>
+        <option value=''>Nothing</option>
         <%= options_from_collection_for_select(@survey.questions.can_be_parent,'id','text')%>
     </select>
     </div>
