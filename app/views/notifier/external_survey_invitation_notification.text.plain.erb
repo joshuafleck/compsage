@@ -1,4 +1,8 @@
-Your organization has been invited by <%=@invitation.inviter.name%> to participate in a CompSage compensation survey. By taking a few minutes to respond to this survey, you will be allowed to view the results of the survey for free. There is no signup required. Click here to get started: <%=url_for(survey_login_path(:survey_id => @survey.id, :key => @invitation.key, :only_path => false))%>
+Your organization has been invited by <%=@invitation.inviter.name%> to participate in a CompSage compensation survey.
+By taking a few minutes to respond to this survey, you will be allowed to view the results of the survey for free.
+There is no signup required. Go to the following link to get started.
+
+<%=url_for(survey_login_path(:survey_id => @survey.id, :key => @invitation.key, :only_path => false))%>
 
 The details of the survey are as follows:
 Job Title: <%=@survey.job_title%>
