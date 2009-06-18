@@ -18,7 +18,9 @@
   </div>
 <% else %>
   <div class="two_third_main_column">
+    <p>
     <%= button_to "Update Invitation List", send_pending_survey_invitations_path(@survey) %>&nbsp;or
     <%= link_to "Cancel", survey_path(@survey) %>
+    </p>
   </div>
 <% end %>
