@@ -58,6 +58,10 @@ class Question < ActiveRecord::Base
   def adequate_responses?
     self.responses.count >= self.response_class.minimum_responses_for_report
   end
+  
+  def adequate_responses_for_percentiles?
+    self.responses.count >= self.response_class.minimum_responses_for_percentiles
+  end
 
   # The qualifications for this question
   def qualifications

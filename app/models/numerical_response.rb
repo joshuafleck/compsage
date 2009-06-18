@@ -20,7 +20,7 @@ class NumericalResponse < Response
   def formatted_response
     number_with_delimiter(self.numerical_response)
   end
-
+  
   private
   # removes dollar signs and commas
   def sanitize_number(value)
