@@ -26,6 +26,7 @@
     <% form_tag invitations_path do %>
       <label>Invite to a Network</label>
       <div id="network_success" class="hidden">Invitation Sent</div>
+      <div id="network_error_content"></div>
       <%= hidden_field :organization, :id, :value => @organization.id %>
       <%= collection_select(:network, 
           :id, 
@@ -40,8 +41,7 @@
     <% form_tag invitations_path do %>
       <label>Invite to a Survey</label>
       <div id="survey_success" class="hidden">Invitation Sent</div>
-      <div id="error_content"></div>
-      <%= error_messages_for :invitation %>
+      <div id="survey_error_content"></div>
       <%= hidden_field :organization, :id, :value => @organization.id %>
       <%= collection_select(:survey, 
           :id, 
@@ -58,21 +58,34 @@ function initializeObservers() {
 }
 
 function addSurveyInvitation() {
-  $('survey_success').addClassName('hidden');
-  new Ajax.Request('<%= surveys_path %>/' + $('survey_id').value + '/invitations', {
+  hideNotifications();
+  new Ajax.Request('<%=invite_to_survey_organization_path(@organization.id)%>', {
     'method': 'post',
-    'parameters': {'organization_id':<%=@organization.id %>},
-    onSuccess: function(e) { $('survey_success').removeClassName('hidden'); }
+    'parameters': {'survey_id':$('survey_id').value}
   });
 }
 
 function addNetworkInvitation() {
-  $('network_success').addClassName('hidden');
-  new Ajax.Request('<%= networks_path %>/' + $('network_id').value + '/invitations', {
+  hideNotifications();
+  new Ajax.Request('<%=invite_to_network_organization_path(@organization.id)%>', {
     'method': 'post',
-    'parameters': {'organization_id':<%=@organization.id %>}
+    'parameters': {'network_id':$('network_id').value}
   });
-  $('network_success').removeClassName('hidden');
+}
+
+function showSurveySuccessMessage() {
+   $('survey_success').removeClassName('hidden');
+}
+
+function showNetworkSuccessMessage() {
+   $('network_success').removeClassName('hidden');
+}
+
+function hideNotifications(){
+  $('network_error_content').update('');
+  $('survey_error_content').update('');
+  $('survey_success').addClassName('hidden');
+  $('network_success').addClassName('hidden');
 }
 </script>
 <% content_for :initialize_js, "initializeObservers();"%>

@@ -56,4 +56,27 @@ class OrganizationsController < ApplicationController
       end
     end
   end
+  
+  #JS only functions for inviting an organization to survey and network
+  def invite_to_survey
+    @organization = Organization.find(params[:id]) 
+    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
+    @invitation = @survey.invitations.new(:inviter => current_organization, :invitee => @organization)
+    
+    @invitation.save
+    respond_to do |wants|
+      wants.js
+    end
+  end
+  
+  def invite_to_network
+    @network = current_organization.owned_networks.find(params[:network_id]) 
+    @organization = Organization.find(params[:id])
+    @invitation = @network.invitations.new(:invitee => @organization, :inviter => current_organization)
+    
+    @invitation.save
+    respond_to do |wants|
+      wants.js
+    end
+  end
 end
