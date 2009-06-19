@@ -66,12 +66,18 @@ function setupFollowupForList(list, parent_questions) {
     var sub_list = item.select('ol').first();
     var questions = item.childElements().first().select('input');
     if(sub_list) {
-      questions.invoke('observe', 'click', function(e) {
-        if(parseInt(e.target.value) == 0)
-          enableList(sub_list);
-        else
-          disableList(sub_list);
+      questions.each(function(input){
+        //ignore those of the type qualification
+        if(!input.id.include('qualification')) {
+          input.observe('click', function(e) {
+            if(parseInt(e.target.value) == 0)
+              enableList(sub_list);
+            else
+              disableList(sub_list);
+          });
+        }
       });
+      
       if(!questions.any(function(q) {return q.checked && parseInt(q.value) == 0}))
         disableList(sub_list);
       setupFollowupForList(sub_list, questions);

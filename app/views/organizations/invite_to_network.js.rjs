@@ -1,0 +1,6 @@
+if @invitation.valid? then
+  page['network_error_content'].replace_html ''
+  page.call :showNetworkSuccessMessage
+else
+  page['network_error_content'].replace_html error_messages_for(:invitation)
+end
