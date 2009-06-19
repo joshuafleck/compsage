@@ -613,6 +613,7 @@ span.sponsor a:hover, div.sponsor a:hover {
 div.breadcrumbs {
   text-align: center;
   overflow: hidden;
+  width: 100%;/* width is required for IE6, otherwise, the invitation headers got too close to the breadcrumbs */
 }
 
 div.breadcrumbs img {
@@ -661,6 +662,7 @@ div.submit_row {
   border-top: 1px solid #eee;
   border-bottom: 1px solid #ddd;
   clear: both;
+  width: 745px; /* A hard-coded width is required for IE6 to prevent overflow */
 }
 
 div.submit_row .previous {
@@ -690,6 +692,10 @@ ol#new_questions div.contents {
   border: 1px solid #000;
   padding: 0 20px 20px 20px;
   margin: 20px;
+}
+
+p.preview_text {
+  width: 100%; /* Required for IE6 to ensure proper spacing between text and breadcrumbs */
 }
 
 /* Invitations Page */
