@@ -231,3 +231,68 @@ describe OrganizationsController, "handling GET /organizations/search without se
   end
     
 end
+
+describe OrganizationsController, "handling PUT /organizations/1/invite_to_survey" do
+  before do
+    @current_organization = Factory.create(:organization)
+    login_as(@current_organization)
+    
+    @survey = Factory.create(:survey, :sponsor => @current_organization)
+    @current_organization.sponsored_surveys.stub!(:find).and_return(@survey)
+    
+    @other_organization = Factory(:organization)
+    Organization.stub!(:find).and_return(@other_organization)
+  end
+  
+  def do_post
+    post :invite_to_survey, :id => @other_organization.id, :survey_id => @survey.id
+  end
+  
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_post 
+  end
+  
+  it "should find the organization to invite" do
+    Organization.should_receive(:find).at_least(:once).and_return(@other_organization)
+    do_post
+  end
+
+  it "should create an internal invitation to the survey" do
+    @survey.invitations.should_receive(:new).and_return(Invitation.new)
+    do_post
+  end
+  
+end
+
+describe OrganizationsController, "handling PUT /organizations/1/invite_to_network" do
+  before do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
+    @network = Factory(:network, :owner => @current_organization)
+    @current_organization.owned_networks.stub(:find).and_return(@network)
+    
+    @other_organization = Factory(:organization)
+    Organization.stub!(:find).and_return(@other_organization)
+  end
+  
+  def do_post
+    post :invite_to_network, :id => @other_organization.id, :network_id => @network.id
+  end
+  
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_post
+  end
+  
+  it "should find the organization to invite" do
+    Organization.should_receive(:find).at_least(:once).and_return(@other_organization)
+    do_post
+  end
+
+  it "should create an internal invitation to the network" do
+    @network.invitations.should_receive(:new).and_return(Invitation.new(:invitee => @other_organization))
+    do_post
+  end
+end
+
