@@ -3,7 +3,7 @@ body {
   background: #faf6f0 url('../images/header_background.gif') repeat-x;
   margin: 0;
   padding: 0;
-  font-family: 'Adobe Garamond Pro', 'Adobe Garamond', 'AGaramond', 'Hoefler Text', 'Baskerville', 'Times New Roman', serif;
+  font-family: 'Hoefler Text', 'Baskerville', 'Times New Roman', serif;
   color: #333;
   font-size: 1em;
 }
@@ -136,6 +136,7 @@ textarea {
 #header #nav.join_nav li#join,
 #header #nav.how_nav li#how, 
 #header #nav.surveys_nav li#surveys_nav,
+#header #nav.surveys_nav li#surveys,
 #header #nav.networks_nav li#networks_nav {
   background: url('../images/selected_menu_item.gif') bottom center no-repeat;
 }
