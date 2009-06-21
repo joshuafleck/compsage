@@ -5,7 +5,7 @@ If you would like to participate in this survey, go to: <%= @recipient.is_a?(Ext
 Survey: <%=@survey.job_title%>
 Description: <%=@survey.description%>
 Sponsor: <%=@survey.sponsor.name%>
-Response deadline: <%=time_ago_in_words(@survey.end_date)%>
+Response deadline: <%=better_time_ago_in_words(@survey.end_date)%>
 
 Thanks,
 CompSage.com

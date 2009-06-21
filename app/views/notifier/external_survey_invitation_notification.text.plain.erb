@@ -7,7 +7,7 @@ There is no signup required. Go to the following link to get started.
 The details of the survey are as follows:
 Job Title: <%=@survey.job_title%>
 Description: <%=@survey.description%>
-Response deadline: <%=time_ago_in_words(@survey.end_date)%>
+Response deadline: <%=better_time_ago_in_words(@survey.end_date)%>
 Sponsor: <%=@survey.sponsor.name%>
 
 Thanks,

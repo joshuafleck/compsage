@@ -5,7 +5,7 @@
   <div id="invitation_list">
     <% if @participation.nil? then %>
       <%=link_to image_tag("respond_button.gif"), survey_questions_path(@survey)%>
-      <div class="deadline">Participation deadline in <%=time_ago_in_words(@survey.end_date)%></div>
+      <div class="deadline">Participation deadline in <%=better_time_ago_in_words(@survey.end_date)%></div>
     <%else%>
       You responded on <%=@participation.created_at.strftime("%B %d")%>.<br />
       <%=link_to "Edit your response.", survey_questions_path(@survey)%>

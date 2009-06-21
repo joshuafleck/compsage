@@ -14,7 +14,7 @@ By taking a few minutes to respond to this survey, you will get the survey resul
   <br />
   <b>Sponsor: </b><%=@survey.sponsor.name%>
   <br />
-  <b>Response deadline: </b><%=time_ago_in_words(@survey.end_date)%>
+  <b>Response deadline: </b><%=better_time_ago_in_words(@survey.end_date)%>
 </p>
 <p>
   Thanks,

@@ -69,4 +69,5 @@ module ApplicationHelper
   def auto_link_new_window(text)
     auto_link(text, :html => {:target => '_blank'})
   end
+  
 end

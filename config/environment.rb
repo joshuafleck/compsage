@@ -21,4 +21,6 @@ Rails::Initializer.run do |config|
   config.load_paths += ["app/workers", "app/builders"]
 end
 
+# This will include our custom DateHelper method: 'better_time_ago_in_words' in ActionView so it is accessible to our views and email templates
+ActionView::Base.send(:include,BetterDateHelper)
 
