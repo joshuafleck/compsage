@@ -125,6 +125,12 @@ function liveOrganizationSearch(value, suggest) {
     'requestHeaders': {'Accept':'application/json'},
     'onSuccess': function(transport) {
       suggest(transport.responseText.evalJSON());
+    },
+    'onCreate': function() {
+      $('live_load_indicator').show();
+    },
+    'onComplete': function() {
+      $('live_load_indicator').hide();
     }
   });
 }
@@ -132,7 +138,9 @@ function liveOrganizationSearch(value, suggest) {
 function addInvitation(organization) {
   new Ajax.Request('<%= survey_invitations_path(@survey) %>', {
     'method': 'post',
-    'parameters': {'organization_id': organization.id}
+    'parameters': {'organization_id': organization.id},
+    'onCreate': function() {$('submit_load_indicator').show();},
+    'onComplete': function() {$('submit_load_indicator').hide();}
   });
 }
 
@@ -141,7 +149,9 @@ function addInvitationByForm(e) {
   var org_name = $F('external_invitation_organization_name');
   new Ajax.Request('<%= survey_invitations_path(@survey) %>', {
     'method': 'post',
-    'parameters': $('invitation_form').serialize()
+    'parameters': $('invitation_form').serialize(),
+    'onCreate': function() {$('submit_load_indicator').show();},
+    'onComplete': function() {$('submit_load_indicator').hide();}
   });
 }
 

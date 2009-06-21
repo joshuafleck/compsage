@@ -50,7 +50,10 @@
         <%= options_from_collection_for_select(@survey.questions.can_be_parent,'id','text')%>
     </select>
     </div>
-    <input id="question_submit" class="question_submit" type="submit" value="Add" />
+    <div>
+      <input id="question_submit" class="question_submit" type="submit" value="Add" />
+      <%= image_tag 'load_indicator.gif', :class => 'load_indicator', :id => 'load_indicator', :style => 'display:none;' %>
+    </div>
     <div class="submit_row">
       <% if @survey.pending? %>
         <input id="form_submit" type="submit" value="Next &ndash; Create Invitation List" class="next" />
@@ -159,13 +162,14 @@ function addQuestion(e) {
       $('custom_question_warning').update('Question text is required');
       return false;
     }
-    
     new Ajax.Request('<%= survey_questions_path(@survey) %>', {
       'method': 'post',
       'parameters': {'question[text]' : $F('custom_question_text'), 'question[custom_question_type]' : $F('custom_question_response'), 'question[parent_question_id]' : selectedParentQuestion},
       'onSuccess' : function(transport) {
         insertQuestions(transport.responseText, selectedParentQuestion);
-      }
+        },
+      'onCreate':function() {$('load_indicator').show();},
+      'onComplete':function() {$('load_indicator').hide();}
     }); 
     
     $('custom_question_text').clear();
@@ -182,7 +186,9 @@ function addQuestion(e) {
       'parameters': {'predefined_question_id' : selectedQuestion, 'parent_question_id' : selectedParentQuestion},
       'onSuccess' : function(transport) {
         insertQuestions(transport.responseText, selectedParentQuestion);
-      }
+      },
+      'onCreate':function() {$('load_indicator').show();},
+      'onComplete':function() {$('load_indicator').hide();}
     });   
       
   }  

@@ -8,6 +8,10 @@
     <div id="external_invitation_organization_name_wrapper">
       <label for="external_invitation_organization_name"><%= required('Organization Name') %></label>
       <%= f.text_field :organization_name, :size => 30 %>
+      <span id="live_load_indicator" class="load_indicator_message" style="display: none;">
+        <%= image_tag 'load_indicator.gif', :class => 'load_indicator' %>
+        Searching for firms...
+      </span>
       <div id="search_results" class="autocomplete" style="display:none;"></div>
     </div>
     <div id="external_invitation_form">
@@ -17,6 +21,9 @@
       </div>
 
       <input id="external_invitation_submit" type="submit" value="Add" />
+      <span id="submit_load_indicator" style="display: none;">
+        <%= image_tag 'load_indicator.gif', :class => 'load_indicator' %>
+      </span>
     </div>
   </div>
 <% end %>

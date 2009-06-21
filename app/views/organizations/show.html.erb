@@ -1,7 +1,6 @@
 <% title @organization.name %>
 <% highlight_tab "networks" %>
 <h2><%=@organization.name%></h2>
-<%= link_to 'Go Back', request.env['HTTP_REFERER'] %>
 <%= flash_messages %>
 <% if !@organization.logo.nil? then %>
   <p><%=image_tag @organization.logo.public_filename %></p>
@@ -32,8 +31,10 @@
           :id, 
           current_organization.owned_networks, 
           :id, 
-          :name) %>
-      <input id="network_invitation_submit" type="submit" onclick="return false;" value="Send Network Invitation" />
+          :name,
+          :prompt => "Select a network...") %>
+      <input id="network_invitation_submit" type="submit" value="Send" />
+      <%= image_tag 'load_indicator.gif', :class => 'load_indicator', :id => 'network_load_indicator', :style => 'display:none;' %>
     <% end %>
   <% end %>
   
@@ -47,29 +48,41 @@
           :id, 
           current_organization.sponsored_surveys.running, 
           :id, 
-          :job_title) %>
-      <input id="survey_invitation_submit" type="submit" onclick="return false;" value="Send Survey Invitation" />
+          :job_title,
+          :prompt => 'Select a survey...') %>
+      <input id="survey_invitation_submit" type="submit" value="Send" />
+      <%= image_tag 'load_indicator.gif', :class => 'load_indicator', :id => 'survey_load_indicator', :style => 'display:none;' %>
     <% end %>
   <% end %>
+  <br />
+  <%= link_to 'Go Back', request.env['HTTP_REFERER'] %>
 <script type="text/javascript">
 function initializeObservers() {
-	 $('network_invitation_submit').observe('click', addNetworkInvitation);
-	 $('survey_invitation_submit').observe('click', addSurveyInvitation);
+  $('network_invitation_submit').observe('click', addNetworkInvitation);
+  $('survey_invitation_submit').observe('click', addSurveyInvitation);
 }
 
-function addSurveyInvitation() {
+function addSurveyInvitation(e) {
+  if(e)
+    e.stop();
   hideNotifications();
   new Ajax.Request('<%=invite_to_survey_organization_path(@organization.id)%>', {
     'method': 'post',
-    'parameters': {'survey_id':$('survey_id').value}
+    'parameters': {'survey_id':$('survey_id').value},
+    'onCreate': function() {$('survey_load_indicator').show();},
+    'onComplete': function() {$('survey_load_indicator').hide();}
   });
 }
 
-function addNetworkInvitation() {
+function addNetworkInvitation(e) {
+  if(e)
+    e.stop();
   hideNotifications();
   new Ajax.Request('<%=invite_to_network_organization_path(@organization.id)%>', {
     'method': 'post',
-    'parameters': {'network_id':$('network_id').value}
+    'parameters': {'network_id':$('network_id').value},
+    'onCreate': function() {$('network_load_indicator').show();},
+    'onComplete': function() {$('network_load_indicator').hide();}
   });
 }
 

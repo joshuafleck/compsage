@@ -85,6 +85,12 @@
       'requestHeaders': {'Accept':'application/json'},
       'onSuccess': function(transport) {
         suggest(transport.responseText.evalJSON());
+      },
+      'onCreate': function() {
+        $('live_load_indicator').show();
+      },
+      'onComplete': function() {
+        $('live_load_indicator').hide();
       }
     });
   }

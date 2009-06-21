@@ -647,7 +647,6 @@ form.new_survey textarea, form.edit_survey textarea {
 }
 
 .question_submit, .discussion_submit {
-  display: block; 
   margin-top: 5px;
 }
 
@@ -1235,6 +1234,14 @@ a.editor_cancel_link {
   padding-left: 1em;
 }
 
+img.load_indicator {
+  vertical-align: middle;
+}
+
+span.load_indicator_message {
+  color: #555;
+  font-size: 0.9em;
+}
 /* inline error description for survey fields eg. */
 div.error_description {
   display: inline;
