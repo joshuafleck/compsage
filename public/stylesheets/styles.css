@@ -686,6 +686,14 @@ ol#new_questions div.contents {
   padding: 10px 20px; 
 }
 
+div.info_box {
+  float: right;
+  width: 31%;
+  margin-left: 1em;
+  margin-top: 1em;
+  color: #444;
+}
+
 /* Survey preview */
 #survey_preview_box {
   background: #fff url('/images/preview_background.gif') right repeat-y;

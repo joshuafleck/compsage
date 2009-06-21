@@ -11,6 +11,11 @@
 <div id="step_container">
   <%=flash_messages%>
   <% form_for(@survey) do |f| %>
+    <% if @survey.pending? then %>
+      <div class="info_box">
+        <%= link_to "Tips for survey sponsorship", home_path('tips'), :target => '_blank' %>
+      </div>
+    <% end %>
     <%= error_messages_for :survey %>
     <%= f.label :job_title, required("Job title") %>
     <%= f.text_field :job_title, :size => 40 %>
