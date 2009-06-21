@@ -182,6 +182,11 @@ describe Organization do
   	@organization.attributes = valid_organization_attributes.with(:zip_code => '1234')
     @organization.should have(1).errors_on(:zip_code)
   end
+
+  it "Should be invalid with a zip code that is not numbers" do
+    @organization.attributes = valid_organization_attributes.with(:zip_code => 'adamm')
+    @organization.should have(1).errors_on(:zip_code)
+  end
   
 end
 

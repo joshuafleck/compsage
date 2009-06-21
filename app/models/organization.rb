@@ -71,7 +71,7 @@ class Organization < ActiveRecord::Base
   validates_format_of       :email,    :with => RE_EMAIL_OK, :message => MSG_EMAIL_BAD
 
   validates_presence_of     :zip_code
-  validates_length_of       :zip_code, :is => 5
+  validates_format_of       :zip_code, :with => /^\d{5}$/
   validates_length_of       :location, :maximum => 60, :allow_nil => :true
   validates_length_of       :industry, :maximum => 100, :allow_nil => :true
   validates_length_of       :contact_name, :maximum => 100, :allow_nil => :true
