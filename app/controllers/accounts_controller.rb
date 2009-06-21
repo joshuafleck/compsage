@@ -2,64 +2,64 @@ class AccountsController < ApplicationController
   before_filter :login_required, :except => [ :new , :create, :forgot, :reset ]
   layout :logged_in_or_invited_layout 
   filter_parameter_logging :password
-	
-	def show
-	
-	  @organization = current_organization
-	  
-	  respond_to do |wants|
+  
+  def show
+  
+    @organization = current_organization
+    
+    respond_to do |wants|
       wants.html
       wants.xml do
-      	render :xml => @organization.to_xml 
+        render :xml => @organization.to_xml 
       end
     end
-	end
-	
-	def new
-	
-	  # save the network invitation in the session, in case the user navigates away from this page
-	  session[:external_network_invitation] = ExternalNetworkInvitation.find_by_key(params[:key]) unless params[:key].blank?
-	  
-	  #The external invitation can be found in the session if it is an external survey invitation, 
-	  # otherwise, check the URL for a key
-	  @external_invitation = current_survey_invitation || session[:external_network_invitation]
-	  
-	  #if a key is provided, also check for a pending account
-	  @pending_account = PendingAccount.find_by_key(params[:key])
-	  
-	  if @external_invitation then
-  	  #Prepopulate the name and email fields automagically
-  	  @organization = Organization.new({
-  	    :name => @external_invitation.organization_name,
-  	    :contact_name => @external_invitation.name,
-  	    :email => @external_invitation.email
-  	  }) 
-	  elsif @pending_account
-	    @organization = Organization.new({
-	      :name => @pending_account.organization_name,
-	      :email => @pending_account.email,
-	      :contact_name => @pending_account.contact_first_name + " " + @pending_account.contact_last_name,
-	    })
-	  else
-	    redirect_to new_session_path
-	  end
-	      
-	end
-	
-	def edit
-  	@organization = current_organization
-	end
-	
-	def create
-	
-	  @external_invitation = ExternalInvitation.find_by_key(params[:key])
-	  @pending_account = PendingAccount.find_by_key(params[:key])
-	  
-	  @organization = Organization.new(params[:organization])
+  end
+  
+  def new
+  
+    # save the network invitation in the session, in case the user navigates away from this page
+    session[:external_network_invitation] = ExternalNetworkInvitation.find_by_key(params[:key]) unless params[:key].blank?
+    
+    #The external invitation can be found in the session if it is an external survey invitation, 
+    # otherwise, check the URL for a key
+    @external_invitation = current_survey_invitation || session[:external_network_invitation]
+    
+    #if a key is provided, also check for a pending account
+    @pending_account = PendingAccount.find_by_key(params[:key])
+    
+    if @external_invitation then
+      #Prepopulate the name and email fields automagically
+      @organization = Organization.new({
+        :name => @external_invitation.organization_name,
+        :contact_name => @external_invitation.name,
+        :email => @external_invitation.email
+      }) 
+    elsif @pending_account
+      @organization = Organization.new({
+        :name => @pending_account.organization_name,
+        :email => @pending_account.email,
+        :contact_name => @pending_account.contact_first_name + " " + @pending_account.contact_last_name,
+      })
+    else
+      redirect_to new_session_path
+    end
+        
+  end
+  
+  def edit
+    @organization = current_organization
+  end
+  
+  def create
+  
+    @external_invitation = ExternalInvitation.find_by_key(params[:key])
+    @pending_account = PendingAccount.find_by_key(params[:key])
+    
+    @organization = Organization.new(params[:organization])
         
     #Save the organization and set the logo if there was a valid external invitation
     if @external_invitation && @organization.save then
-    	  	
+          
       #If the user was invited via network invitation, add the organization to the network and delete the invite
       if @external_invitation.is_a?(ExternalNetworkInvitation) then
         @organization.networks << @external_invitation.network
@@ -86,7 +86,7 @@ class AccountsController < ApplicationController
         @external_invitation.type = 'SurveyInvitation'
         @external_invitation.save!
         @survey_invitation = SurveyInvitation.find(@external_invitation.id)
-        @survey_invitation.aasm_state = @organization.participations.count > 0 ? 'fulfilled' : 'pending'
+        @survey_invitation.aasm_state = @organization.participations.count > 0 ? 'fulfilled' : 'sent'
         @organization.survey_invitations << @survey_invitation                
       
       end
@@ -139,12 +139,12 @@ class AccountsController < ApplicationController
         end
       end
     end
-	end
-	
-	def update
-	
-	  @organization = current_organization  
-     	    
+  end
+  
+  def update
+  
+    @organization = current_organization  
+          
     if @organization.update_attributes(params[:organization]) then
       respond_to do |wants|
         wants.html do
@@ -165,13 +165,13 @@ class AccountsController < ApplicationController
         end
       end
     end
-	end
-	
-	#forgot password functionality
-	def forgot
-	  if request.post?
-	    @organization = Organization.find_by_email(params[:email])
-	    if !@organization.nil? then
+  end
+  
+  #forgot password functionality
+  def forgot
+    if request.post?
+      @organization = Organization.find_by_email(params[:email])
+      if !@organization.nil? then
         @organization.create_reset_key
         Notifier.deliver_reset_password_key_notification(@organization)
         respond_to do |wants|

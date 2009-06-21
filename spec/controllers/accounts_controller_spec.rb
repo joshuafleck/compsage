@@ -132,6 +132,8 @@ describe AccountsController, " handling GET /account/new" do
   
 end
 
+# TODO: Make some specs for the bulk of the behavior in this controller.
+
 describe AccountsController, " handling POST /account" do
 
   before(:each) do
