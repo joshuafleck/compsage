@@ -260,15 +260,17 @@ function saveQuestion(index,e) {
     'method': 'put',
     'parameters': {'question[text]' : $F('question_'+index+'_text'), 'question[custom_question_type]' : $F('question_'+index+'_custom_question_type'), 'question[required]' : $('question_'+index+'_required').checked},
     'onSuccess' : function(transport) {
-      insertQuestions(transport.responseText, null, index)
+    
+      $('question_edit_display_'+index).blindUp({'duration': 0.25});    
+      $('question_display_'+index).blindDown({'duration': 0.25});
+      
+      insertQuestions(transport.responseText, null, index);
+      
     },
     'onCreate': function() {$('load_indicator_' + index).show();},
-    'onSuccess': function() {$('load_indicator_' + index).hide();}
+    'onComplete': function() {$('load_indicator_' + index).hide();}
   });
 
-  $('question_edit_display_'+index).blindUp({'duration': 0.25});    
-  $('question_display_'+index).blindDown({'duration': 0.25});
-  
 }
 
 /**
