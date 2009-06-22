@@ -20,7 +20,7 @@
   <% end %>
 </dl>
 
-<% if current_organization.sponsored_surveys.running.any? || current_organization.owned_networks.any? then %>
+<% if current_organization && (current_organization.sponsored_surveys.running.any? || current_organization.owned_networks.any?) then %>
   <% if current_organization.owned_networks.any? then %>
     <% form_tag invitations_path do %>
       <label>Invite to a Network</label>
@@ -54,8 +54,6 @@
       <%= image_tag 'load_indicator.gif', :class => 'load_indicator', :id => 'survey_load_indicator', :style => 'display:none;' %>
     <% end %>
   <% end %>
-  <br />
-  <%= link_to 'Go Back', request.env['HTTP_REFERER'] %>
 <script type="text/javascript">
 function initializeObservers() {
   $('network_invitation_submit').observe('click', addNetworkInvitation);
@@ -103,3 +101,5 @@ function hideNotifications(){
 </script>
 <% content_for :initialize_js, "initializeObservers();"%>
 <% end %>
+<br />
+<%= link_to 'Go Back', request.env['HTTP_REFERER'] %>

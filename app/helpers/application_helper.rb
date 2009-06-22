@@ -27,7 +27,12 @@ module ApplicationHelper
   
   def link_to_organization(organization, options = {})
     include_location = options.delete(:include_location) != false
-    link_to(include_location ? organization.name_and_location : organization.name, organization_path(organization),
+    if current_survey_invitation then
+      @path = organization_path(organization, :survey_id => current_survey_invitation.survey.id)
+    else
+      @path = organization_path(organization)
+    end
+    link_to(include_location ? organization.name_and_location : organization.name, @path,
         :title => "Contact: #{organization.contact_name} #{organization.city + ", " + organization.state unless organization.city.blank?}")
   end
 

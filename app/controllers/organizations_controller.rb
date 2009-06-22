@@ -1,7 +1,7 @@
 class OrganizationsController < ApplicationController
   before_filter :login_required, :only => [ :index, :search, :invite_to_survey, :invite_to_network ]
   before_filter :login_or_survey_invitation_required, :except => [ :index, :search, :invite_to_survey, :invite_to_network ]
-  layout 'logged_in'
+  layout :logged_in_or_invited_layout 
 
   def index
 	  
@@ -14,7 +14,18 @@ class OrganizationsController < ApplicationController
   end
   
   def show 
-    @organization = Organization.find(params[:id])   
+  
+    if params[:survey_id].blank?
+      @organization = Organization.find(params[:id])   
+    else # Logged in as a survey invitation- need to ensure the organization is invited/sponsoring that survey
+      @survey = Survey.find(params[:survey_id])
+      if params[:id] == @survey.sponsor.id.to_s then
+        @organization = @survey.sponsor
+      else 
+        @organization = @survey.invitees.find(params[:id])
+      end
+    end
+    
     if @organization == current_organization then
       redirect_to edit_account_path
     else

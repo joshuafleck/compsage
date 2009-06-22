@@ -21,6 +21,7 @@ class Survey < ActiveRecord::Base
   belongs_to :sponsor, :class_name => "Organization"
   has_many :discussions, :dependent => :destroy
   has_many :invitations, :class_name => 'SurveyInvitation', :dependent => :destroy
+  has_many :invitees, :class_name => 'Organization', :through => :invitations
   has_many :external_invitations, :class_name => 'ExternalSurveyInvitation'
   has_many :internal_and_external_invitations, :class_name => 'Invitation'
   has_many :questions, :dependent => :destroy, :order => "position"
