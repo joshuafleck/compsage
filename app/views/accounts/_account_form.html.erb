@@ -42,7 +42,7 @@
   <% form_row do %>
     <% form_box do %>
       <%=f.label :password, required('Password') %> 
-      <%=f.password_field :password, :size => 20 %>
+      <%=f.password_field :password, :size => 20, :autocomplete => "off" %>
     <% end %>
     <% form_box do %>
       <%=f.label :password_confirmation, required('Confirm password') %> 
@@ -57,7 +57,7 @@
     <% elsif @organization.new_record? %>
       <%=link_to "Cancel", new_session_path %>
     <% else %>
-      <%=link_to "Cancel", account_path %>
+      <%=link_to "Finished", root_path %>
     <% end %>
   </div>
 <% end %>
