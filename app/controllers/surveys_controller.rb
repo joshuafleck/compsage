@@ -2,7 +2,7 @@
   layout :logged_in_or_invited_layout 
   # we require a valid login if you are creating or editing a survey.
   before_filter :login_required, :only => [ :edit, :update, :create, :new, :index, :destroy, :billing ]
-  before_filter :login_or_survey_invitation_required, :except => [ :edit, :update, :create, :new, :index ]
+  before_filter :login_or_survey_invitation_required, :except => [ :edit, :update, :create, :new, :index, :destroy, :billing ]
   filter_parameter_logging :response  
  
   ssl_required :respond

@@ -1,5 +1,6 @@
 class OrganizationsController < ApplicationController
-  before_filter :login_required
+  before_filter :login_required, :only => [ :index, :search, :invite_to_survey, :invite_to_network ]
+  before_filter :login_or_survey_invitation_required, :except => [ :index, :search, :invite_to_survey, :invite_to_network ]
   layout 'logged_in'
 
   def index
