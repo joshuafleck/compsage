@@ -96,7 +96,6 @@ class AccountsController < ApplicationController
       
       respond_to do |wants|
         wants.html do
-          flash[:notice] = "Your account was created successfully."  
           #Log the user in, and bring them to the surveys page        
           organization = Organization.authenticate(@organization.email, params[:organization][:password])         
           # Set first_login in the session so we can show a tutorial if the user is new.
@@ -115,7 +114,6 @@ class AccountsController < ApplicationController
       @pending_account.destroy
       respond_to do |wants|
         wants.html do
-          flash[:notice] = "Your account was created successfully."  
           #Log the user in, and bring them to the surveys page        
           organization = Organization.authenticate(@organization.email, params[:organization][:password])         
           # Set first_login in the session so we can show a tutorial if the user is new.
