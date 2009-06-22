@@ -743,6 +743,12 @@ p.preview_text {
   clear: left;
 }
 
+#invite_network_list #networks li.network img.invite_indicator {
+  float: left;
+  padding: 2px 1px 0 2px;
+  clear: left;
+}
+
 #send_invitations ul {
   margin: 0;
   padding: 0;

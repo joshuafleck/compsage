@@ -5,7 +5,8 @@
     <ul id="networks" class="entity_list">
       <% @networks.each do |network| %>
         <li class="network" id="network_<%= network.id %>">
-          <a href="#" class="invite" title="Add network to invitation list"><%= image_tag "expand_button.gif", :alt => "Add network to invitation list" %></a>
+        <a href="#" class="invite" title="Add network to invitation list" id="network_<%= network.id %>_invite"><%= image_tag "expand_button.gif", :alt => "Add network to invitation list" %></a>
+          <%= image_tag "load_indicator_sm.gif", :id => "load_indicator_#{network.id}", :class => 'invite_indicator', :style => "display:none;" %>
           <div class="network_info_container">
             <%= network.name %><br />
             <a href="#" class="expand_network">Show Members</a>
@@ -25,7 +26,7 @@
       <% end %>
     </ul>
   <% else %>
-    <p>You're not in any networks! You can save time by <%= link_to "creating a network", new_network_path %> of
+    <p>You're not in any networks. In the future, you can save time by <%= link_to "creating a network", new_network_path %> of
     frequently used contacts.</p>
   <% end %>
 </div>
@@ -194,7 +195,9 @@ function inviteNetwork(network_id, e) {
   e.stop();
   new Ajax.Request('<%= survey_invitations_path(@survey) %>/create_for_network', {
     'method': 'post',
-    'parameters': {'network_id': network_id}
+    'parameters': {'network_id': network_id},
+    'onCreate': function() {$('load_indicator_' + network_id).show();$('network_' + network_id + '_invite').hide();},
+    'onComplete': function() {$('load_indicator_' + network_id).hide();$('network_' + network_id + '_invite').show();}
   });
 }
 </script>
