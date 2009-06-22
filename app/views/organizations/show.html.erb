@@ -12,8 +12,10 @@
   <% end %>
   <dt>Region:</dt>
   <dd><%= @organization.city %> <%= @organization.state %> <%= @organization.zip_code %></dd>
-  <dt>Contact:</dt>
-  <dd><%= @organization.contact_name %></dd>
+  <% unless @organization.contact_name.blank? %>
+    <dt>Contact:</dt>
+    <dd><%= @organization.contact_name %></dd>
+  <% end %>
   <% unless @organization.industry.blank? then %> 
     <dt>Industry:</dt>
     <dd><%= @organization.industry %></dd>

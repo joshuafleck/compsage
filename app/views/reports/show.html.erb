@@ -3,9 +3,6 @@
 <%= link_to_function("Print", "javascript:print()", :id => "print_link", :class => 'print_link') %>
 <%= link_to("Download as PDF", survey_report_path(@survey, :format => "pdf", :wage_format => @format ), :id => 'pdf_link', :class => "print_link") %>
 <h2><%=@survey.job_title%></h2>
-<%if logged_in_from_survey_invitation? then%>
-  <div class="top_join_link"><%= link_to "Sign up for CompSage", new_account_path, :class => "print_link" %></div>
-<% end %>
 <h4>Job Description</h4>
 <div class="description_box"><%=link_and_format(@survey.description)%></div>
 <div id="invitation_section_container">
