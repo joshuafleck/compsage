@@ -23,6 +23,7 @@
     <div class="question_submit">
       <input type="submit" value="Save" id='<%="question_save_#{question.id}"%>' /> or 
       <a id='<%="question_cancel_#{question.id}"%>' href=''>Cancel</a>
+      <%= image_tag 'load_indicator.gif', :class => 'load_indicator', :id => "load_indicator_#{question.id}", :style => 'display:none;' %>
     </div>
   </div>  
   </div>  

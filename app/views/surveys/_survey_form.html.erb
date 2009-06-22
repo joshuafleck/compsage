@@ -261,7 +261,9 @@ function saveQuestion(index,e) {
     'parameters': {'question[text]' : $F('question_'+index+'_text'), 'question[custom_question_type]' : $F('question_'+index+'_custom_question_type'), 'question[required]' : $('question_'+index+'_required').checked},
     'onSuccess' : function(transport) {
       insertQuestions(transport.responseText, null, index)
-    }
+    },
+    'onCreate': function() {$('load_indicator_' + index).show();},
+    'onSuccess': function() {$('load_indicator_' + index).hide();}
   });
 
   $('question_edit_display_'+index).blindUp({'duration': 0.25});    
