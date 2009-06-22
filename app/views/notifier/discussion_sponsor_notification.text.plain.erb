@@ -1,9 +1,9 @@
-A discussion for your survey "<%=@discussion.survey.job_title%>" has been posted.
+Someone has posted a question or comment for "<%=@discussion.survey.job_title%>".
 
 Subject: "<%=@discussion.root.subject%>"
 Message: "<%=@discussion.body%>"
 
-To respond to this discussion, go to: <%=url_for(survey_path(@discussion.survey, :only_path => false))%>
+To respond, go to: <%=url_for(survey_path(@discussion.survey, :only_path => false))%>
 
 Thanks,
 CompSage.com
