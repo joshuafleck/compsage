@@ -23,9 +23,8 @@
 <% if current_organization && (current_organization.sponsored_surveys.running.any? || current_organization.owned_networks.any?) then %>
   <% if current_organization.owned_networks.any? then %>
     <% form_tag invitations_path do %>
-      <label>Invite to a Network</label>
-      <div id="network_success" class="hidden">Invitation Sent</div>
-      <div id="network_error_content"></div>
+      <label for="network_id">Invite to a Network</label>
+      <div id="network_error_content" style="display: none;"></div>
       <%= hidden_field :organization, :id, :value => @organization.id %>
       <%= collection_select(:network, 
           :id, 
@@ -34,15 +33,15 @@
           :name,
           :prompt => "Select a network...") %>
       <input id="network_invitation_submit" type="submit" value="Send" />
+      <span id="network_success" style="display: none;">Invitation Sent</span>
       <%= image_tag 'load_indicator.gif', :class => 'load_indicator', :id => 'network_load_indicator', :style => 'display:none;' %>
     <% end %>
   <% end %>
   
   <% if current_organization.sponsored_surveys.running.any? then %>
     <% form_tag invitations_path do %>
-      <label>Invite to a Survey</label>
-      <div id="survey_success" class="hidden">Invitation Sent</div>
-      <div id="survey_error_content"></div>
+      <label for="survey_id">Invite to a Survey</label>
+      <div id="survey_error_content" style="display: none;"></div>
       <%= hidden_field :organization, :id, :value => @organization.id %>
       <%= collection_select(:survey, 
           :id, 
@@ -51,19 +50,28 @@
           :job_title,
           :prompt => 'Select a survey...') %>
       <input id="survey_invitation_submit" type="submit" value="Send" />
+      <span id="survey_success" style="display: none;">Invitation Sent</span>
       <%= image_tag 'load_indicator.gif', :class => 'load_indicator', :id => 'survey_load_indicator', :style => 'display:none;' %>
     <% end %>
   <% end %>
 <script type="text/javascript">
 function initializeObservers() {
-  $('network_invitation_submit').observe('click', addNetworkInvitation);
-  $('survey_invitation_submit').observe('click', addSurveyInvitation);
+  <% if current_organization.owned_networks.any? then %>
+    $('network_invitation_submit').observe('click', addNetworkInvitation);
+    hideNetworkNotifications();
+    clearNetworkForm();
+  <% end %>
+  <% if current_organization.sponsored_surveys.running.any? then %>
+    $('survey_invitation_submit').observe('click', addSurveyInvitation);
+    hideSurveyNotifications();
+    clearSurveyForm();
+  <% end %>
 }
 
 function addSurveyInvitation(e) {
   if(e)
     e.stop();
-  hideNotifications();
+  hideSurveyNotifications();
   new Ajax.Request('<%=invite_to_survey_organization_path(@organization.id)%>', {
     'method': 'post',
     'parameters': {'survey_id':$('survey_id').value},
@@ -75,7 +83,7 @@ function addSurveyInvitation(e) {
 function addNetworkInvitation(e) {
   if(e)
     e.stop();
-  hideNotifications();
+  hideNetworkNotifications();
   new Ajax.Request('<%=invite_to_network_organization_path(@organization.id)%>', {
     'method': 'post',
     'parameters': {'network_id':$('network_id').value},
@@ -84,19 +92,40 @@ function addNetworkInvitation(e) {
   });
 }
 
+function clearSurveyForm() {
+  $('survey_id').clear();
+}
+
+function clearNetworkForm() {
+  $('network_id').clear();
+}
+
 function showSurveySuccessMessage() {
-   $('survey_success').removeClassName('hidden');
+   $('survey_success').show();
 }
 
 function showNetworkSuccessMessage() {
-   $('network_success').removeClassName('hidden');
+   $('network_success').show();
 }
 
-function hideNotifications(){
+function showSurveyErrorMessage() {
+   $('survey_error_content').show();
+}
+
+function showNetworkErrorMessage() {
+   $('network_error_content').show();
+}
+
+function hideNetworkNotifications(){
   $('network_error_content').update('');
+  $('network_error_content').hide();
+  $('network_success').hide();
+}
+
+function hideSurveyNotifications(){
   $('survey_error_content').update('');
-  $('survey_success').addClassName('hidden');
-  $('network_success').addClassName('hidden');
+  $('survey_error_content').hide();
+  $('survey_success').hide();
 }
 </script>
 <% content_for :initialize_js, "initializeObservers();"%>

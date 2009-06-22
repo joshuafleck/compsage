@@ -1,6 +1,9 @@
 if @invitation.valid? then
   page['survey_error_content'].replace_html ''
+  page.call :hideSurveyNotifications
   page.call :showSurveySuccessMessage
 else
   page['survey_error_content'].replace_html error_messages_for(:invitation)
+  page.call :showSurveyErrorMessage
 end
+
