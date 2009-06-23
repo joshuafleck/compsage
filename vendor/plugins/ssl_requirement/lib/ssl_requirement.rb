@@ -42,7 +42,10 @@ module SslRequirement
     end
     
     def ssl_allowed?
-      (self.class.read_inheritable_attribute(:ssl_allowed_actions) || []).include?(action_name.to_sym)
+      # TODO: TEMPORARY HACK to allow SSL on all pages. We should instead only encrypt sensitive pages, but we need
+      # to do so in a way that does not bother IE6.
+      return true
+      # (self.class.read_inheritable_attribute(:ssl_allowed_actions) || []).include?(action_name.to_sym)
     end
 
   private
@@ -50,7 +53,8 @@ module SslRequirement
       return true if ssl_allowed?
 
       if ssl_required? && !request.ssl?
-        redirect_to "https://" + request.host + request.request_uri
+        host = request.subdomains.any? ? request.host : "www." + request.host
+        redirect_to "https://" + host + request.request_uri
         flash.keep
         return false
       elsif request.ssl? && !ssl_required?
