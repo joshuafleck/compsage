@@ -5,7 +5,7 @@ class HomeController < ApplicationController
     if logged_in?
       redirect_to surveys_path
     end
-    @form_options = Rails.env.production? ? {:protocol => 'https://', :only_path => false} : {}
+    @form_options = Rails.env.production? ? {:protocol => 'https://', :host => 'www.compsage.com', :only_path => false} : {}
   end
   
   def show

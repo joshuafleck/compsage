@@ -6,7 +6,7 @@ class SessionsController < ApplicationController
   # render new.rhtml
   def new
     @login = params[:email]
-    @form_options = Rails.env.production? ? {:protocol => 'https://', :only_path => false} : {}
+    @form_options = Rails.env.production? ? {:protocol => 'https://', :host => 'www.compsage.com', :only_path => false} : {}
   end
 
   def create
