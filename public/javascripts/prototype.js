@@ -2095,6 +2095,8 @@ Element.Methods = {
     var iframeGetAttributeThrowsError = (function(){
       var el = document.createElement('iframe'),
           isBuggy = false;
+      // Fix for IE6 being dumb
+      el.src = "javascript:false";
 
       document.documentElement.appendChild(el);
       try {
