@@ -32,7 +32,7 @@ class NetworkInvitationsController < ApplicationController
       redirect_to network_path(@network)
     else
       # Load @members, required for the networks show view.
-      @members = @network.organizations
+      @members = @network.organizations.find(:all, :conditions => ['organizations.id <> ?', current_organization.id])  
       render :template => '/networks/show'
     end
   end    
