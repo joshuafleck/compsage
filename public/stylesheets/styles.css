@@ -696,7 +696,7 @@ div.info_box {
 
 /* Survey preview */
 #survey_preview_box {
-  background: #fff url('/images/preview_background.gif') right repeat-y;
+  background-color: #fff; 
   border: 1px solid #000;
   padding: 0 20px 20px 20px;
   margin: 20px;
@@ -868,8 +868,8 @@ ol#questions {
 }
 
 ol#questions li {
-  margin: .5em 0;
-  padding: .5em 1em;
+  margin: 0;
+  padding: 0 1em;
 }
 
 ol#questions li.odd {
@@ -878,10 +878,18 @@ ol#questions li.odd {
   border-bottom: 1px solid #eee;
 }
 
+ol#questions li.even {
+  background-color: #ffffff;
+}
+
 ol#questions label, ol#questions div.label {
   font-weight: normal;
   font-size: 1em;
-  margin-top: 0em;
+  margin: 0;
+}
+
+ol#questions li div.question_container {
+  padding: 0.5em 0;
 }
 
 div#why_section {

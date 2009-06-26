@@ -1,7 +1,7 @@
 <% response = *@participation.response[participation_form_question.id] || participation_form_question.responses.new %>
 <% f.fields_for response.class.name.underscore, response, :index => participation_form_question.id, :builder => QuestionFormBuilder do |q| %>
   <li class="<%= cycle("even", "odd") %>">
-    <div style="padding-left:<%= level*2 %>em"> 
+    <div class="question_container" style="padding-left:<%= level*2 %>em"> 
       <%= q.form_field %>
       <% if participation_form_question.response_class.accepts_qualification? then %>
         <div class="qualifications">
