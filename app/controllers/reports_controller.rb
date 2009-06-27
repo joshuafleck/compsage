@@ -11,7 +11,12 @@ class ReportsController < ApplicationController
     
     respond_to do |wants|
       wants.html
-      wants.pdf { render :layout => false }
+      wants.pdf do 
+        # Required for IE6 PDF DL over SSL to allow the browser to cache the report, see issue 299
+        response.headers["Cache-Control"] = "cache, must-revalidate"
+        response.headers["Pragma"] = "public"
+        render :layout => false
+      end
     end
     
   end
