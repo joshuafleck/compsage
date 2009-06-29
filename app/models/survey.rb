@@ -48,7 +48,7 @@ class Survey < ActiveRecord::Base
   named_scope :running_or_stalled, :conditions => 'aasm_state = "running" OR aasm_state = "stalled"'
   named_scope :deletable, :conditions => ['aasm_state = ? OR aasm_state = ?', 'stalled', 'pending']
   
-  after_create :add_sponsor_subscription
+  after_create :add_sponsor_subscription, :add_default_questions
   before_destroy :cancel_survey
   before_save :set_aasm_state_number
   
@@ -102,6 +102,13 @@ class Survey < ActiveRecord::Base
   MAXIMUM_DAYS_TO_RUN = 21
   # the number of participations required to provide results for each question
   REQUIRED_NUMBER_OF_PARTICIPATIONS = 5
+
+  # Default set of questions to prepopulate when sponsoring a survey. This will find the PDQs when the model is first
+  # loaded, meaning changes to PDQs will require a server bounce.
+  DEFAULT_QUESTIONS = [
+    PredefinedQuestion.find_by_name('Base salary'),
+    PredefinedQuestion.find_by_name('Salary range')
+  ]
 
   def closed?
     Time.now > end_date
@@ -336,4 +343,10 @@ class Survey < ActiveRecord::Base
     self[:start_date] = Time.now
   end
 
+  # This adds the default questions.
+  def add_default_questions
+    DEFAULT_QUESTIONS.each do |pdq|
+      pdq.build_questions(self) unless pdq.nil? # Don't blow up if we've changed PDQs...
+    end
+  end
 end
