@@ -38,7 +38,7 @@ pdf.bounding_box(
         "<b>Effective Date</b>",
         " #{@survey.effective_date.to_s(:long_ordinal)}",
         "<b>Completion Date</b>",
-        " #{@survey.end_date.to_date.to_s(:long_ordinal)}"
+        " #{@survey.end_date.to_date.to_s(:long_ordinal)}",
       ]],  
       :border_width => 0, 
       :horizontal_padding => 0, 
@@ -47,8 +47,13 @@ pdf.bounding_box(
       :column_widths => {0 => 73, 1 => 110, 2 => 90, 3 => 110})
 
   pdf.pad_top(inner_padding) do 
+    pdf.text "#{@survey.participations.count} firms participating"
+  end
+
+  pdf.pad_top(inner_padding) do 
     pdf.text "Invitation List", :style => :bold
   end
+
   @invitations.each do |invitation| 
     if invitation.is_a?(SurveyInvitation) then
       pdf.text "#{invitation.invitee.name_and_location(false)}"

@@ -5,6 +5,8 @@
 <h2><%=@survey.job_title%></h2>
 <h4>Job Description</h4>
 <div class="description_box"><%=link_and_format(@survey.description)%></div>
+<div><%= @survey.participations.count %> participants out of <%= @survey.all_invitations(true).count %> firms on the
+<a href="#" id="invitation_list_link" class="print_link">Invitation List</a></div>
 <div id="invitation_section_container">
   <div id="invitation_section" class="hidden">
     <h4>Invitation List</h4>
@@ -19,8 +21,8 @@
           </li>
         <% end %>
       </ul>
+    <%= link_to "Close", '#', :id => "hide_invitation_list_link", :class => "print_link" %>
   </div>
-  <%= link_to "Invitation List", '#', :id => "invitation_list_link", :class => "print_link" %>
 </div>
 <div class="report_date">
   Completed on <%= @survey.end_date.to_date.to_s(:long_ordinal) %><br />
@@ -61,13 +63,14 @@
 <script type="text/javascript">
 
   function observeInvitationList() {
-    var link = $('invitation_list_link');
-    link.observe('click', function(e) {
+    $('invitation_list_link').observe('click', function(e) {
       e.preventDefault();
-      if(link.innerHTML == 'Invitation List')
-        link.innerHTML = 'Hide Invitation List';
-      else
-        link.innerHTML = 'Invitation List';
+      $('invitation_section').toggleClassName('hidden');
+      $('invitation_section').highlight();
+      return false;
+    });
+    $('hide_invitation_list_link').observe('click', function(e) {
+      e.preventDefault();
       $('invitation_section').toggleClassName('hidden');
       $('invitation_section').highlight();
       return false;
