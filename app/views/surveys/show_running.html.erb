@@ -40,11 +40,9 @@
   <div class="main_description"><%=link_and_format(@survey.description)%></div>
   <%=flash_messages%>
   <h3>Questions &amp; Clarifications</h3>
-  <p>Use the link below to ask questions or clarifications, and receive details from the survey's sponsor.</p>
-  <% if @discussions.any? then %>
-    <a href="#" id="new_discussion_link">Start a new topic</a>
-  <% else %>
-    No topics have been created: <a href="#" id="new_discussion_link">Start one now.</a>
+  <p>If you need more information about the survey, you can <a href="#" id="new_discussion_link">ask a question or request a clarification</a> from the survey's sponsor.</p>
+  <% if !@discussions.any? then %>
+    No questions or clarifications have been asked.
   <% end %>
   <div id="new_discussion_form" style="<%='display: none;' unless @discussion.errors.size > 0%>">
     <%=render :partial => 'discussions/discussion_form', :locals => { :discussion => @discussion } %>
