@@ -17,6 +17,9 @@ class ReportsController < ApplicationController
         response.headers["Pragma"] = "public"
         render :layout => false
       end
+      wants.xls do
+         render :layout => false
+      end
     end
     
   end

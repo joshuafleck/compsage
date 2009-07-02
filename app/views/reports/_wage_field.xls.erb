@@ -1,0 +1,38 @@
+<%percentiles = question.responses.percentiles(:raw_numerical_response, 25, 50, 75)
+average = question.responses.average(:numerical_response).to_i / 100.0
+
+if format == "Hourly" then%>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">Average</Data></Cell>
+    <Cell ss:StyleID="s34"><Data ss:Type="Number"><%=WageResponse.units.convert(average,{:from => "Annually", :to => "Hourly"})%></Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">25th Percentile</Data></Cell>
+    <Cell ss:StyleID="s34"><Data ss:Type="Number"><%=WageResponse.units.convert(percentiles[0].to_i / 100.0,{:from => "Annually", :to => "Hourly"})%></Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">50th Percentile</Data></Cell>
+    <Cell ss:StyleID="s34"><Data ss:Type="Number"><%=WageResponse.units.convert(percentiles[1].to_i / 100.0,{:from => "Annually", :to => "Hourly"})%></Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">75th Percentile</Data></Cell>
+    <Cell ss:StyleID="s34"><Data ss:Type="Number"><%=WageResponse.units.convert(percentiles[2].to_i / 100.0,{:from => "Annually", :to => "Hourly"})%></Data></Cell>
+   </Row>
+<% else %>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">Average</Data></Cell>
+    <Cell ss:StyleID="s34"><Data ss:Type="Number"><%=average%></Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">25th Percentile</Data></Cell>
+    <Cell ss:StyleID="s34"><Data ss:Type="Number"><%=percentiles[0].to_i / 100.0%></Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">50th Percentile</Data></Cell>
+    <Cell ss:StyleID="s34"><Data ss:Type="Number"><%=percentiles[1].to_i / 100.0%></Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">75th Percentile</Data></Cell>
+    <Cell ss:StyleID="s34"><Data ss:Type="Number"><%=percentiles[2].to_i / 100.0%></Data></Cell>
+   </Row>
+<% end %>

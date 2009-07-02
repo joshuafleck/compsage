@@ -1,0 +1,17 @@
+<% percentiles = question.responses.percentiles(:numerical_response, 25, 50, 75) %>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">Average</Data></Cell>
+    <Cell ss:StyleID="s32"><Data ss:Type="Number"><%= number_with_precision(question.responses.average(:numerical_response))%></Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">25th Percentile</Data></Cell>
+    <Cell ss:StyleID="s32"><Data ss:Type="Number"><%= number_with_precision(percentiles[0]) %></Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">50th Percentile</Data></Cell>
+    <Cell ss:StyleID="s32"><Data ss:Type="Number"><%= number_with_precision(percentiles[1]) %></Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">75th Percentile</Data></Cell>
+    <Cell ss:StyleID="s32"><Data ss:Type="Number"><%= number_with_precision(percentiles[2]) %></Data></Cell>
+   </Row>

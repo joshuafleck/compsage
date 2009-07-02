@@ -1,0 +1,196 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Author>CompSage Inc.</Author>
+  <Version>12.256</Version>
+ </DocumentProperties>
+ <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
+  <AllowPNG/>
+ </OfficeDocumentSettings>
+ <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+  <WindowHeight>16600</WindowHeight>
+  <WindowWidth>24800</WindowWidth>
+  <WindowTopX>-20</WindowTopX>
+  <WindowTopY>-20</WindowTopY>
+  <Date1904/>
+  <ProtectStructure>False</ProtectStructure>
+  <ProtectWindows>False</ProtectWindows>
+ </ExcelWorkbook>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font ss:FontName="Times New Roman" ss:Size="12.0"/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="s21">
+   <Font ss:FontName="Times New Roman" ss:Size="12.0"/>
+  </Style>
+  <Style ss:ID="s22">
+   <Alignment ss:Vertical="Center"/>
+   <Font ss:FontName="Times New Roman" ss:Size="12.0" ss:Bold="1"/>
+   <NumberFormat ss:Format="@"/>
+  </Style>
+  <Style ss:ID="s24">
+   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+   <Font ss:FontName="Times New Roman" ss:Size="12.0"/>
+   <NumberFormat ss:Format="@"/>
+  </Style>
+  <Style ss:ID="s26">
+   <Alignment ss:Vertical="Bottom"/>
+   <Font ss:FontName="Times New Roman" ss:Size="12.0"/>
+   <NumberFormat ss:Format="@"/>
+  </Style>
+  <Style ss:ID="s27">
+   <Font ss:FontName="Times New Roman" ss:Size="12.0" ss:Bold="1"/>
+   <NumberFormat ss:Format="@"/>
+  </Style>
+  <Style ss:ID="s28">
+   <Font ss:FontName="Times New Roman" ss:Size="12.0"/>
+   <NumberFormat ss:Format="Short Date"/>
+  </Style>
+  <Style ss:ID="s29">
+   <Font ss:FontName="Times New Roman" ss:Size="12.0"/>
+   <NumberFormat/>
+  </Style>
+  <Style ss:ID="s30">
+   <Font ss:FontName="Times New Roman" ss:Size="12.0"/>
+   <NumberFormat ss:Format="@"/>
+  </Style>
+  <Style ss:ID="s31">
+   <Borders>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font ss:FontName="Times New Roman" ss:Size="12.0"/>
+  </Style>
+  <Style ss:ID="s32">
+   <Font ss:FontName="Times New Roman" ss:Size="12.0"/>
+   <NumberFormat ss:Format="Fixed"/>
+  </Style>
+  <Style ss:ID="s33">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Bottom"/>
+   <Font ss:FontName="Times New Roman" ss:Size="12.0" ss:Italic="1"/>
+   <NumberFormat ss:Format="@"/>
+  </Style>
+  <Style ss:ID="s34">
+   <Font ss:FontName="Times New Roman" ss:Size="12.0"/>
+   <NumberFormat ss:Format="&quot;$&quot;#,##0.00"/>
+  </Style>
+  <Style ss:ID="s35">
+   <Font ss:FontName="Times New Roman" ss:Size="12.0"/>
+   <NumberFormat ss:Format="Percent"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Sheet1">
+  <Table ss:ExpandedColumnCount="6" x:FullColumns="1"
+   x:FullRows="1" ss:StyleID="s21" ss:DefaultColumnWidth="65.0"
+   ss:DefaultRowHeight="15.0">
+   <Column ss:StyleID="s21" ss:AutoFitWidth="0" ss:Width="110.0"/>
+   <Column ss:StyleID="s21" ss:AutoFitWidth="0" ss:Width="77.0"/>
+   <Column ss:Index="4" ss:StyleID="s21" ss:AutoFitWidth="0" ss:Width="91.0"/>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s22"><Data ss:Type="String">Job Title</Data></Cell>
+    <Cell ss:MergeAcross="4" ss:StyleID="s24"><Data ss:Type="String"><%=@survey.job_title%></Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s27"><Data ss:Type="String">Effective Date</Data></Cell>
+    <Cell ss:StyleID="s28"><Data ss:Type="DateTime"><%=@survey.effective_date%></Data></Cell>
+    <Cell ss:Index="4" ss:StyleID="s27"><Data ss:Type="String">Completion Date</Data></Cell>
+    <Cell ss:StyleID="s28"><Data ss:Type="DateTime"><%=@survey.end_date.to_date%></Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="33.0">
+    <Cell ss:StyleID="s22"><Data ss:Type="String">Job Description</Data></Cell>
+    <Cell ss:MergeAcross="4" ss:StyleID="s24"><Data ss:Type="String"><%=@survey.description%></Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s22"><Data ss:Type="String">Sponsor</Data></Cell>
+    <Cell ss:MergeAcross="4" ss:StyleID="s26"><Data ss:Type="String"><%=@survey.sponsor.name%></Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s27"><Data ss:Type="String">Firms Participating</Data></Cell>
+    <Cell ss:StyleID="s29"><Data ss:Type="Number"><%=@survey.participations.count%></Data></Cell>
+   </Row>
+   <%@invitations.each do |invitation| %>
+   <Row ss:AutoFitHeight="0">
+     <% if invitation == @invitations.first then %>
+     <Cell ss:StyleID="s27"><Data ss:Type="String">Invitation List</Data></Cell>
+     <% else %>
+     <Cell />
+     <% end %>
+     <%if invitation.is_a?(SurveyInvitation) then %>
+     <Cell ss:StyleID="s30"><Data ss:Type="String"><%=invitation.invitee.name_and_location(false)%></Data></Cell>
+     <%else%>
+     <Cell ss:StyleID="s30"><Data ss:Type="String"><%="#{invitation.organization_name} (#{invitation.email})"%></Data></Cell>
+     <%end%>
+   </Row>
+   <%end%>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s31"/>
+    <Cell ss:StyleID="s31"/>
+    <Cell ss:StyleID="s31"/>
+    <Cell ss:StyleID="s31"/>
+    <Cell ss:StyleID="s31"/>
+    <Cell ss:StyleID="s31"/>
+   </Row>
+   <%@survey.questions.each do |question| %>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s27"><Data ss:Type="String"><%=question.text%></Data></Cell>
+   </Row>
+   <% if question.adequate_responses? then%>
+   <%=render :partial=> "#{question.report_type}.xls.erb",  :locals=>{:question => question, :format => @format}%>
+   <% if question.qualifications.any? then %>
+   <% question.qualifications.each do |qualification| %>
+   <Row ss:AutoFitHeight="0">
+    <% if qualification == question.qualifications.first%>
+    <Cell ss:StyleID="s33"><Data ss:Type="String">Comments</Data></Cell>
+    <% else %>
+    <Cell />
+    <% end %>
+    <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String"><%=qualification%></Data></Cell>
+   </Row>
+   <% end %>
+   <% end %>
+   <% else %>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">Results not available due to insufficient responses.</Data></Cell>
+   </Row>
+   <% end %>
+   <Row ss:AutoFitHeight="0">
+    <Cell />
+   </Row>
+   <% end %>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header
+     x:Data="&amp;L&amp;&quot;Times New Roman,Bold Italic&quot;&amp;18CompSage survey for: <%=@survey.job_title%>"/>
+    <Footer
+     x:Data="&amp;C&amp;&quot;Times New Roman,Regular&quot;Compsage survey sponsored by: <%=@survey.sponsor.name%>"/>
+   </PageSetup>
+   <Unsynced/>
+   <Print>
+    <ValidPrinterInfo/>
+    <HorizontalResolution>-4</HorizontalResolution>
+    <VerticalResolution>-4</VerticalResolution>
+   </Print>
+   <ShowPageLayoutZoom/>
+   <PageLayoutZoom>100</PageLayoutZoom>
+   <Selected/>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>13</ActiveRow>
+     <ActiveCol>1</ActiveCol>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+</Workbook>

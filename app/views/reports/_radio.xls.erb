@@ -1,0 +1,11 @@
+<% dataset = []
+total_response_count = (question.responses.count).to_f
+question_response_count = 0.0
+question.options.each_with_index do |option, index|
+  question_response_count = question.grouped_responses[index.to_f].nil? ? 0 : question.grouped_responses[index.to_f].size %>
+   <Row ss:AutoFitHeight="0">
+     <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String"><%=option%></Data></Cell>
+     <Cell><Data ss:Type="Number"><%=question_response_count%></Data></Cell>
+     <Cell ss:StyleID="s35"><Data ss:Type="Number"><%=(question_response_count / total_response_count).to_s%></Data></Cell>
+   </Row>
+<% end %>
