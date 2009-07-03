@@ -238,28 +238,7 @@
        end
      end    
   end
-  
-  def billing
-    @survey = current_organization.sponsored_surveys.pending.find(params[:id])
-    
-    # For now, pretend we've received billing information.
-    if @survey.pending?
-      @survey.billing_info_received!
-      respond_to do |wants|
-        wants.html do
-          redirect_to survey_path(@survey)
-        end
-      end
-    
-    elsif 
-      respond_to do |wants|
-        wants.html do
-          redirect_to survey_path(@survey)
-        end
-      end
-    end
-  end
-    
+      
   def destroy
     @survey = current_organization.sponsored_surveys.deletable.find(params[:id])
 

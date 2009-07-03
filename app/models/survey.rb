@@ -207,7 +207,7 @@ class Survey < ActiveRecord::Base
   
   # Same price for all surveys for now.  This is in cents.
   def price
-    10000
+    12900
   end
     
   private

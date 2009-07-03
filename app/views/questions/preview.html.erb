@@ -18,7 +18,7 @@
   </div>
   <div class="submit_row">
     <% if @survey.pending? then %>
-      <%= button_to "Next &ndash; Enter Billing Information", billing_survey_path(@survey), :class => "next", :method => :get%>
+      <%= button_to "Next &ndash; Enter Billing Information", new_survey_billing_path(@survey), :class => "next", :method => :get%>
       <%= button_to "Back &ndash; Edit Invitation List", survey_invitations_path(@survey), :class => "previous", :method => :get %>
     <% else %>
       <%= button_to "Finish", survey_path(@survey), :class => "next", :method => :get %>   
