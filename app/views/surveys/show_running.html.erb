@@ -40,7 +40,7 @@
   <div class="main_description"><%=link_and_format(@survey.description)%></div>
   <%=flash_messages%>
   <h3>Questions &amp; Clarifications</h3>
-  <p>If you need more information about the survey, you can <a href="#" id="new_discussion_link">ask a question or request a clarification</a> from the survey's sponsor.</p>
+  <p>If you need more information about the survey, you can ask a question or request a clarification from the survey's sponsor: <a href="#" id="new_discussion_link">Ask something now.</a></p>
   <% if !@discussions.any? then %>
     No questions or clarifications have been asked.
   <% end %>
