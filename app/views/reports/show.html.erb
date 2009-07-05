@@ -58,6 +58,9 @@
     <%= link_to_function "Cancel", "$('suspect_report_form').toggleClassName('hidden'); return false;" %></p>
   </div>
 </div>
+<% if current_organization == @survey.sponsor && !@invoice.paying_with_credit_card? then %>
+  <p><%= link_to "View Invoice", survey_billing_path(@survey) %></p>
+<% end %>
 
 <% content_for :initialize_js, "observeInvitationList();" %>
 <script type="text/javascript">

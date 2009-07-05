@@ -1257,6 +1257,22 @@ span.load_indicator_message {
   color: #555;
   font-size: 0.9em;
 }
+
+/* invoice page */
+ul.invoice {
+  list-style-type: none;
+  padding-left: 1em;
+}
+
+dl.invoice dt {
+  float: left;
+  margin-right: .5em;
+  width: 8em;
+  margin-right: 1em;
+  text-align: right;
+  font-weight: bold;
+}
+
 /* inline error description for survey fields eg. */
 div.error_description {
   display: inline;
@@ -1314,3 +1330,4 @@ div.autocomplete .actions {
   float: right;
   padding-right: 5px;
 }
+

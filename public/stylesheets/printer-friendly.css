@@ -26,3 +26,18 @@ dl.hidden {
 #suspect_results, #formatting_section, #top_join_link {
 	display :none;
 }
+
+/* invoice page */
+ul.invoice {
+  list-style-type: none;
+  padding-left: 1em;
+}
+
+dl.invoice dt {
+  float: left;
+  margin-right: .5em;
+  width: 8em;
+  margin-right: 1em;
+  text-align: right;
+  font-weight: bold;
+}

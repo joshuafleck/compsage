@@ -11,6 +11,7 @@ class Invoice < ActiveRecord::Base
   validates_presence_of :zip_code
   validates_presence_of :amount
   validates_presence_of :phone
+  validates_presence_of :payment_type
 
   before_validation :strip_phone
 
@@ -27,15 +28,19 @@ class Invoice < ActiveRecord::Base
   validates_length_of :phone_extension,  :maximum => 6, :allow_nil => true
   
   def purchase_order_number
-    self[:survey].id + 1000
+    survey.id + 1000
   end
   
   def invoice_number
     self[:id] + 1000
   end
   
-  def invoice_sent?
-    !self[:invoiced_at].blank?
+  def sent?
+    !self[:invoiced_at].blank? || paying_with_credit_card?
+  end
+  
+  def paying_with_credit_card?
+    payment_type == "credit"
   end
   
   private

@@ -82,6 +82,7 @@ namespace :data_generator do
     generate_network_invitations
     
     generate_surveys  
+    generate_invoices
     generate_discussions  
     generate_survey_invitations
     generate_responses_and_participations
@@ -103,7 +104,8 @@ namespace :data_generator do
     'networks',
     'network_memberships',
     'organizations',
-    'questions']
+    'questions',
+    'invoices']
   
   # defaults
   NUM_ORGANIZATIONS = 5
@@ -336,6 +338,36 @@ namespace :data_generator do
     
     puts "generating discussions complete"  
   end
+  
+  # creates invoices for all surveys
+  def generate_invoices
+    surveys = Survey.all
+        
+    puts "generating #{surveys.size} invoices" 
+        
+    surveys.each_with_index do |survey, index|
+    
+      print_percent_complete(index,surveys.size)    
+      
+      Factory.create(:invoice,
+        :survey => survey,
+        :organization_name => Faker::Company.name, 
+        :contact_name => Faker::Name.name,
+        :city => Faker::Address.city,
+        :state => Faker::Address.us_state_abbr,
+        :zip_code => Faker::Address.zip_code.slice(0..4),
+        :amount => survey.price,
+        :address_line_1 => Faker::Address.street_address,
+        :address_line_2 => Faker::Address.street_address,
+        :payment_type => ['credit','invoice'][rand(2)],
+        :phone => '%010d' % rand(9999999999),
+        :phone_extension => rand(999999).to_s
+      )
+      
+    end
+    
+    puts "generating invoices complete"
+  end   
   
   # creates invitations for all surveys
   def generate_survey_invitations

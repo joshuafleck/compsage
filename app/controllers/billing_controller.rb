@@ -1,13 +1,13 @@
 class BillingController < ApplicationController
-	before_filter :login_required, :find_survey
+	before_filter :login_required, :find_invoice
 	layout 'logged_in'
 	
+	filter_parameter_logging :credit_card_number
+	
 	def show
-	  @purchase_order = @survey.purchase_order
 	end
 	
 	def new
-	  @invoice = Invoice.find_or_initialize_by_survey_id(@survey.id)
 	  
 	  # see if we can auto fill some fields based on existing information
   	invoice_params = {}
@@ -37,9 +37,15 @@ class BillingController < ApplicationController
 	end
 	
 	def create
-	  @invoice = Invoice.find_or_initialize_by_survey_id(@survey.id)
 	  @invoice.attributes = params[:invoice]
 	  @invoice.amount = @survey.price
+	  
+	  #TODO: validate cc information via Gateway
+	  if @invoice.paying_with_credit_card? then
+	    credit_card_number = params[:credit_card_number]
+	    expiration_month = params[:expiration_month]
+	    expiration_year = params[:expiration_year]
+	  end
 	  
 	  if @invoice.save then
       @survey.billing_info_received!
@@ -58,13 +64,23 @@ class BillingController < ApplicationController
 	end
 	
 	def invoice
-	
+	  if !@invoice.sent? then
+  	  @invoice.invoiced_at = Time.now
+  	  @invoice.save!	  
+	  end
+	  
+    respond_to do |wants|
+      wants.html do
+        redirect_to survey_report_path(@survey)
+      end
+    end
 	end	
 	
   private
   
-  def find_survey
+  def find_invoice
     @survey = current_organization.sponsored_surveys.find(params[:survey_id])
+    @invoice = Invoice.find_or_initialize_by_survey_id(@survey.id)
   end
 
 end	

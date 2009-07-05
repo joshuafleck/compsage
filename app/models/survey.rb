@@ -204,12 +204,18 @@ class Survey < ActiveRecord::Base
   def to_s
     job_title
   end
-  
+   
   # Same price for all surveys for now.  This is in cents.
   def price
     12900
-  end
-    
+  end  
+  
+  def pretty_print_price
+    dollars = price/100
+    cents = price % 100
+    "$#{dollars}.#{'%02d' % cents}"
+  end   
+  
   private
     
   # TODO: Figure out who to email...
@@ -268,6 +274,9 @@ class Survey < ActiveRecord::Base
     participations.destroy_all
     invitations.destroy_all
     external_invitations.destroy_all
+    
+    invoice = Invoice.find_by_survey_id(self.id)
+    invoice.destroy if invoice
   end
 
   # Creates a survey subscription for the survey sponsor.

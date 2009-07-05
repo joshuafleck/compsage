@@ -187,14 +187,14 @@
   def reports
   
     respond_to do |wants|
-      wants.html {
+      wants.html do
         @filter_by_subscription = "true" # need this flag to designate any searches should be against subscribed surveys
         @surveys = current_organization.surveys.finished.paginate(:page => params[:page])
-      }
-      wants.xml {
+      end
+      wants.xml do
         @surveys = current_organization.surveys
         render :xml => @surveys.to_xml
-      }
+      end
     end
   end
   

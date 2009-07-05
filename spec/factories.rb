@@ -65,6 +65,19 @@ Factory.define :invitation do |i|
   
 end
 
+Factory.define :invoice do |i|
+  i.organization_name 'Iced Inc'
+  i.city 'Minneapolis'
+  i.address_line_1 '123 fake street'
+  i.phone '1234567890'
+  i.payment_type 'credit'
+  i.state 'MN'
+  i.zip_code '55413'
+  i.amount '12900'
+  i.contact_name 'David Peterson'  
+  i.survey {|a| a.association(:survey)}
+end
+
 #definition and setup for survey invitation
 Factory.define :survey_invitation do |i|
   i.survey {|a| a.association(:survey)}

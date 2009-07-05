@@ -1,0 +1,37 @@
+<% title "Invoice for #{@survey.job_title}" %>
+<% highlight_tab("surveys") %>
+
+<h1>Invoice</h1>
+
+<dl class='invoice'>
+  <dt>Invoice Number:</dt><dd><%=@invoice.invoice_number%></dd>
+  <dt>Date:</dt><dd><%=Date.today.strftime("%B %d, %Y")%></dd>
+</dl>
+
+<h4>Remit to:</h4>
+<ul class='invoice'>
+  <li><strong>Huminsight, Inc</strong></li>
+  <li>2310 Stephani Court</li>
+  <li>St. Paul, MN 55117</li>
+</ul>
+
+<h4>Bill to:</h4>
+<ul class='invoice'>
+  <li><strong><%=@invoice.organization_name%></strong></li>
+  <li><%=@invoice.address_line_1%></li>
+  <% if !@invoice.address_line_2.blank? then %><li><%=@invoice.address_line_2%></li><%end%>
+  <li><%=@invoice.city%>, <%=@invoice.state%> <%=@invoice.zip_code%></li>
+</ul>
+
+<dl class='invoice'>
+  <dt>P.O. Number:</dt><dd><%=@invoice.purchase_order_number%></dd>
+  <dt>Delivery Date:</dt><dd><%=@survey.end_date.strftime("%B %d, %Y")%></dd>
+  <dt>Product:</dt><dd>Compsage Compensation Survey</dd>
+  <dt>Description:</dt><dd><%=@survey.job_title%></dd>
+  <dt>Quantity:</dt><dd>1</dd>
+  <dt>Price:</dt><dd><%=@survey.pretty_print_price%></dd>
+  <dt>Total Due:</dt><dd><%=@survey.pretty_print_price%></dd>
+</dl>
+
+<%= link_to_function("Print", "javascript:print()") %>&nbsp;
+<%= link_to "Done", invoice_survey_billing_path(@survey) %>

@@ -8,9 +8,15 @@ class ReportsController < ApplicationController
     @participations = @survey.participations
     @total_participation_count = @participations.size
     @format = params[:wage_format] || "Annually"
+    @invoice = Invoice.find_by_survey_id(@survey.id) if current_organization == @survey.sponsor
     
     respond_to do |wants|
-      wants.html
+      wants.html do
+        #check to see if we need to display the invoice         
+        if @invoice && !@invoice.sent? then
+          redirect_to survey_billing_path(@survey)
+        end
+      end
       wants.pdf do 
         # Required for IE6 PDF DL over SSL to allow the browser to cache the report, see issue 299
         response.headers["Cache-Control"] = "cache, must-revalidate"
