@@ -23,7 +23,7 @@ dl.hidden {
 	display :none;
 }
 
-#suspect_results, #formatting_section, #top_join_link {
+#suspect_results, #formatting_section, #top_join_link, #invoice_link {
 	display :none;
 }
 

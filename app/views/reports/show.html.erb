@@ -1,7 +1,8 @@
 <% title("Report for #{@survey.job_title}") %>
 <% highlight_tab("surveys") %>
 <%= link_to_function("Print", "javascript:print()", :id => "print_link", :class => 'print_link') %>
-<%= link_to("Download as PDF", survey_report_path(@survey, :format => "pdf", :wage_format => @format ), :id => 'pdf_link', :class => "print_link") %>
+<%= link_to("Excel", survey_report_path(@survey, :format => "xls", :wage_format => @format ), :id => 'excel_link', :class => 'print_link') %>
+<%= link_to("Download PDF", survey_report_path(@survey, :format => "pdf", :wage_format => @format ), :id => 'pdf_link', :class => "print_link") %>
 <h2><%=@survey.job_title%></h2>
 <h4>Job Description</h4>
 <div class="description_box"><%=link_and_format(@survey.description)%></div>
@@ -59,7 +60,7 @@
   </div>
 </div>
 <% if current_organization == @survey.sponsor && !@invoice.paying_with_credit_card? then %>
-  <p><%= link_to "View Invoice", survey_billing_path(@survey) %></p>
+  <p><%= link_to "View Invoice", survey_billing_path(@survey), :id => 'invoice_link' %></p>
 <% end %>
 
 <% content_for :initialize_js, "observeInvitationList();" %>
