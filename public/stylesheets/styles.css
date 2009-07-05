@@ -939,7 +939,7 @@ div.top_join_link {
   padding: 0 1em 0 1em;
 }
 
-#print_link, #pdf_link, #excel_link {
+#print_link, #pdf_link, #excel_link, #word_link {
   float: right;
   padding-right: 10px;
 }

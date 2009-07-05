@@ -1,8 +1,9 @@
 <% title("Report for #{@survey.job_title}") %>
 <% highlight_tab("surveys") %>
-<%= link_to_function("Print", "javascript:print()", :id => "print_link", :class => 'print_link') %>
-<%= link_to("Excel", survey_report_path(@survey, :format => "xls", :wage_format => @format ), :id => 'excel_link', :class => 'print_link') %>
-<%= link_to("Download PDF", survey_report_path(@survey, :format => "pdf", :wage_format => @format ), :id => 'pdf_link', :class => "print_link") %>
+<%= link_to_function(image_tag("Printer-32x32.png", :alt => "Print"), "javascript:print()", :id => "print_link", :class => 'print_link') %>
+<%= link_to(image_tag("OfficeWord.png", :alt => "Download Word Document", :width => 32, :height => 32), "#", :id => 'word_link', :class => 'print_link') %>
+<%= link_to(image_tag("Excel2007.PNG", :alt => "Download Excel Document", :width => 32, :height => 32), survey_report_path(@survey, :format => "xls", :wage_format => @format ), :alt => "Download PDF Document", :id => 'excel_link', :class => 'print_link') %>
+<%= link_to(image_tag("pdficon_large.gif", :width => 32, :height => 32), survey_report_path(@survey, :format => "pdf", :wage_format => @format ), :id => 'pdf_link', :class => "print_link") %>
 <h2><%=@survey.job_title%></h2>
 <h4>Job Description</h4>
 <div class="description_box"><%=link_and_format(@survey.description)%></div>
@@ -130,9 +131,11 @@ function toggleWageFormatAndLink(){
   //update format links
   if ($('pdf_link').href.include("Hourly")){
       $('pdf_link').href = $('pdf_link').href.replace("Hourly", "Annually");
-    $('wage_format_link').innerHTML = "Hourly Format";
+      $('excel_link').href = $('excel_link').href.replace("Hourly", "Annually");
+      $('wage_format_link').innerHTML = "Hourly Format";
   } else {
     $('pdf_link').href = $('pdf_link').href.replace("Annually", "Hourly");
+    $('excel_link').href = $('excel_link').href.replace("Annually", "Hourly");
     $('wage_format_link').innerHTML = "Annual Format"
   }
   //then update all of the values
