@@ -68,7 +68,7 @@ function setupFollowupForList(list, parent_questions) {
     if(sub_list) {
       questions.each(function(input){
         //ignore those of the type qualification
-        if(!input.id.include('qualification')) {
+        if(!input.id.include('qualifications')) {
           input.observe('click', function(e) {
             if(parseInt(e.target.value) == 0)
               enableList(sub_list);
@@ -106,5 +106,29 @@ function disableList(list) {
     });
   })
 }
+
+function observeResponseForQualifications(){
+  questions = $('questions');
+  questions.select('input').each(function(input){
+    if(!input.id.include('qualifications') && !input.hasClassName('TextualResponse')) {
+      if(input.getAttribute('type').match(/checkbox|radio/)){
+        input.observe('click', function(e){
+            input.up(1).down('div.qualifications').show();
+        });
+      }
+      else{
+        input.observe('blur', function(e){
+          if (input.value == ''){
+            input.next('.qualifications').select('input').first().value = '';
+            input.next('.qualifications').hide();            
+          }
+          else{
+            input.next('div.qualifications').show();
+          }
+        });
+      }
+    }
+  });
+}
 </script>
-<% content_for :initialize_js, "observeQualificationLinks();observeUnitSelection();setupFollowups();"%>
+<% content_for :initialize_js, "observeQualificationLinks();observeUnitSelection();setupFollowups();observeResponseForQualifications();"%>
