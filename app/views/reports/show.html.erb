@@ -1,9 +1,14 @@
 <% title("Report for #{@survey.job_title}") %>
 <% highlight_tab("surveys") %>
-<%= link_to_function(image_tag("Printer-32x32.png", :alt => "Print"), "javascript:print()", :id => "print_link", :class => 'print_link') %>
-<%= link_to(image_tag("OfficeWord.png", :alt => "Download Word Document", :width => 32, :height => 32), "#", :id => 'word_link', :class => 'print_link') %>
-<%= link_to(image_tag("Excel2007.PNG", :alt => "Download Excel Document", :width => 32, :height => 32), survey_report_path(@survey, :format => "xls", :wage_format => @format ), :alt => "Download PDF Document", :id => 'excel_link', :class => 'print_link') %>
-<%= link_to(image_tag("pdficon_large.gif", :width => 32, :height => 32), survey_report_path(@survey, :format => "pdf", :wage_format => @format ), :id => 'pdf_link', :class => "print_link") %>
+<%= link_to("Word", "#", :id => 'download_link', :class => 'print_link download_link') %>
+<%= link_to(image_tag("OfficeWord.png", :alt => "Download Word Document", :width =>16, :height => 16), "#", :class => 'download_link print_link') %>
+<%= link_to("Excel", survey_report_path(@survey, :format => "xls", :wage_format => @format), :class => 'download_link print_link') %>
+<%= link_to(image_tag("excel_icon.png", :alt => "Download Excel Document"),
+            survey_report_path(@survey, :format => "xls", :wage_format => @format ),
+            :alt => "Download PDF Document", :class => 'download_link print_link') %>
+<%= link_to("Pdf", survey_report_path(@survey, :format => "pdf", :wage_format => @format ), :class => "download_link print_link") %>
+<%= link_to(image_tag("pdficon_large.gif", :width => 16, :height => 16), survey_report_path(@survey, :format => "pdf", :wage_format => @format ), :class => "download_link print_link") %>
+<%= link_to_function('Print', "javascript:print()", :id => "print_link", :class => 'download_link print_link') %>
 <h2><%=@survey.job_title%></h2>
 <h4>Job Description</h4>
 <div class="description_box"><%=link_and_format(@survey.description)%></div>

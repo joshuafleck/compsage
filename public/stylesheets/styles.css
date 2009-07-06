@@ -939,9 +939,14 @@ div.top_join_link {
   padding: 0 1em 0 1em;
 }
 
-#print_link, #pdf_link, #excel_link, #word_link {
+.download_link {
   float: right;
   padding-right: 10px;
+  display: block;
+}
+
+.download_link img {
+  margin-right: -8px;
 }
 
 .report_date {
