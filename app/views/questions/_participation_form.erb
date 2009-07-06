@@ -73,13 +73,13 @@ function setupFollowupForList(list, parent_questions) {
             if(parseInt(e.target.value) == 0)
               enableList(sub_list);
             else
-              disableList(sub_list);
+              disableList(sub_list, true);
           });
         }
       });
       
       if(!questions.any(function(q) {return q.checked && parseInt(q.value) == 0}))
-        disableList(sub_list);
+        disableList(sub_list, false);
       setupFollowupForList(sub_list, questions);
     }
   });
@@ -94,16 +94,28 @@ function enableList(list) {
   })
 }
 
-function disableList(list) {
+function disableList(list, disableChildren) {
   list.childElements().each(function(li) {
     var elements = li.select('div').first().select('input');
     elements.each(function(input) {
-      if(input.getAttribute('type').match(/checkbox|radio/))
+      var qualifications_div = null;
+      if(input.getAttribute('type').match(/checkbox|radio/)){
         input.checked = false;
-      else
+        qualifications_div = input.up(1).down('div.qualifications');
+      }
+      else {
         input.value = '';
+        if (!input.hasClassName('TextualResponse') && !input.id.include('qualifications')){
+          qualifications_div = input.next('div.qualifications');
+        }
+      }
+      if(qualifications_div != null)
+        clearAndHideQualifications(qualifications_div);
       input.setAttribute('disabled', true);
     });
+    var sub_list = li.select('ol').first();
+    if(sub_list && disableChildren)
+      disableList(sub_list, true)
   })
 }
 
@@ -118,17 +130,24 @@ function observeResponseForQualifications(){
       }
       else{
         input.observe('blur', function(e){
+          var qualifications_div = input.next('div.qualifications');
           if (input.value == ''){
-            input.next('.qualifications').select('input').first().value = '';
-            input.next('.qualifications').hide();            
+            clearAndHideQualifications(qualifications_div)
           }
-          else{
-            input.next('div.qualifications').show();
+          else {
+            qualifications_div.show();
           }
         });
       }
     }
   });
+}
+
+function clearAndHideQualifications(qualifications_div){
+  qualifications_div.select('input').first().value = '';
+  qualifications_div.select('div.field').first().hide();
+  qualifications_div.select('a').first().innerHTML = 'Add Comment'
+  qualifications_div.hide();
 }
 </script>
 <% content_for :initialize_js, "observeQualificationLinks();observeUnitSelection();setupFollowups();observeResponseForQualifications();"%>
