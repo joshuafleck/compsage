@@ -39,9 +39,7 @@ function observeUnitSelection() {
       });
     });
   });
-}
-
-function setupFollowups() {
+} function setupFollowups() {
   var root_list = $('questions');
   setupFollowupForList(root_list, null);
 }
@@ -49,33 +47,31 @@ function setupFollowups() {
 function setupFollowupForList(list, parent_questions) {
   list.childElements().each(function(item) {
     var sub_list = item.select('ol').first();
-    var questions = item.childElements().first().select('input');
     if(sub_list) {
-      questions.each(function(input){
-        //ignore those of the type qualification
-        if(!input.id.include('qualifications')) {
-          input.observe('click', function(e) {
-            if(parseInt(e.target.value) == 0)
-              enableList(sub_list);
-            else
-              disableList(sub_list);
-          });
-        }
+      // get all the inputs for this question that aren't qualifications.
+      var inputs = item.childElements().first().select('input:not([id$=qualifications])');
+      inputs.each(function(input){
+        input.observe('click', function(e) {
+          if(parseInt(e.target.value) == 0)
+            enableList(sub_list);
+          else
+            disableList(sub_list);
+        });
       });
       
-      if(!questions.any(function(q) {return q.checked && parseInt(q.value) == 0}))
+      if(!inputs.any(function(q) {return q.checked && parseInt(q.value) == 0}))
         disableList(sub_list);
-      setupFollowupForList(sub_list, questions);
+      setupFollowupForList(sub_list, inputs);
     }
   });
 }
 
 function enableList(list) {
   list.childElements().each(function(li) {
-	var elements = li.select('div').first().select('input');
-	 elements.each(function(input) {
-		input.removeAttribute('disabled');
-		});
+    var elements = li.select('div').first().select('input');
+    elements.each(function(input) {
+      input.removeAttribute('disabled');
+    });
   })
 }
 
