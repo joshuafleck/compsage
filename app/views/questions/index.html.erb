@@ -51,12 +51,31 @@ function setupFollowupForList(list, parent_questions) {
       // get all the inputs for this question that aren't qualifications.
       var inputs = item.childElements().first().select('input:not([id$=qualifications])');
       inputs.each(function(input){
-        input.observe('click', function(e) {
-          if(parseInt(e.target.value) == 0)
-            enableList(sub_list);
-          else
-            disableList(sub_list, true);
-        });
+        if(input.type == 'text') {
+          input.observe('blur', function(e) {
+            if(input.value === '')
+              disableList(sub_list, true);
+            else
+              enableList(sub_list);
+          });
+        }
+        else {
+          if(inputs.length == 2) {
+            input.observe('click', function(e) {
+              if(parseInt(e.target.value) == 0)
+                enableList(sub_list);
+              else
+                disableList(sub_list, true);
+            });
+          }
+          else {
+            input.observe('click', function(e) {
+              enableList(sub_list);
+            });
+          }
+
+        }
+          
       });
       
       if(!inputs.any(function(q) {return q.checked && parseInt(q.value) == 0}))
@@ -69,10 +88,10 @@ function setupFollowupForList(list, parent_questions) {
 
 function enableList(list) {
   list.childElements().each(function(li) {
-	var elements = li.select('div').first().select('input');
-	 elements.each(function(input) {
-		input.removeAttribute('disabled');
-		});
+    var elements = li.select('div').first().select('input');
+    elements.each(function(input) {
+      input.removeAttribute('disabled');
+    });
   })
 }
 
