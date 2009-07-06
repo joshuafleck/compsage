@@ -39,7 +39,6 @@ class Question < ActiveRecord::Base
   }
   
   named_scope :required, :conditions => "required = 1"
-  named_scope :can_be_parent, :conditions => ['custom_question_type = ?', 'Yes/No']
 
   def answerable?
     return !self.response_type.nil?

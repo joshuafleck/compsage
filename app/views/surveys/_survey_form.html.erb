@@ -43,11 +43,11 @@
       <label for='custom_question_response' class='survey_question_label'>Response Type</label>
       <select id='custom_question_response'><%=options_for_select Question::CUSTOM_QUESTION_TYPES.keys %></select>
     </div>
-    <div id='follow_up_question' style='<%=@survey.questions.can_be_parent.size > 0 ? "" : "display:none;"%>'>
+    <div id='follow_up_question' style='<%=@survey.questions.size > 0 ? "" : "display:none;"%>'>
       <label for='follow_up_question_select' class='survey_question_label'>Add as a follow-up to</label>
       <select id='follow_up_question_select'>
         <option value=''>Nothing</option>
-        <%= options_from_collection_for_select(@survey.questions.can_be_parent,'id','text')%>
+        <%= options_from_collection_for_select(@survey.questions,'id','text')%>
     </select>
     </div>
     <div>
@@ -343,59 +343,29 @@ function moveQuestion(index,direction,e) {
   }
   
 }
-
 /**
- * This will check the survey for questions that can have follow-up questions.
- * If questions are allowed to have follow-ups, a select box will be made visible,
- * with the parent candidates as options.
+ * This will update the list of follow-up questions, hiding the box if necessary. 
  */
 function updateParentCandidateQuestions() {
+  //Remove any existing options
+  var selectBox = $('follow_up_question_select');
+  for(i = selectBox.length - 1; i > 0; i--) {
+    selectBox.remove(i);
+  }
 
-  var parentCandidates = [];
-  
-  //Search for questions that can have follow-ups
-  $$('ol#new_questions li').each( function(question) {  
-
-    var id = question.id.match(/(\d+)/).first();
-    
-    var isParentCandidate = $('question_display_type_'+id).innerHTML == 'Yes/No';
-    
-    if (isParentCandidate) {
-      parentCandidates.push([id,$('question_display_text_'+id).innerHTML]);
-    }
-    
+  $$('ol#new_questions li').each(function(question) {  
+    var option = document.createElement("OPTION");
+    option.value = question.id.match(/(\d+)/).first();
+    option.text = $('question_display_text_' + option.value).innerHTML;
+    selectBox.options.add(option);
   });
 
   var followUpQuestionsDiv = $('follow_up_question');
-      
-  //Add all of the parent candidates as follow-up options
-  if(parentCandidates.length > 0) {
-  
-    var selectBox = $('follow_up_question_select');
-    
-    //Remove any existing options
-    for(i = selectBox.length - 1; i > 0; i--) {
-      selectBox.remove(i);
-    }
-    
-    parentCandidates.each( function(question) {      
-      var optn = document.createElement("OPTION");
-      optn.text = question[1];
-      optn.value = question[0];
-      selectBox.options.add(optn);       
-    });
-  
-    if(!followUpQuestionsDiv.visible()) {
-      followUpQuestionsDiv.appear({'duration': 0.5});
-    }
-    
+  if(selectBox.childNodes.length > 0) {
+    followUpQuestionsDiv.show();
   } 
   else {
-  
-    if(followUpQuestionsDiv.visible()) {
-      followUpQuestionsDiv.fade({'duration': 0.5});
-    }  
-        
+    followUpQuestionsDiv.hide();
   }
   
 }
