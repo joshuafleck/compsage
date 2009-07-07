@@ -125,13 +125,19 @@ function observeResponseForQualifications(){
   questions.select('input').each(function(input){
     if(!input.id.include('qualifications') && !input.hasClassName('TextualResponse')) {
       if(input.getAttribute('type').match(/checkbox|radio/)){
+        if(input.checked)
+          input.up(1).down('div.qualifications').show();
         input.observe('click', function(e){
             input.up(1).down('div.qualifications').show();
         });
       }
       else{
+        var qualifications_div = input.next('div.qualifications');
+        if (input.value == '')
+          clearAndHideQualifications(qualifications_div)
+        else
+          qualifications_div.show();
         input.observe('blur', function(e){
-          var qualifications_div = input.next('div.qualifications');
           if (input.value == ''){
             clearAndHideQualifications(qualifications_div)
           }
