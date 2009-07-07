@@ -1,8 +1,13 @@
 <% title("Report for #{@survey.job_title}") %>
 <% highlight_tab("surveys") %>
-<%= link_to("Word", "#", :id => 'download_link', :class => 'print_link download_link') %>
-<%= link_to(image_tag("OfficeWord.png", :alt => "Download Word Document", :width =>16, :height => 16), "#", :class => 'download_link print_link') %>
-<%= link_to("Excel", survey_report_path(@survey, :format => "xls", :wage_format => @format), :class => 'download_link print_link') %>
+<%= link_to("Word",
+            survey_report_path(@survey, :format => "doc", :wage_format => @format),
+            :id => 'download_link', :class => 'print_link download_link') %>
+<%= link_to(image_tag("OfficeWord.png", :alt => "Download Word Document", :width =>16, :height => 16),
+            survey_report_path(@survey, :format => "doc", :wage_format => @format),
+            :class => 'download_link print_link') %>
+<%= link_to("Excel",
+            survey_report_path(@survey, :format => "xls", :wage_format => @format), :class => 'download_link print_link') %>
 <%= link_to(image_tag("excel_icon.png", :alt => "Download Excel Document"),
             survey_report_path(@survey, :format => "xls", :wage_format => @format ),
             :alt => "Download PDF Document", :class => 'download_link print_link') %>
@@ -134,13 +139,16 @@
 
 function toggleWageFormatAndLink(){
   //update format links
-  if ($('pdf_link').href.include("Hourly")){
-      $('pdf_link').href = $('pdf_link').href.replace("Hourly", "Annually");
-      $('excel_link').href = $('excel_link').href.replace("Hourly", "Annually");
-      $('wage_format_link').innerHTML = "Hourly Format";
+  var download_links = $$('a.download_link');
+  if(download_links.first().href.include("Hourly")){
+    download_links.each(function(link) {
+      link.href = link.href.replace("Hourly", "Annually");
+    });
+    $('wage_format_link').innerHTML = "Hourly Format";
   } else {
-    $('pdf_link').href = $('pdf_link').href.replace("Annually", "Hourly");
-    $('excel_link').href = $('excel_link').href.replace("Annually", "Hourly");
+    download_links.each(function(link) {
+      link.href = link.href.replace("Annually", "Hourly");
+    });
     $('wage_format_link').innerHTML = "Annual Format"
   }
   //then update all of the values
