@@ -24,7 +24,14 @@ class ReportsController < ApplicationController
         render :layout => false
       end
       wants.xls do
-         render :layout => false
+        response.headers["Cache-Control"] = "cache, must-revalidate"
+        response.headers["Pragma"] = "public"
+        render :layout => false
+      end
+      wants.doc do
+        response.headers["Cache-Control"] = "cache, must-revalidate"
+        response.headers["Pragma"] = "public"
+        render :layout => false
       end
     end
     

@@ -1,0 +1,53 @@
+<%
+  percentiles = question.responses.percentiles(:numerical_response, 25, 50, 75)
+  average = question.responses.average(:numerical_response) / 100.0
+  
+  if format == "Hourly" then
+    average = WageResponse.units.convert(average, :to => "Hourly", :from => "Annual")
+    percentiles.map! {|p| WageResponse.units.convert(p / 100.0, :to => "Hourly", :from => "Annual") }
+  else
+    percentiles.map! {|p| p / 100.0 }
+  end
+%>
+<% word_section do %>
+  <% word_p(:style => "Heading3") do %>
+    <%= question.text %>
+  <% end %>
+  <% word_table do %>
+    <% word_tr do %>
+      <% word_td do %>
+        <%= word_p "Average" %>
+      <% end %>
+      <% word_td do %>
+        <%= word_p number_to_currency(average) %>
+      <% end %>
+    <% end %>
+    <% if question.adequate_responses_for_percentiles? then %>
+      <% word_tr do %>
+        <% word_td do %>
+          <%= word_p "25th Percentile" %>
+        <% end %>
+        <% word_td do %>
+          <%= word_p number_to_currency(percentiles[0]) %>
+        <% end %>
+      <% end %>
+      <% word_tr do %>
+        <% word_td do %>
+          <%= word_p "Median" %>
+        <% end %>
+        <% word_td do %>
+          <%= word_p number_to_currency(percentiles[1]) %>
+        <% end %>
+      <% end %>
+      <% word_tr do %>
+        <% word_td do %>
+          <%= word_p "75th Percentile" %>
+        <% end %>
+        <% word_td do %>
+          <%= word_p number_to_currency(percentiles[2]) %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+  <%= render :partial => 'qualifications', :object => question.qualifications %>
+<% end %>

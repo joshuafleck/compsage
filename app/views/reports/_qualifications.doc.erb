@@ -1,0 +1,7 @@
+<% if qualifications.any? then %>
+  <%= word_p "" %>
+  <%= word_p "Comments", :bold => true %>
+  <% qualifications.each do |qualification| %>
+    <%= word_p qualification %>
+  <% end %>
+<% end %>

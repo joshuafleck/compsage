@@ -49,4 +49,103 @@ module ReportsHelper
     
     current_color
   end
+
+
+  # Creates a paragraph in a WordML document. Can be called with a block with an optional options param hash, or can be
+  # called with the content directly as the first argument, followed by an optional params hash.
+  # Example:
+  #   <%= word_p "Bold text!", :bold => true %>
+  #   <% word_p :style => "Heading1" do %>
+  #     Big header!
+  #   <% end %>
+  #
+  # Available options are:
+  # * :no_keep - Set to true to not tell the paragraph to hold on to the next paragraph, preventing a line break
+  #   between them.
+  # * :style - Set the style of the paragraph. Example: Heading1.
+  # * :justify - Justify the text left, center, or right.
+  # * :bold - Make the text bold.
+  # * :italic - Make the text italic.
+  #
+  def word_p(*args, &block)
+    content = if block_given? then
+      capture(&block).strip
+    else
+      args.shift.to_s
+    end
+
+    options = args.shift || {}
+
+    xml = "<w:p><w:pPr>"
+    
+    unless no_keep = options.delete(:no_keep) then
+      xml += "<w:keepLines/><w:keepNext/>"
+    end
+
+    if style = options.delete(:style) then
+      xml += "<w:pStyle w:val=\"#{style}\"/>"
+    end
+
+    if justification = options.delete(:justify) then
+      xml += "<w:jc w:val=\"#{justification}\"/>"
+    end
+    xml += "</w:pPr><w:r>"
+    
+    bold = options.delete(:bold)
+    italic = options.delete(:italic)
+
+    if bold || italic then
+      xml += "<w:rPr>"
+      xml += "<w:b/>" if bold
+      xml += "<w:i/>" if italic
+      xml += "</w:rPr>"
+    end
+
+    xml += "<w:t>" + content + "</w:t></w:r></w:p>"
+
+    if block_given? then
+      concat xml
+    else
+      return xml
+    end
+  end
+
+  def word_table(options = {}, &block)
+    header = options.delete(:header)
+    concat <<-TBL
+    <w:tbl>
+      <w:tblPr>
+        <w:tblStyle w:val="TableElegant"/>
+        <w:tblW w:w="0" w:type="auto"/>
+        <w:tblLook w:val="#{ header ? "01E0" : "01C0" }"/>
+      </w:tblPr>
+      #{capture(&block).strip}
+    </w:tbl>
+    TBL
+  end
+
+  def word_tr(&block)
+    concat <<-TBL
+    <w:tr>
+      #{capture(&block).strip}
+    </w:tr>
+    TBL
+  end
+
+  def word_td(&block)
+    concat <<-TBL
+    <w:tc>
+      #{capture(&block).strip}
+    </w:tc>
+    TBL
+  end
+
+  def word_section(&block)
+    concat <<-TBL
+    <wx:sub-section>
+      #{capture(&block).strip}
+      <w:p/>
+    </wx:sub-section>
+    TBL
+  end
 end

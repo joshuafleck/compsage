@@ -1,0 +1,36 @@
+<%
+total_response_count = (question.responses.count).to_f
+question_response_count = 0.0 %>
+<% word_section do %>
+  <% word_p(:style => "Heading3") do %>
+    <%= question.text %>
+  <% end %>
+  <% word_table(:header => true) do %>
+    <% word_tr do %>
+      <% word_td do %>
+        <%= word_p "" %>
+      <% end %>
+      <% word_td do %>
+        <%= word_p "Responses" %>
+      <% end %>
+      <% word_td do %>
+        <%= word_p "Percent" %>
+      <% end %>
+    <% end %>
+    <% question.options.each_with_index do |option, index|
+      question_response_count = question.grouped_responses[index.to_f].nil? ? 0 : question.grouped_responses[index.to_f].size %>
+      <% word_tr do %>
+        <% word_td do %>
+          <%= word_p option %>
+        <% end %>
+        <% word_td do %>
+          <%= word_p question_response_count, :justify => "right" %>
+        <% end %>
+        <% word_td do %>
+          <%= word_p number_with_precision((question_response_count / total_response_count) * 100, :precision => 0), :justify => "right" %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+  <%= render :partial => 'qualifications', :object => question.qualifications %>
+<% end %>

@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?mso-application progid="Word.Document"?>
+<w:wordDocument xmlns:w="http://schemas.microsoft.com/office/word/2003/wordml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:sl="http://schemas.microsoft.com/schemaLibrary/2003/core" xmlns:aml="http://schemas.microsoft.com/aml/2001/core" xmlns:wx="http://schemas.microsoft.com/office/word/2003/auxHint" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:dt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882" w:macrosPresent="no" w:embeddedObjPresent="no" w:ocxPresent="no" xml:space="preserve">
+    <o:DocumentProperties>
+        <o:Title>Survey on <%= @survey.job_title %></o:Title>
+        <o:Author>CompSage.com</o:Author>
+        <o:Created><%= @survey.end_date.utc.iso8601%></o:Created>
+        <o:Company>CompSage.com</o:Company>
+        <o:Version>11.6568</o:Version>
+    </o:DocumentProperties>
+    <w:fonts>
+        <w:defaultFonts w:ascii="Times New Roman" w:fareast="Times New Roman" w:h-ansi="Times New Roman" w:cs="Times New Roman"/>
+    </w:fonts>
+    <w:styles>
+        <w:versionOfBuiltInStylenames w:val="4"/>
+        <w:latentStyles w:defLockedState="off" w:latentStyleCount="156"/>
+        <w:style w:type="paragraph" w:default="on" w:styleId="Normal">
+            <w:name w:val="Normal"/>
+            <w:rsid w:val="00DC418F"/>
+            <w:rPr>
+                <wx:font wx:val="Times New Roman"/>
+                <w:sz w:val="24"/>
+                <w:sz-cs w:val="24"/>
+                <w:lang w:val="EN-US" w:fareast="EN-US" w:bidi="AR-SA"/>
+            </w:rPr>
+        </w:style>
+        <w:style w:type="paragraph" w:styleId="Heading1">
+            <w:name w:val="heading 1"/>
+            <wx:uiName wx:val="Heading 1"/>
+            <w:basedOn w:val="Normal"/>
+            <w:next w:val="Normal"/>
+            <w:rsid w:val="00DC418F"/>
+            <w:pPr>
+                <w:pStyle w:val="Heading1"/>
+                <w:keepNext/>
+                <w:spacing w:before="240" w:after="60"/>
+                <w:outlineLvl w:val="0"/>
+            </w:pPr>
+            <w:rPr>
+                <w:rFonts w:ascii="Arial" w:h-ansi="Arial" w:cs="Arial"/>
+                <wx:font wx:val="Arial"/>
+                <w:b/>
+                <w:b-cs/>
+                <w:kern w:val="32"/>
+                <w:sz w:val="32"/>
+                <w:sz-cs w:val="32"/>
+            </w:rPr>
+        </w:style>
+        <w:style w:type="paragraph" w:styleId="Heading2">
+            <w:name w:val="heading 2"/>
+            <wx:uiName wx:val="Heading 2"/>
+            <w:basedOn w:val="Normal"/>
+            <w:next w:val="Normal"/>
+            <w:rsid w:val="00DC418F"/>
+            <w:pPr>
+                <w:pStyle w:val="Heading2"/>
+                <w:keepNext/>
+                <w:spacing w:before="240" w:after="60"/>
+                <w:outlineLvl w:val="1"/>
+            </w:pPr>
+            <w:rPr>
+                <w:rFonts w:ascii="Arial" w:h-ansi="Arial" w:cs="Arial"/>
+                <wx:font wx:val="Arial"/>
+                <w:b/>
+                <w:b-cs/>
+                <w:i/>
+                <w:i-cs/>
+                <w:sz w:val="28"/>
+                <w:sz-cs w:val="28"/>
+            </w:rPr>
+        </w:style>
+        <w:style w:type="paragraph" w:styleId="Heading3">
+            <w:name w:val="heading 3"/>
+            <wx:uiName wx:val="Heading 3"/>
+            <w:basedOn w:val="Normal"/>
+            <w:next w:val="Normal"/>
+            <w:rsid w:val="00DC418F"/>
+            <w:pPr>
+                <w:pStyle w:val="Heading3"/>
+                <w:keepNext/>
+                <w:spacing w:before="240" w:after="60"/>
+                <w:outlineLvl w:val="2"/>
+            </w:pPr>
+            <w:rPr>
+                <w:rFonts w:ascii="Arial" w:h-ansi="Arial" w:cs="Arial"/>
+                <wx:font wx:val="Arial"/>
+                <w:b/>
+                <w:b-cs/>
+                <w:sz w:val="26"/>
+                <w:sz-cs w:val="26"/>
+            </w:rPr>
+        </w:style>
+        <w:style w:type="character" w:default="on" w:styleId="DefaultParagraphFont">
+            <w:name w:val="Default Paragraph Font"/>
+            <w:semiHidden/>
+        </w:style>
+        <w:style w:type="list" w:default="on" w:styleId="NoList">
+            <w:name w:val="No List"/>
+            <w:semiHidden/>
+        </w:style>
+        <w:style w:type="table" w:styleId="TableElegant">
+            <w:name w:val="Table Elegant"/>
+            <w:basedOn w:val="TableNormal"/>
+            <w:rsid w:val="00DC418F"/>
+            <w:rPr>
+                <wx:font wx:val="Times New Roman"/>
+            </w:rPr>
+            <w:tblPr>
+                <w:tblInd w:w="0" w:type="dxa"/>
+                <w:tblBorders>
+                    <w:top w:val="double" w:sz="6" wx:bdrwidth="45" w:space="0" w:color="000000"/>
+                    <w:left w:val="double" w:sz="6" wx:bdrwidth="45" w:space="0" w:color="000000"/>
+                    <w:bottom w:val="double" w:sz="6" wx:bdrwidth="45" w:space="0" w:color="000000"/>
+                    <w:right w:val="double" w:sz="6" wx:bdrwidth="45" w:space="0" w:color="000000"/>
+                    <w:insideH w:val="single" w:sz="6" wx:bdrwidth="15" w:space="0" w:color="000000"/>
+                    <w:insideV w:val="single" w:sz="6" wx:bdrwidth="15" w:space="0" w:color="000000"/>
+                </w:tblBorders>
+                <w:tblCellMar>
+                    <w:top w:w="0" w:type="dxa"/>
+                    <w:left w:w="108" w:type="dxa"/>
+                    <w:bottom w:w="0" w:type="dxa"/>
+                    <w:right w:w="108" w:type="dxa"/>
+                </w:tblCellMar>
+            </w:tblPr>
+            <w:tcPr>
+                <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+            </w:tcPr>
+            <w:tblStylePr w:type="firstRow">
+                <w:rPr>
+                    <w:caps/>
+                    <w:color w:val="auto"/>
+                </w:rPr>
+                <w:tblPr/>
+                <w:tcPr>
+                    <w:tcBorders>
+                        <w:tl2br w:val="none" w:sz="0" wx:bdrwidth="0" w:space="0" w:color="auto"/>
+                        <w:tr2bl w:val="none" w:sz="0" wx:bdrwidth="0" w:space="0" w:color="auto"/>
+                    </w:tcBorders>
+                </w:tcPr>
+            </w:tblStylePr>
+        </w:style>
+    </w:styles>
+    <w:docPr>
+        <w:view w:val="print"/>
+        <w:zoom w:percent="100"/>
+        <w:doNotEmbedSystemFonts/>
+        <w:proofState w:spelling="clean" w:grammar="clean"/>
+        <w:attachedTemplate w:val=""/>
+        <w:defaultTabStop w:val="720"/>
+        <w:punctuationKerning/>
+        <w:characterSpacingControl w:val="DontCompress"/>
+        <w:optimizeForBrowser/>
+        <w:validateAgainstSchema/>
+        <w:saveInvalidXML w:val="off"/>
+        <w:ignoreMixedContent w:val="off"/>
+        <w:alwaysShowPlaceholderText w:val="off"/>
+        <w:compat>
+            <w:breakWrappedTables/>
+            <w:snapToGridInCell/>
+            <w:wrapTextWithPunct/>
+            <w:useAsianBreakRules/>
+            <w:dontGrowAutofit/>
+        </w:compat>
+    </w:docPr>
+    <w:body>
+        <wx:sect>
+            <wx:sub-section>
+                <w:p>
+                    <w:pPr>
+                        <w:pStyle w:val="Heading1"/>
+                    </w:pPr>
+                    <w:r>
+                        <w:t>Survey on <%= @survey.job_title %></w:t>
+                    </w:r>
+                </w:p>
+                <w:p>
+                    <w:r>
+                        <w:rPr>
+                            <w:b/>
+                        </w:rPr>
+                        <w:t>Effective Date:</w:t>
+                    </w:r>
+                    <w:r>
+                        <w:t> <%= @survey.effective_date.to_date %> </w:t>
+                    </w:r>
+                </w:p>
+                <w:p>
+                    <w:r>
+                        <w:rPr>
+                            <w:b/>
+                        </w:rPr>
+                        <w:t>Completion Date:</w:t>
+                    </w:r>
+                    <w:r>
+                        <w:t> <%= @survey.end_date.to_date %></w:t>
+                    </w:r>
+                </w:p>
+                <w:p>
+                    <w:r>
+                        <w:rPr>
+                            <w:b/>
+                        </w:rPr>
+                        <w:t>Job Description:</w:t>
+                    </w:r>
+                    <w:r>
+                        <w:t> This is the job description! How about that, eh? A job description. Pretty awesome if you ask me.</w:t>
+                    </w:r>
+                </w:p>
+                <w:p>
+                    <w:r>
+                        <w:rPr>
+                            <w:b/>
+                        </w:rPr>
+                        <w:t>Participants: </w:t>
+                    </w:r>
+                    <w:r>
+                        <w:t><%= @survey.participations.count %></w:t>
+                    </w:r>
+                </w:p>
+                <wx:sub-section>
+                    <w:p>
+                        <w:pPr>
+                            <w:pStyle w:val="Heading3"/>
+                        </w:pPr>
+                        <w:r>
+                            <w:t>Invitation List</w:t>
+                        </w:r>
+                    </w:p>
+                    <w:p><w:r><w:t>Joe Schmoe (joe.schmoe@com.com)</w:t>
+                        </w:r>
+                    </w:p>
+                    <w:p>
+                        <w:r>
+                            <w:t>Tony Parker (tony.p@spurs.com</w:t>
+                        </w:r>
+                    </w:p>
+                    <w:p>
+                        <w:r>
+                            <w:t>Kevin Garnett (kg4mvp@boston.com)</w:t>
+												</w:r>
+                    </w:p>
+                    <w:p>
+                        <w:r>
+                            <w:t>Joe King (joe.king@funny.com)</w:t>
+                        </w:r>
+                    </w:p>
+                    <w:p>
+                        <w:r>
+                            <w:t>John Ton (john.ton@asd.com)</w:t>
+                        </w:r>
+                    </w:p>
+                    <w:p/>
+                </wx:sub-section>
+            </wx:sub-section>
+            <wx:sub-section>
+                <w:p>
+                    <w:pPr>
+                        <w:pStyle w:val="Heading1"/>
+                        <w:keepLines/>
+                    </w:pPr>
+                    <w:r>
+                        <w:t>Response Data</w:t>
+                    </w:r>
+                </w:p>
+            </wx:sub-section>
+        </wx:sect>
+    </w:body>
+</w:wordDocument>
+

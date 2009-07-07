@@ -1,0 +1,8 @@
+<% word_section do %>
+  <% word_p(:style => "Heading3") do %>
+    <%= question.text %>
+  <% end %>
+  <% question.responses.each do |response| %>
+    <%= word_p response.textual_response %>
+  <% end %>
+<% end %>
