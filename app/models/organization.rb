@@ -99,11 +99,12 @@ class Organization < ActiveRecord::Base
   end
   
   # returns the organization's name and location if they have one.
+  # TODO: Remove this argument.
   def name_and_location(escape = true)
     if location.blank?
       name
     else
-      "#{name} " + (escape ? "&ndash;" : "-") + " #{location}"
+      "#{name} " + "–" + " #{location}"
     end
   end
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
