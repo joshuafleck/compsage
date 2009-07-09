@@ -18,11 +18,15 @@ class Question < ActiveRecord::Base
   validates_length_of :text, :within => 1..1000, :message => " is required for a question."
   
   def before_validation_on_create 
-     self[:response_type] = CUSTOM_QUESTION_TYPES[self[:custom_question_type]] if attribute_present?("custom_question_type")
-     self[:options] = CUSTOM_QUESTION_OPTIONS[self[:custom_question_type]] if attribute_present?("custom_question_type")
      # by default, set pay or wage response types as required for custom questions
      self[:required] = true if !attribute_present?("predefined_question_id") && self[:custom_question_type] == 'Pay or wage response'
   end
+  
+  def before_validation 
+     # be sure to update the response type and options if the custom question type changes
+     self[:response_type] = CUSTOM_QUESTION_TYPES[self[:custom_question_type]] if attribute_present?("custom_question_type")
+     self[:options] = CUSTOM_QUESTION_OPTIONS[self[:custom_question_type]] if attribute_present?("custom_question_type") 
+  end  
                        
   CUSTOM_QUESTION_TYPES = {
     'Agreement scale' => 'MultipleChoiceResponse',
