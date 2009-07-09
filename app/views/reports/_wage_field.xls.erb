@@ -6,6 +6,7 @@ if format == "Hourly" then%>
     <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">Average</Data></Cell>
     <Cell ss:StyleID="s34"><Data ss:Type="Number"><%=WageResponse.units.convert(average,{:from => "Annually", :to => "Hourly"})%></Data></Cell>
    </Row>
+   <% if question.adequate_responses_for_percentiles? then %>
    <Row ss:AutoFitHeight="0">
     <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">25th Percentile</Data></Cell>
     <Cell ss:StyleID="s34"><Data ss:Type="Number"><%=WageResponse.units.convert(percentiles[0].to_i / 100.0,{:from => "Annually", :to => "Hourly"})%></Data></Cell>
@@ -18,11 +19,13 @@ if format == "Hourly" then%>
     <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">75th Percentile</Data></Cell>
     <Cell ss:StyleID="s34"><Data ss:Type="Number"><%=WageResponse.units.convert(percentiles[2].to_i / 100.0,{:from => "Annually", :to => "Hourly"})%></Data></Cell>
    </Row>
+   <% end %>
 <% else %>
    <Row ss:AutoFitHeight="0">
     <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">Average</Data></Cell>
     <Cell ss:StyleID="s34"><Data ss:Type="Number"><%=average%></Data></Cell>
    </Row>
+   <% if question.adequate_responses_for_percentiles? then %>
    <Row ss:AutoFitHeight="0">
     <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">25th Percentile</Data></Cell>
     <Cell ss:StyleID="s34"><Data ss:Type="Number"><%=percentiles[0].to_i / 100.0%></Data></Cell>
@@ -35,4 +38,5 @@ if format == "Hourly" then%>
     <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">75th Percentile</Data></Cell>
     <Cell ss:StyleID="s34"><Data ss:Type="Number"><%=percentiles[2].to_i / 100.0%></Data></Cell>
    </Row>
+   <% end %>
 <% end %>
