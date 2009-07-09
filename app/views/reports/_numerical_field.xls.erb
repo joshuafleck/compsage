@@ -3,6 +3,7 @@
     <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">Average</Data></Cell>
     <Cell ss:StyleID="s32"><Data ss:Type="Number"><%= number_with_precision(question.responses.average(:numerical_response))%></Data></Cell>
    </Row>
+<% if question.adequate_responses_for_percentiles? then %>
    <Row ss:AutoFitHeight="0">
     <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">25th Percentile</Data></Cell>
     <Cell ss:StyleID="s32"><Data ss:Type="Number"><%= number_with_precision(percentiles[0]) %></Data></Cell>
@@ -15,3 +16,4 @@
     <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String">75th Percentile</Data></Cell>
     <Cell ss:StyleID="s32"><Data ss:Type="Number"><%= number_with_precision(percentiles[2]) %></Data></Cell>
    </Row>
+<% end %>
