@@ -46,9 +46,10 @@
         <%=f.text_field :phone_extension, :size => 5 %>
       <% end %>   
     <% end %>
+    <label>How Would You Like to be Billed?</label>
     <label></label>
     <%=f.radio_button :payment_type, 'credit' %> 
-    <label for="invoice_payment_type_credit" style="display: inline;">Pay by credit card</label>   
+    <label for="invoice_payment_type_credit" style="display: inline;">By Credit Card</label>   
     <div id="credit_card" style="padding-left: 2em; display: none;">
       <% form_row do %>
         <% form_box do %>
@@ -67,12 +68,12 @@
     </div>
     <label></label>
     <%=f.radio_button :payment_type, 'invoice' %>
-    <label for="invoice_payment_type_invoice" style="display: inline;">I would like to be invoiced</label>
+    <label for="invoice_payment_type_invoice" style="display: inline;">By Invoice</label>
     <label></label>
     <div id="invoice" style="padding-left: 2em; display: none;">
       <p>Your purchase order number is: <%=@invoice.purchase_order_number%>. Upon successful completion of the survey, you will have the opportunity to view and print the invoice.</p>
     </div>
-    <p>By submitting this information, you agree that you have read and understand the <%= link_to "legal disclaimer", home_path('about'), :target => '_blank' %> and you agree to pay <%=@survey.pretty_print_price%> upon successful completion of the survey.</p>
+    <p>By submitting this information, you agree that you have read and understand the <%= link_to "legal disclaimer", home_path('about'), :target => '_blank' %> and you agree to pay <%=@survey.pretty_print_price%> upon successful completion of the survey. If you have any questions about the billing process, please <%= link_to "contact us", home_path('contact') %>.</p>
   <div class="submit_row">
       <input id="form_submit" type="submit" value="Next &ndash; Submit Billing Information" class="next" />
       <input type="button" value='Back &ndash; Preview Survey' class="previous" onClick ="parent.location='<%=preview_survey_questions_path(@survey)%>'" />
