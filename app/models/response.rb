@@ -46,6 +46,9 @@ class Response < ActiveRecord::Base
   validates_each :unit do |record, attr, value|
     record.errors.add_to_base "#{record.class.units.name.capitalize} not provided" if record.class.units && value.blank?
   end
+  
+  validate :follow_up_qualification_without_response
+  
 
   before_save :convert_to_standard_units
 
@@ -93,6 +96,10 @@ class Response < ActiveRecord::Base
   # default no formatting
   def formatted_response
     self.response
+  end
+  
+  def follow_up_qualification_without_response
+    errors.add_to_base " You may not comment upon a blank response. Use the parent question to add general comments." if self.question.level > 0 && !self.qualifications.nil? && self.response.nil?
   end
   
 
