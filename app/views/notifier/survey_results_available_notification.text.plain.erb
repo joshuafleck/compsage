@@ -1,6 +1,6 @@
 Results for the survey "<%=@survey.job_title%>" are now available!
 
-To view the survey results, go to: <%= @participant.is_a?(ExternalSurveyInvitation) ? survey_login_path(:survey_id => @survey.id, :key => @participant.key, :only_path => false) : url_for(survey_report_path(@survey, :only_path => false))%>
+To view the survey results, go to: <%= @participant.is_a?(ExternalSurveyInvitation) ? survey_login_path(:survey_id => @survey.id, :key => @participant.key, :only_path => false) : url_for(survey_report_path(@survey, :only_path => false, :format => :html))%>
 
 Thanks,
 CompSage.com

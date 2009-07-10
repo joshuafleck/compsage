@@ -223,7 +223,7 @@ describe SurveysController, " handling GET /surveys/1 when survey is closed" do
 
   it "should redirect to the report for the selected survey" do
     get :show, :id => 1
-    response.should redirect_to(survey_report_path(@survey))
+    response.should redirect_to(survey_report_path(@survey, :format => :html))
   end
 end
 
