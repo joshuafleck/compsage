@@ -27,20 +27,35 @@ class Invoice < ActiveRecord::Base
   validates_length_of :phone, :is => 10
   validates_length_of :phone_extension,  :maximum => 6, :allow_nil => true
   
+  CREDIT = "credit"
+  
+  # use the survey id as the base for the po number
   def purchase_order_number
     survey.id + 1000
   end
   
   def invoice_number
-    self[:id] + 1000
+    id + 1000
+  end  
+  
+  # true, if the sponsor should be presented with the invoice at report-time
+  def should_be_delivered?
+    invoiced_at.blank? && !paying_with_credit_card?
   end
   
-  def sent?
-    !self[:invoiced_at].blank? || paying_with_credit_card?
+  # mark the invoice as delivered, so we know the sponsor has seen it
+  def set_delivered
+    self.invoiced_at = Time.now
+    self.save!
   end
   
   def paying_with_credit_card?
-    payment_type == "credit"
+    payment_type == CREDIT
+  end
+  
+  # credit should be the default payment type
+  def payment_type
+    self[:payment_type] || CREDIT
   end
   
   private

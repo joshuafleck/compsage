@@ -8,7 +8,7 @@
   <dt>Date:</dt><dd><%=Date.today.strftime("%B %d, %Y")%></dd>
 </dl>
 
-<h4>Remit to:</h4>
+<h4>Submit payment to:</h4>
 <ul class='invoice'>
   <li><strong>Huminsight, Inc</strong></li>
   <li>2310 Stephani Court</li>
@@ -32,6 +32,8 @@
   <dt>Price:</dt><dd><%=@survey.pretty_print_price%></dd>
   <dt>Total Due:</dt><dd><%=@survey.pretty_print_price%></dd>
 </dl>
+
+<p>Have a question about billing? Feel free to <%= link_to "contact us", home_path('contact'), :target => '_blank' %>.</p>
 
 <%= link_to_function("Print", "javascript:print()") %>&nbsp;
 <%= link_to "Done", invoice_survey_billing_path(@survey) %>

@@ -8,12 +8,11 @@ class ReportsController < ApplicationController
     @participations = @survey.participations
     @total_participation_count = @participations.size
     @format = params[:wage_format] || "Annually"
-    @invoice = Invoice.find_by_survey_id(@survey.id) if current_organization == @survey.sponsor
     
     respond_to do |wants|
       wants.html do
         #check to see if we need to display the invoice         
-        if @invoice && !@invoice.sent? then
+        if current_organization == @survey.sponsor && @survey.invoice.should_be_delivered? then
           redirect_to survey_billing_path(@survey)
         end
       end

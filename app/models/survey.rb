@@ -19,6 +19,7 @@ class Survey < ActiveRecord::Base
   end
 
   belongs_to :sponsor, :class_name => "Organization"
+  has_one  :invoice, :dependent => :destroy
   has_many :discussions, :dependent => :destroy
   has_many :invitations, :class_name => 'SurveyInvitation', :dependent => :destroy
   has_many :invitees, :class_name => 'Organization', :through => :invitations
@@ -42,6 +43,7 @@ class Survey < ActiveRecord::Base
 
   named_scope :since_last_week, Proc.new { {:conditions => ['end_date > ?', Time.now]} }
   named_scope :recent, :order => 'surveys.created_at DESC', :limit => 10
+  named_scope :most_recent, :order => 'end_date DESC', :conditions => 'end_date IS NOT NULL', :limit => 1
   named_scope :closed, :conditions => ['aasm_state = ? OR aasm_state = ?', 'finished', 'stalled']
   named_scope :not_finished, :conditions => "aasm_state <> 'finished'"
   named_scope :running_or_pending, :conditions => ['aasm_state = ? OR aasm_state = ?', 'running', 'pending']
@@ -274,9 +276,6 @@ class Survey < ActiveRecord::Base
     participations.destroy_all
     invitations.destroy_all
     external_invitations.destroy_all
-    
-    invoice = Invoice.find_by_survey_id(self.id)
-    invoice.destroy if invoice
   end
 
   # Creates a survey subscription for the survey sponsor.
