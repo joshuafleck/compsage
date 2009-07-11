@@ -4,7 +4,7 @@
     <div class="question_container" style="padding-left:<%= level*2 %>em"> 
       <%= q.form_field %>
       <% if participation_form_question.response_class.accepts_qualification? then %>
-        <div class="qualifications"<% if @participation.response[participation_form_question.id].nil? %>style=" display: none;"<%end%>>
+        <div class="qualifications">
           <div class="field">
             <label>Comment:</label>
             <%=q.text_field :qualifications %>
