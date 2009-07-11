@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 module ResponseSpecHelper
   def valid_response_attributes
     {
-      :question => mock_model(Question, {:numerical_response? => false, :has_units? => false}),
+      :question => mock_model(Question, {:numerical_response? => false, :has_units? => false, :level => 0}),
       :response => "The response",
       :participation => mock_model(Participation)
     }

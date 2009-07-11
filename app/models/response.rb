@@ -99,7 +99,7 @@ class Response < ActiveRecord::Base
   end
   
   def follow_up_qualification_without_response
-    errors.add_to_base " You may not comment upon a blank response. Use the parent question to add general comments." if self.question.level > 0 && !self.qualifications.nil? && self.response.nil?
+    errors.add_to_base " You may not comment upon a blank response. Use the parent question to add general comments." if !self.question.nil? && self.question.level > 0 && !self.qualifications.nil? && self.response.nil?
   end
   
 
