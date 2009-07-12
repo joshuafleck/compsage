@@ -26,6 +26,7 @@ function observeQualificationLinks() {
     });
   });
 }
+
 function observeUnitSelection() {
   var unit_selects = $$('select.units');
   unit_selects.each(function(select) {
@@ -39,7 +40,9 @@ function observeUnitSelection() {
       });
     });
   });
-} function setupFollowups() {
+}
+
+function setupFollowups() {
   var root_list = $('questions');
   setupFollowupForList(root_list, null);
 }
@@ -52,7 +55,7 @@ function setupFollowupForList(list, parent_questions) {
       var inputs = item.childElements().first().select('input:not([id$=qualifications])');
       inputs.each(function(input){
         if(input.type == 'text') {
-          input.observe('blur', function(e) {
+          input.observe('keyup', function(e) {
             if(input.value === '')
               disableList(sub_list, true);
             else
@@ -77,8 +80,12 @@ function setupFollowupForList(list, parent_questions) {
         }
           
       });
-      
-      if(!inputs.any(function(q) {return q.checked && parseInt(q.value) == 0}))
+      // if there aren't any inputs that are a yes/no question answered yes, or a radio button that is checked, or a
+      // multiple choice that is simply checked, or a text input that isn't blank, disable the follow-up questions by
+      // default.
+      if(!inputs.any(function(q) {return (inputs.length == 2 && q.type != 'text' && q.checked && parseInt(q.value) == 0) ||
+                                         (q.type != 'text' && q.checked) ||
+                                         (q.type == 'text' && q.value != '')}))
         disableList(sub_list, false);
 
       setupFollowupForList(sub_list, inputs);
@@ -136,7 +143,7 @@ function observeResponseForQualifications(){
         else {
           qualifications_div.show();
         }
-        input.observe('blur', function(e){
+        input.observe('keyup', function(e){
           if (input.value === ''){
             clearAndHideQualifications(qualifications_div);
           }
