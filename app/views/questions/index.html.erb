@@ -1,7 +1,7 @@
 <% title "Responding to #{@survey.job_title}" %>
 <% highlight_tab("surveys") %>
 <%= render :partial => "questions/participation_form"%>
-<% content_for :initialize_js, "createMasks();observeQualificationLinks();observeUnitSelection();setupFollowups();observeResponseForQualifications();"%>
+<% content_for :initialize_js, "createMasks();observeQualificationLinks();observeUnitSelection();setupFollowups();"%>
 <script type="text/javascript">
 function observeQualificationLinks() {
   $$('div.qualifications').each(function(elem) {
@@ -127,53 +127,6 @@ function disableList(list, disableChildren) {
   })
 }
 
-function observeResponseForQualifications(){
-  $('questions').select('input').each(function(input){
-    if(!input.id.include('qualifications') && !input.hasClassName('TextualResponse')) {
-      if(input.getAttribute('type').match(/checkbox|radio/)){
-        input.observe('click', function(e){
-            input.up(1).down('div.qualifications').show();
-        });
-      }
-      else {
-        var qualifications_div = input.next('div.qualifications');
-        if (input.value === ''){
-          clearAndHideQualifications(qualifications_div);
-        }
-        else {
-          qualifications_div.show();
-        }
-        input.observe('keyup', function(e){
-          if (input.value === ''){
-            clearAndHideQualifications(qualifications_div);
-          }
-          else {
-            qualifications_div.show();
-          }
-        });
-      }
-    }
-  });
-  //disable radio questions
-  $('questions').select('div.question_container').each(function(question_div){
-    var inputs = question_div.select('input:not([id$=qualifications])');
-    if(question_div.select('input').first().getAttribute('type').match(/checkbox|radio/)){
-      if(inputs.any(function(q){return q.checked;})) {
-        question_div.down('div.qualifications').show();
-      }
-      else {
-        clearAndHideQualifications(question_div.down('div.qualifications'));
-      }
-    }
-  });
-}
-
-function clearAndHideQualifications(qualifications_div){
-  qualifications_div.select('input').first().value = '';
-  qualifications_div.select('div.field').first().hide();
-  qualifications_div.select('a').first().innerHTML = 'Add Comment';
-  qualifications_div.hide();
-}
 
   function createMasks() {
     $$('input.WageResponse, input.BaseWageResponse').each(function(field) {
