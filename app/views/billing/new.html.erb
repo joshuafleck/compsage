@@ -9,7 +9,7 @@
 <div id="step_container">
   <h3>Billing Information</h3>
   <p class="preview_text">
-  Please enter your billing information below. The cost of a survey is <%=@survey.pretty_print_price%> You may pay by credit card or request an invoice. You will not be billed until the survey completes successfully. 
+  Please enter your billing information below. The cost of a survey is <%=number_to_currency (@survey.price / 100)%> You may pay by credit card or request an invoice. You will not be billed until the survey completes successfully. 
   </p>
   <%=error_messages_for :invoice%>
   <%=flash_messages%>
@@ -73,7 +73,7 @@
     <div id="invoice" style="padding-left: 2em; display: none;">
       <p>Your purchase order number is: <%=@invoice.purchase_order_number%>. Upon successful completion of the survey, you will have the opportunity to view and print the invoice.</p>
     </div>
-    <p>By submitting this information, you agree that you have read and understand the <%= link_to "legal disclaimer", home_path('about'), :target => '_blank' %> and you agree to pay <%=@survey.pretty_print_price%> upon successful completion of the survey. If you have any questions about the billing process, please <%= link_to "contact us", home_path('contact'), :target => '_blank' %>.</p>
+    <p>By submitting this information, you agree that you have read and understand the <%= link_to "legal disclaimer", home_path('about'), :target => '_blank' %> and you agree to pay <%=number_to_currency (@survey.price / 100)%> upon successful completion of the survey. If you have any questions about the billing process, please <%= link_to "contact us", home_path('contact'), :target => '_blank' %>.</p>
   <div class="submit_row">
       <input id="form_submit" type="submit" value="Next &ndash; Submit Billing Information" class="next" />
       <input type="button" value='Back &ndash; Preview Survey' class="previous" onClick ="parent.location='<%=preview_survey_questions_path(@survey)%>'" />

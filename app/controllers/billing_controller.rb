@@ -10,31 +10,7 @@ class BillingController < ApplicationController
 	
 	# making a new invoice
 	def new
-	  
-	  # see if we can auto fill some fields based on existing information
-  	invoice_params = {}
-  	
-	  previous_survey = @current_organization.sponsored_surveys.most_recent.first	  
-	  previous_invoice = previous_survey.invoice if previous_survey
-	  if previous_invoice then
-	    invoice_params[:organization_name] = previous_invoice.organization_name
-	    invoice_params[:contact_name] = previous_invoice.contact_name
-	    invoice_params[:address_line_1] = previous_invoice.address_line_1
-	    invoice_params[:address_line_2] = previous_invoice.address_line_2
-	    invoice_params[:phone] = previous_invoice.phone
-	    invoice_params[:phone_extension] = previous_invoice.phone_extension
-	    invoice_params[:city] = previous_invoice.city
-	    invoice_params[:state] = previous_invoice.state
-	    invoice_params[:zip_code] = previous_invoice.zip_code
-	  else
-	    invoice_params[:organization_name] = current_organization.name
-	    invoice_params[:contact_name] = current_organization.contact_name
-	    invoice_params[:city] = current_organization.city
-	    invoice_params[:state] = current_organization.state
-	    invoice_params[:zip_code] = current_organization.zip_code
-	  end
-	  
-	  @invoice.attributes = invoice_params
+
 	end
 	
 	# creates a new invoice, last step in the survey creation process

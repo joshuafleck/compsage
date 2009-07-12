@@ -212,12 +212,6 @@ class Survey < ActiveRecord::Base
     12900
   end  
   
-  def pretty_print_price
-    dollars = price/100
-    cents = price % 100
-    "$#{dollars}.#{'%02d' % cents}"
-  end   
-  
   private
     
   # TODO: Figure out who to email...

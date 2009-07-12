@@ -26,7 +26,7 @@ class Invoice < ActiveRecord::Base
   validates_length_of :zip_code, :is => 5
   validates_length_of :phone, :is => 10
   validates_length_of :phone_extension,  :maximum => 6, :allow_nil => true
-  
+    
   CREDIT = "credit"
   
   # use the survey id as the base for the po number
@@ -56,6 +56,31 @@ class Invoice < ActiveRecord::Base
   # credit should be the default payment type
   def payment_type
     self[:payment_type] || CREDIT
+  end
+  
+  # overriding the default constructor in order to autofill some attributes
+  def initialize(*params) 
+    super()
+	  survey = Survey.find(self[:survey_id])
+	  previous_survey = survey.sponsor.sponsored_surveys.most_recent.first	  
+	  previous_invoice = previous_survey.invoice if previous_survey
+	  if previous_invoice then # if there was an existing invoice from a previous survey, use that
+	    self.organization_name = previous_invoice.organization_name
+	    self.contact_name = previous_invoice.contact_name
+	    self.address_line_1 = previous_invoice.address_line_1
+	    self.address_line_2 = previous_invoice.address_line_2
+	    self.phone = previous_invoice.phone
+	    self.phone_extension = previous_invoice.phone_extension
+	    self.city = previous_invoice.city
+	    self.state = previous_invoice.state
+	    self.zip_code = previous_invoice.zip_code
+	  else # otherwise, use the sponsor's contact information
+	    self.organization_name = survey.sponsor.name
+	    self.contact_name = survey.sponsor.contact_name
+	    self.city = survey.sponsor.city
+	    self.state = survey.sponsor.state
+	    self.zip_code = survey.sponsor.zip_code
+	  end	    
   end
   
   private
