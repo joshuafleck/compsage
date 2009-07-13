@@ -13,7 +13,7 @@
   </p>
   <%=error_messages_for :invoice%>
   <%=flash_messages%>
-  <% form_for @invoice, :url => survey_billing_path(@survey), :html => {:onSubmit => 'return validateCreditCardInfo();'} do |f| %>
+  <% form_for @invoice, :url => survey_billing_path(@survey) do |f| %>
     <%=f.label :organization_name, required('Company Name') %>    
     <%=f.text_field :organization_name %>
     <%=f.label :contact_name, required('Contact Name') %>    
@@ -49,23 +49,46 @@
     <label>How Would You Like to be Billed?</label>
     <label></label>
     <%=f.radio_button :payment_type, 'credit' %> 
-    <label for="invoice_payment_type_credit" style="display: inline;">By Credit Card</label>   
-    <div id="credit_card" style="padding-left: 2em; display: none;">
+    <label for="invoice_payment_type_credit" style="display: inline;">By Credit Card</label>  
+    <div id="credit_card" style="padding-left: 2em; display: none;">  
+      <% fields_for @credit_card do |credit_card| %>
       <% form_row do %>
         <% form_box do %>
-          <label for="credit_card_number">Credit Card Number</label>
-          <%=text_field_tag :credit_card_number %>
+          <%= credit_card.label :first_name, required('First name') %>
+          <%= credit_card.text_field :first_name, :size => 10 %>
+        <% end %>     
+        <% form_box do %>
+          <%= credit_card.label :last_name, required('Last name') %>
+          <%= credit_card.text_field :last_name, :size => 10 %>
+        <% end %>               
+      <% end %>        
+      <% form_row do %>
+        <% form_box do %>
+          <%= credit_card.label :type, required('Type') %>
+          <%= credit_card.select :type, [['Visa','visa'],['MasterCard','master'],['American Express','american_express'],['Discover','discover']], {:include_blank => true} %>
+        <% end %> 
+        <% form_box do %>
+          <%= credit_card.label :number, required('Number') %>
+          <%= credit_card.text_field :number, :size => 18 %>
         <% end %>
         <% form_box do %>
-          <label for="expiration_month">Expiration Month/Year</label>
-          <%=select_tag :expiration_month, "<option value='' selected='selected'></option>#{options_for_select(1..12)}" %>&nbsp;
-          <%=select_tag :expiration_year, "<option value='' selected='selected'></option>#{options_for_select(Time.now.year..(Time.now.year + 10))}" %>
-        <% end %>   
+          <%= credit_card.label :verification_value, required('Verification value') %>
+          <%= credit_card.text_field :verification_value, :size => 4 %>
+        <% end %>                  
       <% end %>  
-      <p><div id="credit_card_warnings" class="error_description" style="padding: 0;"></div></p>
+      <% form_row do %>
+        <% form_box do %>
+          <%= credit_card.label :year, required('Expiration Month/Year') %>
+          <%= credit_card.select :month, 1..12, {:include_blank => true} %>&nbsp;
+          <%= credit_card.select :year, Time.now.year..(Time.now.year + 10), {:include_blank => true} %>
+        <% end %>   
+        <% form_box do %>
+        <% end %>                  
+      <% end %>        
       <label></label>
       <p>Upon successful completion of the survey, your card will be charged and you will receive a reciept via email.</p>  
-    </div>
+      <% end %>
+    </div>    
     <label></label>
     <%=f.radio_button :payment_type, 'invoice' %>
     <label for="invoice_payment_type_invoice" style="display: inline;">By Invoice</label>
@@ -103,41 +126,6 @@ function selectCreditCard() {
 function selectInvoice() {
   $('invoice').blindDown({'duration': 0.5})
   $('credit_card').blindUp({'duration': 0.5})
-}
-
-function validateCreditCardInfo() {
-
-  if($('invoice_payment_type_credit').checked) {
-    var errorMessages = [];
-    var warningElement = $('credit_card_warnings');
-  
-    if($F('credit_card_number') == "") {
-      errorMessages.push('Credit card number must be provided.');
-      
-    }
-    
-    if($F('expiration_month') == "") {
-      errorMessages.push('Expiration month must be provided.');
-      
-    }
-    
-    if($F('expiration_year') == "") {
-      errorMessages.push('Expiration year must be provided.');
-      
-    }
-    
-    if(errorMessages.size() > 0) {
-      warningElement.update(errorMessages.join(' '));
-      return false;
-    } 
-    else {
-      warningElement.update();
-      return true;
-    }
-            
-  }
-  
-  return true;
 }
 
 </script>

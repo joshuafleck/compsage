@@ -306,7 +306,14 @@ class Survey < ActiveRecord::Base
 
   # Calls the billing routine and returns whether or not billing was successful.
   def billing_successful?
-    bill_sponsor
+    # if we are paying by c.c. bill the card
+    if self.invoice.paying_with_credit_card? then
+      bill_sponsor
+    # if we are paying by invoice, email the invoice to the sponsor
+    else
+      Notifier.deliver_invoice(self)
+      true
+    end
   end
 
   # Attempts to bill the survey sponsor.  Returns whether or not the operation succeeded.

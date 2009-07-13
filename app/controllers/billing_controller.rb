@@ -10,22 +10,27 @@ class BillingController < ApplicationController
 	
 	# making a new invoice
 	def new
-
+    @credit_card = ActiveMerchant::Billing::CreditCard.new
 	end
 	
 	# creates a new invoice, last step in the survey creation process
 	def create
 	  @invoice.attributes = params[:invoice]
-	  @invoice.amount = @survey.price
+	  @credit_card = ActiveMerchant::Billing::CreditCard.new(params[:active_merchant_billing_credit_card])
 	  
+    input_is_valid = @invoice.valid?
+    
 	  #TODO: validate cc information via Gateway
-	  if @invoice.paying_with_credit_card? then
-	    credit_card_number = params[:credit_card_number]
-	    expiration_month = params[:expiration_month]
-	    expiration_year = params[:expiration_year]
+	  if @invoice.paying_with_credit_card? then	
+	  
+	    input_is_valid = @credit_card.valid? && input_is_valid # see if there are credit card errors
+	    
+	    # add any credit card errors to the invoice base so they will be displayed consistently
+	    @invoice.errors.add_to_base("The credit card information provided was incorrect: "+@credit_card.errors.full_messages.join(", ")) unless @credit_card.valid? 
+	    
 	  end
 	  
-	  if @invoice.save then
+	  if input_is_valid && @invoice.save then
       @survey.billing_info_received!
       respond_to do |wants|
         wants.html do

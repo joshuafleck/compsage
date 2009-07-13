@@ -347,10 +347,11 @@ namespace :data_generator do
         
     surveys.each_with_index do |survey, index|
     
-      print_percent_complete(index,surveys.size)    
+      print_percent_complete(index,surveys.size) 
       
-      Factory.create(:invoice,
-        :survey => survey,
+      invoice = Invoice.find_or_initialize_by_survey_id(survey.id)
+      
+      invoice.attributes = {
         :organization_name => Faker::Company.name, 
         :contact_name => Faker::Name.name,
         :city => Faker::Address.city,
@@ -362,7 +363,9 @@ namespace :data_generator do
         :payment_type => ['credit','invoice'][rand(2)],
         :phone => '%010d' % rand(9999999999),
         :phone_extension => rand(999999).to_s
-      )
+        }
+        
+        invoice.save
       
     end
     

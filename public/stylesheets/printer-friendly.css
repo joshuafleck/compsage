@@ -41,3 +41,7 @@ dl.invoice dt {
   text-align: right;
   font-weight: bold;
 }
+
+#billing_questions, #print_link, #report_link {
+	display :none;
+}

@@ -1,0 +1,26 @@
+Invoice
+
+Invoice Number: <%=@invoice.invoice_number%>
+Date: <%=Date.today.strftime("%B %d, %Y")%>
+
+Submit Payment To:
+Huminsight, Inc
+2310 Stephani Court
+St. Paul, MN 55117
+
+Bill To:
+<%=@invoice.organization_name%>
+<%=@invoice.address_line_1%>
+<% if !@invoice.address_line_2.blank? then %><%=@invoice.address_line_2%><%end%>
+<%=@invoice.city%>, <%=@invoice.state%> <%=@invoice.zip_code%>
+
+P.O. Number: <%=@invoice.purchase_order_number%>
+Delivery Date: <%=@survey.end_date.strftime("%B %d, %Y")%>
+Product: Compsage Compensation Survey
+Description: <%=@survey.job_title%>
+Quantity: 1
+Price: <%=number_to_currency (@invoice.amount / 100)%>
+Total Due: <%=number_to_currency (@invoice.amount / 100)%>
+
+Have a question about billing? Feel free to contact us at: support@compsage.com
+
