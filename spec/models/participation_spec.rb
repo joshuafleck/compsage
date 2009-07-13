@@ -108,9 +108,9 @@ describe Participation, "in a survey with required questions" do
     @participation.should be_valid
   end
 
-  it "should not be valid when not responding to a required question that is a follow-up to an optional question" do
+  it "should be valid when not responding to a required question that is a follow-up to an optional question that hasn't been answered" do
     @participation = participation_responding_to(@required_question, @required_follow_up_to_required_question)
-    @participation.should_not be_valid
+    @participation.should be_valid
   end
 
   it "should not be valid if required questions do not have responses" do
@@ -119,7 +119,8 @@ describe Participation, "in a survey with required questions" do
   end
   
   it "should not be valid if a required follow-up has not been answered" do
-    @participation = participation_responding_to(@required_question)
+    @participation = participation_responding_to(@required_question, @optional_question,
+                                                 @required_follow_up_to_optional_question)
     @participation.should_not be_valid
   end
 
@@ -153,3 +154,5 @@ describe Participation, "in a survey with no required questions" do
     @participation.should_not be_valid
   end
 end
+
+

@@ -161,7 +161,6 @@
     @survey = Survey.find(params[:id])
     @participation = current_organization_or_survey_invitation.participations.find_or_initialize_by_survey_id(@survey.id)
     @participation.attributes = params[:participation]
-    
     if @participation.save then
       flash[:notice] = "Thank you for participating in the survey!  You will be notified when results are available."
       

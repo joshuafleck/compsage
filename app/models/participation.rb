@@ -68,12 +68,10 @@ class Participation < ActiveRecord::Base
   # 
   def required_responses_present
     return if survey.nil?
-
     questions_with_responses = self.responses.collect(&:question_id)
     self.survey.questions.required.each do |question|
       # Skip required questions where there's a parent question and it isn't answered.
-      next if !question.parent_question.nil? && questions_with_responses.include?(question.parent_question_id)
-
+      next if !question.parent_question.nil? && !questions_with_responses.include?(question.parent_question_id)
       # If the current question isn't answered, create a dummy question that will fail validation.
       if !questions_with_responses.include?(question.id) then
         responses.build(:question => question, :type => question.response_type)
