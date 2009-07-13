@@ -45,7 +45,7 @@
     respond_to do |wants|
       wants.html do
         if @survey.finished?
-          redirect_to survey_report_path(@survey, :format => :html)
+          redirect_to survey_report_path(@survey)
         else
           render :action => "show_#{@survey.aasm_state}"
         end
@@ -226,7 +226,7 @@
     if @survey.finish_with_partial_report!
        respond_to do |wants|  
          wants.html do
-           redirect_to survey_report_path(@survey, :format => :html) 
+           redirect_to survey_report_path(@survey) 
          end
        end
      else

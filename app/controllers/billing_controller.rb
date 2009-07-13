@@ -54,7 +54,7 @@ class BillingController < ApplicationController
 	  
     respond_to do |wants|
       wants.html do
-        redirect_to survey_report_path(@survey, :format => :html)
+        redirect_to survey_report_path(@survey)
       end
     end
 	end	
