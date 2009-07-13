@@ -127,6 +127,52 @@ function disableList(list, disableChildren) {
   })
 }
 
+function observeResponseForQualifications(){
+  $('questions').select('div.question_container').each(function(question_div){
+    question_div.select('input:not([id$=qualifications])').each(function(input){
+      if(!input.hasClassName('TextualResponse')) {
+        if(input.getAttribute('type').match(/checkbox|radio/)){
+          input.observe('click', function(e){
+              question_div.select('div.qualifications').first().show();
+          });
+        }
+        else {
+          var qualifications_div = question_div.select('div.qualifications').first();
+          if (input.value === ''){
+            clearAndHideQualifications(qualifications_div);
+          }
+          else {
+            qualifications_div.show();
+          }
+          input.observe('blur', function(e){
+            if (input.value === ''){
+              clearAndHideQualifications(qualifications_div);
+            }
+            else {
+              qualifications_div.show();
+            }
+          });
+        }
+      }
+    });
+    
+    if(question_div.select('input').first().getAttribute('type').match(/checkbox|radio/)){
+      if(question_div.select('input:not([id$=qualifications])').any(function(q){return q.checked;})) {
+        question_div.select('div.qualifications').first().show();
+      }
+      else {
+        clearAndHideQualifications(question_div.select('div.qualifications').first());
+      }
+    }
+  });
+}
+
+function clearAndHideQualifications(qualifications_div){
+  qualifications_div.select('input').first().value = '';
+  qualifications_div.select('div.field').first().hide();
+  qualifications_div.select('a').first().innerHTML = 'Add Comment';
+  qualifications_div.hide();
+}
 
   function createMasks() {
     $$('input.WageResponse, input.BaseWageResponse').each(function(field) {
