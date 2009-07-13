@@ -9,6 +9,7 @@ require File.join(File.dirname(__FILE__), 'boot')
 Rails::Initializer.run do |config|
   config.action_controller.session = { :session_key => "_compsage_session", :secret => "535b541d23b19ce0e7a1090c403771d6" }
   config.active_record.observers = :invitation_observer,:discussion_observer,:organization_observer
+  config.action_controller.use_accept_header = false
 
   #config.gem 'fiveruns_tuneup', :version => '>=0.8.10'
   config.gem 'rubyist-aasm', :version => '>=2.0.1', :lib => 'aasm', :source => 'http://gems.github.com'
