@@ -109,12 +109,12 @@ function disableList(list, disableChildren) {
       var qualifications_div = null;
       if(input.getAttribute('type').match(/checkbox|radio/)){
         input.checked = false;
-        qualifications_div = input.up(1).down('div.qualifications');
+        qualifications_div = li.select('div.qualifications').first();
       }
       else {
         input.value = '';
         if (!input.hasClassName('TextualResponse') && !input.id.include('qualifications')){
-          qualifications_div = input.next('div.qualifications');
+          qualifications_div = li.select('div.qualifications').first();
         }
       }
       if(qualifications_div != null)
