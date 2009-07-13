@@ -9,7 +9,7 @@
     <% else %>
       <ul>
         <% @my_results.each do |survey| %>
-          <li><%=link_to survey, survey_report_path(survey, :format => :html)%></li>
+          <li><%=link_to survey, survey_report_path(survey)%></li>
         <% end %>
       </ul>
       <p><%=link_to "All Results", reports_surveys_path%></p>
