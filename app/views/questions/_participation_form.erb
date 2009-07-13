@@ -37,7 +37,7 @@ function observeResponseForQualifications(){
           else {
             qualifications_div.show();
           }
-          input.observe('blur', function(e){
+          input.observe('keyup', function(e){
             if (input.value === ''){
               clearAndHideQualifications(qualifications_div);
             }
