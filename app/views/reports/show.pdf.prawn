@@ -46,6 +46,10 @@ pdf.bounding_box(
       :align => { 0=> :left, 1 => :left, 2 => :right, 3 => :left},
       :column_widths => {0 => 73, 1 => 110, 2 => 90, 3 => 110})
 
+  pdf.pad_top(inner_padding) do
+    pdf.text "<b>Sponsor:</b> #{@survey.sponsor.name_and_location}"
+  end
+
   pdf.pad_top(inner_padding) do 
     pdf.text "#{@survey.participations.count} firms participating"
   end
