@@ -1,5 +1,5 @@
 <% if qualifications.any? then %>
-  <p><%= link_to "Comments (#{qualifications.size})", "#question_#{question.id}_qualifications", :class => 'show_comments' %></p>
+  <p><%= link_to pluralize(qualifications.size, 'Comment'), "#question_#{question.id}_qualifications", :class => 'show_comments' %></p>
   <div id="question_<%=question.id%>_qualifications" class="hidden">
     <ul>
       <% qualifications.each do |qualification| %>
