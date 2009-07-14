@@ -1175,6 +1175,15 @@ label.inline_option {
   display: inline;
 }
 
+label.inline_option_serif {
+  font-family:
+  font-weight: normal;
+  font-size: 1em;
+  margin: 0;
+  display: inline;
+  font-family: 'Hoefler Text', 'Baskerville', 'Times New Roman', serif;
+}
+
 label img {
   vertical-align: middle;
   padding-left: 5px;

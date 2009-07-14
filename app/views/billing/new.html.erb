@@ -9,7 +9,8 @@
 <div id="step_container">
   <h3>Billing Information</h3>
   <p class="preview_text">
-  Enter your billing information below. The cost of a survey is <%=number_to_currency (@survey.price / 100)%> You may pay by credit card or request an invoice. You will not be billed until the survey completes successfully. 
+    Enter your billing information and select the "Invoice" billing option below. You will not be invoiced for any
+    surveys sponsored before September 1st, 2009.
   </p>
   <%=error_messages_for :invoice%>
   <%=flash_messages%>
@@ -46,10 +47,9 @@
         <%=f.text_field :phone_extension, :size => 5 %>
       <% end %>   
     <% end %>
-    <label>How Would You Like to be Billed?</label>
-    <label></label>
-    <%=f.radio_button :payment_type, 'credit' %> 
-    <label for="invoice_payment_type_credit" style="display: inline;">By Credit Card</label>  
+    <h3>How Would You Like to be Billed?</h3>
+    
+    <label class="inline_option_serif"><%=f.radio_button :payment_type, 'credit' %> Enter Credit Card</label>  
     <div id="credit_card" style="padding-left: 2em; display: none;">  
       <% fields_for @credit_card do |credit_card| %>
       <% form_row do %>
@@ -85,18 +85,19 @@
         <% form_box do %>
         <% end %>                  
       <% end %>        
-      <label></label>
+      <p></p>
       <p>Upon successful completion of the survey, your card will be charged and you will receive a reciept via email.</p>  
       <% end %>
     </div>    
-    <label></label>
-    <%=f.radio_button :payment_type, 'invoice' %>
-    <label for="invoice_payment_type_invoice" style="display: inline;">By Invoice</label>
-    <label></label>
-    <div id="invoice" style="padding-left: 2em; display: none;">
-      <p>Your purchase order number is: <%=@invoice.purchase_order_number%>. Upon successful completion of the survey, you will have the opportunity to view and print the invoice.</p>
-    </div>
-    <p>By submitting this information, you agree that you have read and understand the <%= link_to "legal disclaimer", home_path('about'), :target => '_blank' %> and you agree to pay <%=number_to_currency (@survey.price / 100)%> upon successful completion of the survey. If you have any questions about the billing process, please <%= link_to "contact us", home_path('contact'), :target => '_blank' %>.</p>
+    <br />
+    <label class="inline_option_serif"><%=f.radio_button :payment_type, 'invoice' %> Send Me an Invoice</label>
+    <div id="invoice"></div>
+    <p></p>
+    <p>
+      By submitting this information, you agree that you have read and understand the
+      <%= link_to "legal disclaimer", home_path('about'), :target => '_blank' %>. If you have any questions about the
+      billing process, please <%= link_to "contact us", home_path('contact'), :target => '_blank' %>.
+    </p>
   <div class="submit_row">
       <input id="form_submit" type="submit" value="Next &ndash; Submit Billing Information" class="next" />
       <input type="button" value='Back &ndash; Preview Survey' class="previous" onClick ="parent.location='<%=preview_survey_questions_path(@survey)%>'" />
@@ -119,13 +120,13 @@ function initializeObservers() {
 }
 
 function selectCreditCard() {
-  $('credit_card').blindDown({'duration': 0.5});
-  $('invoice').blindUp({'duration': 0.5});
+  $('credit_card').blindDown({'duration': 0.25});
+  $('invoice').blindUp({'duration': 0.25});
 }
 
 function selectInvoice() {
-  $('invoice').blindDown({'duration': 0.5})
-  $('credit_card').blindUp({'duration': 0.5})
+  $('invoice').blindDown({'duration': 0.25})
+  $('credit_card').blindUp({'duration': 0.25})
 }
 
 </script>
