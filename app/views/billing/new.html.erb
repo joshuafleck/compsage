@@ -9,36 +9,36 @@
 <div id="step_container">
   <h3>Billing Information</h3>
   <p class="preview_text">
-  Please enter your billing information below. The cost of a survey is <%=number_to_currency (@survey.price / 100)%> You may pay by credit card or request an invoice. You will not be billed until the survey completes successfully. 
+  Enter your billing information below. The cost of a survey is <%=number_to_currency (@survey.price / 100)%> You may pay by credit card or request an invoice. You will not be billed until the survey completes successfully. 
   </p>
   <%=error_messages_for :invoice%>
   <%=flash_messages%>
   <% form_for @invoice, :url => survey_billing_path(@survey) do |f| %>
-    <%=f.label :organization_name, required('Company Name') %>    
+    <%=f.label :organization_name, 'Company Name' %>    
     <%=f.text_field :organization_name %>
-    <%=f.label :contact_name, required('Contact Name') %>    
+    <%=f.label :contact_name, 'Contact Name' %>    
     <%=f.text_field :contact_name, :size => 13 %>
-    <%=f.label :address_line_1, required("Address Line 1") %> 
+    <%=f.label :address_line_1, 'Address Line 1' %> 
     <%=f.text_field :address_line_1 %>
     <%=f.label :address_line_2, "Address Line 2" %> 
     <%=f.text_field :address_line_2 %>
     <% form_row do %>
       <% form_box do %>
-        <%=f.label :city, required('City') %> 
+        <%=f.label :city, 'City' %> 
         <%=f.text_field :city, :size => 13 %>
       <% end %>
       <% form_box do %>
-        <%= f.label :state, required('State') %> 
+        <%= f.label :state, 'State' %> 
         <%= f.select :state, AccountsHelper::STATE_ABBR, :include_blank => true %>
       <% end %>
       <% form_box do %>
-        <%=f.label :zip_code, required('Zip') %> 
+        <%=f.label :zip_code, 'Zip' %> 
         <%=f.text_field :zip_code, :size => 7 %>
       <% end %>
     <% end %>    
     <% form_row do %>
       <% form_box do %>
-        <%=f.label :phone, required("Phone") %> 
+        <%=f.label :phone, 'Phone' %> 
         <%=f.text_field :phone, :size => 15 %>
       <% end %>
       <% form_box do %>
@@ -54,31 +54,31 @@
       <% fields_for @credit_card do |credit_card| %>
       <% form_row do %>
         <% form_box do %>
-          <%= credit_card.label :first_name, required('First name') %>
+          <%= credit_card.label :first_name, 'First name' %>
           <%= credit_card.text_field :first_name, :size => 10 %>
         <% end %>     
         <% form_box do %>
-          <%= credit_card.label :last_name, required('Last name') %>
+          <%= credit_card.label :last_name, 'Last name' %>
           <%= credit_card.text_field :last_name, :size => 10 %>
         <% end %>               
       <% end %>        
       <% form_row do %>
         <% form_box do %>
-          <%= credit_card.label :type, required('Type') %>
+          <%= credit_card.label :type, 'Type' %>
           <%= credit_card.select :type, [['Visa','visa'],['MasterCard','master'],['American Express','american_express'],['Discover','discover']], {:include_blank => true} %>
         <% end %> 
         <% form_box do %>
-          <%= credit_card.label :number, required('Number') %>
+          <%= credit_card.label :number, 'Number' %>
           <%= credit_card.text_field :number, :size => 18 %>
         <% end %>
         <% form_box do %>
-          <%= credit_card.label :verification_value, required('Verification value') %>
+          <%= credit_card.label :verification_value, 'Verification value' %>
           <%= credit_card.text_field :verification_value, :size => 4 %>
         <% end %>                  
       <% end %>  
       <% form_row do %>
         <% form_box do %>
-          <%= credit_card.label :year, required('Expiration Month/Year') %>
+          <%= credit_card.label :year, 'Expiration Month/Year' %>
           <%= credit_card.select :month, 1..12, {:include_blank => true} %>&nbsp;
           <%= credit_card.select :year, Time.now.year..(Time.now.year + 10), {:include_blank => true} %>
         <% end %>   
