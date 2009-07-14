@@ -1,4 +1,12 @@
-<% response = *@participation.response[participation_form_question.id] || participation_form_question.responses.new %>
+<%
+# hack below, need to handle case when multiple responses come through here. There may be multiple responses when
+# editing a participation and deleting a question because the validation logic will create a blank question that
+# will force a validation failure, which will then roll back the deletion of that very same question, resulting in a
+# duplicate. By selecting the last of the responses, we select the blank one that was added, which ensures that the
+# user sees a blank response with the validation error. TODO: A better way.
+%>
+<% response = [*@participation.response[participation_form_question.id]].last || participation_form_question.responses.new %>
+<% puts "Here: #{response.inspect}" %>
 <% f.fields_for response.class.name.underscore, response, :index => participation_form_question.id, :builder => QuestionFormBuilder do |q| %>
   <li class="<%= cycle("even", "odd") %>">
     <div class="question_container" style="padding-left:<%= level*2 %>em"> 

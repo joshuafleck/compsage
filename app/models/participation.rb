@@ -25,9 +25,17 @@ class Participation < ActiveRecord::Base
       current_responses = response[question.id]
       if attributes[:response].blank? && attributes[:qualifications].blank? then
         # didn't respond
-        response[question.id].first.destroy if response[question.id] # So, destroy the previous response if it exists
+        if !(current_responses.nil? || current_responses.empty?) then
+          current_responses.first.destroy # So, destroy the previous response if it exists
+        end
       else
-        question_response =  (current_responses.nil? || current_responses.empty?) ? responses.build(:question => question, :type => question.response_type) : current_responses.first 
+        question_response = if current_responses.nil? || current_responses.empty? then
+                              # Build a new response to save assuming all goes well.
+                              responses.build(:question => question, :type => question.response_type)
+                            else
+                              # Otherwise, use the current response.
+                              current_responses.first
+                            end
         question_response.attributes = attributes
       end
     end
@@ -58,17 +66,19 @@ class Participation < ActiveRecord::Base
   
   def before_update
     # we also want to update the associated records.  We'll assume it's valid by this point
-    # as we are validating the associated records.
-    responses.each { |r| r.save! if r.changed? }
+    # as we are validating the associated records. We don't want to save frozen responses
+    # as they are likely deleted at this point.
+    responses.each { |r| r.save! if !r.frozen? && r.changed? }
   end  
   
   private
   
   # Adds a blank response to each required question to ensure validation fails if there is no response
-  # 
+  # Validation fails, so deletion gets rolled back, so building dummy for validation failure creates duplicate question. 
   def required_responses_present
     return if survey.nil?
-    questions_with_responses = self.responses.collect(&:question_id)
+    # Find all of our responses, weeding out the responses that are frozen.
+    questions_with_responses = self.responses.reject{|r| r.frozen?}.collect(&:question_id)
     self.survey.questions.required.each do |question|
       # Skip required questions where there's a parent question and it isn't answered.
       next if !question.parent_question.nil? && !questions_with_responses.include?(question.parent_question_id)
