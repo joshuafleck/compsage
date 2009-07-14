@@ -20,17 +20,17 @@ class ReportsController < ApplicationController
         # Required for IE6 PDF DL over SSL to allow the browser to cache the report, see issue 299
         response.headers["Cache-Control"] = "cache, must-revalidate"
         response.headers["Pragma"] = "public"
-        render :layout => false
+        send_data render_to_string(:layout => false), :disposition => 'attachment', :filename => "CompSage Report on #{@survey.job_title}.pdf", :type => 'application/ms-excel'
       end
       wants.xls do
         response.headers["Cache-Control"] = "cache, must-revalidate"
         response.headers["Pragma"] = "public"
-        send_data render_to_string(:layout => false), :disposition => 'attachment', :filename => "Report-#{@survey.job_title}.xls", :type => 'application/ms-excel'
+        send_data render_to_string(:layout => false), :disposition => 'attachment', :filename => "CompSage Report on #{@survey.job_title}.xls", :type => 'application/ms-excel'
       end
       wants.doc do
         response.headers["Cache-Control"] = "cache, must-revalidate"
         response.headers["Pragma"] = "public"
-        render :layout => false
+        send_data render_to_string(:layout => false), :disposition => 'attachment', :filename => "Compsage Report on #{@survey.job_title}.doc", :type => 'application/ms-excel'
       end
     end
     
