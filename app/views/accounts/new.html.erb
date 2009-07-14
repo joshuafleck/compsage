@@ -2,7 +2,8 @@
 <% highlight_tab "join" %>
 <h2>New Account</h2>
 <%= flash_messages %>
-<p>Now that you've been invited to a CompSage compensation survey, you may join CompSage instantly and free! Simply
-fill out the form below to create your account.  Then, you'll have easy access to compensation surveys in your area
-and you can sponsor surveys of your own design.</p>
+<p>Until September 1st, sponsoring a CompSage compensation survey is completely free!</p>
+<p>Now that you've been invited to a CompSage compensation survey, you may join CompSage instantly, and as always,
+without cost! Simply fill out the form below to create your account.  Then, you'll have easy access to compensation
+surveys in your area and you can sponsor surveys of your own design.</p>
 <%= render :partial => "accounts/account_form", :locals => { :external_invitation => @external_invitation, :pending_account => @pending_account } %>
