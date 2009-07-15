@@ -700,6 +700,8 @@ div.info_box {
   border: 1px solid #000;
   padding: 0 20px 20px 20px;
   margin: 20px;
+  overflow: hidden;
+  width: 685px;
 }
 
 p.preview_text {
