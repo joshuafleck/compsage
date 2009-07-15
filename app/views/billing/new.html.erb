@@ -12,7 +12,7 @@
     Enter your billing information and select the "Invoice" billing option below. You will not be invoiced for any
     surveys sponsored before September 1st, 2009. All fields are required.
   </p>
-  <%=error_messages_for :invoice%>
+  <%=error_messages_for :invoice, :credit_card %>
   <%=flash_messages%>
   <% form_for @invoice, :url => survey_billing_path(@survey) do |f| %>
     <%=f.label :organization_name, 'Company Name' %>    

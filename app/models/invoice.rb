@@ -60,7 +60,7 @@ class Invoice < ActiveRecord::Base
   
   # overriding the default constructor in order to autofill some attributes
   def initialize(*params) 
-    super()
+    super
     
     survey = Survey.find(self[:survey_id])
     previous_survey = survey.sponsor.sponsored_surveys.most_recent.first    
