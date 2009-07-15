@@ -980,7 +980,6 @@ p#networks_description {
 table#networks {
   border: 0;
   border-collapse: collapse;
-  width: 65%;
 }
 
 table#networks tr.odd {
@@ -1161,6 +1160,10 @@ label, div.label {
   color: #333;
 }
 
+label.inline {
+  display: inline;
+}
+
 label.option {
   font-weight: normal;
   font-size: 0.875em;
@@ -1172,15 +1175,6 @@ label.inline_option {
   font-size: 0.875em;
   margin: 0;
   display: inline;
-}
-
-label.inline_option_serif {
-  font-family:
-  font-weight: normal;
-  font-size: 1em;
-  margin: 0;
-  display: inline;
-  font-family: 'Hoefler Text', 'Baskerville', 'Times New Roman', serif;
 }
 
 label img {
