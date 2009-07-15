@@ -1,31 +1,30 @@
 <% title "Your Contact Networks" %>
 <% highlight_tab "networks" %>
 <h2>Networks &amp; Contacts</h2>
+<div id="new_network"><%= link_to image_tag("new_network_button.gif"), new_network_path %></div>
+<% if @network_invitations.any? then %>
+  <h3>Network Invitations</h3>
+  <ul id="network_invitations">
+    <% @network_invitations.each do |invitation| %>
+      <li>
+        <h4><%= invitation.network.name %></h4>
+        <span class="manager">Managed by <%= link_to_organization(invitation.network.owner) %></span>
+        <div class="description_box"><%= auto_link_new_window(invitation.network.description) %></div>
+        <div class="actions">
+          <%= link_to "Join Network", join_network_path(invitation.network), :method => :put %> or 
+          <%= link_to "Decline", decline_network_invitation_path(invitation.network.id,invitation.id), :method => :put %>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+<% end %>  
 
-<div id="search_organizations">
-  <div id="new_network"><%= link_to image_tag("new_network_button.gif"), new_network_path %></div>
-  <% if @network_invitations.any? then %>
-    <h3>Network Invitations</h3>
-    <ul id="network_invitations">
-      <% @network_invitations.each do |invitation| %>
-        <li>
-          <h4><%= invitation.network.name %></h4>
-          <span class="manager">Managed by <%= link_to_organization(invitation.network.owner) %></span>
-          <div class="description_box"><%= auto_link_new_window(invitation.network.description) %></div>
-          <div class="actions">
-            <%= link_to "Join Network", join_network_path(invitation.network), :method => :put %> or 
-            <%= link_to "Decline", decline_network_invitation_path(invitation.network.id,invitation.id), :method => :put %>
-          </div>
-        </li>
-      <% end %>
-    </ul>
-  <% end %>  
-</div>
 <% if @networks.empty? then %>
   <p id="networks_description">Contact Networks make it easy for you to send surveys to and receive surveys from a group of peers. When you join a
   contact network, surveying that group of organizations is just a few clicks away. You can easily
   <%= link_to "make your own contact network", new_network_path %> and invite your own group of organizations.
 <% else %>
+  <h3>Your Networks</h3>
   <table id="networks">
     <% @networks.each do |network| %>
       <tr class="<%=cycle("even", "odd")%>">
