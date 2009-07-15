@@ -945,6 +945,7 @@ div#report_download_options {
   float: right;
   padding-right: 5px;
   text-align: right;
+  line-height: 26px;
 }
 
 .report_date {
