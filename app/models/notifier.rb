@@ -75,7 +75,7 @@ class Notifier < ActionMailer::Base
     recipients recipient.email
     from       "CompSage <support@compsage.com>"
     reply_to   "support@compsage.com"
-    subject    "#{discussion.survey.sponsor.name} has responded to the discussion \"#{discussion.root.subject}\""
+    subject    "#{discussion.survey.sponsor.name} has responded to \"#{discussion.root.subject}\""
     body       :discussion => discussion, :recipient => recipient
   end  
   
@@ -84,7 +84,7 @@ class Notifier < ActionMailer::Base
     recipients discussion.survey.sponsor.email
     from       "CompSage <support@compsage.com>"
     reply_to   "support@compsage.com"
-    subject    "A discussion has been posted for \"#{discussion.survey.job_title}\""
+    subject    "Clarification posted for \"#{discussion.survey.job_title}\""
     body       :discussion => discussion
   end  
   
