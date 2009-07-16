@@ -120,7 +120,7 @@ function initializeObservers() {
  * This will send an ajax request to the server with the search text
  */
 function liveOrganizationSearch(value, suggest) {
-  new Ajax.Request('<%=search_organizations_path%>', {
+  new Ajax.Request('<%=search_organizations_path(:format => 'json')%>', {
     'method': 'get',
     'parameters': {'search_text': value},
     'requestHeaders': {'Accept':'application/json'},
