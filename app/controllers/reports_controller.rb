@@ -54,8 +54,8 @@ class ReportsController < ApplicationController
     Notifier.deliver_report_suspect_results_notification(@survey, params[:comment])
     
     respond_to do |wants|
-      wants.json do
-        render :json => "successful!"
+      wants.js do
+        render :text => "Success!"
       end
     end
   end

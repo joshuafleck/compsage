@@ -22,7 +22,7 @@
 <h2><%=@survey.job_title%></h2>
 <h4>Job Description</h4>
 <div class="description_box"><%=link_and_format(@survey.description)%></div>
-<div><%= @survey.participations.count %> participants out of <%= @survey.all_invitations(true).count %> firms on the
+<div><%= @survey.participations.count %> participants out of <%= @survey.all_invitations(true).size %> firms on the
 <a href="#" id="invitation_list_link" class="print_link">Invitation List</a></div>
 <div id="invitation_section_container">
   <div id="invitation_section" class="hidden">
@@ -117,7 +117,6 @@
   new Ajax.Request('<%=suspect_survey_report_path%>', {
     'method': 'post',
     'parameters': 'comment=' + $('comment').value,
-    'requestHeaders': {'Accept':'application/json'},
     'onSuccess': function(transport) {
       flashSuccess();
     }
