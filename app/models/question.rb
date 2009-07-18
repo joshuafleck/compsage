@@ -19,13 +19,15 @@ class Question < ActiveRecord::Base
   
   def before_validation_on_create 
      # by default, set pay or wage response types as required for custom questions
-     self[:required] = true if !attribute_present?("predefined_question_id") && self[:custom_question_type] == 'Pay or wage response'
+     self.required = true if !attribute_present?("predefined_question_id") && self.custom_question_type == 'Pay or wage response'
   end
   
   def before_validation 
-     # be sure to update the response type and options if the custom question type changes
-     self[:response_type] = CUSTOM_QUESTION_TYPES[self[:custom_question_type]] if attribute_present?("custom_question_type")
-     self[:options] = CUSTOM_QUESTION_OPTIONS[self[:custom_question_type]] if attribute_present?("custom_question_type") 
+    if attribute_present?("custom_question_type") && self.custom_question_type_changed? then
+      # be sure to update the response type and options if the custom question type changes
+      self.response_type = CUSTOM_QUESTION_TYPES[self.custom_question_type] 
+      self.options = CUSTOM_QUESTION_OPTIONS[self.custom_question_type] 
+    end
   end  
                        
   CUSTOM_QUESTION_TYPES = {
@@ -81,6 +83,9 @@ class Question < ActiveRecord::Base
     response_class.report_type
   end
   
+  def yes_no?
+    return !self.options.nil? && self.options.size == 2 && self.options.first == "Yes" && self.options.last == "No"
+  end
   # Determines the level of nesting for the question
   def level
     if !parent_question then

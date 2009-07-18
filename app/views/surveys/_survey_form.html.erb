@@ -20,8 +20,13 @@
     <%= f.text_field :job_title, :size => 40 %>
     <%= f.label :description, "Job description" %>
     <%= f.text_area :description, :rows => 4, :cols => 40 %>
-    <%= f.label :days_running, "Run length" %>
-    <%= f.select :days_running, (3..14).to_a.collect {|i| ["#{i} days", i]} %>
+    <% if @survey.pending? then %>
+      <%= f.label :days_running, "Run length" %>
+      <%= f.select :days_running, (3..14).to_a.collect {|i| ["#{i} days", i]} %>
+    <% elsif @survey.can_be_extended? then %>
+      <p></p>
+      <p>Extend deadline by <%=f.select :days_to_extend, (Survey::MINIMUM_DAYS_TO_EXTEND..(@survey.maximum_days_to_extend)).to_a, :include_blank => true %> days.</p>
+    <% end %>
     <h3>Questions</h3>
     <ol id="new_questions" class="entity_list">
       <%=render(:partial => "questions/question", :collection => @survey.top_level_questions, :locals => {:level => 0})%>
@@ -59,7 +64,7 @@
 	      <%= link_to "Cancel", { :action => "destroy", :id => @survey.id }, :confirm => "You are about to delete this survey. Are you sure?", :method => :delete %>
       <%else%>
         <%= button_to "Next &ndash; Preview Survey", preview_survey_questions_path(@survey), :class => "next", :method => :get, :id => "invitation_form_submit" %>
-	      <input type="button" onclick="window.location='<%= survey_path(@survey) %>'" value="Cancel" class="previous" />
+	      <input type="button" onclick="window.location='<%= survey_path(@survey) %>'" value="Back" class="previous" />
 	    <%end%>
     </div>
   <% end %>

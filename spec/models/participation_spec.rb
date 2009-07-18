@@ -69,7 +69,12 @@ module ParticipationCreationHelper
   def participation_responding_to(*questions)
     participation = Factory.build(:participation, :survey => @survey, :participant => @participant, :responses => [])
     questions.each do |question|
-      participation.responses << Factory.build(:numerical_response, :question => question, :response => 1)
+      if question.is_a?(Hash) then
+        # Has question and value.
+        participation.responses << Factory.build(:numerical_response, :question => question.keys.first, :response => question.values.first)
+      else
+        participation.responses << Factory.build(:numerical_response, :question => question, :response => 1)
+      end
     end
 
     return participation
@@ -84,6 +89,12 @@ describe Participation, "in a survey with required questions" do
     @participant = Factory.create(:organization)
     @required_question = Factory.create(:question, :survey => @survey, :required => 1)
     @optional_question = Factory.create(:question, :survey => @survey, :required => 0)
+    @yes_no_question =   Factory.create(:question,
+                                        :survey => @survey,
+                                        :required => 0,
+                                        :response_type => 'MultipleChoiceResponse',
+                                        :options => ['Yes', 'No'])
+
     @required_follow_up_to_optional_question = Factory.create(:question,
                                                               :survey => @survey,
                                                               :required => 1,
@@ -100,6 +111,11 @@ describe Participation, "in a survey with required questions" do
                                                               :survey => @survey,
                                                               :required => 0,
                                                               :parent_question_id => @required_question.id)
+    @required_follow_up_to_yes_no_question   = Factory.create(:question,
+                                                              :survey => @survey,
+                                                              :required => 1,
+                                                              :parent_question_id => @yes_no_question.id)
+
   end
 
   it "should be valid when only the required questions have been answered" do
@@ -127,6 +143,18 @@ describe Participation, "in a survey with required questions" do
   it "should not be valid if a follow-up question has been answered and the parent question has not" do
     @participation = participation_responding_to(@required_question, @required_follow_up_to_required_question,
                                                  @required_follow_up_to_optional_question)
+    @participation.should_not be_valid
+  end
+
+  it "should be valid if not answering a required follow-up to a yes/no with a no answer" do
+    @participation = participation_responding_to(@required_question, @required_follow_up_to_required_question,
+                                                 {@yes_no_question => 1})
+    @participation.should be_valid
+  end
+
+  it "should not be valid if not answering a required follow-up to a yes/no with a yes answer" do
+    @participation = participation_responding_to(@required_question, @required_follow_up_to_required_question,
+                                                 {@yes_no_question => 0})
     @participation.should_not be_valid
   end
 end

@@ -20,7 +20,7 @@ The survey could not be successfully completed because only <%=@survey.participa
       <p>
         <% form_for(:survey, @survey, :url => rerun_survey_path(@survey), :html => { :method => :get }) do |f| %>  
           <%=error_messages_for :survey%>      
-          Extend <%=f.select :days_running, (Survey::MINIMUM_DAYS_TO_RERUN..(@survey.maximum_days_to_rerun)).to_a %> days.
+          Extend <%=f.select :days_to_extend, (Survey::MINIMUM_DAYS_TO_EXTEND..(@survey.maximum_days_to_extend)).to_a %> days.
           <input type="submit" value="Submit" />
         <% end %>  
       </p>
@@ -28,7 +28,7 @@ The survey could not be successfully completed because only <%=@survey.participa
       <p><%=link_to "Cancel the survey", survey_path(@survey), :method => :delete %></p> 
     <% else %>
       <p>
-        The survey could not be successfully completed due to insufficient participation. This survey has exceeded <%=(Survey::MAXIMUM_DAYS_TO_RUN - Survey::MINIMUM_DAYS_TO_RERUN)%> days and may no longer be extended.
+        The survey could not be successfully completed due to insufficient participation. This survey has exceeded <%=(Survey::MAXIMUM_DAYS_TO_RUN - Survey::MINIMUM_DAYS_TO_EXTEND)%> days and may no longer be extended.
       </p>
       <p><%=link_to "Cancel the survey", survey_path(@survey), :method => :delete %></p> 
     <% end %>

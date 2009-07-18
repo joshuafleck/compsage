@@ -80,8 +80,11 @@ class Participation < ActiveRecord::Base
     # Find all of our responses, weeding out the responses that are frozen.
     questions_with_responses = self.responses.reject{|r| r.frozen?}.collect(&:question_id)
     self.survey.questions.required.each do |question|
-      # Skip required questions where there's a parent question and it isn't answered.
-      next if !question.parent_question.nil? && !questions_with_responses.include?(question.parent_question_id)
+      # Skip required questions where there's a parent question and it isn't answered, or there is a parent question
+      # and it's a yes/no with a no response.
+      next if !question.parent_question.nil? && (!questions_with_responses.include?(question.parent_question_id) || 
+                                                 (question.parent_question.yes_no? && response[question.parent_question_id].first.response.to_i == 1))
+
       # If the current question isn't answered, create a dummy question that will fail validation.
       if !questions_with_responses.include?(question.id) then
         responses.build(:question => question, :type => question.response_type)
