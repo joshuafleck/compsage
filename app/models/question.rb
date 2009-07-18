@@ -81,6 +81,9 @@ class Question < ActiveRecord::Base
     response_class.report_type
   end
   
+  def yes_no?
+    return !self.options.nil? && self.options.size == 2 && self.options.first == "Yes" && self.options.last == "No"
+  end
   # Determines the level of nesting for the question
   def level
     if !parent_question then
