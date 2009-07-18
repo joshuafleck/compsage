@@ -22,6 +22,7 @@ function observeQualificationLinks() {
       field = elem.select('div.field').first().toggle();
       e.target.innerHTML = e.target.innerHTML == 'Cancel' ? 'Add Comment' : 'Cancel';
       elem.select('input').first().value = "";
+      input.activate();
       e.stop();
     });
   });
