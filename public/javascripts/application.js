@@ -80,6 +80,8 @@ function inputMask(element, data_type, units) {
     data_template = "#{number}";
     check_response = checkNumericResponse;
     error_message = "Response must be a valid number, e.g. 3, 23,000, -5.2"
+  } else if(data_type == 'text') {
+    char_mask = /.*/;
   }
 
   element.observe('keydown', function(e) {
@@ -136,7 +138,6 @@ function inputMask(element, data_type, units) {
   };
 
   element.observe('change', reviewer);
-  
   if(units) {
     units.observe('change',reviewer);
   }

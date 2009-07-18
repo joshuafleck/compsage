@@ -145,5 +145,9 @@ function disableList(list, disableChildren) {
     $$('input.PercentResponse').each(function(field) {
       new inputMask(field, 'percent');
     });
+
+    $$('input.TextualResponse').each(function(field) {
+      new inputMask(field, 'text');
+    });
   }
 </script>
