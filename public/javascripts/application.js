@@ -137,10 +137,11 @@ function inputMask(element, data_type, units) {
     last_valid = element.value;
   };
 
-  element.observe('change', reviewer);
-  if(units) {
+  if(data_type != 'text')
+    element.observe('change', reviewer);
+
+  if(units)
     units.observe('change',reviewer);
-  }
 }
 
 /*
