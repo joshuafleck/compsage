@@ -1,7 +1,7 @@
 <% title("Report for #{@survey.job_title}") %>
 <% highlight_tab("surveys") %>
 <div id="report_download_options">
-  Download:
+  <span class="print_link">Download:</span>
   <%= link_to(image_tag("pdficon_large.gif"), survey_report_path(@survey, :format => "pdf", :wage_format => @format ), :class => "print_link") %>
   <%= link_to("Pdf", survey_report_path(@survey, :format => "pdf", :wage_format => @format ), :class => "print_link") %>&nbsp;&nbsp;
   <%= link_to(image_tag("OfficeWord.png", :alt => "Download Word Document"),
@@ -23,7 +23,7 @@
 <h4>Job Description</h4>
 <div class="description_box"><%=link_and_format(@survey.description)%></div>
 <div><%= @survey.participations.count %> participants out of <%= @survey.all_invitations(true).size %> firms on the
-<a href="#" id="invitation_list_link" class="print_link">Invitation List</a></div>
+<a href="#" id="invitation_list_link">invitation list</a>.</div>
 <div id="invitation_section_container">
   <div id="invitation_section" class="hidden">
     <h4>Invitation List</h4>

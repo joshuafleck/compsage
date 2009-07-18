@@ -15,7 +15,7 @@ a#invitation_list_link {
   font-size: 1.1em;
 }
 
-a.print_link {
+.print_link {
   display: none;
 }
 
