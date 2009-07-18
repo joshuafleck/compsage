@@ -1,7 +1,7 @@
 <% title "Responding to #{@survey.job_title}" %>
 <% highlight_tab("surveys") %>
-<%= render :partial => "questions/participation_form"%>
 <% content_for :initialize_js, "createMasks();observeQualificationLinks();observeUnitSelection();setupFollowups();"%>
+<%= render :partial => "questions/participation_form"%>
 <script type="text/javascript">
 function observeQualificationLinks() {
   $$('div.qualifications').each(function(elem) {
