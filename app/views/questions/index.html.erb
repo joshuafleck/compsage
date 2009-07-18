@@ -56,7 +56,7 @@ function setupFollowupForList(list, parent_questions) {
       var inputs = item.childElements().first().select('input:not([id$=qualifications])');
       inputs.each(function(input){
         if(input.type == 'text') {
-          input.observe('keyup', function(e) {
+          input.observe('question:validinput', function(e) {
             if(input.value === '')
               disableList(sub_list, true);
             else

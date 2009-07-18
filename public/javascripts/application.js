@@ -97,6 +97,7 @@ function inputMask(element, data_type, units) {
     } else {
       last_valid = e.element().value;
       $("warning_"+question_id).update('');
+      element.fire('question:validinput');
     }
   })
 
