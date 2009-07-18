@@ -81,11 +81,12 @@ function setupFollowupForList(list, parent_questions) {
         }
           
       });
+
       // if there aren't any inputs that are a yes/no question answered yes, or a radio button that is checked, or a
       // multiple choice that is simply checked, or a text input that isn't blank, disable the follow-up questions by
       // default.
       if(!inputs.any(function(q) {return (inputs.length == 2 && q.type != 'text' && q.checked && parseInt(q.value) == 0) ||
-                                         (q.type != 'text' && q.checked) ||
+                                         (inputs.length > 2 && q.type != 'text' && q.checked) ||
                                          (q.type == 'text' && q.value != '')}))
         disableList(sub_list, false);
 
