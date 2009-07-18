@@ -52,7 +52,9 @@ class Survey < ActiveRecord::Base
   
   after_create :add_sponsor_subscription, :add_default_questions
   before_destroy :cancel_survey
-  before_save :set_aasm_state_number
+  before_save :set_aasm_state_number, :recalculate_end_date
+  
+  attr_accessor :days_to_extend
   
   ########### AASM Configuration: START ############
     
@@ -84,7 +86,7 @@ class Survey < ActiveRecord::Base
   end
   
   aasm_event :rerun do
-    transitions :to => :running, :from => :stalled, :guard => :can_be_rerun?, :on_transition => :email_rerun_message_and_calculate_end_date
+    transitions :to => :running, :from => :stalled, :guard => :can_be_rerun?, :on_transition => :email_rerun_message
   end
 
   aasm_event :billing_error_resolved do
@@ -98,8 +100,8 @@ class Survey < ActiveRecord::Base
 
   ############### AASM Configuration: END ###################
        
-  # the minumum number of days a survey can be rerun
-  MINIMUM_DAYS_TO_RERUN = 3
+  # the minumum number of days a survey can be extended
+  MINIMUM_DAYS_TO_EXTEND = 3
   # the maximum number of days a survey can be running for
   MAXIMUM_DAYS_TO_RUN = 21
   # the number of participations required to provide results for each question
@@ -125,24 +127,31 @@ class Survey < ActiveRecord::Base
     self[:days_running] || 7
   end
 
-  # a survey can be rerun if there are enough days left to accomidate the minimum run length 
+  # a survey can be rerun if there are enough days left to accomodate the minimum run length 
   # (and the survey is currently stalled)
   def can_be_rerun?
-    days_until_rerun_deadline >= MINIMUM_DAYS_TO_RERUN && stalled?
+    can_be_extended? && stalled?
   end
   
-  # this will determine the maximum number of days the survey can be rerun for
-  # 7 days if default, but it may be less if nearing the rerun deadline
-  def maximum_days_to_rerun
-    [days_until_rerun_deadline, 7].min
+  # determines if there are enough days left to accomodate the minimum run length
+  def can_be_extended?
+    days_until_extension_deadline >= MINIMUM_DAYS_TO_EXTEND
   end
   
-  def rerun_deadline
+  # this will determine the maximum number of days the survey can be extended for
+  # 7 days if default, but it may be less if nearing the extension deadline
+  def maximum_days_to_extend
+    [days_until_extension_deadline, 7].min
+  end
+  
+  def extension_deadline
     self.start_date + MAXIMUM_DAYS_TO_RUN.days
   end
 
-  def days_until_rerun_deadline
-    rerun_deadline.to_date - Date.today
+  # the number of days the survey can be extended, if the survey is running, base this off of the end date
+  # if the survey is stalled, base this off of the current date (the end date may be many days past)
+  def days_until_extension_deadline
+    extension_deadline.to_date - (self.running? ? self.end_date.to_date : Date.today)
   end
 
   # The date that the survey began running, it may not be set, so use the current time as a substitute
@@ -219,12 +228,6 @@ class Survey < ActiveRecord::Base
     Notifier.deliver_survey_stalled_notification(self)
   end
   
-  #method called for re-running a survey
-  def email_rerun_message_and_calculate_end_date
-    calculate_end_date
-    email_rerun_message
-  end
-  
   # email all participants (so they know they may be receiving results), all pending invitees, external invitees
   def email_rerun_message    
     self.participations.each do |p| 
@@ -278,8 +281,8 @@ class Survey < ActiveRecord::Base
   end
   
   def send_invitations_and_calculate_end_date_and_set_start_date
-    set_start_date
-    calculate_end_date
+    self.start_date = Time.now
+    self.end_date = self.start_date + days_running.to_i.days
     self.save # i noticed some trouble with sending invites without the save
     send_invitations
   end
@@ -334,7 +337,7 @@ class Survey < ActiveRecord::Base
   
   # Set the aasm state number using the current aasm_state (hack for survey sphinx search filter by state attribute)
   def set_aasm_state_number
-    self[:aasm_state_number] = AASM_STATE_NUMBER_MAP[self[:aasm_state]]
+    self.aasm_state_number = AASM_STATE_NUMBER_MAP[self.aasm_state]
   end
 
   # Once the survey is finalized, we need to send the invitations.
@@ -342,20 +345,24 @@ class Survey < ActiveRecord::Base
     (invitations + external_invitations).each {|s|  s.send_invitation! }
   end
   
-  # This will set the end date to the current date plus the number of days to run
-  def calculate_end_date
-    self[:end_date] = Time.now + days_running.to_i.days
-  end
-  
-  # This will set the time the survey started running
-  def set_start_date
-    self[:start_date] = Time.now
-  end
-
   # This adds the default questions.
   def add_default_questions
     DEFAULT_QUESTIONS.each do |pdq|
       pdq.build_questions(self) unless pdq.nil? # Don't blow up if we've changed PDQs...
+    end
+  end
+  
+  # If the user changed the number of days to run the survey, the end date needs to be updated
+  def recalculate_end_date
+    if !self.days_to_extend.blank? then
+    
+      self.end_date += self.days_to_extend.to_i.days if self.running?
+      
+      # if the survey was stalled, start from current time, as the survey may have been stalled for a while
+      self.end_date = Time.now + self.days_to_extend.to_i.days if self.stalled?
+      
+      # make sure we clear this attr to ensure the survey is extended only once
+      self.days_to_extend = nil
     end
   end
 end

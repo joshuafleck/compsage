@@ -77,15 +77,26 @@ describe Survey do
     @survey.destroy
   end
 
-  it "should have a rerun deadline of 21 days after it is created" do
+  it "should have a extension deadline of 21 days after it is created" do
     @survey.start_date = Time.now
-    @survey.rerun_deadline.should == @survey.start_date + 21.days
+    @survey.extension_deadline.should == @survey.start_date + 21.days
   end
 
-  it "should determine the number of days until the rerun deadline" do
+  it "should determine the number of days until the extension deadline" do
     @survey.start_date = Time.now
-    @survey.days_until_rerun_deadline.should == 21
+    @survey.days_until_extension_deadline.should == 21
   end
+  
+  it "should update the end date when the number of days running is changed" do
+    current_time = Time.now
+    @survey.start_date = current_time
+    @survey.end_date = current_time
+    @survey.aasm_state = 'running'
+    @survey.days_to_extend = 10
+    @survey.save!
+    @survey.end_date.should eql(current_time + 10.days)
+    @survey.destroy
+  end  
   
   it "should be invalid without questions" do
     @survey = Survey.create(valid_survey_attributes)
@@ -139,7 +150,8 @@ describe Survey, "that is stalled" do
   end
   
   it "should rerun" do
-    @survey.days_running = 3
+    @survey.days_to_extend = 3
+    @survey.save!
     @survey.rerun!
     @survey.should be_running
   end
@@ -153,19 +165,19 @@ describe Survey, "that is stalled" do
 
 end
 
-describe Survey, "maximum days to rerun" do
+describe Survey, "maximum days to extend" do
   before do
     @survey = valid_survey(valid_survey_attributes.with(:end_date => Time.now + 1.day, :start_date => Time.now))
   end
   
   it "should not exceed 7 days even when more days are available" do
     @survey.start_date = Time.now
-    @survey.maximum_days_to_rerun.should == 7 
+    @survey.maximum_days_to_extend.should == 7 
   end
 
   it "should be the number of days before the run limit if the run limit is imminent" do
     @survey.start_date = Time.now - 20.days
-    @survey.maximum_days_to_rerun.should == 1
+    @survey.maximum_days_to_extend.should == 1
   end
 end
 

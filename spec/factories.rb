@@ -49,9 +49,7 @@ Factory.define :survey do |s|
   s.job_title 'Trailer Park Supervisor'
   s.description 'Assist in matter pertinent to the saftey of the citizens of a trailer park.'
   s.created_at((Time.now - 2.days).to_s(:db))
-  s.end_date((Time.now + 5.days).to_s(:db))
   s.sponsor {|a| a.association(:organization)}
-  s.aasm_state 'running'
   s.questions {|a| [a.association(:question, :survey_id => 1)]}
 end
 

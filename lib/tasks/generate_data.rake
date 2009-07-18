@@ -83,8 +83,9 @@ namespace :data_generator do
     
     generate_surveys  
     generate_invoices
-    generate_discussions  
     generate_survey_invitations
+    run_surveys
+    generate_discussions  
     generate_responses_and_participations
     close_surveys
     
@@ -283,12 +284,28 @@ namespace :data_generator do
           :job_title => Faker::Company.catch_phrase, 
           :sponsor => sponsor, 
           :description => Faker::Lorem.paragraph,
-          :questions => generate_questions)
+          :questions => generate_questions,
+          :aasm_state => 'pending',
+          :days_running => (3..14).to_a[rand(11)])
       end  
          
     end
     
     puts "generating surveys complete"     
+  end
+  
+  # will put the surveys in a running state
+  def run_surveys
+    surveys = Survey.all
+    
+    puts "running #{surveys.size} surveys" 
+    
+    surveys.each_with_index do |survey, index| 
+      print_percent_complete(index,surveys.size) 
+      survey.billing_info_received!
+    end
+    
+    puts "running surveys complete" 
   end
   
   # creates discussions for all surveys
@@ -388,7 +405,7 @@ namespace :data_generator do
         organization = Organization.find :first, :offset => (Organization.count * rand).to_i
         Factory(
           :survey_invitation,
-          :aasm_state => 'sent',
+          :aasm_state => 'pending',
           :survey => survey,
           :inviter => survey.sponsor,
           :invitee => organization) unless survey.sponsor == organization || invitees.include?(organization)
@@ -398,7 +415,7 @@ namespace :data_generator do
       (rand(EXTERNAL_INVITATIONS_PER_SURVEY)+2).times do |index|
         Factory(
           :external_survey_invitation,
-          :aasm_state => 'sent',
+          :aasm_state => 'pending',
           :survey => survey,
           :inviter => survey.sponsor,
           :email => Faker::Internet.email,
