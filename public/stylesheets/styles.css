@@ -856,6 +856,7 @@ div.qualifications a {
   font-size: 0.9em;
   color: #666;
   outline: none;
+  font-weight: bold;
 }
 
 div.qualifications .field {
@@ -888,6 +889,7 @@ ol#questions label, ol#questions div.label {
   font-weight: normal;
   font-size: 1em;
   margin: 0;
+  padding: 0;
 }
 
 ol#questions li div.question_container {

@@ -4,15 +4,17 @@
 # will force a validation failure, which will then roll back the deletion of that very same question, resulting in a
 # duplicate. By selecting the last of the responses, we select the blank one that was added, which ensures that the
 # user sees a blank response with the validation error. TODO: A better way.
-%>
+-%>
 <% response = [*@participation.response[participation_form_question.id]].last || participation_form_question.responses.new %>
-<% puts "Here: #{response.inspect}" %>
 <% f.fields_for response.class.name.underscore, response, :index => participation_form_question.id, :builder => QuestionFormBuilder do |q| %>
   <li class="<%= cycle("even", "odd") %>">
     <div class="question_container" style="padding-left:<%= level*2 %>em"> 
-      <%= q.form_field %>
-      <% if participation_form_question.response_class.accepts_qualification? then %>
-        <div class="qualifications">
+      <%
+      # The following line is a hack to get IE6/IE7 to not add spurrious space between the qualification div and the
+      # bottom of the last radio button. For some reason it insists on rendering the whitespace :( This can
+      # most likely be improved.
+      -%>
+      <%= q.form_field -%><% if participation_form_question.response_class.accepts_qualification? then -%><div class="qualifications">
           <div class="field">
             <%=q.label :qualifications, 'Comment:' %>
             <%=q.text_field :qualifications %>

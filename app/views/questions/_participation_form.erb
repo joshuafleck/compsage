@@ -19,7 +19,6 @@
 <% end %>
 <% content_for :initialize_js, "observeResponseForQualifications();" %>
 <script type="text/javascript">
-
 function observeResponseForQualifications(){
   $('questions').select('div.question_container').each(function(question_div){
     question_div.select('input:not([id$=qualifications])').each(function(input){
