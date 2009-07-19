@@ -139,7 +139,7 @@ class Survey < ActiveRecord::Base
   end
   
   # this will determine the maximum number of days the survey can be extended for
-  # 7 days if default, but it may be less if nearing the extension deadline
+  # 7 days is default, but it may be less if nearing the extension deadline
   def maximum_days_to_extend
     [days_until_extension_deadline, 7].min
   end

@@ -142,7 +142,7 @@
 
 function toggleWageFormatAndLink(){
   //update format links
-  var download_links = $$('a.download_link');
+  var download_links = $$('a.print_link');
   if(download_links.first().href.include("Hourly")){
     download_links.each(function(link) {
       link.href = link.href.replace("Hourly", "Annually");
