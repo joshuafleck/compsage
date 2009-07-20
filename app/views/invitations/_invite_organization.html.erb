@@ -7,7 +7,7 @@
     <div id="error_content"></div>
     <div id="external_invitation_organization_name_wrapper">
       <label for="external_invitation_organization_name"><%= required('Organization Name') %></label>
-      <%= f.text_field :organization_name, :size => 25 %>
+      <%= f.text_field :organization_name, :size => 30 %>
       <span id="live_load_indicator" class="load_indicator_message" style="display: none;">
         <%= image_tag 'load_indicator.gif', :class => 'load_indicator' %>
         Searching for firms...
@@ -17,7 +17,7 @@
     <div id="external_invitation_form">
       <div id="external_invitation_email_wrapper">
         <label for="external_invitation_email"><%= required("Email Address") %></label>
-        <%= f.text_field :email, :size => 25 %>
+        <%= f.text_field :email, :size => 30 %>
       </div>
 
       <input id="external_invitation_submit" type="submit" value="Add" />

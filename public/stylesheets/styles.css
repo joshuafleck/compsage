@@ -964,6 +964,10 @@ div#invitation_section ul.invitations {
   padding: 0;
 }
 
+div#suspect_results {
+  margin-top: 2em;
+}
+
 /* Survey stalled */
 span.adequate_responses {
   color: green;
