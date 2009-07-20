@@ -2,7 +2,6 @@ require 'rubygems'
 require 'faker'
 
 namespace :data_generator do
-
   desc "Generate a fake set of responses for a survey."
   task :finished_survey => :environment do
     sponsor = Organization.first
@@ -67,6 +66,27 @@ namespace :data_generator do
     clear_database
     Rake::Task["ts:index"].invoke
   end
+
+  desc "Generate an external invitation link to respond to a survey"
+  task :external_invitation, :survey_id, :needs => [:environment] do |task, args|
+    if args[:survey_id] then
+      survey = Survey.find(args[:survey_id])
+    else
+      survey = Survey.running.last
+    end
+
+    begin
+      invite = Factory.create(:external_survey_invitation, :survey => survey, :inviter => survey.sponsor)
+    rescue ActiveRecord::RecordInvalid => e
+      if e.message == "Validation failed: That organization is already invited" then
+        retry
+      else
+        raise
+      end
+    end
+    puts "External invitation link: /survey_login?key=#{CGI.escape(invite.key)}&survey_id=#{survey.id}"
+  end
+
 
   # usage: rake 'data_generator:load_all[5]'
   desc "Generate a fake set of data for all types."
