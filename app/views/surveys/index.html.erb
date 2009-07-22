@@ -22,7 +22,7 @@
             <%=link_to participation.survey, participation.survey%> sponsored by <%=link_to_organization participation.survey.sponsor%>
             <div class="description_box">
               <% if participation.survey.running? then %>
-                Results available in <%=distance_of_time_in_words_to_now(participation.survey.end_date)%>
+                Results available in <%=better_time_ago_in_words(participation.survey.end_date)%>
               <% else %>
                 Insufficient participation for results
               <% end %>
@@ -55,7 +55,7 @@
           <h3><%=link_to invite.survey, survey_path(invite.survey)%> <span class="sponsor">sponsored by
             <%=link_to invite.survey.sponsor.name, organization_path(invite.survey.sponsor) %></span></h3>
           <div class="description"><%= link_and_format(invite.survey.description) %></div>
-          <div class="deadline">Participation deadline in <%=distance_of_time_in_words_to_now(invite.survey.end_date)%></div>
+          <div class="deadline">Participation deadline in <%=better_time_ago_in_words(invite.survey.end_date)%></div>
           <div class="actions no_description">
             <%=link_to "Decline Invitation", decline_survey_invitation_path(invite.survey, invite), :method => :put, :class => 'action' %>
           </div>
@@ -97,7 +97,7 @@
               <span class="participants"><%= pluralize(survey.participations.count, 'participant') %></span>
               <span class="invitations"><%= pluralize(survey.all_invitations(true).size, 'invitation') %></span>
             </div>
-            <div class="deadline">Participation deadline in <%=distance_of_time_in_words_to_now(survey.end_date)%></div>
+            <div class="deadline">Participation deadline in <%=better_time_ago_in_words(survey.end_date)%></div>
           </li>
         <% end %>
       <% end %>
