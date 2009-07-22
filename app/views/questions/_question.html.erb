@@ -15,7 +15,7 @@
   </div>
   <div id='<%="question_edit_display_#{question.id}"%>' style='<%= question.errors.empty? ? "display: none;" : ""%>'>
     <%= label_tag "question_#{question.id}_text", 'Question Text', :class => "survey_question_label" %>
-    <%= text_field_tag "question_#{question.id}_text", question.text %>    
+    <%= text_field_tag "question_#{question.id}_text", question.text, :size => 40 %>    
     <%= label_tag "question_#{question.id}_custom_question_type", 'Response Type', :class => "survey_question_label" %>
     <%= select_tag "question_#{question.id}_custom_question_type", options_for_select(Question::CUSTOM_QUESTION_TYPES.keys, question.custom_question_type) %>
     <%= label_tag "question_#{question.id}_required", 'Response required', :class => 'inline_option' %>

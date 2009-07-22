@@ -42,7 +42,7 @@
     </select>
     <div id='custom_question_form' style='display: none;'>
       <label for='custom_question_text' class='survey_question_label'><%=required('Question Text')%></label>
-      <input id='custom_question_text' type='text' size='30' />    
+      <input id='custom_question_text' type='text' size='40' />    
       <div class="error_description" id="custom_question_warning"></div>
       <label for='custom_question_response' class='survey_question_label'>Response Type</label>
       <select id='custom_question_response'><%=options_for_select Question::CUSTOM_QUESTION_TYPES.keys %></select>
