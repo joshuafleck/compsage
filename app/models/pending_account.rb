@@ -1,4 +1,3 @@
-require 'digest/sha1'
 class PendingAccount < ActiveRecord::Base
   
   before_validation :strip_phone
@@ -36,7 +35,7 @@ class PendingAccount < ActiveRecord::Base
   
   protected
    
-    def create_key
-      self[:key] = [Digest::SHA1.digest(Time.now.to_f.to_s + Array.new(){rand(256)}.pack('c*'))].pack("m")[0..19]
-    end
+  def create_key
+    self.key = KeyGen.random
+  end
 end

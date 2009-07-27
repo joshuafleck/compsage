@@ -1,5 +1,3 @@
-require 'digest/sha1'
-
 class Organization < ActiveRecord::Base
   include Authentication
   include Authentication::ByPassword
@@ -120,7 +118,7 @@ class Organization < ActiveRecord::Base
   
   #code for reset password
    def create_reset_key
-     self[:reset_password_key] = [Digest::SHA1.digest(Time.now.to_f.to_s + Array.new(){rand(256)}.pack('c*'))].pack("m")[0..19]
+     self.reset_password_key = KeyGen.random
      self.reset_password_key_expires_at = Time.now + 5.days
      self.save!
    end
