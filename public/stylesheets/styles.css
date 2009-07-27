@@ -188,13 +188,13 @@ textarea {
 }
 
 #main_content {
-  padding: 5px;
+  padding: 5px 10px;
   overflow: hidden; /* required for IE6, causes container to misalign otherwise */
 }
 
 #main_content.with_side_bar {
-  width: 512px;
-  margin-left: 266px;
+  width: 507px;
+  margin-left: 269px;
 }
 
 /* Footer stuff */
@@ -231,7 +231,7 @@ textarea {
 
 div#banner {
   position: relative;
-  left: -5px;
+  left: -10px;
   top: -5px;
   /*margin: -5px;*/
   overflow: hidden;
@@ -310,17 +310,16 @@ div.benefit p {
 
 div.image_header {
   color: #455349;
-  margin: 20px 0px 10px 10px;
+  margin: 20px 0px 10px 0px;
 }
 
 .main_page {
-  margin: 0 10px;
   font-size: 1.1em;
   line-height: 1.4em;
 }
 /* Survey Sidebar */
 #surveys_sidebar {
-  width: 246px;
+  width: 239px;
   padding: 0 10px;
   float: left;
 }
@@ -612,9 +611,11 @@ span.sponsor a:hover, div.sponsor a:hover {
 /* New Survey Form */
 
 div.breadcrumbs {
+  position: relative;
+  left: -5px;
+  width:794px;
   text-align: center;
   overflow: hidden;
-  width: 100%;/* width is required for IE6, otherwise, the invitation headers got too close to the breadcrumbs */
 }
 
 div.breadcrumbs img {
@@ -625,7 +626,7 @@ div.breadcrumbs img {
 }
 
 div#step_container {
-  margin:10px;
+  margin:10px 0;
 }
 
 div#step_container .third_column {
@@ -1239,8 +1240,8 @@ div.errorExplanation h2 {
 }
 
 div.third_column {
-  width: 243px;
-  margin: 0 10px;
+  width: 249px;
+  margin: 0 10px 0 0;
 }
 
 div.two_third_main_column {
