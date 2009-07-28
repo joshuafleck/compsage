@@ -90,6 +90,17 @@ textarea {
   height: 6em;
 }
 
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul li {
+  margin: 0;
+  padding: 0;
+}
+
 /* Specific element styles */
 
 /* Header stuff*/
@@ -205,9 +216,7 @@ textarea {
 }
 
 #footer ul.links {
-  list-style-type: none;
   margin: 0.5em 0 0.5em 0;
-  padding: 0;
 }
 
 #footer ul.links li {
@@ -328,14 +337,8 @@ div.image_header {
   margin-top: .5em;
 }
 
-#surveys_sidebar ul {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-}
-
 #surveys_sidebar li {
-  padding-bottom: 1ex;
+  padding-bottom: 0.5em;
 }
 
 /* Search box */
@@ -394,8 +397,6 @@ div.tutorial {
 }
 /* My Surveys */
 div#my_surveys ul {
-  list-style-type: none;
-  margin: 0;
   padding: 0 0 1em 0;
   margin-bottom: 1em;
   background: url('../images/embellish.gif') bottom center no-repeat;
@@ -477,11 +478,6 @@ div.link_bar a {
   clear: both;
 }
 
-ul.surveys {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-}
 ul.surveys li {
   margin-bottom: 1.2857em;
 }
@@ -493,10 +489,7 @@ div#invitations ul{
 }
 
 ul#discussions {
-  list-style-type: none;
-  margin: 0;
   margin-top: 1em;
-  padding: 0;
 }
 
 ul#discussions li.discussion_topic {
@@ -518,12 +511,6 @@ ul#discussions li.discussion_reply_link {
 ul#discussions div.discussion_reply_box {
   margin: 0;
   padding: 0;
-}
-
-ul#discussions ul {
-  padding: 0;
-  margin: 0;
-  list-style-type: none;
 }
 
 ul#discussions P {
@@ -549,12 +536,6 @@ ul#discussions .date {
 }
 
 /* Survey Results Page */
-
-ul#survey_results {
-  padding: 0;
-  margin: 0;
-  list-style-type: none;
-}
 
 ul#survey_results div.generated {
   margin-top: -1em;
@@ -674,8 +655,10 @@ div.submit_row .next {
 }
 
 ol#new_questions {
-  margin-top: 1em;
   border: 1px solid #eee;
+  list-style-type: none;
+  margin: 1em 0;
+  padding: 0;
 }
 
 ol#new_questions li {
@@ -750,12 +733,6 @@ p.preview_text {
   float: left;
   padding: 2px 1px 0 2px;
   clear: left;
-}
-
-#send_invitations ul {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
 }
 
 #send_invitations .description {
@@ -961,8 +938,6 @@ div#invitation_section_container {
 
 div#invitation_section ul.invitations {
   margin: 0 0 0.5em 0;
-  list-style-type: none;
-  padding: 0;
 }
 
 div#suspect_results {
@@ -1015,12 +990,6 @@ div#search_organizations p {
   margin-top: .5em;
 }
 
-ul#network_invitations {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-
 ul#network_invitations h4 {
   margin-top: 0;
 }
@@ -1048,18 +1017,10 @@ div#network_actions h3 {
   margin-top: .25em;
 }
 
-ul#network_menu {
-  list-style-type: none;
-  margin: 0;
-  padding-left: 0;
-}
-
 ul#network_menu li {
   margin-bottom: .25em;
 }
 ul#network_members {
-  list-style-type: none;
-  padding: 0;
   margin: 0 0 0 10px;
 }
 
@@ -1084,8 +1045,6 @@ form.edit_network ul li label {
 
 /* Organization Search / Browse */
 ul#organizations {
-  list-style-type: none;
-  padding: 0;
   margin: 1em 0 0 0;
 }
 
@@ -1143,20 +1102,6 @@ div.flash_error {
 }
 
 /* Custom Elements */
-ul.entity_list, ol.entity_list {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-}
-
-ul.entity_list li.even, ol.entity_list li.even {
-  background-color: #FBFAF8;
-}
-
-ul.entity_list li.odd, ol.entity_list li.odd {
-  background-color: #f1f3f0;
-}
-
 label, div.label {
   display: block;
   font-weight: bold;
@@ -1274,7 +1219,6 @@ span.load_indicator_message {
 
 /* invoice page */
 ul.invoice {
-  list-style-type: none;
   padding-left: 1em;
 }
 
@@ -1325,16 +1269,11 @@ div.autocomplete {
   z-index: 1;
 }
 div.autocomplete ul {
-  list-style-type:none;
-  margin:0;
-  padding:0;
   z-index: 1;
 }
 div.autocomplete ul li.selected { background-color: #ffb;}
 div.autocomplete ul li {
-  list-style-type:none;
   display:block;
-  margin:0;
   padding:2px;
   cursor:pointer;
 }
