@@ -1,5 +1,75 @@
-<%title "Dashboard"%>
+<% title "Dashboard" %>
 <p>Welcome! What would you like to do?</p>
-<%=link_to "Billed Surveys", admin_billed_surveys_path%>
-<br />
-<%=link_to "Pending Accounts", admin_pending_accounts_path%>
+<%= link_to "Billed Surveys", admin_billed_surveys_path%>
+<%= link_to "Pending Accounts", admin_pending_accounts_path%>
+<%= link_to "Organization List", admin_organizations_path%>
+
+<div class="table_container">
+<table>
+  <caption>Latest Surveys</caption>
+  <thead>
+    <th>Sponsor</th>
+    <th>Start Date</th>
+    <th>Job Title</th>
+    <th>Invitations</th>
+    <th>Participants</th>
+  </thead>
+  <tbody>
+    <% @latest_surveys.each do |survey| %>
+      <tr>
+        <td><%= survey.sponsor.name %></td>
+        <td><%= survey.start_date.to_date %></td>
+        <td><%= survey.job_title %></td>
+        <td><%= survey.all_invitations.size + 1 %></td>
+        <td><%= survey.participations.count %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+<table>
+  <caption>Newest Organizations</caption>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Contact</th>
+      <th>Location Name</th>
+      <th>Region</th>
+      <th>Last Login</th>
+      <th>Last Sponsored</th>
+      <th>Created At</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render :partial => 'admin/organizations/organization', :collection => @new_organizations %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="0">
+        <%= link_to "All Organizations", admin_organizations_path %>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+
+<table>
+  <caption>Reported Discussions</caption>
+  <thead>
+    <tr>
+      <th>Survey</th>
+      <th>Subject</th>
+      <th>Body</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @reported_discussions.each do |discussion| %>
+      <tr>
+        <td><%= discussion.survey.job_title %></td>
+        <td><%= discussion.subject %></td>
+        <td><%= simple_format(discussion.body) %></td>
+        <td><%= link_to "Reset", reset_admin_reported_discussion_path(discussion) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

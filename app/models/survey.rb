@@ -46,6 +46,7 @@ class Survey < ActiveRecord::Base
   named_scope :most_recent, :order => 'end_date DESC', :conditions => 'end_date IS NOT NULL', :limit => 1
   named_scope :closed, :conditions => ['aasm_state = ? OR aasm_state = ?', 'finished', 'stalled']
   named_scope :not_finished, :conditions => "aasm_state <> 'finished'"
+  named_scope :not_pending, :conditions => "aasm_state <> 'pending'"
   named_scope :running_or_pending, :conditions => ['aasm_state = ? OR aasm_state = ?', 'running', 'pending']
   named_scope :running_or_stalled, :conditions => 'aasm_state = "running" OR aasm_state = "stalled"'
   named_scope :deletable, :conditions => ['aasm_state = ? OR aasm_state = ?', 'stalled', 'pending']

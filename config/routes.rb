@@ -33,10 +33,13 @@ ActionController::Routing::Routes.draw do |map|
   map.survey_login 'survey_login', :controller => 'sessions', :action => 'create_survey_session'
 
   map.namespace 'admin' do |admin|
+    admin.map '', :controller => 'dashboards', :action => 'show'
     admin.resource :dashboard
     admin.resources :surveys
     admin.resources :pending_accounts, :member => {:approve => :any, :deny => :any}
     admin.resources :billed_surveys
+    admin.resources :organizations
+    admin.resources :reported_discussions, :member => {:reset => :any}
   end
 
   map.path '', :controller => 'surveys', :action => 'index'

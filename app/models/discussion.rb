@@ -16,6 +16,7 @@ class Discussion < ActiveRecord::Base
   after_create :set_parent
   
   named_scope :within_abuse_threshold, lambda { {:conditions => ["times_reported < #{ABUSE_THRESHOLD}"]} }
+  named_scope :reported, lambda { {:conditions => ["times_reported >= #{ABUSE_THRESHOLD}"]} }
   
   # The number of abuse reports before a dicussion will be suppressed
   ABUSE_THRESHOLD = 1

@@ -4,6 +4,7 @@
 <head>
 	<title>CompSage: <%=yield :title%></title>
   <%=javascript_include_tag :defaults %>
+  <%= stylesheet_link_tag 'admin' %>
 	<script type="text/javascript">
     document.observe("dom:loaded", function() {      
   		<%=yield(:initialize_js)%>
@@ -11,6 +12,6 @@
 	</script>
 </head>
 <body>
-			<%=yield %>
+	<%=yield %>
 </body>
 </html>

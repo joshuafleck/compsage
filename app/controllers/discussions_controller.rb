@@ -70,7 +70,7 @@
     if @discussion.increment!(:times_reported) then    
       respond_to do |wants|
         wants.html {         
-          flash[:notice] = "The discussion was reported successfully."
+          flash[:notice] = "The discussion was reported"
           redirect_to survey_path(@survey) }      
         wants.xml do
           head :status => :ok

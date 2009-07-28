@@ -1,0 +1,9 @@
+<tr>
+  <td><%= organization.name %></td>
+  <td><a href="mailto:<%= organization.email %>"><%= organization.contact_name %></a></td>
+  <td><%= organization.location %></td>
+  <td><%= organization.city %> <%= organization.state %> <%= organization.zip_code %></td>
+  <td><%= organization.last_login_at.try(:to_s, :short) %></td>
+  <td><%= organization.surveys.find(:first, :order => 'created_at DESC').try(:created_at).try(:to_s, :short) %></td>
+  <td><%= organization.created_at.to_date %></td>
+</tr>
