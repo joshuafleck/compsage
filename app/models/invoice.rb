@@ -1,4 +1,6 @@
 class Invoice < ActiveRecord::Base
+  include PhoneNumberFormatter
+  format_phone_fields :phone
 
   belongs_to :survey
   
@@ -12,8 +14,6 @@ class Invoice < ActiveRecord::Base
   validates_presence_of :amount
   validates_presence_of :phone
   validates_presence_of :payment_type
-
-  before_validation :strip_phone
 
   validates_format_of :zip_code, :with => /^\d{5}$/  
   validates_numericality_of :amount

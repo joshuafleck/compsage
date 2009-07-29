@@ -1,6 +1,7 @@
 class PendingAccount < ActiveRecord::Base
+  include PhoneNumberFormatter
+  format_phone_fields :phone
   
-  before_validation :strip_phone
   before_create :create_key
   
   validates_presence_of :email
@@ -24,17 +25,9 @@ class PendingAccount < ActiveRecord::Base
     self.save  
   end
   
+  
   private
-  
-  ##
-  # Strip the extra characters out of the phone number.
-  
-  def strip_phone
-    phone.gsub!(/\D/, '') unless phone.blank?
-  end
-  
-  protected
-   
+
   def create_key
     self.key = KeyGen.random
   end
