@@ -60,7 +60,7 @@ describe PendingAccount do
     @pending_account.email = 'asdf@asdf'
     @pending_account.should have(1).error_on(:email)
     @pending_account.email = 'xxxs'
-    @pending_account.should have(1).error_on(:email)
+    @pending_account.should have(2).error_on(:email)
   end
   
   it "should be invalid when the organization name is less than 3 characters in length" do
@@ -113,5 +113,23 @@ describe PendingAccount do
     @pending_account.valid?
     @pending_account.phone.should == '1242125212'
   end
-  
+
+  it "should send out a creation email when saved" do
+    @pending_account.attributes = valid_pending_account_attributes
+    Notifier.should_receive(:deliver_pending_account_creation_notification).and_return(true)
+    @pending_account.save!
+  end
+end
+
+describe PendingAccount, "being approved" do
+  include PendingAccountSpecHelper
+
+  before do
+    @pending_account = PendingAccount.create(valid_pending_account_attributes)
+  end
+
+  it "should send out a notification email" do 
+    Notifier.should_receive(:deliver_pending_account_approval_notification).and_return(true)
+    @pending_account.approve
+  end
 end
