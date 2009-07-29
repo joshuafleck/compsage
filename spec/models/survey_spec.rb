@@ -118,11 +118,11 @@ end
 
 describe Survey, "that is pending" do
   before do
-    @survey = valid_survey
+    @survey = Factory(:survey)
   end
   
   it "should transition to running once billing information is received" do
-    @survey.billing_info_received!
+    @survey.billing_info_received
     @survey.should be_running
   end
 
@@ -131,8 +131,7 @@ describe Survey, "that is pending" do
     external_inv = @survey.external_invitations.build
     inv.should_receive(:send_invitation!).and_return(true)
     external_inv.should_receive(:send_invitation!).and_return(true)
-
-    @survey.billing_info_received!
+    @survey.billing_info_received
   end
 end
 
@@ -159,7 +158,7 @@ describe Survey, "that is stalled" do
   it "should not rerun if the survey if the end date would be beyond 21 days from creation" do
     @survey.start_date = @survey.end_date - 19.days
     @survey.days_running = 3
-    @survey.rerun!
+    @survey.rerun
     @survey.should be_stalled
   end
 
@@ -210,14 +209,14 @@ describe Survey, "that is ready to be billed" do
   end
 
   it "should transition to stalled if there are not enough responses" do
-    @survey.stub!(:enough_responses).and_return(false)
+    @survey.stub!(:enough_responses?).and_return(false)
     @survey.finish!
 
     @survey.should be_stalled
   end
 
   it "should not attempt to bill the sponsor when there are not enough responses" do
-    @survey.stub!(:enough_responses).and_return(false)
+    @survey.stub!(:enough_responses?).and_return(false)
     Gateway.should_not_receive(:bill_survey_sponsor)
     @survey.finish!
   end

@@ -1,6 +1,4 @@
 class Survey < ActiveRecord::Base
-  include AASM
-
   define_index do
     indexes job_title
     indexes description
@@ -50,6 +48,8 @@ class Survey < ActiveRecord::Base
   named_scope :running_or_pending, :conditions => ['aasm_state = ? OR aasm_state = ?', 'running', 'pending']
   named_scope :running_or_stalled, :conditions => 'aasm_state = "running" OR aasm_state = "stalled"'
   named_scope :deletable, :conditions => ['aasm_state = ? OR aasm_state = ?', 'stalled', 'pending']
+  named_scope :finished, :conditions => "aasm_state = 'finished'"
+  named_scope :running, :conditions => "aasm_state = 'running'"
   
   after_create :add_sponsor_subscription, :add_default_questions
   before_destroy :cancel_survey
@@ -57,15 +57,39 @@ class Survey < ActiveRecord::Base
   
   attr_accessor :days_to_extend
   
-  ########### AASM Configuration: START ############
+  ########### State Machine Configuration: START ############
     
-  aasm_initial_state :pending
-  aasm_state :pending
-  aasm_state :running
-  aasm_state :stalled, :enter => :email_failed_message
-  aasm_state :billing_error, :enter => :email_billing_error
-  aasm_state :finished, :enter => :email_results_available
-  
+  state_machine 'aasm_state', :initial => :pending do
+    after_transition :pending => :running,  :do => [:send_invitations, :set_start_and_end_dates]
+    after_transition :stalled => :running,  :do => :email_rerun_message
+    after_transition any => :stalled,       :do => :email_failed_message
+    after_transition any => :billing_error, :do => :email_billing_error 
+    after_transition any => :finished,      :do => :email_results_available
+
+    event :billing_info_received do
+      transition :pending => :running
+    end
+
+    event :finish do
+      transition :running => :finished,      :if => [:closed?, :full_report?, :billing_successful?]
+      transition :running => :billing_error, :if => [:closed?, :full_report?]
+      transition :running => :stalled,       :if => [:closed?]
+    end
+
+    event :rerun do
+      transition :stalled => :running, :if => :can_be_rerun?
+    end
+
+    event :billing_error_resolved do
+      transition :billing_error => :finished
+    end
+
+    event :finished_with_partial_report do
+      transition :stalled => :finished,      :if => [:closed?, :full_report?, :billing_successful?]
+      transition :stalled => :billing_error, :if => [:closed?, :enough_responses?]
+    end
+  end
+
   # hack, for filtering surveys by aasm_state in sphinx
   AASM_STATE_NUMBER_MAP = {
     'pending' => 0,
@@ -74,30 +98,6 @@ class Survey < ActiveRecord::Base
     'billing_error' => 3,
     'finished' => 4
   }
-  
-  aasm_event :billing_info_received do
-    transitions :to => :running, :from => :pending, :on_transition => :send_invitations_and_calculate_end_date_and_set_start_date
-  end
-
-  aasm_event :finish do
-    # AASM currently doesn't support more than one guard, hence this absurd method here.
-    transitions :to => :finished, :from => :running, :guard => :closed_and_full_report_and_billing_successful? 
-    transitions :to => :billing_error, :from => :running, :guard => :closed_and_full_report?
-    transitions :to => :stalled, :from => :running, :guard => :closed?
-  end
-  
-  aasm_event :rerun do
-    transitions :to => :running, :from => :stalled, :guard => :can_be_rerun?, :on_transition => :email_rerun_message
-  end
-
-  aasm_event :billing_error_resolved do
-    transitions :to => :finished, :from => :billing
-  end
-  
-  aasm_event :finish_with_partial_report do
-    transitions :to => :finished, :from => :stalled, :guard => :closed_and_enough_responses_and_billing_successful? 
-    transitions :to => :billing_error, :from => :stalled, :guard => :closed_and_enough_responses?
-  end
 
   ############### AASM Configuration: END ###################
        
@@ -281,33 +281,12 @@ class Survey < ActiveRecord::Base
     s = subscriptions.create!(:organization => sponsor, :relationship => 'sponsor')
   end
   
-  def send_invitations_and_calculate_end_date_and_set_start_date
+  def set_start_and_end_dates 
     self.start_date = Time.now
     self.end_date = self.start_date + days_running.to_i.days
     self.save # i noticed some trouble with sending invites without the save
-    send_invitations
   end
     
-  # returns whether or not there are enough responses and the survey is closed
-  def closed_and_enough_responses?
-    closed? && enough_responses?
-  end  
- 
-  # returns whether or not there are enough responses and the survey is closed, and if so, if billing was successful
-  def closed_and_enough_responses_and_billing_successful?
-    closed_and_enough_responses? && billing_successful?
-  end
-  
-  # returns whether or not all questions can be reported and the survey is closed
-  def closed_and_full_report?
-    closed? && full_report?
-  end  
- 
-  # returns whether or not all questions can be reported and the survey is closed, and if so, if billing was successful
-  def closed_and_full_report_and_billing_successful?
-    closed_and_full_report? && billing_successful?
-  end  
-
   # Calls the billing routine and returns whether or not billing was successful.
   def billing_successful?
     # if we are paying by c.c. bill the card

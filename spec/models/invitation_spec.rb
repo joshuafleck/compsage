@@ -260,7 +260,6 @@ describe SurveyInvitation do
  
   it "should send a notification email when asked" do
     Notifier.should_receive(:deliver_survey_invitation_notification)
-    @survey_invitation.aasm_state = :pending
     @survey_invitation.send_invitation
   end
 end
@@ -424,8 +423,7 @@ describe ExternalSurveyInvitation do
   end
 
   it "should send a notification email when asked" do
-    Notifier.should_receive(:deliver_external_survey_invitation_notification)
-    @external_survey_invitation.aasm_state = :pending
+    Notifier.should_receive(:deliver_external_survey_invitation_notification).and_return(true)
     @external_survey_invitation.send_invitation
   end
 end 

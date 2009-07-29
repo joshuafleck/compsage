@@ -1,5 +1,4 @@
 class ExternalSurveyInvitation < ExternalInvitation
-  include AASM
   belongs_to :survey
   
   has_many :discussions, :as => :responder
@@ -12,12 +11,12 @@ class ExternalSurveyInvitation < ExternalInvitation
 
   attr_accessible :survey, :disccusions, :responses
   
-  aasm_initial_state :pending
-  aasm_state :pending
-  aasm_state :sent
-  
-  aasm_event :send_invitation do
-    transitions :to => :sent, :from => :pending, :on_transition => :send_invitation_email
+  state_machine 'aasm_state', :initial => :pending do
+    after_transition :pending => :sent, :do => :send_invitation_email
+
+    event :send_invitation do
+      transition :pending => :sent
+    end
   end
  
   private

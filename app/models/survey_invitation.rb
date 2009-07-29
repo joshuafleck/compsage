@@ -1,6 +1,4 @@
 class SurveyInvitation < Invitation
-  include AASM
-
   belongs_to :survey
   
   validates_presence_of :invitee
@@ -9,23 +7,21 @@ class SurveyInvitation < Invitation
   
   named_scope :running, :include => :survey, :conditions => ["surveys.end_date > ?", Time.now ]
   
-  aasm_initial_state :pending
-  aasm_state :pending
-  aasm_state :sent
-  aasm_state :declined
-  aasm_state :fulfilled
-  
-  aasm_event :send_invitation do
-    transitions :to => :sent, :from => :pending, :on_transition => :send_invitation_email
-  end
+  state_machine 'aasm_state', :initial => :pending do
+    after_transition :pending => :sent, :do => :send_invitation_email
 
-  aasm_event :decline do
-    transitions :to => :declined, :from => :sent
-  end  
-  
-  aasm_event :fulfill do
-    transitions :to => :fulfilled, :from => :sent
-  end    
+    event :send_invitation do
+      transition :pending => :sent
+    end
+
+    event :decline do
+      transition :sent => :declined
+    end
+
+    event :fulfill do
+      transition :sent => :fulfilled
+    end
+  end
   
   def to_s
     invitee.name_and_location
