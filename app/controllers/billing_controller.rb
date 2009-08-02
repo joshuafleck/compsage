@@ -1,8 +1,9 @@
 class BillingController < ApplicationController
-  before_filter :login_required, :find_invoice
+  before_filter :login_required, :find_or_initialize_invoice
   layout 'logged_in'
   
-  filter_parameter_logging :credit_card_number
+  # don't allow the credit card information to be logged
+  filter_parameter_logging :active_merchant_billing_credit_card
   
   # viewing an invoice
   def show
@@ -17,27 +18,18 @@ class BillingController < ApplicationController
   def create
     @invoice.attributes = params[:invoice]
     @credit_card = ActiveMerchant::Billing::CreditCard.new(params[:active_merchant_billing_credit_card])
-    
-    input_is_valid = @invoice.valid?
-    
-    #TODO: validate cc information via Gateway
-    if @invoice.paying_with_credit_card? then 
-      input_is_valid = @credit_card.valid? && input_is_valid # see if there are credit card errors
-    end
-    
-    if input_is_valid && @invoice.save then
-      @survey.billing_info_received!
-      respond_to do |wants|
-        wants.html do
-          redirect_to survey_path(@survey)
+
+    respond_to do |wants| 
+      wants.html do
+
+        if (@credit_card.valid? || !@invoice.paying_with_credit_card?) && @invoice.save then        
+          @survey.billing_info_received!               
+          redirect_to survey_path(@survey)          
+        else        
+          render :action => :new                  
         end
-      end
-    else
-      respond_to do |wants|
-        wants.html do
-          render :action => :new
-        end
-      end
+        
+      end      
     end
   end
   
@@ -56,7 +48,8 @@ class BillingController < ApplicationController
   
   private
   
-  def find_invoice
+  # finds the survey and finds or initializes the invoice by survey id
+  def find_or_initialize_invoice
     @survey = current_organization.sponsored_surveys.find(params[:survey_id])
     @invoice = Invoice.find_or_initialize_by_survey_id(@survey.id)
   end

@@ -69,6 +69,7 @@ Factory.define :invoice do |i|
   i.address_line_1 '123 fake street'
   i.phone '1234567890'
   i.payment_type 'credit'
+  i.purchase_order_number '12345'
   i.state 'MN'
   i.zip_code '55413'
   i.amount '12900'

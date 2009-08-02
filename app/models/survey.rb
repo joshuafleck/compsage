@@ -41,7 +41,10 @@ class Survey < ActiveRecord::Base
 
   named_scope :since_last_week, Proc.new { {:conditions => ['end_date > ?', Time.now]} }
   named_scope :recent, :order => 'surveys.created_at DESC', :limit => 10
-  named_scope :most_recent, :order => 'end_date DESC', :conditions => 'end_date IS NOT NULL', :limit => 1
+  named_scope :most_recent,  # used by the Invoice initializer
+    :order => 'end_date DESC', 
+    :conditions => 'end_date IS NOT NULL', 
+    :limit => 1
   named_scope :closed, :conditions => ['aasm_state = ? OR aasm_state = ?', 'finished', 'stalled']
   named_scope :not_finished, :conditions => "aasm_state <> 'finished'"
   named_scope :not_pending, :conditions => "aasm_state <> 'pending'"
