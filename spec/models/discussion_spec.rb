@@ -93,11 +93,11 @@ describe Discussion, "that exists" do
 
   it "should know if a comment is abusive" do
     @discussion.times_reported = Discussion::ABUSE_THRESHOLD
-    @discussion.not_abuse?.should == false
+    @discussion.not_abuse?.should be_false
   end
 
   it "should know if a comment is not abusive" do
-    @discussion.not_abuse?.should == true
+    @discussion.not_abuse?.should be_true
   end
 
   it "should know when the comment is a top-level comment" do

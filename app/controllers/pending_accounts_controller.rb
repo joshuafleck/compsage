@@ -9,23 +9,12 @@ class PendingAccountsController < ApplicationController
     @pending_account = PendingAccount.new(params[:pending_account])
   
     if @pending_account.save then
-      respond_to do |wants|
-        wants.html {         
-          flash[:notice] = "Your signup request was received."
-          redirect_to new_session_path }      
-        wants.xml do
-          render :status => :created
-        end
-      end
+      flash[:notice] = "We have received your signup request. We will call you soon to verify your request and give" \
+        " you further instruction."
+
+      redirect_to new_session_path
     else
-      respond_to do |wants|
-        wants.html do
-          render :action => 'new'
-        end
-        wants.xml do
-          render :xml => @pending_account.errors.to_xml, :status => 422
-        end
-      end
+      render :action => 'new'
     end
   end
 end
