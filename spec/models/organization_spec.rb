@@ -18,30 +18,10 @@ describe Organization do
     Organization.reflect_on_association(:network_invitations).should_not be_nil
   end
   
-  it 'should have one logo' do
-    Organization.reflect_on_association(:logo).should_not be_nil
-  end
-  
   it 'should have many survey invitations' do
     Organization.reflect_on_association(:survey_invitations).should_not be_nil
   end
   
-  it 'should have many sent network invitations' do
-    Organization.reflect_on_association(:sent_network_invitations).should_not be_nil
-  end
-  
-  it 'should have many sent survey invitations' do
-    Organization.reflect_on_association(:sent_survey_invitations).should_not be_nil
-  end
-  
-  it 'should have many sent external network invitations' do
-    Organization.reflect_on_association(:sent_external_network_invitations).should_not be_nil
-  end
-  
-  it 'should have many sent external survey invitations' do
-    Organization.reflect_on_association(:sent_external_survey_invitations).should_not be_nil
-  end
-   
   it 'should have many sent global invitations' do
     Organization.reflect_on_association(:sent_global_invitations).should_not be_nil
   end
@@ -267,5 +247,4 @@ describe Organization, "that already exists" do
     @organization.networks.delete(@network)
     @network.owner.should eql(@organization2)
   end
-
 end
