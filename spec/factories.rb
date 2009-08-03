@@ -55,7 +55,10 @@ end
 
 #definition and setup for discussion
 Factory.define :discussion do |d|
-
+  d.subject "Hi"
+  d.body    "Rampage"
+  d.survey  {|a| a.association(:survey)}
+  d.responder  {|a| a.association(:organization)}
 end
 
 #definition and setup for invitation

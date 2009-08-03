@@ -1,4 +1,4 @@
-<%=error_messages_for :discussion%>
+<%= error_messages_for :discussion %>
 <% form_for [@survey, discussion] do |f| %>
     <%=f.label :subject, nil, :class => 'discussion_label' %>
     <%=f.text_field :subject %>

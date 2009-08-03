@@ -15,7 +15,7 @@
   def create
     @discussion = current_organization_or_survey_invitation.discussions.new(params[:discussion])
     @discussion.survey = @survey
-    
+
     if @discussion.save then
       respond_to do |wants|
         wants.html do        

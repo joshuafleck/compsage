@@ -16,20 +16,16 @@
   </div>  
   <ul id="discussion_<%=discussion_topic.id%>_replies">
       <%= render :partial => "discussions/discussion", 
-                 :collection => discussion_topic.all_children.find_all{|discussion| discussion.is_not_abuse}.sort %>
+                 :collection => discussion_topic.all_children.find_all(&:not_abuse?).sort %>
       <li class="discussion_reply_link">
         <div id="discussion_reply_box_<%=discussion_topic.id%>" style='display: none;' class="discussion_reply_box">
           <% form_tag survey_discussions_url(@survey), :method => :post do %>
-            <%=text_area_tag(
-              'discussion[body]',
-              '', 
-              :id => "discussion_reply_#{discussion_topic.id}_body")
-            %>
-            <%=hidden_field_tag(
-              'discussion[parent_discussion_id]',
-              discussion_topic.id, 
-              :id => "discussion_reply_#{discussion_topic.id}_parent_id")
-             %>
+            <%= text_area_tag 'discussion[body]',
+                              '', 
+                              :id => "discussion_reply_#{discussion_topic.id}_body" %>
+            <%= hidden_field_tag 'discussion[parent_discussion_id]',
+                                 discussion_topic.id, 
+                                 :id => "discussion_reply_#{discussion_topic.id}_parent_id" %>
             <div class="discussion_submit">
               <%= submit_tag 'Post' %> or <a id="discussion_reply_<%=discussion_topic.id%>_cancel" href="#">Cancel</a>
             </div>
