@@ -6,8 +6,6 @@ class Question < ActiveRecord::Base
   has_many :participations, :through => :responses
   acts_as_list :scope => 'survey_id=#{survey_id} AND parent_question_id #{parent_question_id.nil? ? "IS NULL" : "="+parent_question_id.to_s}'
   
-  attr_accessor :parent_question_index
-  
   serialize :options
   serialize :textual_response
 
