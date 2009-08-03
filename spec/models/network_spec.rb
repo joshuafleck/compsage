@@ -65,8 +65,25 @@ describe Network do
   end  
   
   it "should add the network owner as a member on create" do
-    @network = Network.create!(valid_network_attributes)
-    @network.organizations.size.should equal(1)
+    @network = Network.create!(valid_network_attributes.with(:owner => Factory(:organization)))
+    @network.organizations.size.should eql(1)
   end
-  
 end  
+
+describe Network, "promoting a new owner" do
+  before do
+    @owner    = Factory(:organization)
+    @network  = Factory(:network, :owner => @owner)
+
+    @member_1 = Factory(:organization)
+    @network.organizations << @member_1
+
+    @member_2 = Factory(:organization)
+    @network.organizations << @member_2
+  end
+
+  it "should promote the next most senior network member ignoring the current network owner" do
+    @network.promote_new_owner
+    @network.owner.should == @member_1
+  end
+end
