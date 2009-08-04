@@ -30,7 +30,7 @@ class ReportsController < ApplicationController
       wants.doc do
         response.headers["Cache-Control"] = "cache, must-revalidate"
         response.headers["Pragma"] = "public"
-        send_data render_to_string(:layout => false), :disposition => 'attachment', :filename => "Compsage Report on #{@survey.job_title}.doc", :type => 'application/ms-excel'
+        send_data render_to_string(:layout => false), :disposition => 'attachment', :filename => "CompSage Report on #{@survey.job_title}.doc", :type => 'application/ms-excel'
       end
     end
     
