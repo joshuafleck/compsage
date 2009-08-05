@@ -37,23 +37,23 @@ describe BillingController, " handling GET /surveys/1/billing" do
   end
   
   it "should be successful" do
-  	do_get
-  	response.should be_success
+    do_get
+    response.should be_success
   end  
   
   it "should render show template" do
-  	do_get
-  	response.should render_template("show")
+    do_get
+    response.should render_template("show")
   end  
   
   it "should assign the survey to the view" do
     do_get
-    assigns[:survey].should eql(@survey)
+    assigns[:survey].should == @survey
   end
   
   it "should assign the invoice to the view" do
     do_get
-    assigns[:invoice].should eql(@invoice)
+    assigns[:invoice].should == @invoice
   end
       
    
@@ -78,26 +78,30 @@ describe BillingController, " handling GET /surveys/1/billing/new" do
   end
   
   it "should be successful" do
-  	do_get
-  	response.should be_success
+    do_get
+    response.should be_success
   end  
   
   it "should render new template" do
-  	do_get
-  	response.should render_template("new")
+    do_get
+    response.should render_template("new")
   end  
   
   it "should assign the survey to the view" do
     do_get
-    assigns[:survey].should eql(@survey)
+    assigns[:survey].should == @survey
   end
   
-  it "should initialize an invoice using the survey and assign it to the view" do
+  it "should initialize an invoice for the survey" do
+    do_get
+    assigns[:invoice].new_record?.should be_true
+    assigns[:invoice].survey.should == @survey
+  end      
+  
+  it "should assign the invoice to the view" do
     do_get
     assigns[:invoice].should_not be_nil
-    assigns[:invoice].new_record?.should be_true
-    assigns[:invoice].survey.should eql(@survey)
-  end      
+  end   
    
 end
 
@@ -122,8 +126,8 @@ describe BillingController, " handling GET /surveys/1/billing/invoice" do
   end
   
   it "should redirect to the survey report" do
-  	do_get
-  	response.should redirect_to(survey_report_path(@survey))
+    do_get
+    response.should redirect_to(survey_report_path(@survey))
   end  
   
   it "should mark the invoice as delivered" do
@@ -156,15 +160,15 @@ describe BillingController, " handling POST /surveys/1/billing" do
   end
 
   it "should place the survey in a running state" do
-    @survey.aasm_state.should eql("pending")
-  	do_get
-  	@survey.reload
-    @survey.aasm_state.should eql("running")
+    @survey.aasm_state.should == "pending"
+    do_get
+    @survey.reload
+    @survey.aasm_state.should == "running"
   end  
     
   it "should redirect to the survey" do
-  	do_get
-  	response.should redirect_to(survey_path(@survey))
+    do_get
+    response.should redirect_to(survey_path(@survey))
   end  
   
   describe "with an invalid credit card" do
@@ -175,8 +179,8 @@ describe BillingController, " handling POST /surveys/1/billing" do
     end
     
     it "should render the new template" do
-    	do_get
-    	response.should render_template(:new)
+      do_get
+      response.should render_template(:new)
     end
       
   end
@@ -188,8 +192,8 @@ describe BillingController, " handling POST /surveys/1/billing" do
     end
     
     it "should render the new template" do
-    	do_get
-    	response.should render_template(:new)
+      do_get
+      response.should render_template(:new)
     end
     
   end
