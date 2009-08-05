@@ -1,6 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Invoice do
+
   before(:each) do
     @invoice = Factory.build(:invoice)
   end  

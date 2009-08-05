@@ -123,6 +123,7 @@ describe BillingController, " handling GET /surveys/1/billing/invoice" do
   
   def do_get
     get :invoice, :survey_id => @survey.id.to_s
+    @invoice.reload
   end
   
   it "should redirect to the survey report" do
@@ -130,11 +131,8 @@ describe BillingController, " handling GET /surveys/1/billing/invoice" do
     response.should redirect_to(survey_report_path(@survey))
   end  
   
-  it "should mark the invoice as delivered" do
-    @invoice.should_be_delivered?.should be_true
-    do_get
-    @invoice.reload
-    @invoice.should_be_delivered?.should be_false
+  it "should mark the invoice as delivered" do  
+    lambda{ do_get }.should change(@invoice, :should_be_delivered?).from(true).to(false)
   end    
    
 end
@@ -157,15 +155,17 @@ describe BillingController, " handling POST /surveys/1/billing" do
   
   def do_get
     post :create, @params
+    @survey.reload
   end
 
   it "should place the survey in a running state" do
-    @survey.aasm_state.should == "pending"
-    do_get
-    @survey.reload
-    @survey.aasm_state.should == "running"
+    lambda{ do_get }.should change(@survey, :aasm_state).from("pending").to("running")
   end  
-    
+ 
+  it "should create an invoice" do
+    lambda{ do_get }.should change(Invoice, :count).by(1)
+  end  
+     
   it "should redirect to the survey" do
     do_get
     response.should redirect_to(survey_path(@survey))
@@ -182,6 +182,11 @@ describe BillingController, " handling POST /surveys/1/billing" do
       do_get
       response.should render_template(:new)
     end
+    
+    it "should not create an invoice" do
+      do_get
+    lambda{ do_get }.should_not change(Invoice, :count)
+    end    
       
   end
   
@@ -195,7 +200,12 @@ describe BillingController, " handling POST /surveys/1/billing" do
       do_get
       response.should render_template(:new)
     end
-    
+     
+    it "should not create an invoice" do
+      do_get
+    lambda{ do_get }.should_not change(Invoice, :count)
+    end    
+        
   end
    
 end
