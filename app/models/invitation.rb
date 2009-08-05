@@ -9,6 +9,7 @@ class Invitation < ActiveRecord::Base
   named_scope :pending, :conditions => {:aasm_state => 'pending'}
   named_scope :not_pending, :conditions => 'aasm_state <> "pending"'
   named_scope :sent, :conditions => {:aasm_state => 'sent'}
+  named_scope :ordered_by, lambda { |o| {:order => o } }
   
   #This will sort the invitations by invitee organization name, regardless of type
   def <=>(o)
