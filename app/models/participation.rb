@@ -17,6 +17,14 @@ class Participation < ActiveRecord::Base
       'Invitation', 
       'Organization', 
       'Organization']  
+
+  named_scope :recent,
+    :include => :survey,
+    :conditions => ['surveys.aasm_state = ? OR (surveys.aasm_state = ? AND surveys.end_date > ?)',
+                    'running',
+                    'stalled',
+                    Time.now - 1.day]
+  named_scope :not_sponsored_by, lambda { |o| {:include => :survey, :conditions => ['surveys.sponsor_id <> ?', o.id]} }
   
   # Sets up the response for this participation from the form parameters.  
   def response=(question_response_params)

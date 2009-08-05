@@ -53,6 +53,28 @@ Factory.define :survey do |s|
   s.questions {|a| [a.association(:question, :survey_id => 1)]}
 end
 
+Factory.define :pending_survey, :parent => :survey do |s|
+  s.aasm_state 'pending'
+end
+
+Factory.define :running_survey, :parent => :survey do |s|
+  s.aasm_state 'running'
+  s.end_date   Time.now + 6.days
+  s.start_date Time.now - 1.day
+end
+
+Factory.define :stalled_survey, :parent => :survey do |s|
+  s.aasm_state 'stalled'
+  s.start_date Time.now - 8.days
+  s.end_date   Time.now - 1.day
+end
+
+Factory.define :finished_survey, :parent => :survey do |s|
+  s.aasm_state 'finished'
+  s.start_date Time.now - 8.days
+  s.end_date   Time.now - 1.day
+end
+
 #definition and setup for discussion
 Factory.define :discussion do |d|
   d.subject "Hi"
@@ -85,6 +107,14 @@ Factory.define :survey_invitation do |i|
   i.survey {|a| a.association(:survey)}
   i.inviter {|a| a.association(:organization)} 
   i.invitee {|a| a.association(:organization)}
+end
+
+Factory.define :sent_survey_invitation, :parent => :survey_invitation do |i|
+  i.aasm_state 'sent' 
+end
+
+# So we can be explicit in our specs when using a pending invitation.
+Factory.define :pending_survey_invitation, :parent => :survey_invitation do |i|
 end
 
 #definition and setup for network invitation
