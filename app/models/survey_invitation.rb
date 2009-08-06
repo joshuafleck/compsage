@@ -23,10 +23,6 @@ class SurveyInvitation < Invitation
     end
   end
   
-  def to_s
-    invitee.name_and_location
-  end
-  
   private
   
   # adds an error if the invitee was already invited (or the sponsor)

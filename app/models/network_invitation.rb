@@ -5,16 +5,14 @@ class NetworkInvitation < Invitation
   validates_presence_of :network
   validate_on_create :not_already_invited_or_member
   
+  after_create :send_invitation_email
+  
   # accepts the invitation.
   def accept!
     invitee.networks << network
     destroy
   end
    
-  def to_s
-    invitee.name_and_location
-  end
-  
   private
   
   def not_already_invited_or_member
@@ -33,5 +31,9 @@ class NetworkInvitation < Invitation
   def not_already_member
     errors.add_to_base "That organization is already a member of this network" if invitee.networks.include?(network) || invitee.owned_networks.include?(network)
   end
-   
+ 
+  def send_invitation_email
+    Notifier.deliver_network_invitation_notification(self)
+  end
+     
 end

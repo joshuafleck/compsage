@@ -6,11 +6,8 @@ class ExternalSurveyInvitation < ExternalInvitation
   has_many :responses, :through => :participations
   
   validates_presence_of :survey
-  validates_presence_of :organization_name
   validate_on_create :not_already_invited
 
-  attr_accessible :survey, :disccusions, :responses
-  
   state_machine 'aasm_state', :initial => :pending do
     after_transition :pending => :sent, :do => :send_invitation_email
 
