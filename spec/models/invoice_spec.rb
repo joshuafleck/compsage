@@ -9,7 +9,11 @@ describe Invoice do
   it "should be valid" do
     @invoice.should be_valid
   end
-  
+   
+  it "should belong to a survey" do
+    Invoice.reflect_on_association(:survey).should_not be_nil
+  end
+   
   it "should be invalid without a survey" do
     @invoice.survey = nil
     @invoice.should have(1).errors_on(:survey)
