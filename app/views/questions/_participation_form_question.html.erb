@@ -10,11 +10,11 @@
   <li class="<%= cycle("even", "odd") %>">
     <div class="question_container" style="padding-left:<%= level*2 %>em"> 
       <%
-      # The following line is a hack to get IE6/IE7 to not add spurrious space between the qualification div and the
+      # The following line is a hack to get IE6/IE7 to not add spurrious space between the comment div and the
       # bottom of the last radio button. For some reason it insists on rendering the whitespace :( This can
       # most likely be improved.
       -%>
-      <%= q.form_field -%><% if participation_form_question.response_class.accepts_qualification? then -%><div class="qualifications">
+      <%= q.form_field -%><% if participation_form_question.response_class.accepts_comments? then -%><div class="comments">
           <div class="field">
             <%=q.label :comments, 'Comment:' %>
             <%=q.text_field :comments %>
