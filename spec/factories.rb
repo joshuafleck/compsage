@@ -85,7 +85,7 @@ end
 
 #definition and setup for invitation
 Factory.define :invitation do |i|
-  
+  i.inviter {|a| a.association(:organization)}
 end
 
 Factory.define :invoice do |i|

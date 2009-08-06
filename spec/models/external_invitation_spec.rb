@@ -6,6 +6,10 @@ describe ExternalInvitation do
     @invitation = Factory.build(:external_invitation)
   end
   
+  it "should be valid" do
+    @invitation.should be_valid
+  end  
+     
   it "should be invalid without an email" do
     @invitation.email = nil
     @invitation.should have(3).errors_on(:email)

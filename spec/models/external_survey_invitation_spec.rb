@@ -7,6 +7,10 @@ describe ExternalSurveyInvitation do
     @invitation = Factory.build(:external_survey_invitation, :survey => @survey)
   end
    
+  it "should be valid" do
+    @invitation.should be_valid
+  end  
+     
   it "should belong to a survey" do
     ExternalSurveyInvitation.reflect_on_association(:survey).should_not be_nil
   end
@@ -45,4 +49,11 @@ describe ExternalSurveyInvitation do
     @invitation.destroy
   end
   
+  it "should send a notification email when asked" do
+    @invitation.save!
+    Notifier.should_receive(:deliver_external_survey_invitation_notification)
+    @invitation.send_invitation!
+    @invitation.destroy
+  end   
+    
 end  

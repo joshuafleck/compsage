@@ -10,7 +10,11 @@ describe SurveyInvitation do
   after(:each) do
     @survey.destroy
   end  
-   
+  
+  it "should be valid" do
+    @invitation.should be_valid
+  end  
+      
   it "should belong to a survey" do
     SurveyInvitation.reflect_on_association(:survey).should_not be_nil
   end
@@ -45,7 +49,14 @@ describe SurveyInvitation do
     @invitation.save!
     lambda{ @invitation.send_invitation! }.should change(@invitation, :aasm_state).from("pending").to("sent")
     @invitation.destroy
-  end    
+  end   
+  
+  it "should send a notification email when asked" do
+    @invitation.save!
+    Notifier.should_receive(:deliver_survey_invitation_notification)
+    @invitation.send_invitation!
+    @invitation.destroy
+  end   
   
   it "should have a declined status after declining the invitation" do
     @invitation.save!

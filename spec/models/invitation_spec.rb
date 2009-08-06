@@ -6,6 +6,10 @@ describe Invitation do
     @invitation = Factory.build(:invitation)
   end
   
+  it "should be valid" do
+    @invitation.should be_valid
+  end  
+     
   it "should belong to an invitee" do
     Invitation.reflect_on_association(:invitee).should_not be_nil
   end

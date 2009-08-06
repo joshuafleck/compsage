@@ -10,6 +10,10 @@ describe NetworkInvitation do
   after(:each) do
     @network.destroy
   end  
+  
+  it "should be valid" do
+    @invitation.should be_valid
+  end  
    
   it "should belong to a network" do
     NetworkInvitation.reflect_on_association(:network).should_not be_nil
@@ -44,6 +48,11 @@ describe NetworkInvitation do
     @invitation.should have(1).error_on(:base)
   end    
   
+  it "should be invalid if the invitee is the network owner" do        
+    @invitation.invitee = @network.owner    
+    @invitation.should have(1).error_on(:base)
+  end    
+  
   it "should destroy the invitation when it is accepted" do
     @invitation.save!
     @invitation.reload
@@ -59,6 +68,12 @@ describe NetworkInvitation do
     lambda{ @invitation.accept! }.should change(@invitation.invitee.networks, :count).by(1)
     
     @invitation.destroy
-  end     
+  end    
+  
+  it "should send a notification email on create" do
+    Notifier.should_receive(:deliver_network_invitation_notification)
+    @invitation.save!
+    @invitation.destroy
+  end        
   
 end 
