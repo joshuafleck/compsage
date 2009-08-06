@@ -13,5 +13,5 @@
       <dd><%= number_with_precision(percentiles[2]) %></dd>
     <% end %>
   </dl>
-  <%= render :partial => "qualifications", :object => question.qualifications, :locals => {:question => question} %>
+  <%= render :partial => "comments", :object => question.comments, :locals => {:question => question} %>
 </div>

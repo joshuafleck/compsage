@@ -126,7 +126,7 @@
      <Cell />
      <% end %>
      <%if invitation.is_a?(SurveyInvitation) then %>
-     <Cell ss:StyleID="s30"><Data ss:Type="String"><%=invitation.invitee.name_and_location%></Data></Cell>
+     <Cell ss:StyleID="s30"><Data ss:Type="String"><%=invitation.invitee.name_and_location(false)%></Data></Cell>
      <%else%>
      <Cell ss:StyleID="s30"><Data ss:Type="String"><%="#{invitation.organization_name} (#{invitation.email})"%></Data></Cell>
      <%end%>
@@ -146,15 +146,15 @@
    </Row>
    <% if question.adequate_responses? then%>
    <%=render :partial=> "#{question.report_type}.xls.erb",  :locals=>{:question => question, :format => @format}%>
-   <% if question.qualifications.any? then %>
-   <% question.qualifications.each do |qualification| %>
+   <% if question.comments.any? then %>
+   <% question.comments.each do |comment| %>
    <Row ss:AutoFitHeight="0">
-    <% if qualification == question.qualifications.first%>
+    <% if comment == question.comments.first%>
     <Cell ss:StyleID="s33"><Data ss:Type="String">Comments</Data></Cell>
     <% else %>
     <Cell />
     <% end %>
-    <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String"><%=qualification%></Data></Cell>
+    <Cell ss:Index="2" ss:StyleID="s30"><Data ss:Type="String"><%=comment%></Data></Cell>
    </Row>
    <% end %>
    <% end %>

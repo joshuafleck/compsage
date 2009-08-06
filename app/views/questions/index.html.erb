@@ -1,10 +1,10 @@
 <% title "Responding to #{@survey.job_title}" %>
 <% highlight_tab("surveys") %>
-<% content_for :initialize_js, "createMasks();observeQualificationLinks();observeUnitSelection();setupFollowups();"%>
+<% content_for :initialize_js, "createMasks();observeCommentLinks();observeUnitSelection();setupFollowups();"%>
 <%= render :partial => "questions/participation_form"%>
 <script type="text/javascript">
-function observeQualificationLinks() {
-  $$('div.qualifications').each(function(elem) {
+function observeCommentLinks() {
+  $$('div.comments').each(function(elem) {
     var link = elem.select('a').first();
     var input_div = elem.select('div.field').first();
     var input = input_div.select('input').first();
@@ -52,8 +52,8 @@ function setupFollowupForList(list, parent_questions) {
   list.childElements().each(function(item) {
     var sub_list = item.select('ol').first();
     if(sub_list) {
-      // get all the inputs for this question that aren't qualifications.
-      var inputs = item.childElements().first().select('input:not([id$=qualifications])');
+      // get all the inputs for this question that aren't comments.
+      var inputs = item.childElements().first().select('input:not([id$=comments])');
       inputs.each(function(input){
         if(input.type == 'text') {
           input.observe('question:validinput', function(e) {
@@ -108,19 +108,19 @@ function disableList(list, disableChildren) {
   list.childElements().each(function(li) {
     var elements = li.select('div').first().select('input');
     elements.each(function(input) {
-      var qualifications_div = null;
+      var comments_div = null;
       if(input.getAttribute('type').match(/checkbox|radio/)){
         input.checked = false;
-        qualifications_div = li.select('div.qualifications').first();
+        comments_div = li.select('div.comments').first();
       }
       else {
         input.value = '';
-        if (!input.hasClassName('TextualResponse') && !input.id.include('qualifications')){
-          qualifications_div = li.select('div.qualifications').first();
+        if (!input.hasClassName('TextualResponse') && !input.id.include('comments')){
+          comments_div = li.select('div.comments').first();
         }
       }
-      if(qualifications_div != null)
-        clearAndHideQualifications(qualifications_div);
+      if(comments_div != null)
+        clearAndHideComments(comments_div);
       input.setAttribute('disabled', true);
     });
     var sub_list = li.select('ol').first();

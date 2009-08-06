@@ -64,9 +64,9 @@ class Question < ActiveRecord::Base
     self.responses.count >= self.response_class.minimum_responses_for_percentiles
   end
 
-  # The qualifications for this question
-  def qualifications
-    @qualifications ||= self.responses.collect(&:qualifications).compact
+  # The comments for this question
+  def comments
+    @comments ||= self.responses.collect(&:comments).compact
   end
 
   # The class of the type of response this question gathers

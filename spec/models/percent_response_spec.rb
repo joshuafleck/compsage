@@ -20,7 +20,7 @@ describe PercentResponse do
     @response.response_before_type_cast.should == "1asdf2"
   end
 
-  it "should accept qualification" do
-    PercentResponse.accepts_qualification.should be_true
+  it "should accept comment" do
+    PercentResponse.accepts_comment.should be_true
   end
 end

@@ -36,8 +36,8 @@ describe Response do
     @response.should_not be_valid
   end
   
-  it 'should be invalid with a qualification but no response' do
-    @response.attributes = valid_response_attributes.except(:response).with(:qualifications => 'something')
+  it 'should be invalid with a comment but no response' do
+    @response.attributes = valid_response_attributes.except(:response).with(:comments => 'something')
     @response.should_not be_valid
   end
   

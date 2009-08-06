@@ -31,7 +31,7 @@ class Participation < ActiveRecord::Base
     survey.questions.each do |question|
       attributes = question_response_params[question.id.to_s] || {}
       current_responses = response[question.id]
-      if attributes[:response].blank? && attributes[:qualifications].blank? then
+      if attributes[:response].blank? && attributes[:comments].blank? then
         # didn't respond
         if !(current_responses.nil? || current_responses.empty?) then
           current_responses.first.destroy # So, destroy the previous response if it exists

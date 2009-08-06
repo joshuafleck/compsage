@@ -16,7 +16,7 @@ end
 pdf.footer [pdf.margin_box.left, pdf.margin_box.bottom + 25] do
   pdf.stroke_horizontal_rule
   pdf.pad_top(inner_padding) do
-    pdf.text "CompSage survey sponsored by: #{@survey.sponsor.name_and_location}", 
+    pdf.text "CompSage survey sponsored by: #{@survey.sponsor.name_and_location(false)}", 
       :size => 10, 
       :style => :italic
     pdf.text "Page: #{pdf.page_count}", :align => :right
@@ -60,7 +60,7 @@ pdf.bounding_box(
 
   @invitations.each do |invitation| 
     if invitation.is_a?(SurveyInvitation) then
-      pdf.text "#{invitation.invitee.name_and_location}"
+      pdf.text "#{invitation.invitee.name_and_location(false)}"
     else
       pdf.text "#{invitation.organization_name} (#{invitation.email})"
     end   
@@ -80,11 +80,11 @@ pdf.bounding_box(
       pdf.pad_top(inner_padding) do
         render :partial=> "#{question.report_type}.pdf.prawn",  :locals=>{:p_pdf=>pdf, :question => question, :format => @format}
       end 
-      if question.qualifications.any? then
+      if question.comments.any? then
         pdf.pad_top(inner_padding) do
           pdf.text "Comments", :style => :bold, :size => 10
-          question.qualifications.each do |qualification|          
-            pdf.text "#{qualification}", :size => 10
+          question.comments.each do |comment|          
+            pdf.text "#{comment}", :size => 10
           end
         end
       end

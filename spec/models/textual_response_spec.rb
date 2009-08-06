@@ -10,7 +10,7 @@ describe TextualResponse do
     @textual_response.textual_response.should == "rampage"
   end
 
-  it "should not accept qualification" do
-    TextualResponse.accepts_qualification.should be_false
+  it "should not accept comment" do
+    TextualResponse.accepts_comment.should be_false
   end
 end

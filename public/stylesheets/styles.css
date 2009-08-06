@@ -830,14 +830,14 @@ ul#invitations a.remove {
 
 /* Survey Questions Page */
 
-div.qualifications a {
+div.comments a {
   font-size: 0.9em;
   color: #666;
   outline: none;
   font-weight: bold;
 }
 
-div.qualifications .field {
+div.comments .field {
   display: inline;
 }
 

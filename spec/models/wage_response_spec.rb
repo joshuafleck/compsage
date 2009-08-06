@@ -20,8 +20,8 @@ describe WageResponse do
     @response.response_before_type_cast.should == "1asdf2"
   end
 
-  it "should accept qualification" do
-    WageResponse.accepts_qualification.should be_true
+  it "should accept comment" do
+    WageResponse.accepts_comment.should be_true
   end
 
   it "should have some units" do

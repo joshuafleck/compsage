@@ -20,8 +20,8 @@ describe BaseWageResponse do
     @response.response_before_type_cast.should == "1asdf2"
   end
 
-  it "should accept qualification" do
-    NumericalResponse.accepts_qualification.should be_true
+  it "should accept comment" do
+    NumericalResponse.accepts_comment.should be_true
   end
 
   it "should have some units" do

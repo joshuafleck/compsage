@@ -17,31 +17,31 @@
     </ol>   
   <div class="response_submit submit_row"><input type="submit" value="Submit My Responses" /><span  id='cancel_section'> or <%=link_to "Cancel", survey_path(@survey), :id => 'cancel_link' %></span></div>
 <% end %>
-<% content_for :initialize_js, "observeResponseForQualifications();" %>
+<% content_for :initialize_js, "observeResponseForComments();" %>
 <script type="text/javascript">
-function observeResponseForQualifications(){
+function observeResponseForComments(){
   $('questions').select('div.question_container').each(function(question_div){
-    question_div.select('input:not([id$=qualifications])').each(function(input){
+    question_div.select('input:not([id$=comments])').each(function(input){
       if(!input.hasClassName('TextualResponse')) {
         if(input.getAttribute('type').match(/checkbox|radio/)){
           input.observe('click', function(e){
-              question_div.select('div.qualifications').first().show();
+              question_div.select('div.comments').first().show();
           });
         }
         else {
-          var qualifications_div = question_div.select('div.qualifications').first();
+          var comments_div = question_div.select('div.comments').first();
           if (input.value === ''){
-            clearAndHideQualifications(qualifications_div);
+            clearAndHideComments(comments_div);
           }
           else {
-            qualifications_div.show();
+            comments_div.show();
           }
           input.observe('question:validinput', function(e){
             if (input.value === ''){
-              clearAndHideQualifications(qualifications_div);
+              clearAndHideComments(comments_div);
             }
             else {
-              qualifications_div.show();
+              comments_div.show();
             }
           });
         }
@@ -49,21 +49,21 @@ function observeResponseForQualifications(){
     });
     
     if(question_div.select('input').first().getAttribute('type').match(/checkbox|radio/)){
-      if(question_div.select('input:not([id$=qualifications])').any(function(q){return q.checked;})) {
-        question_div.select('div.qualifications').first().show();
+      if(question_div.select('input:not([id$=comments])').any(function(q){return q.checked;})) {
+        question_div.select('div.comments').first().show();
       }
       else {
-        clearAndHideQualifications(question_div.select('div.qualifications').first());
+        clearAndHideComments(question_div.select('div.comments').first());
       }
     }
   });
 }
 
-function clearAndHideQualifications(qualifications_div){
-  qualifications_div.select('input').first().value = '';
-  qualifications_div.select('div.field').first().hide();
-  qualifications_div.select('a').first().innerHTML = 'Add Comment';
-  qualifications_div.hide();
+function clearAndHideComments(comments_div){
+  comments_div.select('input').first().value = '';
+  comments_div.select('div.field').first().hide();
+  comments_div.select('a').first().innerHTML = 'Add Comment';
+  comments_div.hide();
 }
 
 </script>

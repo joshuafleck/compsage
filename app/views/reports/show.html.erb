@@ -106,9 +106,9 @@
     $$('.show_comments').each(function(elem) {
       elem.observe('click', function(e) {
         e.preventDefault();
-        var question_id = e.target.href.match(/question_(\d+)_qualifications/)[1];
-        $('question_' + question_id + '_qualifications').toggleClassName('hidden');
-        $('question_' + question_id + '_qualifications').highlight();
+        var question_id = e.target.href.match(/question_(\d+)_comments/)[1];
+        $('question_' + question_id + '_comments').toggleClassName('hidden');
+        $('question_' + question_id + '_comments').highlight();
         return false;
       })
     })

@@ -23,7 +23,7 @@ class QuestionFormBuilder < ActionView::Helpers::FormBuilder
       question.options.to_enum(:each_with_index).collect { |option, index|
         @template.content_tag(:label, radio_button(:response, index.to_f) + " " + option, :class => 'option')
       }.join("") + 
-      error_text # error should be displayed in the case that a qualification was entered, but no response
+      error_text # error should be displayed in the case that a comment was entered, but no response
     when "text_area"
       label(:response, question_text) + text_area(:response, :rows => 5, :cols => 50)
     when "checkbox"

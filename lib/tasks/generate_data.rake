@@ -506,7 +506,7 @@ namespace :data_generator do
             :question => question, 
             :response => 20000 + rand(60000),
             :unit => ['Annually', 'Hourly'][rand(2)],
-            :qualifications => [nil,Faker::Lorem.sentence][rand(2)])
+            :comments => [nil,Faker::Lorem.sentence][rand(2)])
             
             response.response = WageResponse.units.convert(response.response, {:to => "Hourly", :from => "Annually"}) if response.unit == "Hourly"
         when 'WageResponse'
@@ -515,7 +515,7 @@ namespace :data_generator do
             :question => question, 
             :response => 20000 + rand(60000),
             :unit => ['Annually', 'Hourly'][rand(2)],
-            :qualifications => [nil,Faker::Lorem.sentence][rand(2)])
+            :comments => [nil,Faker::Lorem.sentence][rand(2)])
             
           response.response = WageResponse.units.convert(response.response, {:to => "Hourly", :from => "Annually"}) if response.unit == "Hourly"
         when 'MultipleChoiceResponse'
@@ -523,19 +523,19 @@ namespace :data_generator do
             :multiple_choice_response, 
             :question => question, 
             :response => 0 + rand(question.options.size),
-            :qualifications => [nil,Faker::Lorem.sentence][rand(2)])
+            :comments => [nil,Faker::Lorem.sentence][rand(2)])
         when 'PercentResponse'
           response = Factory.build(
             :percent_response, 
             :question => question, 
             :response => 20000 + rand(60000),
-            :qualifications => [nil,Faker::Lorem.sentence][rand(2)])
+            :comments => [nil,Faker::Lorem.sentence][rand(2)])
         when 'NumericalResponse'
           response = Factory.build(
             :numerical_response, 
             :question => question, 
             :response => 20000 + rand(60000),
-            :qualifications => [nil,Faker::Lorem.sentence][rand(2)])
+            :comments => [nil,Faker::Lorem.sentence][rand(2)])
         else
           response = Factory.build(
             :textual_response, 

@@ -1,0 +1,7 @@
+<% if comments.any? then %>
+  <%= word_p "" %>
+  <%= word_p "Comments", :bold => true %>
+  <% comments.each do |comment| %>
+    <%= word_p comment %>
+  <% end %>
+<% end %>

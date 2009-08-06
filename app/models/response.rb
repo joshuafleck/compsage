@@ -1,6 +1,6 @@
 class Response < ActiveRecord::Base
   class_inheritable_accessor :units, :minimum_responses_for_report, :has_options, :field_type, :field_options,
-                             :accepts_qualification, :report_type, :minimum_responses_for_percentiles
+                             :accepts_comment, :report_type, :minimum_responses_for_percentiles
   attr_accessor :raw_numerical_response
 
   self.units = nil
@@ -8,7 +8,7 @@ class Response < ActiveRecord::Base
   self.has_options = false
   self.field_type = 'text_box'
   self.field_options = {:size => 40}
-  self.accepts_qualification = false
+  self.accepts_comment = false
   self.report_type = 'text_field'
   self.minimum_responses_for_percentiles = 5
 
@@ -16,8 +16,8 @@ class Response < ActiveRecord::Base
     self.has_options
   end
 
-  def self.accepts_qualification?
-    self.accepts_qualification
+  def self.accepts_comment?
+    self.accepts_comment
   end
 
   # Here we must override new in order to create an object of the proper type.
@@ -47,7 +47,7 @@ class Response < ActiveRecord::Base
     record.errors.add_to_base "#{record.class.units.name.capitalize} not provided" if record.class.units && value.blank?
   end
   
-  validate :follow_up_qualification_without_response
+  validate :follow_up_comment_without_response
   
 
   before_save :convert_to_standard_units
@@ -85,11 +85,11 @@ class Response < ActiveRecord::Base
     self.textual_response
   end
   
-  def qualifications=(value)
+  def comments=(value)
     if value.blank? then
-      self[:qualifications] = nil
+      self[:comments] = nil
     else
-      self[:qualifications] = value
+      self[:comments] = value
     end
   end
  
@@ -98,8 +98,8 @@ class Response < ActiveRecord::Base
     self.response
   end
   
-  def follow_up_qualification_without_response
-    errors.add_to_base " You may not comment upon a blank response. Use the parent question to add general comments." if !self.question.nil? && self.question.level > 0 && !self.qualifications.nil? && self.response.nil?
+  def follow_up_comment_without_response
+    errors.add_to_base " You may not comment upon a blank response. Use the parent question to add general comments." if !self.question.nil? && self.question.level > 0 && !self.comments.nil? && self.response.nil?
   end
   
 

@@ -1,0 +1,10 @@
+<% if comments.any? then %>
+  <p><%= link_to pluralize(comments.size, 'Comment'), "#question_#{question.id}_comments", :class => 'show_comments' %></p>
+  <div id="question_<%=question.id%>_comments" class="hidden">
+    <ul>
+      <% comments.each do |comment| %>
+        <li><%= comment %></li>
+      <% end %>
+    </ul>
+  </div>
+<%end%>

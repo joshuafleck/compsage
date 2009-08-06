@@ -23,5 +23,5 @@
     <dt>75th Percentile</dt>
 	<dd><%= number_to_currency(WageResponse.units.convert(percentiles[2].to_i / 100.0,{:from => "Annually", :to => "Hourly"})) %></dd>
   </dl>
-  <%= render :partial => "qualifications", :object => question.qualifications, :locals => {:question => question} %>
+  <%= render :partial => "comments", :object => question.comments, :locals => {:question => question} %>
 </div>
