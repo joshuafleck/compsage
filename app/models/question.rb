@@ -9,6 +9,7 @@ class Question < ActiveRecord::Base
   serialize :options
   serialize :textual_response
 
+  # strips all HTML tags from fields with user input before saving
   xss_terminate :except => [ :response_type, :question_parameters, :html_parameters, :options, :custom_question_type ]
   
   validates_presence_of :response_type
@@ -26,7 +27,9 @@ class Question < ActiveRecord::Base
       self.response_type = CUSTOM_QUESTION_TYPES[self.custom_question_type] 
       self.options = CUSTOM_QUESTION_OPTIONS[self.custom_question_type] 
     end
-  end  
+  end
+  
+  named_scope :required, :conditions => "required = 1"
                        
   CUSTOM_QUESTION_TYPES = {
     'Agreement scale' => 'MultipleChoiceResponse',
@@ -41,12 +44,6 @@ class Question < ActiveRecord::Base
     'Yes/No' => ['Yes', 'No'],
     'Agreement scale' => ['Strongly Agree','Agree','Neutral','Disagree','Strongly Disagree']
   }
-  
-  named_scope :required, :conditions => "required = 1"
-
-  def answerable?
-    return !self.response_type.nil?
-  end
  
   def grouped_responses  
     @grouped_responses ||= responses.group_by(&:numerical_response)     
@@ -57,11 +54,12 @@ class Question < ActiveRecord::Base
     self.response_class.minimum_responses_for_report
   end
   
-  # returns true if the question received enough responses to be displayed in the report
+  # returns true if the question received enough responses to be displayed on the report
   def adequate_responses?
     self.responses.count >= self.response_class.minimum_responses_for_report
   end
   
+  # returns true if the question received enough responses to be displayed in percentiles on the report
   def adequate_responses_for_percentiles?
     self.responses.count >= self.response_class.minimum_responses_for_percentiles
   end
@@ -81,6 +79,7 @@ class Question < ActiveRecord::Base
     response_class.report_type
   end
   
+  # Determines if the question_type is Yes or No
   def yes_no?
     return !self.options.nil? && self.options.size == 2 && self.options.first == "Yes" && self.options.last == "No"
   end
