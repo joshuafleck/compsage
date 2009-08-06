@@ -31,7 +31,6 @@ class AccountsController < ApplicationController
       #Prepopulate the name and email fields automagically
       @organization = Organization.new({
         :name => @external_invitation.organization_name,
-        :contact_name => @external_invitation.name,
         :email => @external_invitation.email
       }) 
     elsif @pending_account
