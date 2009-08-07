@@ -16,18 +16,9 @@ class Question < ActiveRecord::Base
   validates_presence_of :options, :message => " are required multiple response question", :if => Proc.new { |question| question.response_class.has_options? }
   validates_length_of :text, :within => 1..1000, :message => " is required for a question."
   
-  def before_validation_on_create 
-     # by default, set pay or wage response types as required for custom questions
-     self.required = true if !attribute_present?("predefined_question_id") && self.question_type == 'Pay or wage response'
-  end
-  
-  def before_validation 
-    if attribute_present?("question_type") && self.question_type_changed? then
-      # be sure to update the response type and options if the custom question type changes
-      self.response_type = QUESTION_TYPES[self.question_type] 
-      self.options = QUESTION_OPTIONS[self.question_type] 
-    end
-  end
+  before_save :determine_level
+  before_validation :set_type
+  before_validation_on_create :determine_required
   
   named_scope :required, :conditions => "required = 1"
                        
@@ -81,14 +72,32 @@ class Question < ActiveRecord::Base
   
   # Determines if the question_type is Yes or No
   def yes_no?
-    return !self.options.nil? && self.options.size == 2 && self.options.first == "Yes" && self.options.last == "No"
+    return self.question_type == 'Yes/No'
   end
+  
+  private
+  
   # Determines the level of nesting for the question
-  def level
-    if !parent_question then
-      0 
+  def determine_level
+    if !self.parent_question then
+      self.level = 0 
     else
-      parent_question.level + 1
+      self.level = self.parent_question.level + 1
+    end
+  end
+  
+  # Determines if required set to true
+  def determine_required
+     # by default, set pay or wage response types as required for custom questions
+     self.required = true if !attribute_present?("predefined_question_id") && self.question_type == 'Pay or wage response'
+  end
+  
+  # Sets the type and options for the question
+  def set_type 
+    if attribute_present?("question_type") && self.question_type_changed? then
+      # be sure to update the response type and options if the question type changes
+      self.response_type = QUESTION_TYPES[self.question_type] 
+      self.options = QUESTION_OPTIONS[self.question_type] 
     end
   end
 end
