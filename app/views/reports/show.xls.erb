@@ -126,7 +126,7 @@
      <Cell />
      <% end %>
      <%if invitation.is_a?(SurveyInvitation) then %>
-     <Cell ss:StyleID="s30"><Data ss:Type="String"><%=invitation.invitee.name_and_location(false)%></Data></Cell>
+     <Cell ss:StyleID="s30"><Data ss:Type="String"><%=invitation.invitee.name_and_location%></Data></Cell>
      <%else%>
      <Cell ss:StyleID="s30"><Data ss:Type="String"><%="#{invitation.organization_name} (#{invitation.email})"%></Data></Cell>
      <%end%>
