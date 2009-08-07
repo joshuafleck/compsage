@@ -12,8 +12,7 @@ class PredefinedQuestion < ActiveRecord::Base
   # ==== Options
   # +parent_question+:: The question that all new questions should be a follow up to.
   #
-  def build_questions(survey, options = {})
-    parent_question = options.delete(:parent_question)
+  def build_questions(survey, parent_question_id = nil)
 
     new_questions = [];
     
@@ -26,8 +25,8 @@ class PredefinedQuestion < ActiveRecord::Base
       # If the PDQ isn't a follow-up to another PDQ and a parent question is specified, set the parent question to the
       # specified parent question. Otherwise, if the PDQ has a parent question index, set the parent question to the
       # already built parent question.
-      if parent_question_index.nil? && !parent_question.nil? then
-        question_attributes[:parent_question] = parent_question
+      if parent_question_index.nil? && !parent_question_id.blank? then
+        question_attributes[:parent_question_id] = parent_question_id
       elsif !parent_question_index.nil? then
         question_attributes[:parent_question] = new_questions[parent_question_index]
       end

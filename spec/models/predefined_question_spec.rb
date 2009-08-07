@@ -25,7 +25,7 @@ describe PredefinedQuestion do
   end
 
   it "should set the new question's parent question to the specified parent question" do
-    question = @predefined_question.build_questions(@survey, :parent_question => @question).first
+    question = @predefined_question.build_questions(@survey, @question.id).first
     question.parent_question.should == @question
   end
 

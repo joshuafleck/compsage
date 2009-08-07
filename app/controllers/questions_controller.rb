@@ -46,8 +46,7 @@ class QuestionsController < ApplicationController
       end
       
     else # creating a predefined question (could result in multiple questions created)
-      @parent_question_id = params[:parent_question_id]
-      @questions = PredefinedQuestion.find(@predefined_question_id).build_questions(@survey, @parent_question_id)
+      @questions = PredefinedQuestion.find(@predefined_question_id).build_questions(@survey, params[:parent_question_id])
       
       respond_to do |wants|
         wants.js do
