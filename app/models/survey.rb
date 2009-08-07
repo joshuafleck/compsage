@@ -63,7 +63,7 @@ class Survey < ActiveRecord::Base
   ########### State Machine Configuration: START ############
     
   state_machine 'aasm_state', :initial => :pending do
-    after_transition :pending => :running,  :do => [:send_invitations, :set_start_and_end_dates]
+    after_transition :pending => :running,  :do => [:set_start_and_end_dates, :send_invitations]
     after_transition :stalled => :running,  :do => :email_rerun_message
     after_transition any => :stalled,       :do => :email_failed_message
     after_transition any => :billing_error, :do => :email_billing_error 
