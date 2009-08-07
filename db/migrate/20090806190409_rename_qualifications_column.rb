@@ -4,5 +4,6 @@ class RenameQualificationsColumn < ActiveRecord::Migration
   end
 
   def self.down
+    rename_column :responses, :comments, :qualifications
   end
 end

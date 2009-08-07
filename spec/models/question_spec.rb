@@ -52,13 +52,13 @@ describe Question do
   end
   
   it "should set custom questions with wage responses as required by default" do
-    @question.attributes = valid_question_attributes.with(:custom_question_type => "Pay or wage response")
+    @question.attributes = valid_question_attributes.with(:question_type => "Pay or wage response")
     @question.valid?
     @question.required?.should == true
   end
   
   it "should not set predefined questions with wage responses as required by default" do
-    @question.attributes = valid_question_attributes.with(:custom_question_type => "Pay or wage response", :predefined_question_id => "1")
+    @question.attributes = valid_question_attributes.with(:question_type => "Pay or wage response", :predefined_question_id => "1")
     @question.valid?
     @question.required?.should == false
   end  
@@ -97,7 +97,4 @@ describe Question, "that is just plain old text (like instructions)" do
     @question.attributes = valid_question_attributes.with(:response_type => nil)
   end
 
-  it "should not be answerable" do
-    @question.should_not be_answerable
-  end
 end

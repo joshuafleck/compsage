@@ -10,7 +10,7 @@ class Question < ActiveRecord::Base
   serialize :textual_response
 
   # strips all HTML tags from fields with user input before saving
-  xss_terminate :except => [ :response_type, :question_parameters, :html_parameters, :options, :custom_question_type ]
+  xss_terminate :except => [ :response_type, :question_parameters, :html_parameters, :options, :question_type ]
   
   validates_presence_of :response_type
   validates_presence_of :options, :message => " are required multiple response question", :if => Proc.new { |question| question.response_class.has_options? }
@@ -18,20 +18,20 @@ class Question < ActiveRecord::Base
   
   def before_validation_on_create 
      # by default, set pay or wage response types as required for custom questions
-     self.required = true if !attribute_present?("predefined_question_id") && self.custom_question_type == 'Pay or wage response'
+     self.required = true if !attribute_present?("predefined_question_id") && self.question_type == 'Pay or wage response'
   end
   
   def before_validation 
-    if attribute_present?("custom_question_type") && self.custom_question_type_changed? then
+    if attribute_present?("question_type") && self.question_type_changed? then
       # be sure to update the response type and options if the custom question type changes
-      self.response_type = CUSTOM_QUESTION_TYPES[self.custom_question_type] 
-      self.options = CUSTOM_QUESTION_OPTIONS[self.custom_question_type] 
+      self.response_type = QUESTION_TYPES[self.question_type] 
+      self.options = QUESTION_OPTIONS[self.question_type] 
     end
   end
   
   named_scope :required, :conditions => "required = 1"
                        
-  CUSTOM_QUESTION_TYPES = {
+  QUESTION_TYPES = {
     'Agreement scale' => 'MultipleChoiceResponse',
     'Text response' => 'TextualResponse',
     'Numeric response' => 'NumericalResponse', 
@@ -40,7 +40,7 @@ class Question < ActiveRecord::Base
     'Yes/No' => 'MultipleChoiceResponse', 
   }
                            
-  CUSTOM_QUESTION_OPTIONS = {
+  QUESTION_OPTIONS = {
     'Yes/No' => ['Yes', 'No'],
     'Agreement scale' => ['Strongly Agree','Agree','Neutral','Disagree','Strongly Disagree']
   }

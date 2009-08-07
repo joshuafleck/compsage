@@ -469,7 +469,7 @@ namespace :data_generator do
       
       question = Factory.build(
         :question,
-        :custom_question_type => question_type, 
+        :question_type => question_type, 
         :text => Faker::Lorem.sentence.gsub(/.$/, '?'), 
         :position => index)
       

@@ -3,7 +3,7 @@ salary_questions:
   position: 1
   name: Base salary
   question_hash: --- 
-  - :custom_question_type: "Pay or wage response"
+  - :question_type: "Pay or wage response"
     :text: "Average base salary:"
     :required: true
     
@@ -12,11 +12,11 @@ salary_range_questions:
   position: 2
   name: Salary range
   question_hash: --- 
-  - :custom_question_type: "Pay or wage response"
+  - :question_type: "Pay or wage response"
     :text: "Salary range minimum:"
-  - :custom_question_type: "Pay or wage response"
+  - :question_type: "Pay or wage response"
     :text: "Salary range midpoint:"
-  - :custom_question_type: "Pay or wage response"
+  - :question_type: "Pay or wage response"
     :text: "Salary range maximum:"    
   
 incentive_question:
@@ -25,15 +25,15 @@ incentive_question:
   name: Eligibility and target incentive bonus
   question_hash: --- 
   - :text: "Is this position eligible for incentive bonus?"
-    :custom_question_type: "Yes/No"
+    :question_type: "Yes/No"
   - :text: "What is this position's incentive target as percent of base salary?"
-    :custom_question_type: "Percent"
+    :question_type: "Percent"
     :parent_question_index: 0
   - :text: Is there a maximum incentive that can be earned?
-    :custom_question_type: "Yes/No"
+    :question_type: "Yes/No"
     :parent_question_index: 0
   - :text: If yes, what is the maximum incentive as a percent of base salary?
-    :custom_question_type: "Percent"
+    :question_type: "Percent"
     :parent_question_index: 2
 
 bargaining_unit_question:
@@ -42,7 +42,7 @@ bargaining_unit_question:
     name: Membership in a collective bargaining unit 
     question_hash: ---
     - :text: "Is this position part of a bargaining unit?"
-      :custom_question_type: "Yes/No"
+      :question_type: "Yes/No"
           
 flsa_question:
     id: 6
@@ -50,4 +50,4 @@ flsa_question:
     name: FLSA status
     question_hash: ---
     - :text: "Is this position exempt from FLSA overtime provisions?"
-      :custom_question_type: "Yes/No"
+      :question_type: "Yes/No"

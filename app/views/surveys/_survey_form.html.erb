@@ -45,7 +45,7 @@
       <input id='custom_question_text' type='text' size='40' />    
       <div class="error_description" id="custom_question_warning"></div>
       <label for='custom_question_response' class='survey_question_label'>Response Type</label>
-      <select id='custom_question_response'><%=options_for_select Question::CUSTOM_QUESTION_TYPES.keys %></select>
+      <select id='custom_question_response'><%=options_for_select Question::QUESTION_TYPES.keys %></select>
     </div>
     <div id='follow_up_question' style='<%=@survey.questions.size > 0 ? "" : "display:none;"%>'>
       <label for='follow_up_question_select' class='survey_question_label'>Add as a follow-up to</label>
@@ -168,7 +168,7 @@ function addQuestion(e) {
     }
     new Ajax.Request('<%= survey_questions_path(@survey) %>', {
       'method': 'post',
-      'parameters': {'question[text]' : $F('custom_question_text'), 'question[custom_question_type]' : $F('custom_question_response'), 'question[parent_question_id]' : selectedParentQuestion},
+      'parameters': {'question[text]' : $F('custom_question_text'), 'question[question_type]' : $F('custom_question_response'), 'question[parent_question_id]' : selectedParentQuestion},
       'onSuccess' : function(transport) {
         insertQuestions(transport.responseText, selectedParentQuestion);
         },
@@ -262,7 +262,7 @@ function saveQuestion(index,e) {
   
   new Ajax.Request('<%= survey_questions_path(@survey) %>/'+index, {
     'method': 'put',
-    'parameters': {'question[text]' : $F('question_'+index+'_text'), 'question[custom_question_type]' : $F('question_'+index+'_custom_question_type'), 'question[required]' : $('question_'+index+'_required').checked},
+    'parameters': {'question[text]' : $F('question_'+index+'_text'), 'question[question_type]' : $F('question_'+index+'_question_type'), 'question[required]' : $('question_'+index+'_required').checked},
     'onSuccess' : function(transport) {
     
       $('question_edit_display_'+index).blindUp({'duration': 0.25});    

@@ -187,7 +187,7 @@ class Survey < ActiveRecord::Base
   
   # find all custom questions, mark all as 'included'
   def custom_questions
-    self.questions.find_all{|q| !q.custom_question_type.blank?}.each{|q| q.included = "1"}
+    self.questions.find_all{|q| !q.question_type.blank?}.each{|q| q.included = "1"}
   end
   
   def enough_participations?

@@ -24,12 +24,12 @@ Given /there is a survey/ do
   @custom_question1 = Factory.build(
       :question, 
       :text => "Custom Question 1 text", 
-      :custom_question_type => "Numeric response"
+      :question_type => "Numeric response"
     )
   @custom_question2 = Factory.build(
       :question, 
       :text => "Custom Question 2 text", 
-      :custom_question_type => "Numeric response"
+      :question_type => "Numeric response"
     ) 
     
   @survey = Factory.create(
