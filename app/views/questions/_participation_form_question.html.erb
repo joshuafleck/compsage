@@ -14,7 +14,7 @@
       # bottom of the last radio button. For some reason it insists on rendering the whitespace :( This can
       # most likely be improved.
       -%>
-      <%= q.form_field -%><% if participation_form_question.response_class.accepts_comments? then -%><div class="comments">
+      <%= q.form_field -%><% if participation_form_question.response_class.accepts_comment? then -%><div class="comments">
           <div class="field">
             <%=q.label :comments, 'Comment:' %>
             <%=q.text_field :comments %>
