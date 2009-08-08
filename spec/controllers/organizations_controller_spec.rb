@@ -1,14 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-# Be sure to include AuthenticatedTestHelper in spec/spec_helper.rb instead
-# Then, you can remove it from this and the units test.
-
 describe OrganizationsController, "#route_for" do
 
-  it "should map { :controller => 'organizations', :action => 'index'} to /organizations" do
-    route_for(:controller => "organizations", :action => "index").should == "/organizations"
-  end
-  
   it "should map { :controller => 'organizations', :action => 'show', :id => '1' } to /organizations/1" do
     route_for(:controller => "organizations", :action => "show", :id => '1').should == "/organizations/1"
   end
@@ -17,149 +10,136 @@ describe OrganizationsController, "#route_for" do
     route_for(:controller => "organizations", :action => "search").should == "/organizations/search"
   end
   
-end
-
-describe OrganizationsController, " handling GET /organizations.xml" do
-
-	before do
-
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
-      
-    @organization = mock_model(Organization, :id => 1, :to_xml => "XML")
+  it "should map { :controller => 'organizations', :action => 'invite_to_survey', :id => '1' } to /organizations/1/invite_to_survey" do
+    route_for(
+      :controller => "organizations", 
+      :action     => "invite_to_survey", 
+      :id         => '1').should == { :path => "/organizations/1/invite_to_survey", :method => :post }
+  end
+  
+  it "should map { :controller => 'organizations', :action => 'invite_to_network', :id => '1' } to /organizations/1/invite_to_network" do
+    route_for(
+      :controller => "organizations", 
+      :action     => "invite_to_network", 
+      :id         => '1').should == { :path => "/organizations/1/invite_to_network", :method => :post }
+  end  
     
-    Organization.stub!(:find).and_return(@organization)
-    
-	end
-   
-  def do_get
-    @request.env["HTTP_ACCEPT"] = "application/xml"
-    get :index
-  end
-  
-  it "should require being logged in" do
-    controller.should_receive(:login_required)
-    do_get
-  end
-  
-  it "should be successful" do
-    do_get
-    response.should be_success
-  end
-
-  it "should find all organizations" do
-    Organization.should_receive(:find).with(:all).and_return([@organization])
-    do_get
-  end
-  
-  it "should render the found organziations as xml" do
-    @organization.should_receive(:to_xml).and_return("XML")
-    do_get
-    response.body.should == "XML"
-  end
-
 end
 
 describe OrganizationsController, "handling GET /organizations/1" do
 
-	before do
-	
-    @current_organization = mock_model(Organization)
+  before(:each) do
+  
+    @current_organization = Factory.create(:organization)
     login_as(@current_organization)
       
-    @organization = mock_model(Organization, :id => 1, :name => "Organization Name")
-    
-    Organization.stub!(:find).and_return(@organization)
+    @organization = Factory.create(:organization)
     
   end
   
   def do_get
-    get :show, :id => "1"
+    get :show, :id => @organization.id
   end
 
-  it "should require being logged in" do
-    controller.should_receive(:login_required)
+  it "should require being logged in or invited to the survey" do
+    controller.should_receive(:login_or_survey_invitation_required)
     do_get
   end
   
-  it "should be successful" do  	
+  it "should be successful" do    
     do_get
     response.should be_success
   end
   
-  it "should render show template" do	
+  it "should render show template" do  
     do_get
-  	response.should render_template('show')
+    response.should render_template('show')
   end
   
-  it "should find the organization requested" do
-  	Organization.should_receive(:find).with("1").and_return(@organization)
-  	do_get
+  it "should assign the organization requested for the view" do    
+    do_get
+    assigns[:organization].should == @organization
   end
   
-  it "should assign the organization requested for the view" do  	
-    do_get
-    assigns[:organization].should equal(@organization)
+  describe "when viewing self show page" do
+
+    def do_get
+      get :show, :id => @current_organization.id
+    end    
+  
+    it "should redirect to the account edit page" do
+      do_get
+      response.should redirect_to(edit_account_path)
+    end
+    
   end
   
 end
 
-describe OrganizationsController, "handling GET /organizations/1.xml" do
+describe OrganizationsController, "handling GET /organizations/1 with external survey invitation" do
 
-	before do
-
-    @current_organization = mock_model(Organization)
-    login_as(@current_organization)
+  before(:each) do
+    
+    @invitation = Factory.create(:external_survey_invitation)
+    login_as(@invitation)
+     
+     @params = { :survey_id => @invitation.survey.id.to_s }
+  end
+  
+  describe "when requesting the page of an invitee" do
+   
+    it "should assign the organization requested for the view" do    
+     
+      @invitee = Factory.create(:organization)
       
-    @organization = mock_model(Organization, :id => 1, :to_xml => "XML", :name => "Organization Name")
+      Factory.create(:survey_invitation, 
+        :invitee => @invitee, 
+        :inviter => @invitation.survey.sponsor, 
+        :survey  => @invitation.survey)
     
-    Organization.stub!(:find).and_return(@organization)
+      get :show, @params.merge(:id => @invitee.id)
+      assigns[:organization].should == @invitee
+    end
+     
+  end
+  
+  describe "when requesting the page of the sponsor" do
     
-  end
+    it "should assign the organization requested for the view" do    
+      get :show, @params.merge(:id => @invitation.survey.sponsor.id)
+      assigns[:organization].should == @invitation.survey.sponsor
+    end
+       
+  end  
   
-  def do_get
-    @request.env["HTTP_ACCEPT"] = "application/xml"
-    get :show, :id => "1"
-  end
+  describe "when requesting the page of a non-invitee" do
   
-  it "should require being logged in" do
-    controller.should_receive(:login_required)
-    do_get
-  end
-  
-  it "should be successful" do
-    do_get
-    response.should be_success
-  end
-
-  it "should render the organization as xml" do  
-    @organization.should_receive(:to_xml).and_return("XML")
-    do_get
-    response.body.should == "XML"
-  end
-  
-  it "should find the organization requested" do
-  	Organization.should_receive(:find).with("1").and_return(@organization)
-  	do_get
-  end
+    it "should not find the requested organization" do 
+      @non_invitee = Factory.create(:organization)         
+      lambda{ get :show, @params.merge(:id => @non_invitee.id) }.should raise_error(ActiveRecord::RecordNotFound)
+    end
+      
+  end  
   
 end
+
 
 describe OrganizationsController, "handling GET /organizations/search" do
-	
-	before do
-
-    @current_organization = mock_model(Organization, :industry => 'Coal', :latitude => 1, :longitude => 1)
+  
+  before(:each) do
+  
+    @current_organization = Factory.create(:organization)
     login_as(@current_organization)
       
-    @organization = mock_model(Organization, :id => 1, :name => "Denarius", :to_xml => "XML")
+    @organization = Factory.create(:organization)    
     @organizations = [@organization]
+        
     Organization.stub!(:search).and_return(@organizations)
-    @params = {:search_text => "josh"}
-	end
+  end
   
   def do_get
-    get :search, @params
+    @request.env["HTTP_ACCEPT"] = "application/json"
+    get :search, :search_text => "josh", :format => 'json'
   end
   
   it "should require being logged in" do
@@ -168,84 +148,42 @@ describe OrganizationsController, "handling GET /organizations/search" do
   end
   
   it "should be successful" do
-  	do_get
-  	response.should be_success
-  end
-  
-  it "should render the search template" do
-  	do_get
-  	response.should render_template('search')
+    do_get
+    response.should be_success
   end
   
   it "should find the organizations that match the search terms" do
-  	Organization.should_receive(:search).and_return(@organizations)
-  	do_get
-  end
-  
-  it "should assign the found organizations for the view" do
-  	do_get
-  	assigns[:organizations].should == [@organization]
-  end
-    
-end
-
-describe OrganizationsController, "handling GET /organizations/search without search text" do
-	
-	before do
-
-    @current_organization = mock_model(Organization, :industry => 'Coal', :latitude => 1, :longitude => 1)
-    login_as(@current_organization)
-      
-    @organization = mock_model(Organization, :id => 1, :name => "Denarius", :to_xml => "XML")
-    @organizations = [@organization]
-    Organization.stub!(:search).and_return(@organizations)
-	end
-  
-  def do_get
-    get :search
-  end
-  
-  it "should require being logged in" do
-    controller.should_receive(:login_required)
+    Organization.should_receive(:search).and_return(@organizations)
     do_get
   end
-  
-  it "should be successful" do
-  	do_get
-  	response.should be_success
+   
+  it "should escape the search text" do
+    Riddle.should_receive(:escape)
+    do_get
   end
-  
-  it "should render the search template" do
-  	do_get
-  	response.should render_template('search')
-  end
-  
-  it "should find the organizations that match the search terms" do
-  	Organization.should_receive(:search).and_return(@organizations)
-  	do_get
-  end
-  
-  it "should assign the found organizations for the view" do
-  	do_get
-  	assigns[:organizations].should == [@organization]
+   
+  it "should render the organization as JSON" do
+    do_get
+    response.body.should == @organizations.to_json(:only    => [:name, :location, :id, :contact_name],
+                                                   :methods => 'name_and_location')
   end
     
 end
 
-describe OrganizationsController, "handling PUT /organizations/1/invite_to_survey" do
-  before do
+describe OrganizationsController, "handling POST /organizations/1/invite_to_survey" do
+
+  before(:each) do
+  
     @current_organization = Factory.create(:organization)
     login_as(@current_organization)
     
-    @survey = Factory.create(:survey, :sponsor => @current_organization)
-    @current_organization.sponsored_surveys.stub!(:find).and_return(@survey)
-    
+    @survey = Factory.create(:survey, :sponsor => @current_organization)    
     @other_organization = Factory(:organization)
-    Organization.stub!(:find).and_return(@other_organization)
+    
   end
   
   def do_post
-    post :invite_to_survey, :id => @other_organization.id, :survey_id => @survey.id
+    post :invite_to_survey, { :id => @other_organization.id, :survey_id => @survey.id }
   end
   
   it "should require being logged in" do
@@ -253,31 +191,25 @@ describe OrganizationsController, "handling PUT /organizations/1/invite_to_surve
     do_post 
   end
   
-  it "should find the organization to invite" do
-    Organization.should_receive(:find).at_least(:once).and_return(@other_organization)
-    do_post
-  end
-
   it "should create an internal invitation to the survey" do
-    @survey.invitations.should_receive(:new).and_return(Invitation.new)
-    do_post
+    lambda{ do_post }.should change(@survey.invitations,:count).by(1)
   end
   
 end
 
-describe OrganizationsController, "handling PUT /organizations/1/invite_to_network" do
-  before do
+describe OrganizationsController, "handling POST /organizations/1/invite_to_network" do
+
+  before(:each) do 
+  
     @current_organization = Factory(:organization)
     login_as(@current_organization)
-    @network = Factory(:network, :owner => @current_organization)
-    @current_organization.owned_networks.stub(:find).and_return(@network)
     
+    @network = Factory(:network, :owner => @current_organization)    
     @other_organization = Factory(:organization)
-    Organization.stub!(:find).and_return(@other_organization)
   end
   
   def do_post
-    post :invite_to_network, :id => @other_organization.id, :network_id => @network.id
+    post :invite_to_network, { :id => @other_organization.id, :network_id => @network.id }
   end
   
   it "should require being logged in" do
@@ -285,14 +217,9 @@ describe OrganizationsController, "handling PUT /organizations/1/invite_to_netwo
     do_post
   end
   
-  it "should find the organization to invite" do
-    Organization.should_receive(:find).at_least(:once).and_return(@other_organization)
-    do_post
-  end
-
   it "should create an internal invitation to the network" do
-    @network.invitations.should_receive(:new).and_return(Invitation.new(:invitee => @other_organization))
-    do_post
+    lambda{ do_post }.should change(@network.invitations,:count).by(1)
   end
+  
 end
 
