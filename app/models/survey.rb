@@ -88,7 +88,7 @@ class Survey < ActiveRecord::Base
     end
 
     event :finish_with_partial_report do
-      transition :stalled => :finished,      :if => [:closed?, :full_report?, :billing_successful?]
+      transition :stalled => :finished,      :if => [:closed?, :billing_successful?]
       transition :stalled => :billing_error, :if => [:closed?, :enough_responses?]
     end
   end

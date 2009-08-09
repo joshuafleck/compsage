@@ -132,6 +132,9 @@ Factory.define :external_survey_invitation do |i|
   i.email { Factory.next(:email) }
 end
 
+Factory.define :sent_external_survey_invitation, :parent => :external_survey_invitation do |i|
+  i.aasm_state 'sent'
+end
 #definition and setup for external invitation
 Factory.define :external_invitation do |i|
   i.inviter {|a| a.association(:organization)}

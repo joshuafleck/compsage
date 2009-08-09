@@ -206,8 +206,7 @@ describe SurveysController, " handling GET /surveys" do
 end
 
 describe SurveysController, " handling GET /surveys/1" do
-  
-  before(:each) do
+  before do
     @current_organization = Factory(:organization)
     login_as(@current_organization)
 
@@ -305,7 +304,7 @@ describe SurveysController, " handling GET /surveys/1" do
 end
 
 describe SurveysController, " handling GET /surveys/new" do
-  before(:each) do
+  before do
     @current_organization = Factory(:organization)
     login_as(@current_organization)
   end
@@ -404,137 +403,99 @@ describe SurveysController, "handling GET /surveys/1/edit when not the survey sp
   end
 
   it "should raise a 404 error" do
-    lambda { do_get }.should_raise ActiveRecord::RecordNotFound
+    lambda { do_get }.should raise_error(ActiveRecord::RecordNotFound)
   end
 end
 
 describe SurveysController, " handling PUT /surveys/1" do
-  before(:each) do
-    @surveys = []
-    
+  before do
     @current_organization = Factory(:organization)
-    @current_organization.stub!(:sponsored_surveys).and_return(@surveys)
     login_as(@current_organization)
     
-    @survey = Factory(:survey, :sponsor => @current_organization)
-    @surveys.stub!(:running_or_pending).and_return(@surveys)
-    @surveys.stub!(:find).and_return(@survey)
-    @survey.stub!(:participations).and_return([])
-    @survey.stub!(:update_attributes).and_return(true)
-    
-    @params = {:id => @survey.id}
+    @survey = Factory(:running_survey, :sponsor => @current_organization)
+
+    @params = {:id => @survey.id, :survey => {:job_title => 'Updated'} }
   end
   
   def do_update
     put :update, @params
-  end
-  
-  it "should find the survey requested" do
-    @current_organization.should_receive(:sponsored_surveys).and_return(@surveys)
-    @surveys.should_receive(:running_or_pending).and_return(@surveys)
-    @surveys.should_receive(:find).and_return(@survey)
-    do_update
+    @survey.reload
   end
   
   it "should update the selected survey" do
-    @survey.should_receive(:update_attributes).and_return(true)
     do_update
+    @survey.job_title.should == "Updated"
   end
 
   it "should assign the found survey to the view" do
     do_update
-    assigns(:survey).should equal(@survey)
+    assigns(:survey).should == @survey
   end
   
-  describe "for a running survey" do
-    before(:each) do
-      @survey.stub!(:running?).and_return(true)
-      @survey.stub!(:pending?).and_return(false)
-    end
-    
-    it "should redirect to the survey preview page for this survey upon success" do
-      do_update
-      response.should redirect_to(preview_survey_questions_path(@survey))
-    end    
-  
-  end
-  
-  describe "for a pending survey" do
-    before(:each) do
-      @survey.stub!(:running?).and_return(false)
-      @survey.stub!(:pending?).and_return(true)
-    end  
-    
-    it "should redirect to the survey invitations page for this survey upon success" do
-      do_update
-      response.should redirect_to(survey_invitations_path(@survey))
-    end
-  
-  end
+  it "should redirect to the survey preview page for this survey upon success" do
+    do_update
+    response.should redirect_to(preview_survey_questions_path(@survey))
+  end    
 
-end
-  
-  describe SurveysController, " handling PUT /surveys/1, with failure" do
-    before(:each) do
-      @current_organization = mock_model(Organization)
-      login_as(@current_organization)
-
-      @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :questions => [], :participations => [])
-      @surveys_proxy = mock('surveys proxy')
-      @open_surveys = []
-      @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
-      @surveys_proxy.stub!(:running_or_pending).and_return(@open_surveys)
-      @open_surveys.stub!(:find).and_return(@survey)
+  describe "with a validation error" do
+    before do
+      @params[:survey][:job_title] = ""
     end
 
-    def do_update
-      put :update, :id => @survey
-    end
-    
-    it "should render edit template upon failure" do
+    it "should render the edit template" do
       do_update
       response.should render_template('edit')
     end
   end
-
-describe SurveysController, " handling PUT /surveys/1, with failure" do
-  before(:each) do
-    @current_organization = mock_model(Organization)
+end
+  
+describe SurveysController, "handling PUT /surveys/1 with a pending survey" do
+  before do
+    @current_organization = Factory(:organization)
     login_as(@current_organization)
-
-    @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => mock_model(Organization), :job_title => "test", :participations => [])
-    @surveys_proxy = mock('surveys proxy')
-    @open_surveys = []
     
-    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
-    @surveys_proxy.stub!(:running_or_pending).and_return(@open_surveys)
-    @open_surveys.stub!(:find).and_raise(ActiveRecord::RecordNotFound)
+    @survey = Factory(:pending_survey, :sponsor => @current_organization)
+
+    @params = {:id => @survey.id, :survey => {:job_title => 'Updated'} }
+  end
+  
+  def do_update
+    put :update, @params
+    @survey.reload
+  end
+
+  it "should redirect to the survey invitations page for this survey upon success" do
+    do_update
+    response.should redirect_to(survey_invitations_path(@survey))
+  end
+end
+
+describe SurveysController, " handling PUT /surveys/1 when the current organization isn't the sponsor" do
+  before do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
+    
+    @survey = Factory(:pending_survey)
+
+    @params = {:id => @survey.id, :survey => {:job_title => 'Updated'} }
   end
 
   def do_update
-    put :update, :id => 1
+    put :update, @params
   end
+
   it "should error if requesting organization is not the sponsor"  do
-    lambda{ do_update }.should raise_error(ActiveRecord::RecordNotFound)
+    lambda { do_update }.should raise_error(ActiveRecord::RecordNotFound)
   end
 end
 
 describe SurveysController, " handling PUT /surveys/1, with participations" do
-  before(:each) do
+  before do
     @current_organization = Factory.create(:organization)
     login_as(@current_organization)
         
-    @survey = Factory.create(:survey)
-    @surveys = [@survey]
-    
-    @surveys_proxy = mock('surveys proxy')
-
-    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
-    @surveys_proxy.stub!(:running_or_pending).and_return(@surveys)
-    @surveys.stub!(:find).and_return(@survey)
-    @participation = Factory.create(:participation)
-    @participations = [@participation]
-    @survey.stub!(:participations).and_return(@participations)
+    @survey = Factory.create(:running_survey, :sponsor => @current_organization)
+    Factory.create(:participation, :survey => @survey, :participant => @current_organization)
   end
 
   def do_update
@@ -548,17 +509,14 @@ describe SurveysController, " handling PUT /surveys/1, with participations" do
 end
 
 describe SurveysController, "handling GET /surveys/search" do
-  before(:each) do
-    @current_organization = mock_model(Organization, :industry => 'Fun', :latitude => 12, :longitude => 12)
+  before do
+    @current_organization = Factory(:organization)
     login_as(@current_organization)
     
-    @survey = mock_model(Survey, :id => 1, :title => "My Survey")
-    @surveys = [@survey]
-    
+    @surveys = [Factory(:survey), Factory(:survey)]
+
     Survey.stub!(:search).and_return(@surveys)
-    
     @params = {:search_text => "josh"}
-    
   end
   
   def do_get
@@ -566,44 +524,37 @@ describe SurveysController, "handling GET /surveys/search" do
   end
   
   it "should be successful" do
-  	do_get
-  	response.should be_success
+    do_get
+    response.should be_success
   end
   
   it "should render the search template" do
-  	do_get
-  	response.should render_template('search')
+    do_get
+    response.should render_template('search')
   end
   
   it "should search the users surveys" do	
-  	Survey.should_receive(:search).and_return(@surveys)
+    Survey.should_receive(:search).and_return(@surveys)
     do_get
   end
   
   it "should assign found surveys to the view" do
     do_get
-    assigns[:surveys].should eql(@surveys)
+    assigns[:surveys].should == @surveys
   end
 end
 
 describe SurveysController, "handling POST /surveys/1/respond, as invitee that is not a shawarma user" do
-  before(:each) do
-    @survey = mock_model(Survey, :id => 1)
-    @current_invitation = mock_model(SurveyInvitation, :survey => @survey)
+  before do
+    @survey = Factory(:survey)
+    @current_invitation = Factory(:sent_external_survey_invitation, :survey => @survey)
     login_as(@current_invitation)
-    
-    Survey.stub!(:find).and_return(@survey)
-    @survey.stub!(:questions).and_return([])
-    
-    #participations stub
-    @participations = []
-    @participation = Factory.create(:participation)
-    @current_invitation.stub!(:participations).and_return(@participations)
-    @participations.stub!(:find_or_initialize_by_survey_id).and_return(@participation)
+
+    @participation = Factory.create(:participation, :survey => @survey, :participant => @current_invitation)
   end
   
   def do_respond
-    post :respond, :id => 1
+    post :respond, :id => @survey.id
   end
   
   it "should redirect to the success/sign-up page " do
@@ -617,24 +568,18 @@ describe SurveysController, "handling POST /surveys/1/respond, as invitee that i
   end
 end
 
-describe SurveysController, "handling POST /surveys/1/respond, as organization based user" do
-  before(:each) do
-    @survey = mock_model(Survey, :id => 1)
-    @current_organization = mock_model(Organization)
+describe SurveysController, "handling POST /surveys/1/respond, as an organization" do
+  before do
+    @current_organization = Factory(:organization)
     login_as(@current_organization)
-    
-    Survey.stub!(:find).and_return(@survey)
-    @survey.stub!(:questions).and_return([])
-    
-    #participations stub
-    @participations = []
-    @participation = Factory.create(:participation)
-    @current_organization.stub!(:participations).and_return(@participations)
-    @participations.stub!(:find_or_initialize_by_survey_id).and_return(@participation)
+
+    @survey = Factory(:survey)
+
+    @participation = Factory.create(:participation, :survey => @survey, :participant => @current_organization)
   end
   
   def do_respond
-    post :respond, :id => 1
+    post :respond, :id => @survey.id
   end
   
   it "should redirect to the survey show page" do
@@ -649,35 +594,15 @@ describe SurveysController, "handling POST /surveys/1/respond, as organization b
 end
 
 describe SurveysController, "handling POST /surveys/1/respond, with invalid respones" do
-  before(:each) do
-    @current_organization = mock_model(Organization)
+  before do
+    @current_organization = Factory(:organization)
     login_as(@current_organization)
-    @q1 = mock_model(Question, :id => 1, :attributes => "", :response_type => "TextualResponse")
-    @q2 = mock_model(Question, :id => 2, :attributes => "", :response_type => "TextualResponse")
-    @questions = [@q1, @q2]
-    @survey = mock_model(Survey, :id => 1)
-    @survey.stub!(:questions).and_return(@questions)
-    @responses = []
 
-    @my_response = mock_model(Response, :update_attributes => true, :valid? => false, :textual_response => "", :textual_response= => true, :save => false, :question => mock_model(Question))
-    @params = {:id => 1,
-      :responses => {"1" => {:response => @my_response}, "2" => {:response => @my_response}}
-    }
-    
-    Survey.stub!(:find).and_return(@survey)
-    @responses.stub!(:find_or_create_by_question_id).and_return(@my_response)
-    
-    #participations stub
-    @participations = []
-    @errors = []
-    @participation = mock_model(Participation, :responses => @responses, :attributes= => [], :save => false, :errors => @errors)
-    @current_organization.stub!(:participations).and_return(@participations)
-    @errors.stub!(:clear).and_return([])
-    @participations.stub!(:find_or_initialize_by_survey_id).and_return(@participation)
+    @survey = Factory(:survey)
   end
   
   def do_respond
-    post :respond, @params
+    post :respond, :id => @survey.id
   end
   
   it "should re-render questions index" do 
@@ -686,108 +611,74 @@ describe SurveysController, "handling POST /surveys/1/respond, with invalid resp
   end
 end
 
- describe SurveysController, " handling GET /surveys/1/rerun" do
-    before(:each) do
-      @current_organization = mock_model(Organization)
-      login_as(@current_organization)
+describe SurveysController, " handling GET /surveys/1/rerun" do
+  before do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
 
-      @survey = mock_model(Survey, :id => 1, :update_attributes => true, :sponsor => @current_organization, :job_title => "test", :rerun! => true)
-      @surveys_proxy = mock('surveys proxy')
-      @stalled_surveys = mock('stalled surveys', :find => @survey)
-      @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
-      @surveys_proxy.stub!(:stalled).and_return(@stalled_surveys)
-    end
+    @survey = Factory(:stalled_survey, :sponsor => @current_organization)
+  end
 
-    def do_rerun
-      get :rerun, :id => @survey
-    end
-    
-    it "should be successful" do
-      do_rerun
-      response.should be_redirect
-    end
-    
-    it "should be update the end date" do
-      @survey.should_receive(:update_attributes).and_return(true)
-      do_rerun
-    end
-    
-    it "should rerun the survey" do
-      @survey.should_receive(:rerun!).and_return(true)
-      do_rerun
-    end
-    
-    it "should render the survey invitations page on success" do
-      do_rerun
-      response.should redirect_to(survey_invitations_path(@survey))
-    end
+  def do_rerun
+    get :rerun, :id => @survey.id
+    @survey.reload
   end
   
- describe SurveysController, " handling GET /surveys/1/rerun with error" do
-    before(:each) do
-      @current_organization = mock_model(Organization)
-      login_as(@current_organization)
-
-      @survey = mock_model(Survey, :id => 1, :update_attributes => false, :sponsor => @current_organization, :job_title => "test", :rerun! => true)
-      @surveys_proxy = mock('surveys proxy')
-      @stalled_surveys = mock('stalled surveys', :find => @survey)
-      @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
-      @surveys_proxy.stub!(:stalled).and_return(@stalled_surveys)
-    end
-
-    def do_rerun
-      get :rerun, :id => @survey
-    end
-    
-    it "should render the survey page on failure" do
-      do_rerun
-      response.should redirect_to(survey_path(@survey))
-    end
+  it "should be successful" do
+    do_rerun
+    response.should be_redirect
   end
   
-  describe SurveysController, " handling GET surveys/1/billing" do
-     before(:each) do
-       @current_organization = mock_model(Organization)
-       login_as(@current_organization)
+  it "should rerun the survey" do
+    do_rerun
+    @survey.should be_running
+  end
+  
+  it "should render the survey invitations page on success" do
+    do_rerun
+    response.should redirect_to(survey_invitations_path(@survey))
+  end
+end
+  
+describe SurveysController, " handling GET /surveys/1/rerun with error" do
+  before do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
 
-       @survey = mock_model(Survey, :id => 1, :billing_info_received! => true, :aasm_state => :pending)
-       @surveys_proxy = mock('surveys proxy')
-       @pending_surveys = [@survey]
-       @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
-       @surveys_proxy.stub!(:pending).and_return(@pending_surveys)
-       @pending_surveys.stub!(:find).and_return(@survey)
-       @survey.stub!(:pending?).and_return(true)
-     end
+    @survey = Factory(:stalled_survey, :sponsor => @current_organization, :start_date => Time.now - 30.days)
+  end
 
-     def do_billing
-       get :billing, :id => @survey
-     end
-     
-     it "should render the survey show page" do
-       do_billing
-       response.should redirect_to(survey_path(@survey))
-     end
-     
-     #this should happen once the billing gateway is set up
-     it "should render the billing page"
-     
-   end
-   
-   describe SurveysController, " handling GET surveys/1/billing when survey is not pending" do
-      before(:each) do
-        @current_organization = Factory.create(:organization)
-        login_as(@current_organization)
-        @survey = Factory.create(:survey)
-      end
+  def do_rerun
+    get :rerun, :id => @survey
+  end
+  
+  it "should render the survey page on failure" do
+    do_rerun
+    response.should redirect_to(survey_path(@survey))
+  end
+end
 
-      def do_billing
-        get :billing, :id => @survey
-      end
+describe SurveysController, "handling GET /surveys/1/finish_partial" do
+  before do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
 
-      it " should give RecordNotFound error" do
-        lambda{ do_billing }.should raise_error(ActiveRecord::RecordNotFound)
-      end
-    end
+    @survey = Factory(:stalled_survey, :sponsor => @current_organization, :start_date => Time.now - 30.days)
+    @invoice = Factory(:invoice, :survey => @survey)
+  end
 
+  def do_get
+    get :finish_partial, :id => @survey.id
+    @survey.reload
+  end
 
+  it "should redirect to the survey report path" do
+    do_get
+    response.should redirect_to(survey_report_path(@survey))
+  end
 
+  it "should finish the survey" do
+    do_get
+    @survey.should be_finished
+  end
+end

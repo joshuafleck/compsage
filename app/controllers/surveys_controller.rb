@@ -109,15 +109,15 @@ class SurveysController < ApplicationController
   
   # All the data the user has
   def reports
-    @surveys = current_organization.surveys.finished.paginate(:page => params[:page])
+    @surveys = current_organization.surveys.with_aasm_state(:finished).paginate(:page => params[:page])
   end
   
   # Allows users to re-run a stalled survey
   def rerun
-    @survey = current_organization.sponsored_surveys.stalled.find(params[:id])
+    @survey = current_organization.sponsored_surveys.with_aasm_state(:stalled).find(params[:id])
 
     # Set the new end date, attempt to reset the state of the survey
-    if @survey.update_attributes(params[:survey]) && @survey.rerun! then
+    if @survey.update_attributes(params[:survey]) && @survey.rerun then
       redirect_to survey_invitations_path(@survey) 
     else
       flash[:notice] = 'Unable to rerun survey. Please choose an end date in the future.'
@@ -127,7 +127,7 @@ class SurveysController < ApplicationController
   
   # Allows users to view the results of a partial report
   def finish_partial
-    @survey = current_organization.sponsored_surveys.stalled.find(params[:id])
+    @survey = current_organization.sponsored_surveys.with_aasm_state(:stalled).find(params[:id])
     @survey.finish_with_partial_report! # Raise an exception if we cannot finish the report for some reason.
 
     redirect_to survey_report_path(@survey) 

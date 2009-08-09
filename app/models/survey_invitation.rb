@@ -6,7 +6,7 @@ class SurveyInvitation < Invitation
   validate_on_create :not_already_invited
   
   named_scope :running, :include => :survey, :conditions => ["surveys.aasm_state = ?", 'running']
-  
+
   state_machine 'aasm_state', :initial => :pending do
     after_transition :pending => :sent, :do => :send_invitation_email
 
