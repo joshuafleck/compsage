@@ -22,8 +22,6 @@ ActionController::Routing::Routes.draw do |map|
     network.resources :invitations, :controller => :network_invitations, :member => {:decline => :put}
   end
   
-  map.resources :external_invitations
-  map.resources :invitations
   map.resource :account, :member => {:forgot => :any, :reset => :any}
   
   map.signup 'signup', :controller => 'pending_accounts', :action => 'new', :conditions => { :method => :get }
