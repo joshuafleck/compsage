@@ -51,7 +51,7 @@ describe OrganizationsController, "handling GET /organizations/1" do
     response.should be_success
   end
   
-  it "should render show template" do  
+  it "should render the show template" do  
     do_get
     response.should render_template('show')
   end

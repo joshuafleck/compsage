@@ -3,10 +3,13 @@
 <% title "Reset your password" %>
 <h2>Reset your password</h2>
 <p>Enter a new password below. It will take effect immediately.</p>
-<% form_tag reset_account_path( :key =>  @organization.reset_password_key) do -%>
-<p><label for="password">Password</label>
-<%= password_field_tag 'password' %></p>
-<p><label for="password_confirmation">Confirm your password</label>
-<%= password_field_tag 'password_confirmation' %></p>
-<p><%= submit_tag 'Reset My Password' %></p>
-<% end -%>
+<% form_for @organization, :url => reset_account_path(:key =>  @organization.reset_password_key) do |f| %>
+  <%=error_messages_for :organization%>
+  <%=f.label :password %> 
+  <%=f.password_field :password, :size => 20, :autocomplete => "off" %>
+  <%=f.label :password_confirmation %> 
+  <%=f.password_field :password_confirmation, :size => 20 %>
+  <div class="submit">
+    <%= submit_tag 'Reset My Password' %>
+  </div>
+<% end %>

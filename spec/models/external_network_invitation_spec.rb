@@ -35,5 +35,28 @@ describe ExternalNetworkInvitation do
     @invitation.save!
     @invitation.destroy
   end    
+    
+  describe "accepting the invitation" do  
+  
+    before(:each) do
+      @invitee = Factory.create(:organization)
+      @invitation.save!
+    end
+    
+    after(:each) do
+      @invitation.destroy
+      @invitee.destroy
+    end 
+    
+    
+    it "should destroy the invitation when it is accepted" do      
+      lambda{ @invitation.accept!(@invitee) }.should change(ExternalNetworkInvitation, :count).by(-1)
+    end   
+    
+    it "should add the invitee as a network member when accepted" do
+      lambda{ @invitation.accept!(@invitee) }.should change(@invitee.networks, :count).by(1)
+    end    
+   
+  end 
   
 end  

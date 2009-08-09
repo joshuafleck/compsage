@@ -61,7 +61,7 @@ module ApplicationHelper
   
   # Determines if the user can create an account directly, or must use the signup page
   def has_key?
-    current_survey_invitation || !session[:external_network_invitation].nil?
+    current_survey_invitation || !session[:invitation_or_pending_account].nil?
   end
   
   # Passes text through a gauntlet of functions to improve the results for an end user

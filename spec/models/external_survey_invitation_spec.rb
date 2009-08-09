@@ -55,5 +55,48 @@ describe ExternalSurveyInvitation do
     @invitation.send_invitation!
     @invitation.destroy
   end   
+  
+  describe "accepting an invitation" do
+  
+    before(:each) do
+      @invitee = Factory.create(:organization)
+      @invitation.save!
+      @invitation.send_invitation!
+      @participation = Factory.create(:participation, :participant => @invitation, :survey => @invitation.survey)
+      @discussion = Factory.create(:discussion, :responder => @invitation, :survey => @invitation.survey)
+    end
+    
+    after(:each) do
+      @invitation.destroy
+      @participation.destroy
+      @discussion.destroy
+      @invitee.destroy
+    end 
+    
+    it "should move the partiticipation from the invitation to the organization" do
+      lambda{ @invitation.accept!(@invitee) }.should change(@invitee.participations, :count).by(1)
+    end
+     
+    it "should fulfill the invitation" do
+      lambda{ @invitation.accept!(@invitee) }.should change(@invitation, :aasm_state).from("sent").to("fulfilled")
+    end
+      
+    it "should subscribe the organization to the survey" do
+      lambda{ @invitation.accept!(@invitee) }.should change(@invitee.survey_subscriptions, :count).by(1)
+    end
+     
+    it "should move the discussions from the invitation to the organization" do
+      lambda{ @invitation.accept!(@invitee) }.should change(@invitee.discussions, :count).by(1)
+    end
+     
+    it "should change the invitation to an internal invitation" do
+      lambda{ @invitation.accept!(@invitee) }.should change(@invitation, :type).from("ExternalSurveyInvitation").to("SurveyInvitation")
+    end
+       
+    it "should invite the organization to the survey" do
+      lambda{ @invitation.accept!(@invitee) }.should change(@invitee.invited_surveys, :count).by(1)
+    end
+          
+  end
     
 end  

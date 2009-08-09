@@ -14,6 +14,37 @@ class ExternalSurveyInvitation < ExternalInvitation
     event :send_invitation do
       transition :pending => :sent
     end
+    
+    event :fulfill do
+      transition :sent => :fulfilled
+    end    
+  end
+  
+  # When an external survey invitation is used to create a new account, its participations and discussions must be moved to the 
+  # new account. Once that is complete, the external invitation can be converted to an internal invitation, so
+  # that the account is invited to the survey.
+  #
+  def accept!(organization)
+  
+    # Move the participation to the new organization, and create a survey subscription
+    if self.participations.count > 0 then
+      self.fulfill!
+      organization.participations << self.participations.first      
+      organization.participations.first.create_participant_subscription
+    end
+
+    # Move any discussions to the new organization
+    self.discussions.each do |discussion|
+      organization.discussions << discussion 
+    end  
+    
+    # Convert this invitation to a survey invitation
+    self.type = 'SurveyInvitation'
+    self.save!   
+     
+    # Invites this organization to the survey
+    organization.survey_invitations << SurveyInvitation.find(self.id)      
+    
   end
  
   private

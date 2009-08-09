@@ -3,9 +3,10 @@
 <% title "Forgot your password?" %>
 <h2>Forgot your password?</h2>
 <p>Enter your login email below and we will send you an email with a link to reset your password.</p>
-<% form_tag forgot_account_path do -%>
-<label for="email">Email Address</label>
-<%= text_field_tag 'email' %> <%= submit_tag 'Reset My Password' %>
-<% end -%>
+<% form_tag(forgot_account_path, :method=> :put) do %>
+  <label for="email">Email Address</label>
+  <%= text_field_tag 'email' %> 
+  <%= submit_tag 'Reset My Password' %>
+<% end %>
 <br />
-Remember your password? <%= link_to "Log in", new_session_path %>!
+<p>Remember your password? <%= link_to "Log in", new_session_path %>!</p>

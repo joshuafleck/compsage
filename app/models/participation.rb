@@ -53,8 +53,6 @@ class Participation < ActiveRecord::Base
     responses.group_by(&:question_id)
   end
   
-  protected
-  
   def create_participant_subscription
     if participant.is_a?(Organization) && survey.sponsor != participant then
       s = SurveySubscription.create!(
@@ -64,7 +62,9 @@ class Participation < ActiveRecord::Base
       )
     end
   end
-  
+    
+  protected
+
   def fulfill_invitation
     if participant.is_a?(Organization) then
       invitation = self.participant.survey_invitations.find_by_survey_id(self.survey.id)

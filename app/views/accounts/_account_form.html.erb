@@ -1,13 +1,6 @@
 <% form_for @organization, :url => account_path, :html => {:multipart => true} do |f| %>
   <%=error_messages_for :organization%>
   <% if @organization.new_record? %>
-   <% if external_invitation then %>
-	<%= hidden_field_tag 'key', external_invitation.key %>
-   <% elsif pending_account %>
-	<%= hidden_field_tag 'key', pending_account.key %>
-   <% end %>
- <% end %>
-  <% if @organization.new_record? %>
     <%=f.label :name, required('Name of your organization') %>
     <%=f.text_field :name %>
   <% end %>

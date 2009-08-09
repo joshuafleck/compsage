@@ -45,7 +45,6 @@ class Organization < ActiveRecord::Base
   has_many :network_invitations, :class_name => "NetworkInvitation", :foreign_key => "invitee_id", :dependent => :destroy
   has_many :survey_invitations, :class_name => "SurveyInvitation", :foreign_key => "invitee_id", :dependent => :destroy  
   has_many :invitations, :class_name => "Invitation", :foreign_key => "invitee_id", :dependent => :destroy
-  has_many :sent_global_invitations, :class_name => "ExternalInvitation", :foreign_key => "inviter_id"
   
   validates_presence_of     :name
   validates_format_of       :name,     :with => RE_NAME_OK,  :message => MSG_NAME_BAD, :allow_nil => true
@@ -89,10 +88,18 @@ class Organization < ActiveRecord::Base
   
   # Creates a random key that expires 5 days from now that the user can use to reset his password.
   #
-  def create_reset_key
+  def create_reset_key_and_send_reset_notification
     self.reset_password_key = KeyGen.random
     self.reset_password_key_expires_at = Time.now + 5.days
     self.save!
+    
+    Notifier.deliver_reset_password_key_notification(self)
+  end
+  
+  # True, if the reset password key expiration date is in the past.
+  #
+  def reset_password_key_expired?
+    self.reset_password_key_expires_at < Time.now
   end
   
   # Removes the reset key and expiry date.
@@ -102,6 +109,26 @@ class Organization < ActiveRecord::Base
     self.reset_password_key_expires_at = nil
     self.save!
   end
+  
+  # overriding the default constructor in order to autofill some attributes
+  def initialize(params = nil) 
+    super
+    
+    invitation_or_pending_account = params[:invitation_or_pending_account] if params
+    
+    if invitation_or_pending_account then 
+    
+      self.name = invitation_or_pending_account.organization_name
+      self.email = invitation_or_pending_account.email
+      
+      if invitation_or_pending_account.is_a? PendingAccount then
+        self.contact_name = invitation_or_pending_account.contact_first_name + 
+          " " + invitation_or_pending_account.contact_last_name
+      end
+      
+    end
+    
+  end  
 
   private
   

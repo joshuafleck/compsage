@@ -22,10 +22,6 @@ describe Organization do
     Organization.reflect_on_association(:survey_invitations).should_not be_nil
   end
   
-  it 'should have many sent global invitations' do
-    Organization.reflect_on_association(:sent_global_invitations).should_not be_nil
-  end
-    
   it 'should have many networks' do
     Organization.reflect_on_association(:networks).should_not be_nil
   end
@@ -167,7 +163,7 @@ describe Organization do
     @organization.attributes = valid_organization_attributes.with(:zip_code => 'adamm')
     @organization.should have(1).errors_on(:zip_code)
   end
-  
+
 end
 
 describe Organization, "that already exists" do
@@ -180,7 +176,37 @@ describe Organization, "that already exists" do
     @organization.update_attributes(:password => 'new password', :password_confirmation => 'new password')
     Organization.authenticate('brian.terlson@gmail.com', 'new password').should == @organization
   end
+  
+  it "should create a reset password key" do    
+    lambda{ @organization.create_reset_key_and_send_reset_notification }.should change(@organization, :reset_password_key).from(nil)
+  end
+   
+  it "should set an expiration time for the password reset" do    
+    lambda{ @organization.create_reset_key_and_send_reset_notification }.should change(@organization, :reset_password_key_expires_at).from(nil)
+  end
 
+  it "should delete the password key" do    
+    @organization.create_reset_key_and_send_reset_notification
+    lambda{ @organization.delete_reset_key }.should change(@organization, :reset_password_key).to(nil)
+  end
+ 
+  it "should delete the expiration time for the password reset" do    
+    @organization.create_reset_key_and_send_reset_notification
+    lambda{ @organization.delete_reset_key }.should change(@organization, :reset_password_key_expires_at).to(nil)
+  end
+         
+  it "should send a notification email when resetting the password" do   
+    Notifier.should_receive(:deliver_reset_password_key_notification) 
+    @organization.create_reset_key_and_send_reset_notification
+  end
+      
+  it "should determine when the password reset has expired" do    
+    @organization.create_reset_key_and_send_reset_notification
+    @organization.reset_password_key_expired?.should be_false
+    @organization.reset_password_key_expires_at = Time.now - 1.minute
+    @organization.reset_password_key_expired?.should be_true
+  end
+  
   it 'should not rehash password when updating other attributes' do
     @organization.save
     @organization.update_attributes(:email => 'brian.terlson@gmail2.com')
@@ -247,4 +273,48 @@ describe Organization, "that already exists" do
     @organization.networks.delete(@network)
     @network.owner.should eql(@organization2)
   end
+end
+
+describe Organization, "built from an invitation" do
+  before(:each) do
+    @invitation = Factory.create(:external_invitation)
+    @organization = Organization.new(:invitation_or_pending_account => @invitation)
+  end
+  
+  after(:each) do
+    @invitation.destroy
+  end
+  
+  it "should have a name" do
+    @organization.name.should == @invitation.organization_name
+  end   
+  
+  it "should have an email" do
+    @organization.email.should == @invitation.email
+  end   
+
+end
+
+describe Organization, "built from a pending account" do
+  before(:each) do
+    @pending_account = Factory.create(:pending_account)
+    @organization = Organization.new(:invitation_or_pending_account => @pending_account)
+  end
+  
+  after(:each) do
+    @pending_account.destroy
+  end
+  
+  it "should have a name" do
+    @organization.name.should == @pending_account.organization_name
+  end   
+  
+  it "should have an email" do
+    @organization.email.should == @pending_account.email
+  end   
+  
+  it "should have a contact name" do
+    @organization.contact_name.should_not be_blank
+  end   
+
 end

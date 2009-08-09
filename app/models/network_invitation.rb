@@ -7,7 +7,7 @@ class NetworkInvitation < Invitation
   
   after_create :send_invitation_email
   
-  # accepts the invitation.
+  # Accepts the invitation by making the invitee a network member and deleting the invitation
   def accept!
     invitee.networks << network
     destroy
@@ -22,12 +22,12 @@ class NetworkInvitation < Invitation
     end
   end
   
-  # adds an error if the invitee was already invited
+  # Adds an error if the invitee was already invited
   def not_already_invited
     errors.add_to_base "That organization is already invited to this network" if invitee.invited_networks.include?(network)
   end
   
-  # adds an error if the invitee is already a member
+  # Adds an error if the invitee is already a member
   def not_already_member
     errors.add_to_base "That organization is already a member of this network" if invitee.networks.include?(network) || invitee.owned_networks.include?(network)
   end
