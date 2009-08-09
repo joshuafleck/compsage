@@ -6,7 +6,8 @@ module QuestionSpecHelper
     {
       :text => "What is the meaning of life?",
       :position => 1,
-      :response_type => "MultipleChoiceResponse",
+      :question_type => 'Yes/No',
+      :response_type => 'MultipleChoiceResponse',
       :question_parameters => {},
       :html_parameters => {},
       :options => ['Yes', 'No'],
@@ -37,7 +38,7 @@ describe Question do
     Question.reflect_on_association(:child_questions).should_not be_nil
   end
   
-  it "should have a perent question" do
+  it "should have a parent question" do
     Question.reflect_on_association(:parent_question).should_not be_nil
   end  
   
@@ -63,15 +64,68 @@ describe Question do
     @question.required?.should == false
   end  
 
-  it "should determine the number of nested levels for the question when the question is a parent" do
-    @question.level.should eql(0)
+  it "should determine the number of nested levels for the question when the question is a parent after saving" do
+    @question.attributes = valid_question_attributes
+    @question.save
+    @question.level.should == 0
   end
   
-  it "should determine the number of nested levels for the question when the question is a child" do
+  it "should determine the number of nested levels for the question when the question is a child after saving" do
     @survey = Factory.create(:survey)
     @parent_question = Factory.create(:question, :survey => @survey)
+    @question.attributes = valid_question_attributes
     @question.parent_question = @parent_question
-    @question.level.should eql(1)
+    @question.save
+    @question.level.should == 1
+  end
+  
+  it "should correctly determine the type for a question after validation if the question type changes" do
+    @question.attributes = valid_question_attributes
+    @question.save
+    @question.question_type = "Text response"
+    @question.valid?
+    @question.response_type.should == "TextualResponse"
+  end
+  
+  it "should return the minumimum number of responses for the response type" do
+    @response = Factory.create(:response, :participation => Factory.create(:participation))
+    @question.attributes = valid_question_attributes
+    @question.responses << @response
+    @question.minimum_responses.should == @response.minimum_responses_for_report
+  end 
+  
+  it "should be true with an adequete number of responses" do
+  end
+  
+  it "should be false without an adequete number of responses" do
+    @question.attributes = valid_question_attributes
+    @response = Factory.create(:response, :participation => Factory.create(:participation))
+    @question.responses = [@response]
+    @question.save
+    @question.adequate_responses?.should be_false
+  end
+  
+  it "should be true with an adequete number of responses for percentiles"
+  it "should be false with an adequete number of responses for percentiles"
+  it "should collect comments from responses for the question" do
+    @response = Factory.create(:response, :comments => "Comment for a question.", :participation => Factory.create(:participation))
+    @question.attributes = valid_question_attributes
+    @question.responses = [@response]
+    @question.comments.size.should > 0
+  end
+  
+  it "should yield correct report type" do
+     @question.attributes = valid_question_attributes
+     @question.report_type.should == 'radio'
+  end
+  
+  it "should yield correct response class" do
+     @question.attributes = valid_question_attributes
+     @question.response_class.to_s.should == 'MultipleChoiceResponse'
+  end
+  it "should correctly determine if the question is a yes or no question" do
+    @question.attributes = valid_question_attributes
+    @question.yes_no?.should be_true
   end
 end
 
@@ -84,7 +138,7 @@ describe Question, "with options" do
   end
   
   it "should be invalid without some options" do
-    @question.attributes = @question.attributes.with(:options => [])
+    @question.attributes = @question.attributes.with(:options => [], :question_type => '')
     @question.should have(1).error_on(:options)
   end
 end
