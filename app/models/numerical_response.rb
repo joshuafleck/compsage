@@ -21,7 +21,7 @@ class NumericalResponse < Response
     number_with_delimiter(self.numerical_response)
   end
   
-  private
+  protected
   # removes dollar signs and commas
   def sanitize_number(value)
     value.respond_to?(:gsub) ? value.gsub(/\$|\,|\%/, '') : value
