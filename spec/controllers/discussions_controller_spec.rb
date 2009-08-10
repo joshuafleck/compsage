@@ -1,7 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe DiscussionsController, "#route_for" do
-
   it "should map { :controller => 'discussions', :action => 'index' } to surveys/1/discussions" do
     route_for(:controller => "discussions", :action => "index", :survey_id => '1') .should == "/surveys/1/discussions"
   end
@@ -10,85 +9,19 @@ describe DiscussionsController, "#route_for" do
     route_for(:controller => "discussions", :action => "update", :id => '1', :survey_id => '1').should == {:path => "/surveys/1/discussions/1", :method => :put}
   end
 
-  it "should map { :controller => 'discussions', :action => 'destroy', :id => '1'} to surveys/1/discussions/1" do
-    route_for(:controller => "discussions", :action => "destroy", :id => '1', :survey_id => '1').should == {:path => "/surveys/1/discussions/1", :method => :delete}
-  end
-
   it "should map { :controller => 'discussions', :action => 'report', :id => '1'} to surveys/1/discussions/1/report" do
     route_for(:controller => "discussions", :action => "report", :id => '1', :survey_id => '1').should == "/surveys/1/discussions/1/report"
   end
-
-end
-
-describe DiscussionsController, " handling GET /discussions.xml" do
-  
-  before do
-    @current_organization_or_survey_invitation = mock_model(Organization)
-    login_as(@current_organization_or_survey_invitation)
-    
-    @discussion = mock_model(Discussion)
-    
-    @discussions = [@discussion]
-    @discussions.stub!(:to_xml).and_return("XML")
-    @discussions.stub!(:all).and_return(@discussions)
-    
-    @survey = mock_model(Survey, :id => 1, :job_title => 'Software Engineer')
-    @survey.stub!(:discussions).and_return(@discussions)
-    
-    Survey.stub!(:find).and_return(@survey)
-    
-    @params = {:survey_id => @survey.id}
-  end
-  
-  def do_get
-    @request.env["HTTP_ACCEPT"] = "application/xml"
-    get :index, @params
-  end
-  
-  it "should require being logged in" do
-    controller.should_receive(:login_or_survey_invitation_required)
-    do_get
-  end
-  
-  it "should be successful" do
-    do_get
-    response.should be_success
-  end
-  
-  it "should find all discussions" do
-    @survey.should_receive(:discussions).and_return(@discussions)
-    @discussions.should_receive(:all).and_return(@discussions)
-    do_get
-  end
-  
-  it "should render the found discussions as XML" do
-    @discussions.should_receive(:to_xml).and_return("XML")
-    do_get
-    response.body.should == "XML"
-  end
-    
 end
 
 describe DiscussionsController, " handling POST /discussions" do
+  before do
+    @organization = Factory(:organization)
+    login_as(@organization)
+    
+    @survey = Factory(:survey)
 
-  before(:each) do
-    @current_organization_or_survey_invitation = mock_model(Organization)
-    login_as(@current_organization_or_survey_invitation)
-    
-    @survey = mock_model(Survey, :id => 1)
-    @discussion = mock_model(Discussion, :id => 1, :save => true, :survey= => @survey)  
-    @discussions = [@discussion] 
-    
-    @survey_discussions_proxy = mock('survey discussions proxy', :discussions => @discussions)
-    
-    @organization_discussions_proxy = mock('organization discussions proxy')
-    @organization_discussions_proxy.stub!(:new).and_return(@discussion)
-    @current_organization_or_survey_invitation.stub!(:discussions).and_return(@organization_discussions_proxy)
-    @survey.stub!(:discussions).and_return(@survey_discussions_proxy)
-    
-    Survey.stub!(:find).and_return(@survey)
-    
-    @params = {:survey_id => @survey.id}
+    @params = {:survey_id => @survey.id, :discussion => Factory.attributes_for(:discussion, :survey => @survey)}
   end
   
   def do_post
@@ -101,12 +34,10 @@ describe DiscussionsController, " handling POST /discussions" do
   end
   
   it "should create a new discussion" do
-    @organization_discussions_proxy.should_receive(:new).and_return(@discussion)
-    @discussion.should_receive(:save).and_return(true)
-    do_post
+    lambda { do_post }.should change(Discussion, :count).by(1)
   end
   
-  it "should redirect to the discussion index page upon success" do
+  it "should redirect to the survey show page upon success" do
     do_post
     response.should redirect_to(survey_path(@survey))
   end
@@ -115,62 +46,48 @@ end
 
 describe DiscussionsController, " handling POST /discussions with validation error" do
 
-  before(:each) do
-    @current_organization_or_survey_invitation = mock_model(Organization)
-    login_as(@current_organization_or_survey_invitation)
+  before do
+    @organization = Factory(:organization)
+    login_as(@organization)
     
-    @survey = mock_model(Survey, :id => 1, :all_invitations => [])
-    @discussion = mock_model(Discussion, :id => 1, :save => false, :survey= => @survey)  
-    @discussions = [@discussion] 
-    
-    @participations_proxy = mock('participations proxy',:find_by_survey_id => [])
-    @current_organization_or_survey_invitation.stub!(:participations).and_return(@participations_proxy)
-    
-    @survey_discussions_proxy = mock('survey discussions proxy', :discussions => @discussions)
-    @survey_discussions_proxy.stub!(:within_abuse_threshold).and_return(@survey_discussions_proxy)
-    @survey_discussions_proxy.stub!(:roots).and_return(@discussions)
-    
-    @organization_discussions_proxy = mock('organization discussions proxy')
-    @organization_discussions_proxy.stub!(:new).and_return(@discussion)
-    @current_organization_or_survey_invitation.stub!(:discussions).and_return(@organization_discussions_proxy)
-    @survey.stub!(:discussions).and_return(@survey_discussions_proxy)
-    
-    Survey.stub!(:find).and_return(@survey)
-    
-    @params = {:survey_id => @survey.id}
+    @survey = Factory(:survey)
+
+    @params = { :survey_id => @survey.id,
+                :discussion => Factory.attributes_for(:discussion).except(:subject) }
   end
   
   def do_post
     post :create, @params
   end
   
-  it "should render the survey show template" do
+  it "should redirect to the survey show page" do
     do_post
-    response.should render_template('surveys/show')
+    response.should redirect_to(survey_path(@survey))
+  end
+
+  it "should assign the invalid discussion to flash" do
+    do_post
+    flash[:discussion].should_not be_nil
   end
   
 end
 
 describe DiscussionsController, " handling PUT /discussions/1" do
-
   before do
-    @current_organization_or_survey_invitation = mock_model(Organization, :id => 1)
-    login_as(@current_organization_or_survey_invitation)
+    @organization = Factory(:organization)
+    login_as(@organization)
     
-    @discussion = mock_model(Discussion, :id => 1, :update_attributes => true, :body => "body")
-    @survey = mock_model(Survey, :id => 1)
-    
-    @organization_discussions_proxy = mock('organization discussions proxy', :find => @discussion)
-    @current_organization_or_survey_invitation.stub!(:discussions).and_return(@organization_discussions_proxy)
-    
-    Survey.stub!(:find).and_return(@survey)
-    
-    @params = {:survey_id => @survey.id, :id => @discussion.id, :discussion => {:subject => 'subject', :body => 'body'}}
+    @survey = Factory(:survey)
+    @discussion = Factory(:discussion, :survey => @survey, :responder => @organization)
+
+    @params = { :survey_id => @survey.id,
+                :id => @discussion.id,
+                :discussion => Factory.attributes_for(:discussion).with(:body => "Rampage").except(:survey, :responder) }
   end
   
   def do_put
-    @request.env["HTTP_ACCEPT"] = "text/javascript"
-    put :update, @params
+    put 'update', @params.merge(:format => 'js')
+    @discussion.reload
   end
   
   it "should require being logged in" do
@@ -178,115 +95,55 @@ describe DiscussionsController, " handling PUT /discussions/1" do
     do_put
   end
   
-  it "should find the discussion requested" do
-    @organization_discussions_proxy.should_receive(:find).and_return(@discussion)
-    do_put    
-  end
-  
   it "should update the selected discussion" do
-    @discussion.should_receive(:update_attributes).and_return(true)
     do_put
+    @discussion.body.should == "Rampage"
   end
      
   it "should return the updated text" do
     do_put
-    response.body.should == '<p>body</p>'
+    response.body.should == '<p>Rampage</p>'
   end
-  
 end
 
 describe DiscussionsController, " handling PUT /discussions/1 with validation error" do
-
   before do
-    @current_organization_or_survey_invitation = mock_model(Organization, :id => 1)
-    login_as(@current_organization_or_survey_invitation)
+    @organization = Factory(:organization)
+    login_as(@organization)
     
-    @discussion = mock_model(Discussion, :id => 1, :update_attributes => false, :errors => mock('full_messages', :full_messages => ['error_messages']))
-    @survey = mock_model(Survey, :id => 1)
-    
-    @organization_discussions_proxy = mock('organization discussions proxy', :find => @discussion)
-    @current_organization_or_survey_invitation.stub!(:discussions).and_return(@organization_discussions_proxy)
-    
-    Survey.stub!(:find).and_return(@survey)
-    
-    @params = {:survey_id => @survey.id, :id => @discussion.id, :discussion => {:subject => 'subject', :body => 'body'}}
+    @survey = Factory(:survey)
+    @discussion = Factory(:discussion, :survey => @survey, :responder => @organization)
+
+    @params = { :survey_id => @survey.id,
+                :id => @discussion.id,
+                :discussion => Factory.attributes_for(:discussion).with(:subject => '').except(:survey, :responder) }
   end
   
   def do_put
-    @request.env["HTTP_ACCEPT"] = "text/javascript"
-    put :update, @params
+    put :update, @params.merge(:format => 'js')
   end
   
   it "should render the error" do
     do_put
-    response.body.should eql('error_messages')
+    response.body.should == "Subject can't be blank"
   end
-  
-end
-
-describe DiscussionsController, " handling DELETE /discussions/1" do
-  
-  before do
-    @current_organization_or_survey_invitation = mock_model(Organization, :id => 1)
-    login_as(@current_organization_or_survey_invitation)
-    
-    @discussion = mock_model(Discussion, :id => 1)
-    @discussion.stub!(:destroy)
-    @survey = mock_model(Survey, :id => 1)
-    
-    @organization_discussions_proxy = mock('organization discussions proxy', :find => @discussion)
-    @current_organization_or_survey_invitation.stub!(:discussions).and_return(@organization_discussions_proxy)
-    
-    Survey.stub!(:find).and_return(@survey)
-    
-    @params = {:survey_id => @survey.id, :id => @discussion.id}
-  end
-  
-  def do_delete
-    delete :destroy, @params
-  end
-    
-  it "should require being logged in" do
-    controller.should_receive(:login_or_survey_invitation_required)
-    do_delete
-  end
-  
-  it "should find the discussion requested" do
-    @organization_discussions_proxy.should_receive(:find).and_return(@discussion)
-    do_delete
-  end
-  
-  it "should destory the discussion requested" do
-    @discussion.should_receive(:destroy)
-    do_delete
-  end
-  
-  it "should redirect discussions page for the related survey upon success" do
-    do_delete
-    response.should redirect_to(survey_path(@survey)) 
-  end
-  
 end
 
 describe DiscussionsController, "handling PUT /discussions/1/report" do
-  
   before do
-    @current_organization_or_survey_invitation = mock_model(Organization, :id => 1)
-    login_as(@current_organization_or_survey_invitation)
-    
-    @discussion = mock_model(Discussion, :id => 1, :times_reported => 0)
-    @discussion.stub!(:increment!).with(:times_reported).and_return(true)
+    @organization = Factory(:organization)
+    login_as(@organization)
 
-    @survey_discussions_proxy = mock('survey discussions proxy', :find => @discussion)
-    @survey = mock_model(Survey, :id => 1, :discussions => @survey_discussions_proxy)
-    
-    Survey.stub!(:find).and_return(@survey)
-    
-    @params = {:survey_id => @survey.id, :id => @discussion.id}
+    @survey = Factory(:survey)
+    @discussion = Factory(:discussion, :survey => @survey)
+
+    @params = { :survey_id => @survey.id,
+                :id => @discussion.id }
   end
   
   def do_put
     put :report, @params
+    @discussion.reload
   end
    
   it "should require being logged in" do
@@ -294,14 +151,8 @@ describe DiscussionsController, "handling PUT /discussions/1/report" do
     do_put
   end
   
-  it "should find the discussion requested" do
-    @survey_discussions_proxy.should_receive(:find).and_return(@discussion)
-    do_put
-  end
-  
   it "should increase the number of times reported" do
-    @discussion.should_receive(:increment!).with(:times_reported)
-    do_put
+    lambda { do_put }.should change(@discussion, :times_reported).by(1)
   end
   
   it "should redirect to the discussion page" do
@@ -311,8 +162,7 @@ describe DiscussionsController, "handling PUT /discussions/1/report" do
   
   it "should flash a success message upon success" do
     do_put
-    flash[:notice].should eql('The discussion was reported successfully.')    
+    flash[:notice].should eql('The discussion was reported')    
   end  
-    
 end
 
