@@ -2,6 +2,9 @@
 # virtual attribute response, which is subsequently saved in the database as either numerical_response or
 # textual_response.
 #
+# A note about validations: All validations should be done on the virtual response attribute rather than the
+# numerical_response/textual_response fields to assure the user sees a non-confusing error message.
+#
 # == Subclasses ==
 # There are currently 6 types of responses:
 #
@@ -29,23 +32,33 @@
 # * +Report_type+: The name of the report partial that should be rendered for this response type.
 #
 # == Response Interface ==
+# 
+# Subclasses follow a certain convention, making it easy to customize behavior and still integrate nicely into Rails.
 #
+# === Custom Methods ===
 # Subclasses may want to define the following custom methods:
 #
-# === +response=+ ===
+# ==== +response=+ ====
 # Use this method to override what occurs when the response is set. In this method, you will want to save to either
 # +numerical_response+ or +textual_response+, depending on the sort of question. You may also want to format the
 # response or remove any extraneous characters. The +response_before_type_cast+ instance variable set to assure the
 # user sees the proper value in the input field when an error occurs.
 #
-# === +response+ ===
+# ==== +response+ ====
 # This method is used to pull out the response from the database, eg. either +textual_response+ or
 # +numerical_response+.
 #
-# === +formatted_response+ ===
+# ==== +formatted_response+ ====
 # The question form will call this method to get the value to use for the forms to display to the user, so if you want
 # to do any formatting, eg. turn 1 into $1.00, do it here.
 # 
+#
+# === Units ===
+# If you would like to do unit conversions, define a after_find/before_save callback to convert to and from the user
+# supplied units into the standard database format. WageResponse has an example here. Also keep in mind that if you
+# want to access the numeric response value as it comes out of the database, you should set raw_numerical_response in
+# your callback.
+#
 class Response < ActiveRecord::Base
   class_inheritable_accessor :units, :minimum_responses_for_report, :has_options, :field_type, :field_options,
                              :accepts_comment, :report_type, :minimum_responses_for_percentiles
@@ -68,10 +81,6 @@ class Response < ActiveRecord::Base
     record.errors.add_to_base "#{record.class.units.name.capitalize} not provided" if record.class.units && value.blank?
   end
   validate :follow_up_comment_without_response
-
-  before_save :convert_to_standard_units
-  def after_find; end; # Enable after find callback by defining this method.
-  after_find :convert_from_standard_units
 
   named_scope :from_invitee,
     :include => {:participation => [{:survey => [:invitations]}]}, 
@@ -134,12 +143,9 @@ class Response < ActiveRecord::Base
     self.textual_response
   end
   
+  # We don't want blank comments in the database, so replace blank comments with nil.
   def comments=(value)
-    if value.blank? then
-      self[:comments] = nil
-    else
-      self[:comments] = value
-    end
+    super(value.blank? ? nil : value)
   end
  
   # Formatted version of the response. The form builder will call this method to set the value of the form fields.
@@ -155,21 +161,6 @@ class Response < ActiveRecord::Base
   def follow_up_comment_without_response
     if !self.question.nil? && self.question.level > 0 && !self.comments.nil? && self.response.nil? then
       errors.add_to_base " You may not comment upon a blank response. Use the parent question to add general comments." 
-    end
-  end
-
-  # Convert to the standard unit before storing in the database, if the response class has units.
-  def convert_to_standard_units
-    if self.class.units && self.unit then
-      self.numerical_response = self.class.units.convert(self.numerical_response, :from => self.unit, :to => self.class.units.standard_unit) 
-    end
-  end
-
-  # Convert from the standard units to the user-defined units after pulling the response from the database.
-  def convert_from_standard_units
-    self.raw_numerical_response = self.numerical_response
-    if !self.unit.blank? && self.class.units then
-      self.numerical_response = self.class.units.convert(self.numerical_response, :from => self.class.units.standard_unit, :to => self.unit) 
     end
   end
 

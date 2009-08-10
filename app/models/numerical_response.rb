@@ -17,11 +17,13 @@ class NumericalResponse < Response
     self.numerical_response = @response_before_type_cast = value
   end
 
+  # Simply add commas. 
   def formatted_response
     number_with_delimiter(self.numerical_response)
   end
   
   protected
+
   # removes dollar signs and commas
   def sanitize_number(value)
     value.respond_to?(:gsub) ? value.gsub(/\$|\,|\%/, '') : value

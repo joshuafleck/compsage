@@ -45,31 +45,9 @@ describe Response do
     response = Response.new(:type => 'NumericalResponse')
     response.is_a?(NumericalResponse).should be_true
   end
-end
 
-describe Response, "with units" do
-  include ResponseSpecHelper
-
-  before(:each) do
-    Response.stub!(:units).and_return(Units.new("format", {'Annually' => 1, 'Hourly' => 2080}, 'Annually'))
-    @response = Response.new(valid_response_attributes)
-  end
-
-  it "should convert units before saving" do
-    @response.numerical_response = 1
-    @response.unit = "Hourly"
-    @response.save!
-
-    @response.numerical_response.should == 2080
-  end
-
-  it "should convert to user specified units when finding" do
-    @response.numerical_response = 1
-    @response.unit = "Hourly"
-    @response.save!
-    
-    @response = Response.find(@response.id)
-    @response.numerical_response.should == 1
+  it 'should convert empty comments to nil' do
+    @response.attributes = valid_response_attributes.with(:comments => '')
+    @response.comments.should be_nil
   end
 end
-

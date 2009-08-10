@@ -4,7 +4,6 @@ class SurveysController < ApplicationController
   before_filter :login_required, :except => [:show, :respond]
   before_filter :login_or_survey_invitation_required, :only => [:show, :respond]
 
-  filter_parameter_logging :response  
  
   ssl_required :respond
   

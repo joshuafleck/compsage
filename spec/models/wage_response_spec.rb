@@ -32,4 +32,30 @@ describe WageResponse do
     @response.response = "$100.00"
     @response.numerical_response.should == 10000
   end
+
 end
+
+describe Response, "with units" do
+  before(:each) do
+    @response = WageResponse.new(:question => mock_model(Question, {:numerical_response? => true, :has_units? => false, :level => 0}),
+      :participation => mock_model(Participation))
+  end
+
+  it "should convert units before saving" do
+    @response.response = 1
+    @response.unit = "Hourly"
+    @response.save!
+
+    @response.response.should == 2080
+  end
+
+  it "should convert to user specified units when finding" do
+    @response.response = 1
+    @response.unit = "Hourly"
+    @response.save!
+    
+    @response = Response.find(@response.id)
+    @response.response.should == 1
+  end
+end
+
