@@ -87,32 +87,6 @@ describe Question do
     @question.response_type.should == "TextualResponse"
   end
   
-  it "should return the minumimum number of responses for the response type" do
-    @response = Factory.create(:response, :participation => Factory.create(:participation))
-    @question.attributes = valid_question_attributes
-    @question.responses << @response
-    @question.minimum_responses.should == @response.minimum_responses_for_report
-  end 
-  
-  it "should be true with an adequete number of responses" do
-  end
-  
-  it "should be false without an adequete number of responses" do
-    @question.attributes = valid_question_attributes
-    @response = Factory.create(:response, :participation => Factory.create(:participation))
-    @question.responses = [@response]
-    @question.save
-    @question.adequate_responses?.should be_false
-  end
-  
-  it "should be true with an adequete number of responses for percentiles"
-  it "should be false with an adequete number of responses for percentiles"
-  it "should collect comments from responses for the question" do
-    @response = Factory.create(:response, :comments => "Comment for a question.", :participation => Factory.create(:participation))
-    @question.attributes = valid_question_attributes
-    @question.responses = [@response]
-    @question.comments.size.should > 0
-  end
   
   it "should yield correct report type" do
      @question.attributes = valid_question_attributes
@@ -126,6 +100,44 @@ describe Question do
   it "should correctly determine if the question is a yes or no question" do
     @question.attributes = valid_question_attributes
     @question.yes_no?.should be_true
+  end
+end
+
+describe Question, "with response" do
+  before(:each) do
+    @survey = Factory.create(:survey)
+    @question = Factory.create(:question, :survey => @survey)
+  end
+  it "should return the minumimum number of responses for the response type" do
+    @response = Factory.create(:numerical_response, :participation => Factory.create(:participation), :question => @question)
+    @question.minimum_responses.should == @response.minimum_responses_for_report
+  end 
+  
+  it "should be true with an adequete number of responses" do
+    NumericalResponse.minimum_responses_for_report.times do
+      Factory(:response, :question => @question, :participation => Factory.create(:participation))
+    end
+    @question.adequate_responses?.should be_true
+  end
+  
+  it "should be false without an adequete number of responses" do
+    @question.adequate_responses?.should be_false
+  end
+  
+  it "should be true with an adequete number of responses for percentiles" do
+    NumericalResponse.minimum_responses_for_percentiles.times do
+      Factory(:response, :question => @question, :participation => Factory.create(:participation))
+    end
+    @question.adequate_responses_for_percentiles?.should be_true
+  end
+  
+  it "should be false with an adequete number of responses for percentiles" do
+    @question.adequate_responses_for_percentiles?.should be_false
+  end
+  
+  it "should collect comments from responses for the question" do
+    Factory.create(:response, :comments => "Comment for a question.", :participation => Factory.create(:participation), :question => @question)
+    @question.comments.size.should > 0
   end
 end
 
