@@ -32,11 +32,15 @@ describe SessionsController do
     response.should render_template('new')
   end
 
+  it 'fails login and does not redirect when the survey is invalid' do
+    post :create_survey_session, :key => 'hahahahano', :survey_id => @invitation.survey.id
+    response.should render_template('new')
+  end
+
   it 'logs out' do
     login_as @brian
     get :destroy
     session[:organization_id].should be_nil
-    response.should be_redirect
   end
 
   it 'remembers me' do
