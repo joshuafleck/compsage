@@ -64,8 +64,9 @@ describe Participation do
   end
 end
 
-
 module ParticipationCreationHelper
+  # This function is used to generate a participation with subsequent responses to any number of
+  # questions passed in to the function. Returns this participation.
   def participation_responding_to(*questions)
     participation = Factory.build(:participation, :survey => @survey, :participant => @participant, :responses => [])
     questions.each do |question|

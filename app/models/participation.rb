@@ -10,13 +10,7 @@ class Participation < ActiveRecord::Base
   before_validation :required_responses_present, :parent_responses_present
   
   after_create :create_participant_subscription, :fulfill_invitation
-  
-  named_scope :belongs_to_invitee, 
-    :include => [{:survey => [:invitations]}], 
-    :conditions => ['participations.participant_type = ? OR (participations.participant_type = ? AND participations.participant_id = surveys.sponsor_id) OR (invitations.invitee_id = participations.participant_id AND participations.participant_type = ?)',
-      'Invitation', 
-      'Organization', 
-      'Organization']  
+  before_update :save_responses
 
   named_scope :recent,
     :include => :survey,
@@ -28,13 +22,13 @@ class Participation < ActiveRecord::Base
   
   # Sets up the response for this participation from the form parameters.  
   def response=(question_response_params)
-    survey.questions.each do |question|
+    self.survey.questions.each do |question|
       attributes = question_response_params[question.id.to_s] || {}
       current_responses = response[question.id]
       if attributes[:response].blank? && attributes[:comments].blank? then
         # didn't respond
         if !(current_responses.nil? || current_responses.empty?) then
-          current_responses.first.destroy # So, destroy the previous response if it exists
+          current_responses.first.destroy # Destroy the previous response if it exists
         end
       else
         question_response = if current_responses.nil? || current_responses.empty? then
@@ -53,40 +47,43 @@ class Participation < ActiveRecord::Base
     responses.group_by(&:question_id)
   end
   
-  def create_participant_subscription
-    if participant.is_a?(Organization) && survey.sponsor != participant then
-      s = SurveySubscription.create!(
-        :organization => participant,
-        :survey => survey,
-        :relationship => 'participant'
-      )
-    end
-  end
-    
-  protected
-
+  # After participation is created this will transtition the status of the users invitation 
+  # to fufilled so it will no longer be listed among the users current survey invitations.
   def fulfill_invitation
-    if participant.is_a?(Organization) then
+    if self.participant.is_a?(Organization) then
       invitation = self.participant.survey_invitations.find_by_survey_id(self.survey.id)
       invitation.fulfill! unless invitation.nil?
     end
   end
   
-  def before_update
+  # Makes a subscription to the survey which allows us to link a participation to it's
+  # responded surveys, regardless of membership type.
+  def create_participant_subscription
+    if self.participant.is_a?(Organization) && self.survey.sponsor != self.participant then
+      s = SurveySubscription.create!(
+        :organization => self.participant,
+        :survey => self.survey,
+        :relationship => 'participant'
+      )
+    end
+  end
+    
+  private
+  # Called after creation to add a subscription.
+  
+  def save_responses
     # we also want to update the associated records.  We'll assume it's valid by this point
     # as we are validating the associated records. We don't want to save frozen responses
     # as they are likely deleted at this point.
     responses.each { |r| r.save! if !r.frozen? && r.changed? }
   end  
   
-  private
-  
   # Adds a blank response to each required question to ensure validation fails if there is no response
   # Validation fails, so deletion gets rolled back, so building dummy for validation failure creates duplicate question. 
   def required_responses_present
     return if survey.nil?
     # Find all of our responses, weeding out the responses that are frozen.
-    questions_with_responses = self.responses.reject{|r| r.frozen?}.collect(&:question_id)
+    questions_with_responses = collect_responses
     self.survey.questions.required.each do |question|
       # Skip required questions where there's a parent question and it isn't answered, or there is a parent question
       # and it's a yes/no with a no response.
@@ -105,8 +102,8 @@ class Participation < ActiveRecord::Base
   #
   def parent_responses_present
     return if survey.nil?
-
-    questions_with_responses = self.responses.collect(&:question_id)
+    # Find all of our responses, weeding out the responses that are frozen.
+    questions_with_responses = collect_responses
     self.responses.each do |response|
       if response.question.parent_question &&
          !questions_with_responses.include?(response.question.parent_question_id) then
@@ -114,5 +111,9 @@ class Participation < ActiveRecord::Base
         responses.build(:question => response.question.parent_question, :type => response.question.parent_question.response_type)
       end
     end
+  end
+  
+  def collect_responses
+    self.responses.reject{|r| r.frozen?}.collect(&:question_id)
   end
 end
