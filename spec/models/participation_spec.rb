@@ -66,7 +66,9 @@ end
 
 module ParticipationCreationHelper
   # This function is used to generate a participation with subsequent responses to any number of
-  # questions passed in to the function. Returns this participation.
+  # questions passed in to the function. You may also pass that question as a hash
+  # along with a value, and that value will be set as the response value.
+  # Returns this participation.
   def participation_responding_to(*questions)
     participation = Factory.build(:participation, :survey => @survey, :participant => @participant, :responses => [])
     questions.each do |question|
@@ -93,6 +95,7 @@ describe Participation, "in a survey with required questions" do
     @yes_no_question =   Factory.create(:question,
                                         :survey => @survey,
                                         :required => 0,
+                                        :question_type => 'Yes/No',
                                         :response_type => 'MultipleChoiceResponse',
                                         :options => ['Yes', 'No'])
 

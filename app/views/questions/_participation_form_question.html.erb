@@ -5,7 +5,7 @@
 # duplicate. By selecting the last of the responses, we select the blank one that was added, which ensures that the
 # user sees a blank response with the validation error. TODO: A better way.
 -%>
-<% response = [*@participation.response[participation_form_question.id]].last || participation_form_question.responses.new %>
+<% response = [*@participation.responses_for(participation_form_question.id)].last || participation_form_question.responses.new %>
 <% f.fields_for response.class.name.underscore, response, :index => participation_form_question.id, :builder => QuestionFormBuilder do |q| %>
   <li class="<%= cycle("even", "odd") %>">
     <div class="question_container" style="padding-left:<%= level*2 %>em"> 

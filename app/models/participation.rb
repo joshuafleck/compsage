@@ -24,7 +24,7 @@ class Participation < ActiveRecord::Base
   def response=(question_response_params)
     self.survey.questions.each do |question|
       attributes = question_response_params[question.id.to_s] || {}
-      current_responses = response[question.id]
+      current_responses = responses_for(question.id)
       if attributes[:response].blank? && attributes[:comments].blank? then
         # didn't respond
         if !(current_responses.nil? || current_responses.empty?) then
@@ -43,8 +43,10 @@ class Participation < ActiveRecord::Base
     end
   end
   
-  def response
-    responses.group_by(&:question_id)
+  # return an array of the responses for a given question
+  def responses_for(question_id)
+    grouped_responses = self.responses.group_by(&:question_id)
+    grouped_responses[question_id]
   end
   
   # After participation is created this will transtition the status of the users invitation 
@@ -69,8 +71,6 @@ class Participation < ActiveRecord::Base
   end
     
   private
-  # Called after creation to add a subscription.
-  
   def save_responses
     # we also want to update the associated records.  We'll assume it's valid by this point
     # as we are validating the associated records. We don't want to save frozen responses
@@ -88,7 +88,7 @@ class Participation < ActiveRecord::Base
       # Skip required questions where there's a parent question and it isn't answered, or there is a parent question
       # and it's a yes/no with a no response.
       next if !question.parent_question.nil? && (!questions_with_responses.include?(question.parent_question_id) || 
-                                                 (question.parent_question.yes_no? && response[question.parent_question_id].first.response.to_i == 1))
+                                                 (question.parent_question.yes_no? && responses_for(question.parent_question_id).first.response.to_i == 1))
 
       # If the current question isn't answered, create a dummy question that will fail validation.
       if !questions_with_responses.include?(question.id) then
