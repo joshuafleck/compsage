@@ -58,7 +58,7 @@ function checkWageResponse(response, units) {
  *                      new questions added or deleted). 
  */
 function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
-  this.editableQuestions = new Array();
+  this.editableQuestions = [];
 
   var questionSet = this;
   var questionsById = {};
@@ -77,7 +77,7 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
       this.editableQuestions[i].position -= 1;
     }
     this.updateFollowups();
-  }
+  };
 
   /* Registers the specified question with the root level question set. This allows getting any question, regardless of
    * its position in the DOM or question structure, such as when adding follow-ups by question id. If this question set
@@ -86,11 +86,13 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
    * @question  The question object to register.
    */
   this.registerQuestion = function(question) {
-    if(parentQuestionSet)
-      parentQuestionSet.registerQuestion(question)
-    else
+    if(parentQuestionSet) {
+      parentQuestionSet.registerQuestion(question);
+    }
+    else {
       questionsById[question.id] = question;
-  }
+    }
+  };
 
   /* Update the list of follow-up question select box with the current list of follow-up questions, in the proper
    * order. Only the root level question list is concerned with this operation, so if this isn't a root level
@@ -109,9 +111,9 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
         question.toOptions().each(function(option) {
           followUpSelect.options.add(option);
         });
-      })
+      });
     }
-  }
+  };
 
   /* Swaps the specified question with either the 'previous' question or 'next' question.
    * @question  The question to be swapped.
@@ -119,10 +121,12 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
    */
   this.swapQuestionWith = function(question, direction) {
     var swapPos = null;
-    if(direction == 'previous')
+    if(direction == 'previous') {
       swapPos = question.position - 1;
-    else
+    }
+    else {
       swapPos = question.position + 1;
+    }
 
     // Swap the array positions
     this.editableQuestions[question.position] = this.editableQuestions[swapPos];
@@ -300,14 +304,14 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
 
   /* Edit this question. Shows the edit fields. */
   this.edit = function(e) {
-    e.stop();
+    if(e) { e.stop(); }
     displayDiv.blindUp({'duration': 0.25});
     editDiv.blindDown({'duration': 0.25});
   }
 
   /* Cancels editing of this question. Hides the edit fields. */
   this.cancelEdit = function(e) {
-    e.stop();
+    if(e) { e.stop(); }
     editDiv.blindUp({'duration': 0.25});
     displayDiv.blindDown({'duration': 0.25});
   }
@@ -315,8 +319,8 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
   /* Delete this question. Removes its list item from the DOM, notifies the server of the deletion, and notifies its
    * question set that this question has been deleted.
    */
-  this.delete = function(e) {
-    e.stop();
+  this.deleteQuestion = function(e) {
+    if(e) { e.stop(); }
     new Effect.Fade(listItem, {'duration': 0.5,
      'afterFinish': function() {
         listItem.remove();
@@ -332,7 +336,7 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
 
   /* Move this question up in the list */
   this.moveUp = function(e) {
-    e.stop();
+    if(e) { e.stop(); }
     if(question.position == 0)
       return;
     
@@ -342,7 +346,7 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
   
   /* Move this question down in the list */
   this.moveDown = function(e) {
-    e.stop();
+    if(e) { e.stop(); }
     if(question.position == questionSet.editableQuestions.length - 1)
       return;
 
@@ -352,9 +356,7 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
 
   /* Saves the question, hiding the edit form once finished. */
   this.save = function(e) {
-    if(e) {
-      e.stop();
-    }
+    if(e) { e.stop(); }
 
     new Ajax.Request(questionUri + '.json', {
       'method': 'put',
@@ -413,7 +415,7 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
   function setupObservers() {
     cancelButton.observe('click', question.cancelEdit);
     editButton.observe('click', question.edit);
-    deleteButton.observe('click', question.delete);
+    deleteButton.observe('click', question.deleteQuestion);
     upButton.observe('click', question.moveUp);
     downButton.observe('click', question.moveDown);
     saveButton.observe('click', question.save);
