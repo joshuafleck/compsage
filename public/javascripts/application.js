@@ -46,6 +46,411 @@ function checkWageResponse(response, units) {
 
 }
 
+/* EditableQuestionSet initializes a set of questions that can be edited by the user. This class takes care of
+ * observing the new question form, keeping track of all the questions, adding/removing questions from the list, and
+ * various other tasks.
+ *
+ * @list                The DOM list element that holds all the questions. 
+ * @addForm             The ID of the add question form.
+ * @surveyId            The ID of the survey.
+ * @parentQuestionSet   If this question set is a set of follow-up questions, then pass the question set of the parent
+ *                      questions in here. Various notifications are passed to the root level question set (such as
+ *                      new questions added or deleted). 
+ */
+function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
+  this.editableQuestions = new Array();
+
+  var questionSet = this;
+  var questionsById = {};
+  var pdqSelect = null;
+  var followUpSelect = null;
+  var followUpQuestionDiv = null;
+
+  /* Public Functions */
+
+  /* Remove the specified question from this set. Adjusts the position of the following questions accordingly.
+   * @question  The question object to be destroyed.
+   */
+  this.removeQuestion = function(question) {
+    this.editableQuestions = this.editableQuestions.without(question);
+    for(i = question.position;i<this.editableQuestions.length;++i) {
+      this.editableQuestions[i].position -= 1;
+    }
+    this.updateFollowups();
+  }
+
+  /* Registers the specified question with the root level question set. This allows getting any question, regardless of
+   * its position in the DOM or question structure, such as when adding follow-ups by question id. If this question set
+   * is not a root level question set, then this merely passes the request up the chain.
+   *
+   * @question  The question object to register.
+   */
+  this.registerQuestion = function(question) {
+    if(parentQuestionSet)
+      parentQuestionSet.registerQuestion(question)
+    else
+      questionsById[question.id] = question;
+  }
+
+  /* Update the list of follow-up question select box with the current list of follow-up questions, in the proper
+   * order. Only the root level question list is concerned with this operation, so if this isn't a root level
+   * question set, pass the request up the chain.
+   */
+  this.updateFollowups = function() {
+    if(parentQuestionSet) { // Send up the chain
+      parentQuestionSet.updateFollowups();
+    }
+    else {                 // Otherwise update the follow-up list.
+      for(i = followUpSelect.length - 1; i > 0; i--) {
+        followUpSelect.remove(i);
+      }
+
+      this.editableQuestions.each(function(question) {
+        question.toOptions().each(function(option) {
+          followUpSelect.options.add(option);
+        });
+      })
+    }
+  }
+
+  /* Swaps the specified question with either the 'previous' question or 'next' question.
+   * @question  The question to be swapped.
+   * @direction The direction to swap the question, either 'previous' or 'next'.
+   */
+  this.swapQuestionWith = function(question, direction) {
+    var swapPos = null;
+    if(direction == 'previous')
+      swapPos = question.position - 1;
+    else
+      swapPos = question.position + 1;
+
+    // Swap the array positions
+    this.editableQuestions[question.position] = this.editableQuestions[swapPos];
+    this.editableQuestions[swapPos] = question;
+    
+    // Swap the DOM elements
+    tmp = document.createElement('div');
+    var first = this.editableQuestions[question.position].listItem.replace(tmp);
+    var second = this.editableQuestions[swapPos].listItem.replace(first);
+    tmp = tmp.replace(second);
+
+    // Update the questions' positions
+    tmp = question.position;
+    question.position = swapPos;
+    this.editableQuestions[tmp].position = tmp;
+
+    // Update follow-ups with the new order.
+    this.updateFollowups();
+  }
+
+  /* Adds a new question at the request of the user from the question form
+   */
+  this.addNewQuestion = function(e) {
+    if(e) {
+      e.stop();
+    }
+    var selectedQuestion = $F(pdqSelect);
+    var selectedParentQuestion = $F(followUpSelect);
+    var questionParameters = null;
+
+    if(selectedQuestion == "0") {      //The user selected custom question
+      if($F('custom_question_text') == '') {
+        // don't add the question if the user did not enter any text
+        $('custom_question_warning').update('Question text is required');
+        return false;
+      }
+      questionParameters = {'question[text]': $F('custom_question_text'),
+                            'question[question_type]': $F('custom_question_response'),
+                            'question[parent_question_id]': selectedParentQuestion};
+
+      $('custom_question_text').clear();
+      $('custom_question_response').clear();
+      $('custom_question_warning').update('');
+      $('custom_question_form').blindUp({'duration': 0.5});
+    } 
+    else if(selectedQuestion != '') {  //The user selected a predefined question
+      questionParameters = {'predefined_question_id': selectedQuestion,
+                            'parent_question_id': selectedParentQuestion}
+    }  
+      
+    new Ajax.Request('/surveys/' + surveyId + '/questions', {
+      'method': 'post',
+      parameters: questionParameters,
+      'onSuccess' : function(transport) {
+        questionSet.insertQuestions(transport.responseText, selectedParentQuestion);
+      },
+      'onCreate':function() {$('load_indicator').show();},
+      'onComplete':function() {$('load_indicator').hide();}
+    }); 
+
+    //Reset the select box
+    $('predefined_questions').clear();
+    $('follow_up_question_select').clear();
+  }
+
+  /* Inserts the specified question under the specified parent question. Called when the server responds to a user's
+   * request to add questions.
+   * @questions       The questions (in HTML format) to be inserted.
+   * @parentQuestion  The parent question of all the questions.
+   */
+  this.insertQuestions = function(questions, parentQuestion) {
+    if(parentQuestion === "" || parentQuestion == null) {
+      // Insert the questions into the DOM and initialize the observers and such.
+      $(list).insert(questions); 
+      initializeQuestions();
+    }
+    else {
+      // Find the question that this is a follow-up to and send the insert request to that question set containing that
+      // question's follow-ups.
+      parentQuestion = questionsById[parentQuestion]
+      parentQuestion.followUpQuestions.insertQuestions(questions, null);
+    }
+  }
+
+  /* Private Functions */
+  
+  /* Observes the form that the user uses to add questions. */
+  function observeNewQuestionForm() {
+    addForm.observe('submit', questionSet.addNewQuestion);
+    pdqSelect = addForm.select('#predefined_questions').first();
+    pdqSelect.observe('change', customQuestionSelect);
+    followUpSelect = addForm.select('#follow_up_question_select').first();
+    followUpQuestionsDiv = $('follow_up_question');
+  }
+
+  /* Sets up the questions that are in the DOM */
+  function initializeQuestions() {
+    $(list).immediateDescendants().each(function(li, index) {
+      if(index < questionSet.editableQuestions.length)
+        return;   // Don't want to re-initialize existing questions.
+
+      var question = new EditableQuestion(questionSet, surveyId, li, index); 
+      questionSet.editableQuestions.push(question);
+      questionSet.registerQuestion(question);
+    })
+    questionSet.updateFollowups();
+  }
+
+  /* Handles when the user selects a predefined question. This will hide or show the custom question form. */
+  function customQuestionSelect(e) {
+    if($F(pdqSelect) == "0") {  //The user selected custom question, show the form
+      if (!$('custom_question_form').visible()) {
+        $('custom_question_form').blindDown({'duration': 0.5});
+      }
+    } 
+    else {                      //The user selected a non-custom question, hide the form
+      if ($('custom_question_form').visible()) {
+        $('custom_question_form').blindUp({'duration': 0.5});
+        $('custom_question_warning').update('');
+      }
+    }
+  }
+
+  if(addForm)
+    observeNewQuestionForm();
+
+  // Get the list of questions and set up our objects
+  initializeQuestions()
+}
+
+/* An editable question is a question that can be edited by the user.
+ * @questionSet The question set that this question belongs to.
+ * @surveyId    The survey ID this question is belongs to.
+ * @listItem    This DOM list element of this question.
+ * @position    The position this question is in the question list, starting at 0. This is essentially the index this
+ *              question holds in its question set.
+ */
+function EditableQuestion(questionSet, surveyId, listItem, position) {
+  /* Public Attributes */
+  this.id = listItem.id.match(/\d+/);
+  this.questionSet = questionSet;
+  this.surveyId = surveyId;
+  this.listItem = listItem;
+  this.position = position;
+  this.followUpQuestions = null;
+
+  /* Private Attributes */
+  var question = this;
+
+  // Buttons and various chrome.
+  var cancelButton = null;
+  var editButton   = null;
+  var deleteButton = null;
+  var upButton     = null;
+  var downButton   = null;
+  var saveButton   = null;
+  
+  var displayDiv  = null;
+  var textDiv     = null;
+  var typeDiv     = null;
+  var requiredDiv = null;
+
+  var editDiv        = null;
+  var textInput      = null;
+  var typeSelect     = null;
+  var requiredSelect = null;
+
+  var loadIndicator  = null;
+
+  var followUpList = null;
+
+  var questionUri = '/surveys/' + surveyId + '/questions/' + this.id;
+
+  /* Public Functions */
+
+  /* Edit this question. Shows the edit fields. */
+  this.edit = function(e) {
+    e.stop();
+    displayDiv.blindUp({'duration': 0.25});
+    editDiv.blindDown({'duration': 0.25});
+  }
+
+  /* Cancels editing of this question. Hides the edit fields. */
+  this.cancelEdit = function(e) {
+    e.stop();
+    editDiv.blindUp({'duration': 0.25});
+    displayDiv.blindDown({'duration': 0.25});
+  }
+
+  /* Delete this question. Removes its list item from the DOM, notifies the server of the deletion, and notifies its
+   * question set that this question has been deleted.
+   */
+  this.delete = function(e) {
+    e.stop();
+    new Effect.Fade(listItem, {'duration': 0.5,
+     'afterFinish': function() {
+        listItem.remove();
+      }
+    })
+
+    new Ajax.Request(questionUri, {
+      'method': 'delete'
+    });  
+
+    questionSet.removeQuestion(question);
+  }
+
+  /* Move this question up in the list */
+  this.moveUp = function(e) {
+    e.stop();
+    if(question.position == 0)
+      return;
+    
+    questionSet.swapQuestionWith(question, 'previous');
+    sendPositionUpdate('higher');
+  }
+  
+  /* Move this question down in the list */
+  this.moveDown = function(e) {
+    e.stop();
+    if(question.position == questionSet.editableQuestions.length - 1)
+      return;
+
+    questionSet.swapQuestionWith(question, 'next');
+    sendPositionUpdate('lower');
+  }
+
+  /* Saves the question, hiding the edit form once finished. */
+  this.save = function(e) {
+    if(e) {
+      e.stop();
+    }
+
+    new Ajax.Request(questionUri + '.json', {
+      'method': 'put',
+      'parameters': { 'question[text]': $F(textInput),
+                      'question[question_type]': $F(typeSelect),
+                      'question[required]': $(requiredSelect).checked },
+      'onSuccess' : function(transport) {
+        editDiv.blindUp({'duration': 0.25});    
+        updateQuestion(transport.responseText.evalJSON());
+        displayDiv.blindDown({'duration': 0.25});
+      },
+      'onCreate': function() {loadIndicator.show();},
+      'onComplete': function() {loadIndicator.hide();}
+    });
+  }
+
+  /* Create some DOM option elements. */
+  this.toOptions = function() {
+    var options = new Array();
+    options.push(new Element('option', {'value': this.id}).update(textDiv.innerHTML));
+
+    this.followUpQuestions.editableQuestions.each(function(question) {
+      options = options.concat(question.toOptions());
+    });
+
+    return options;
+  }
+
+  /* Private Functions */
+
+  /* Selects out the various DOM elements and stores them in private vars for later. */
+  function initializeChrome() {
+    cancelButton = listItem.select('a.question_cancel').first();
+    editButton   = listItem.select('a.question_edit').first();
+    deleteButton = listItem.select('a.question_delete').first();
+    upButton     = listItem.select('a.question_up').first();
+    downButton   = listItem.select('a.question_down').first();
+    saveButton   = listItem.select('input.question_save').first();
+
+    displayDiv  = listItem.select('div.question_display').first();
+    textDiv     = displayDiv.select('div.question_display_text').first();
+    typeDiv     = displayDiv.select('span.question_display_type').first();
+    requiredDiv = displayDiv.select('span.question_display_required').first();
+
+    editDiv    = listItem.select('div.question_edit_display').first();
+    textInput  = editDiv.select('input.question_text').first();
+    typeSelect = editDiv.select('select.question_type_select').first();
+    requiredSelect = editDiv.select('input.required_check').first();
+
+    followUpList = listItem.select('ol').first();
+
+    loadIndicator = listItem.select('img.load_indicator').first();
+  }
+
+  /* Observes the various question actions */
+  function setupObservers() {
+    cancelButton.observe('click', question.cancelEdit);
+    editButton.observe('click', question.edit);
+    deleteButton.observe('click', question.delete);
+    upButton.observe('click', question.moveUp);
+    downButton.observe('click', question.moveDown);
+    saveButton.observe('click', question.save);
+    listItem.select('input[type=text]').invoke('observe', 'keydown', function(e) {
+      if (!e) var e = window.event;
+      if(e.keyCode==13){
+        e.stop();
+        question.save();
+      }
+      return false;
+    });
+  }
+
+  /* Updates this question with the specified attributes.
+   * @newQuestion an object with text, question_type, and required attrs (eg, parsed JSON response from the server).
+   */
+  function updateQuestion(newQuestion) {
+    textDiv.update(newQuestion.text);
+    typeDiv.update(newQuestion.question_type);
+    requiredDiv.update(newQuestion.required ? 'Required' : '');
+  }
+
+  /* Tell the server to update this question's position.
+   * @direction The direction to move the question, either up or down.
+   */
+  function sendPositionUpdate(direction) {
+    new Ajax.Request(questionUri + '/move.xml', {
+      'method': 'put',
+      'parameters': {'direction': direction}
+    }); 
+  }
+
+  initializeChrome();
+  setupObservers();
+  this.followUpQuestions = new EditableQuestionSet(followUpList, null, surveyId, questionSet);
+}
+
 /*
  * inputMask creates a new mask object that will only allow certain inputs. Currently supports only currency, percent,
  * and plain number.
@@ -162,12 +567,6 @@ function callFunctionOnEnterForm(f,toCall) {
  * @e the event
  */
 function callFunctionOnEnter(toCall,e) {
-  if (!e) var e = window.event;
-  if(e.keyCode==13){
-    e.stop();
-    toCall();
-  }
-  return false;
 }
 
 /*
@@ -206,201 +605,3 @@ function isValidEmail(email) {
   var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
   return filter.test(email);
 }
-
-/**
- * Tab javascript code from the highly regarded Dan Peverill.
- */
-var Tabs = {
-	className: "tabs",
-	activeClass: "active",
-	
-	addLoadEvent: function(event) {
-		var oldLoad = window.onload;
-		
-		window.onload = function() {
-			event();
-			if (oldLoad) oldLoad();
-		}
-	},
-	
-	create: function(tabs, callbacks) {
-		if (!tabs.length)
-			this.createSingle(tabs, callbacks);
-		else
-			this.createGroup(tabs, callbacks);
-	},
-	
-	createSingle: function(tab, callbacks) {
-		if (this.Element.hasClass(tab, this.activeClass))
-			this.Element.show(this.getTarget(tab));
-	
-		this.Element.addClickEvent(tab, function(e) {
-			if (!Tabs._callback(this, callbacks, "click", e))
-				return false;	// Cancel event.
-			
-			Tabs.Element.toggleClass(this, Tabs.activeClass);
-			
-			if (!Tabs._callback(this, callbacks, "show", e))
-				return false;	// Callback handled visibility change.
-			
-			Tabs.Element.toggleVisibility(Tabs.getTarget(this));
-		});
-	},
-	
-	createGroup: function(tabs, callbacks) {
-		var active;
-		
-		for (var i = 0; i < tabs.length; i++) {
-			var tab = tabs[i];
-			if (this.Element.hasClass(tab, this.activeClass)) {
-				active = tab;
-				this.Element.addClass(tab);
-				this.Element.show(this.getTarget(tab));
-			}
-			else {
-				this.Element.hide(this.getTarget(tab));
-			}
-
-			Tabs.Element.addClickEvent(tab, function(e) {
-				if (!Tabs._callback(this, callbacks, "click", e, active))
-					return false;	// Cancel event.
-					
-				Tabs.Element.removeClass(active, Tabs.activeClass);
-				Tabs.Element.addClass(this, Tabs.activeClass);
-				
-				var from = active;
-				active = this;
-				
-				if (!Tabs._callback(this, callbacks, "show", e, from))
-					return false;	// Callback handled visibility change.
-				
-				Tabs.Element.hide(Tabs.getTarget(from));
-				Tabs.Element.show(Tabs.getTarget(this));
-			});
-		}
-		
-		if (!active) {
-			var tab = tabs[0];
-			active = tab;
-			
-			this.Element.addClass(tab, this.activeClass);
-			this.Element.show(this.getTarget(tab));
-		}
-	},
-	
-	_callback: function(element, callbacks, type, e, active) {
-		if (callbacks && callbacks[type] && callbacks[type].call(element, e, active) === false)
-			return false;
-		
-		return true;
-	},
-	
-	getTarget: function(tab) {
-		var match = /#(.*)$/.exec(tab.href);
-		var target;
-		
-		if (match && (target = document.getElementById(match[1])))
-			return target;
-	},
-	
-	getElementsByClassName: function(className, tag) {
-		var elements = document.getElementsByTagName(tag || "*");
-		var list = new Array();
-		
-		for (var i = 0; i < elements.length; i++) {
-			if (this.Element.hasClass(elements[i], this.className))
-				list.push(elements[i]);
-		}
-		
-		return list;
-	}
-};
-
-Tabs.Element = {
-	addClickEvent: function(element, callback) {
-		var oldClick = element.onclick;
-		
-		element.onclick = function(e) {
-			callback.call(this, e);
-			if (oldClick) oldClick.call(this, e);	// Play nice with others.
-			
-			return false;
-		}
-	},
-	
-	addClass: function(element, className) {
-		element.className += (element.className ? " " : "") + className;
-	},
-	
-	removeClass: function(element, className) {
-		element.className = element.className.replace(new RegExp("(^|\\s)" + className + "(\\s|$)"), "$1");
-		if (element.className == " ")
-			element.className = "";
-	},
-
-	hasClass: function(element, className) {
-		return element.className && (new RegExp("(^|\\s)" + className + "(\\s|$)")).test(element.className);
-	},
-	
-	toggleClass: function(element, className) {
-		if (this.hasClass(element, className))
-			this.removeClass(element, className);
-		else
-			this.addClass(element, className);
-	},
-	
-	getStyle: function(element, property) {
-		if (element.style[property]) return element.style[property];
-		
-		if (element.currentStyle)	// IE.
-			return element.currentStyle[property];
-			
-		property = property.replace(/([A-Z])/g, "-$1").toLowerCase();	// Turns propertyName into property-name.
-		var style = document.defaultView.getComputedStyle(element, "");
-		if (style)
-			return style.getPropertyValue(property);
-	},
-	
-	show: function(element) {
-		element.style.display = "";
-		if (this.getStyle(element, "display") == "none")
-			element.style.display = "block";
-	},
-	
-	hide: function(element) {
-		element.style.display = "none";
-	},
-	
-	isVisible: function(element) {
-		return this.getStyle(element, "display") != "none";
-	},
-	
-	toggleVisibility: function(element) {
-		if (this.isVisible(element))
-			this.hide(element);
-		else
-			this.show(element);
-	}
-};
-
-Tabs.addLoadEvent(function() {
-	var elements = Tabs.getElementsByClassName(Tabs.className);
-	for (var i = 0; i < elements.length; i++) {
-		var element = elements[i];
-			
-		if (element.tagName == "A") {
-			Tabs.create(element);
-		}
-		else {	// Group
-			var tabs = element.getElementsByTagName("a");
-			var group = new Array();
-				
-			for (var t = 0; t < tabs.length; t++) {
-				if (Tabs.getTarget(tabs[t]))
-					group.push(tabs[t]);	// Only group actual tab links.
-			}
-
-			if (group.length) Tabs.create(group);
-		}
-	}
-});

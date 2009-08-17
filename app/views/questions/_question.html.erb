@@ -1,33 +1,36 @@
 <li class="<%= cycle("even", "odd") %>" id='<%="question_#{question.id}"%>'>
   <div class="contents" <% if level > 0 then %>style="padding-left:<%= 1+level*2 %>em;"<% end %>>
-  <div id='<%="question_display_#{question.id}"%>' style='<%= question.errors.empty? ? "" : "display: none;"%>'>
-    <div id='<%="question_display_text_#{question.id}"%>'><%=question.text%></div>
+  <div class='question_display'>
+    <div class='question_display_text'><%=question.text%></div>
     <div>
-      <span id='<%="question_display_type_#{question.id}"%>' class="description_box"><%=question.question_type%></span>
-      <span id='<%="question_display_required_#{question.id}"%>' class="response_required_box"><%= question.required? ? "Required" : "" %></span>
+      <span class='question_display_type description_box'><%=question.question_type%></span>
+      <span class='question_display_required response_required_box'><%= question.required? ? "Required" : "" %></span>
     </div>      
     <div>
-      <a id='<%="question_up_#{question.id}"%>' href=''><%= image_tag "up_button.gif" %></a>
-      <a id='<%="question_down_#{question.id}"%>' href=''><%= image_tag "down_button.gif" %></a>
-      <a id='<%="question_edit_#{question.id}"%>' href=''><%= image_tag "edit_button.gif" %></a>
-      <a id='<%="question_delete_#{question.id}"%>' href=''><%= image_tag "remove_button.gif" %></a>
+      <a class='question_up' href='#'><%= image_tag "up_button.gif" %></a>
+      <a class='question_down' href='#'><%= image_tag "down_button.gif" %></a>
+      <a class='question_edit' href='#'><%= image_tag "edit_button.gif" %></a>
+      <a class='question_delete' href='#'><%= image_tag "remove_button.gif" %></a>
     </div>
   </div>
-  <div id='<%="question_edit_display_#{question.id}"%>' style='<%= question.errors.empty? ? "display: none;" : ""%>'>
+  <div class='question_edit_display' style="display:none;">
     <%= label_tag "question_#{question.id}_text", 'Question Text', :class => "survey_question_label" %>
-    <%= text_field_tag "question_#{question.id}_text", question.text, :size => 40 %>    
+    <%= text_field_tag "question_#{question.id}_text", question.text, :class => 'question_text', :size => 40 %>    
     <%= label_tag "question_#{question.id}_question_type", 'Response Type', :class => "survey_question_label" %>
-    <%= select_tag "question_#{question.id}_question_type", options_for_select(Question::QUESTION_TYPES.keys, question.question_type) %>
+    <%= select_tag "question_#{question.id}_question_type",
+      options_for_select(Question::QUESTION_TYPES.keys, question.question_type),
+      :class => 'question_type_select'
+    %>
     <%= label_tag "question_#{question.id}_required", 'Response required', :class => 'inline_option' %>
-    <%= check_box_tag "question_#{question.id}_required", question.required?, question.required? %>
+    <%= check_box_tag "question_#{question.id}_required", true, question.required?, :class => 'required_check' %>
     <div class="question_submit">
-      <input type="submit" value="Save" id='<%="question_save_#{question.id}"%>' /> or 
-      <a id='<%="question_cancel_#{question.id}"%>' href=''>Cancel</a>
-      <%= image_tag 'load_indicator.gif', :class => 'load_indicator', :id => "load_indicator_#{question.id}", :style => 'display:none;' %>
+      <input type="submit" value="Save" class='question_save' /> or 
+      <a class='question_cancel' href='#'>Cancel</a>
+      <%= image_tag 'load_indicator.gif', :class => 'load_indicator', :style => 'display:none;' %>
     </div>
   </div>  
   </div>  
-  <ol id='<%="question_children_#{question.id}"%>' class='entity_list'>
+  <ol class='question_children entity_list'>
     <%=render(:partial => "questions/question", :collection => question.child_questions, :locals => {:level => level+1})%>
   </ol>
 </li>

@@ -25,12 +25,15 @@
       <%= f.select :days_running, (3..14).to_a.collect {|i| ["#{i} days", i]} %>
     <% elsif @survey.can_be_extended? then %>
       <p></p>
-      <p>Extend deadline by <%=f.select :days_to_extend, (Survey::MINIMUM_DAYS_TO_EXTEND..(@survey.maximum_days_to_extend)).to_a, :include_blank => true %> days.</p>
+      <p>Extend deadline by
+      <%=f.select :days_to_extend, (Survey::MINIMUM_DAYS_TO_EXTEND..(@survey.maximum_days_to_extend)).to_a, :include_blank => true %> days.</p>
     <% end %>
-    <h3>Questions</h3>
-    <ol id="new_questions" class="entity_list">
-      <%=render(:partial => "questions/question", :collection => @survey.top_level_questions, :locals => {:level => 0})%>
-    </ol>
+  <% end %>
+  <h3>Questions</h3>
+  <ol id="new_questions" class="entity_list">
+    <%=render(:partial => "questions/question", :collection => @survey.top_level_questions, :locals => {:level => 0})%>
+  </ol>
+  <% form_tag '', :id => 'new_question_form' do %>
     <label for='predefined_questions'>Add a Question</label>
     <select id="predefined_questions">
       <option value="">Choose which question...</option>
@@ -73,7 +76,8 @@
 <script type="text/javascript">
 
 function initializeObservers() {
-
+  var set = new EditableQuestionSet('new_questions', $('new_question_form'), <%= @survey.id %>);
+/*
   //hook up observers for each question's actions
   <% @survey.questions.each do |question| %>
     observeQuestion('<%= question.id %>');
@@ -87,21 +91,7 @@ function initializeObservers() {
   //Reset the select box
   $('predefined_questions').clear();  
   $('follow_up_question_select').clear();
-  
-}
-
-/**
- * Hooks up observers for all question actions
- */
-function observeQuestion(index) {
-  $('question_cancel_'+index).observe('click', cancelEditQuestion.curry(index));
-  $('question_edit_'+index).observe('click', editQuestion.curry(index));
-  $('question_delete_'+index).observe('click', deleteQuestion.curry(index));
-  $('question_up_'+index).observe('click', moveQuestion.curry(index,'higher'));
-  $('question_down_'+index).observe('click', moveQuestion.curry(index, 'lower'));
-  $('question_save_'+index).observe('click', saveQuestion.curry(index));
-  callFunctionOnEnterForm($('question_edit_display_'+index), saveQuestion.curry(index));
-  
+ */ 
 }
 
 /**
@@ -130,19 +120,6 @@ function restripeQuestions() {
  */
 function selectQuestion() {
 
-  //The user selected custom question, show the form
-  if($F('predefined_questions') == "0") {
-    if (!$('custom_question_form').visible()) {
-      $('custom_question_form').blindDown({'duration': 0.5});
-    }
-  } 
-  //The user selected a non-custom question, hide the form
-  else {
-    if ($('custom_question_form').visible()) {
-      $('custom_question_form').blindUp({'duration': 0.5});
-      $('custom_question_warning').update('');
-    }
-  }
 
 }
 
@@ -151,56 +128,7 @@ function selectQuestion() {
  * This will add a custom or predefined question, depending on what was selected
  */
 function addQuestion(e) {
-  if(e) {
-    e.stop();
-  }
-
-  var selectedQuestion = $F('predefined_questions');
-  var selectedParentQuestion = $F('follow_up_question_select');
-  
-  //The user selected custom question
-  if(selectedQuestion == "0") {
-  
-    // don't add the question if the user did not enter any text
-    if($F('custom_question_text') == '') {
-      $('custom_question_warning').update('Question text is required');
-      return false;
-    }
-    new Ajax.Request('<%= survey_questions_path(@survey) %>', {
-      'method': 'post',
-      'parameters': {'question[text]' : $F('custom_question_text'), 'question[question_type]' : $F('custom_question_response'), 'question[parent_question_id]' : selectedParentQuestion},
-      'onSuccess' : function(transport) {
-        insertQuestions(transport.responseText, selectedParentQuestion);
-        },
-      'onCreate':function() {$('load_indicator').show();},
-      'onComplete':function() {$('load_indicator').hide();}
-    }); 
-    
-    $('custom_question_text').clear();
-    $('custom_question_response').clear();
-    $('custom_question_warning').update('');
-    $('custom_question_form').blindUp({'duration': 0.5});
-    
-  } 
-  //The user selected a predefined question
-  else if (selectedQuestion != '') {
-    
-    new Ajax.Request('<%= survey_questions_path(@survey) %>', {
-      'method': 'post',
-      'parameters': {'predefined_question_id' : selectedQuestion, 'parent_question_id' : selectedParentQuestion},
-      'onSuccess' : function(transport) {
-        insertQuestions(transport.responseText, selectedParentQuestion);
-      },
-      'onCreate':function() {$('load_indicator').show();},
-      'onComplete':function() {$('load_indicator').hide();}
-    });   
-      
-  }  
-    
-  //Reset the select box
-  $('predefined_questions').clear();
-  $('follow_up_question_select').clear();
-    
+   
 }
 
 /** 
@@ -241,112 +169,6 @@ function insertQuestions(questions, parent_question_id, replacing_question_id) {
          
 };
 
-/**
- * Hides the question display and brings up the question edit form
- */
-function editQuestion(index,e) {
-  e.stop();
-
-  $('question_display_'+index).blindUp({'duration': 0.25});
-  $('question_edit_display_'+index).blindDown({'duration': 0.25});
-  
-}
-
-/**
- * Hides the edit form, sends the update request to the server, handles the response from questions_controller.update
- */
-function saveQuestion(index,e) {
-  if(e) {
-    e.stop();
-  }
-  
-  new Ajax.Request('<%= survey_questions_path(@survey) %>/'+index, {
-    'method': 'put',
-    'parameters': {'question[text]' : $F('question_'+index+'_text'), 'question[question_type]' : $F('question_'+index+'_question_type'), 'question[required]' : $('question_'+index+'_required').checked},
-    'onSuccess' : function(transport) {
-    
-      $('question_edit_display_'+index).blindUp({'duration': 0.25});    
-      $('question_display_'+index).blindDown({'duration': 0.25, 'afterFinish': function() {insertQuestions(transport.responseText, null, index);}});
-      
-    },
-    'onCreate': function() {$('load_indicator_' + index).show();},
-    'onComplete': function() {$('load_indicator_' + index).hide();}
-  });
-
-}
-
-/**
- * Hides the edit form and brings up the question display
- */
-function cancelEditQuestion(index,e) {
-  e.stop();
- 
-  $('question_edit_display_'+index).blindUp({'duration': 0.25});   
-  $('question_display_'+index).blindDown({'duration': 0.25});
-  
-}
-
-/**
- * Removed the question from the DOM, as well as sends the destroy request to the server
- */
-function deleteQuestion(index,e) {
-  e.stop();
-  var question = $('question_'+index);
-  
-  new Effect.Fade(question, {'duration': 0.5,
-   'afterFinish': function() {
-    question.remove();
-    restripeQuestions();
-    updateParentCandidateQuestions();
-   }});
-   
-  new Ajax.Request('<%= survey_questions_path(@survey) %>/' + index, {
-    'method': 'delete'
-  });  
-    
-}
-
-/**
- * Repsitions a question either 'higher' or 'lower' depending on the input, send the move request to the server
- */
-function moveQuestion(index,direction,e) {
-  e.stop();
-  var question = $('question_'+index);
-  var moveCompleted = false;
-  
-  if(direction == 'higher' && question.previousSiblings().length > 0) {
-    moveCompleted = true;
-    
-    var sibling = question.previousSiblings().first();
-    
-    question.remove();
-
-    new Insertion.Before(sibling, question);
-    
-  }
-  else if (direction == 'lower' && question.nextSiblings().length > 0) {
-    moveCompleted = true;
-    
-    var sibling = question.nextSiblings().first();
-    
-    question.remove();
-
-    new Insertion.After(sibling, question);  
-     
-  }
-  
-  if(moveCompleted) {
-  
-    restripeQuestions(); 
-    
-    new Ajax.Request('<%= survey_questions_path(@survey) %>/' + index + '/move', {
-      'method': 'put',
-      'parameters': {'direction': direction}
-    }); 
-       
-  }
-  
-}
 /**
  * This will update the list of follow-up questions, hiding the box if necessary. 
  */

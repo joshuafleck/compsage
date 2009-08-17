@@ -52,9 +52,13 @@ class QuestionsController < ApplicationController
 
     @question.update_attributes(params[:question]) 
 
+    # TODO: Do we need to return the entire partial?
     respond_to do |wants|
       wants.js do
         render(:partial => "question", :object => @question, :locals => {:level => @question.level})
+      end
+      wants.json do
+        render :json => @question.to_json
       end
     end
     
