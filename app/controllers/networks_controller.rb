@@ -4,30 +4,14 @@ class NetworksController < ApplicationController
   
   # List all the networks.
   def index
-        
-    respond_to do |wants|
-      wants.html do
-        @network_invitations = current_organization.network_invitations
-        @networks = current_organization.networks.paginate(:page => params[:page], :order => "name")
-      end
-      wants.xml do
-        @networks = current_organization.networks
-        render :xml => @networks.to_xml
-      end
-    end
+    @network_invitations = current_organization.network_invitations
+    @networks = current_organization.networks.paginate(:page => params[:page], :order => "name")
   end
   
   # Show a specific network that the current organization is a member of.
   def show
     @network = current_organization.networks.find(params[:id])
     @members = @network.organizations.find(:all, :conditions => ['organizations.id <> ?', current_organization.id])  
-
-    respond_to do |wants|
-      wants.html # render template
-      wants.xml do
-        render :xml => @network.to_xml(:include => :organizations)
-      end
-    end
   end
   
   def new
@@ -44,94 +28,42 @@ class NetworksController < ApplicationController
     @network = current_organization.owned_networks.new(params[:network])
     
     if @network.save then
-      respond_to do |wants|
-        wants.html do
-          redirect_to network_path(@network) 
-        end
-        wants.xml do
-          head :status => :created
-        end
-      end
+      redirect_to network_path(@network) 
     else
-      respond_to do |wants|
-        wants.html do
-          render :action => 'new'
-        end
-        wants.xml do
-          render :xml => @network.errors.to_xml, :status => 422
-        end
-      end
+      render :action => 'new'
     end
   end
   
   # update a network that the current organization owns.
   def update
     @network = current_organization.owned_networks.find(params[:id])
-    @network.attributes = params[:network]
-    
-    if @network.save then
-      respond_to do |wants|
-        wants.html do
-          redirect_to network_path(@network)
-        end
-        wants.xml do
-          render :status => :ok
-        end
-      end
+     
+    if @network.update_attributes(params[:network]) then
+      redirect_to network_path(@network)
     else
-      respond_to do |wants|
-        wants.html do
-          render :action => 'edit'
-        end
-        wants.xml do
-          render :xml => @network.errors.to_xml, :status => 422
-        end
-      end
+      render :action => 'edit'
     end
   end
   
-  # leave a network.  Redirects to the network edit page if the current organization
-  # owns the network so that they can designate a new owner.
+  # Leave a network.  Redirects to the network page.
+  # if user is the network owner, and new owner is automatically assigned.
   def leave
     @network = current_organization.networks.find(params[:id])
 
     current_organization.networks.delete(@network)
-    
-    respond_to do |wants|
-      wants.html do
-        redirect_to networks_path
-      end
-      wants.xml do
-        render :status => :ok
-      end
-    end
+    redirect_to networks_path
   end
   
   # joins a network, assuming the current organization has an invite.
   def join
     network_invite = current_organization.network_invitations.find_by_network_id(params[:id], :include => :network)
     if network_invite.nil? then
-      respond_to do |wants|
-        wants.html do
-          flash[:notice] = "You get an invite before joining that network."
-          redirect_to networks_path
-        end
-        wants.xml do
-          render :status => :not_authorized
-        end
-      end
+      flash[:notice] = "You must get an invite before joining that network."
+      redirect_to networks_path
     else
       network_invite.accept!
-      
-      respond_to do |wants|
-        wants.html do
-          flash[:notice] = "You have joined the network!"
-          redirect_to network_path(network_invite.network)
-        end
-        wants.xml do
-          render :status => :ok
-        end
-      end
+      flash[:notice] = "You have joined the network!"
+      redirect_to network_path(network_invite.network)
     end
   end
   
@@ -143,25 +75,11 @@ class NetworksController < ApplicationController
     @network.organizations.delete(@organization) if @network.owner != @organization
     
     if @network.save then
-      respond_to do |wants|
-        wants.html do
-          flash[:notice] = "#{@organization.name} was removed from the network"
-          redirect_to network_path(@network)
-        end
-        wants.xml do
-          render :status => :ok
-        end
-      end
+      flash[:notice] = "#{@organization.name} was removed from the network"
+      redirect_to network_path(@network)
     else
-      respond_to do |wants|
-        wants.html do
-          flash[:notice] = "Unable to remove #{@organization.name} from the network. Please try again later."
-          redirect_to network_path(@network)
-        end
-        wants.xml do
-          render :xml => @network.errors.to_xml, :status => 422
-        end
-      end
+      flash[:notice] = "Unable to remove #{@organization.name} from the network. Please try again later."
+      redirect_to network_path(@network)
     end
   end
   

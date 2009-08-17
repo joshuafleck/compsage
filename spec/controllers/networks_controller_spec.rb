@@ -35,15 +35,12 @@ describe NetworksController, "#route_for" do
 end
 
 describe NetworksController, " handling GET /networks" do
-  before do
-    @organization = mock_model(Organization)
-    login_as(@organization)
+  before(:each) do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
     
-    @network = mock_model(Network)
-    @invitation = mock_model(NetworkInvitation) 
-    @networks_proxy = mock('networks_proxy', :paginate => [@network])
-    @organization.stub!(:networks).and_return(@networks_proxy)
-    @organization.stub!(:network_invitations).and_return([@invitation])
+    @network = Factory(:network, :owner => @current_organization)
+    @invitation = Factory(:network_invitation, :invitee => @current_organization)
   end
   
   def do_get
@@ -65,67 +62,20 @@ describe NetworksController, " handling GET /networks" do
     response.should render_template('index')
   end
   
-  it "should find all networks the organization belongs to" do
-    @organization.should_receive(:networks).and_return(@networks_proxy)
-    do_get
-  end
-  
-  it "should find all network invitations for the organization" do
-    @organization.should_receive(:network_invitations).and_return([@invitation])
-    do_get
-  end  
-  
   it "should assign the found networks and invitations for the view" do
     do_get
     assigns[:networks].should == [@network]
     assigns[:network_invitations].should == [@invitation]
   end
-      
-  it "should support pagination" do
-    @networks_proxy.should_receive(:paginate).with(:page => params[:page], :order => "name")
-    do_get
-  end
   
-end
-
-describe NetworksController, " handling GET /networks.xml" do
-  before do
-    @organization = mock_model(Organization)
-    login_as(@organization)
-    
-    @network = mock_model(Network, :to_xml => "XML")
-    @networks = [@network]
-    @organization.stub!(:networks).and_return(@networks)
-  end
-  
-  def do_get
-    @request.env["HTTP_ACCEPT"] = "application/xml"
-    get :index
-  end
-  
-  it "should be successful" do
-    do_get
-    response.should be_success
-  end
-  
-  it "should find all networks the organization belongs to" do
-    @organization.should_receive(:networks).and_return([@network])
-    do_get
-  end
-  
-  it "should render the found networks as XML" do
-    @networks.should_receive(:to_xml).and_return("XML")
-    do_get
-    response.body.should == "XML"
-  end
 end
 
 describe NetworksController, " handling GET /networks/1" do
-  before do
-    @organization = Factory(:organization)
-    login_as(@organization)
+  before(:each) do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
     
-    @network = Factory(:network, :owner => @organization)
+    @network = Factory(:network, :owner => @current_organization)
 
     @network_member = Factory(:organization)
     @network.organizations << @network_member
@@ -164,49 +114,10 @@ describe NetworksController, " handling GET /networks/1" do
   end
 end
 
-describe NetworksController, " handling GET /networks/1.xml" do
-  before do
-    @organization = mock_model(Organization)
-    login_as(@organization)
-    
-    @organizations_proxy = mock('org_proxy', :find => [])
-    @network = mock_model(Network, :name => "Network!", :organizations => @organizations_proxy, :to_xml => "XML")
-    
-    @network_proxy = mock('Network Proxy', :find => @network)
-    @organization.stub!(:networks).and_return(@network_proxy)
-    
-    @params = {:id => "1"}
-  end
-  
-  def do_get
-    @request.env["HTTP_ACCEPT"] = "application/xml"
-    get :show, @params
-  end
-  
-  it "should be successful" do
-    do_get
-    response.should be_success    
-  end
-   
-  it "should find the network requested" do
-    @network_proxy.should_receive(:find).and_return(@network)
-    do_get
-  end
-  
-  it "should render the found network and network members as XML" do
-    @network.should_receive(:to_xml, :with => {:include => :organizations}).and_return("XML")
-    do_get
-    response.body.should == "XML"
-  end
-end
-
 describe NetworksController, " handling GET /networks/new" do
-  before do
-    @organization = mock_model(Organization)
-    login_as(@organization)
-    
-    @network = mock_model(Network)
-    Network.stub!(:new).and_return(@network)
+  before(:each) do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
   end
   
   def do_get
@@ -228,35 +139,19 @@ describe NetworksController, " handling GET /networks/new" do
     response.should render_template('new')
   end
   
-  it "should create a new network" do
-    Network.should_receive(:new).and_return(@network)
+  it "should assign a network to the view" do
     do_get
+    assigns[:network].should_not be_nil
   end
-  
-  it "should assign a new network to the view" do
-    do_get
-    assigns[:network].should == @network
-  end
-  
-  it "should not save the network" do
-    @network.should_not_receive(:save)
-    do_get
-  end
-  
 end
 
 describe NetworksController, " handling GET /networks/1/edit" do
-  
-  before do
-    @organization = mock_model(Organization)
-    login_as(@organization)
+  before(:each) do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
     
-    @network = mock_model(Network, :to_xml => "XML", :name => "Network")
-    
-    @network_proxy = mock('Network Proxy', :find => @network)
-    @organization.stub!(:owned_networks).and_return(@network_proxy)
-    
-    @params = {:id => "1"}
+    @network = Factory(:network, :owner => @current_organization)
+    @params = {:id => @network.id}
   end
   
   def do_get
@@ -273,11 +168,6 @@ describe NetworksController, " handling GET /networks/1/edit" do
     response.should be_success
   end
   
-  it "should find the network requested" do
-    @network_proxy.should_receive(:find).and_return(@network)
-    do_get
-  end
-  
   it "should render the edit template" do
     do_get
     response.should render_template('edit')    
@@ -291,55 +181,44 @@ describe NetworksController, " handling GET /networks/1/edit" do
 end
 
 describe NetworksController, " handling POST /networks" do
-  before do
-    @organization = mock_model(Organization)
-    login_as(@organization)
-    
-    @network = mock_model(Network, :save => true)
-    
-    @owned_networks_proxy = mock('owned networks proxy', :new => @network)
-    @networks_proxy = mock('networks proxy')
-    @organization.stub!(:networks).and_return(@networks_proxy)
-    @organization.stub!(:owned_networks).and_return(@owned_networks_proxy)
+  before(:each) do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
+    @network = Factory(:network, :owner => @current_organization)
+    @params = {:network => @network.attributes}
   end
   
   def do_post
-    post :create
+    post :create, @params
   end
   
   it "should require being logged in" do
     controller.should_receive(:login_required)
-    do_post
-  end
-  
-  it "should create a new network" do
-    @owned_networks_proxy.should_receive(:new).and_return(@network)
-    @network.should_receive(:save)
     do_post
   end
   
   it "should redirect to the show network view" do
     do_post
-    response.should redirect_to(network_path(@network.id))
+    response.should redirect_to(network_path(@network.id + 1))
+  end
+  
+  it "should create a new network" do
+    lambda { do_post }.should change(Network, :count).by(1)
   end
 end
 
 describe NetworksController, " handling PUT /networks/1" do
-  before do
-    @organization = mock_model(Organization)
-    login_as(@organization)
+  before(:each) do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
     
-    @network = mock_model(Network, :attributes= => true, :save => true)
-    
-    @owned_networks_proxy = mock('owned networks proxy', :find => @network)
-    
-    @organization.stub!(:owned_networks).and_return(@owned_networks_proxy)
-    
-    @params = {:id => @network.id}
+    @network = Factory(:network, :owner => @current_organization)   
+    @params = {:id => @network.id, :network => {:name => 'Updated!'}}
   end
   
   def do_put
     put :update, @params
+    @network.reload
   end
   
   it "should require being logged in" do
@@ -347,14 +226,9 @@ describe NetworksController, " handling PUT /networks/1" do
     do_put
   end
   
-  it "should find the network requested" do
-    @owned_networks_proxy.should_receive(:find).and_return(@network)
-    do_put
-  end
-  
   it "should update the selected network" do
-    @network.should_receive(:attributes=)
     do_put
+    @network.name.should == 'Updated!'
   end
 
   it "should redirect to the network show page" do
@@ -365,15 +239,10 @@ describe NetworksController, " handling PUT /networks/1" do
 end
 
 describe NetworksController, " handling PUT /networks/1/leave" do
-  before do
-    @organization = mock_model(Organization)
-    login_as(@organization)
-    
-    @network = mock_model(Network, :update_attributes! => true, :owner => mock_model(Organization))
-    
-    @networks_proxy = mock('networks proxy', :find => @network, :delete => true)
-    
-    @organization.stub!(:networks).and_return(@networks_proxy)
+  before(:each) do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
+    @network = Factory(:network, :owner => @current_organization)
     
     @params = {:id => @network.id}
   end
@@ -387,14 +256,8 @@ describe NetworksController, " handling PUT /networks/1/leave" do
     do_put
   end
   
-  it "should find the network requested" do
-    @networks_proxy.should_receive(:find).and_return(@network)
-    do_put
-  end
-  
   it "should allow the organization to leave the network" do
-    @networks_proxy.should_receive(:delete).with(@network)
-    do_put
+    lambda { do_put }.should change(Network, :count).by(-1)
   end
 
   it "should redirect to the network index" do
@@ -405,18 +268,12 @@ describe NetworksController, " handling PUT /networks/1/leave" do
 end
 
 describe NetworksController, " handling PUT /networks/1/join" do
-  before do
-    @organization = mock_model(Organization)
-    login_as(@organization)
-    
-    @network = mock_model(Network, :owner => @organization)
-    @invite = mock_model(NetworkInvitation, :network => @network, :invitee => @organization, :accept! => true)
-    
-    @invites_proxy = mock('invites proxy', :find_by_network_id => @invite)
-    
-    @organization.stub!(:network_invitations).and_return(@invites_proxy)
-    @organization.stub!(:networks).and_return(@networks_proxy)
-    
+  before(:each) do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
+    @network = Factory(:network, :owner => Factory(:organization))
+    @invite = Factory(:network_invitation, :network => @network, :invitee => @current_organization)
+
     @params = {:id => @network.id}
   end
   
@@ -425,8 +282,11 @@ describe NetworksController, " handling PUT /networks/1/join" do
   end
   
   it "should accept the invitation" do
-    @invite.should_receive(:accept!)
-    do_put
+    lambda { do_put }.should change(@current_organization.networks, :count).by(1)
+  end
+  
+  it "should destroy the invitaiton" do
+    lambda { do_put }.should change(NetworkInvitation, :count).by(-1)
   end
   
   it "should redirect to the network show page" do
@@ -441,15 +301,12 @@ describe NetworksController, " handling PUT /networks/1/join" do
 end
 
 describe NetworksController, "handling PUT /networks/1/join with no invitation" do
-  before do
-    @organization = mock_model(Organization)
-    login_as(@organization)
+  before(:each) do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
+    @network = Factory(:network, :owner => Factory(:organization))
     
-    @invites_proxy = mock('invites proxy', :find_by_network_id => nil)
-    
-    @organization.stub!(:network_invitations).and_return(@invites_proxy)
-    
-    @params = {:id => 1}
+    @params = {:id => @network.id}
   end
   
   def do_put
@@ -463,6 +320,40 @@ describe NetworksController, "handling PUT /networks/1/join with no invitation" 
   
   it "should flash an error message" do
     do_put
-    flash[:notice].should == "You get an invite before joining that network."
+    flash[:notice].should == "You must get an invite before joining that network."
   end
+end
+
+describe NetworksController, "handling PUT /networks/1/evict" do
+  before(:each) do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
+    
+    @network = Factory(:network, :owner => @current_organization)
+    @network_member = Factory(:organization)
+    @network.organizations << @network_member
+    
+    @params = {:id => @network.id, :organization_id => @network_member.id}
+  end
+  
+  def do_put
+    put :evict, @params
+  end
+  
+  it "should remove the organization from the network" do
+    lambda { do_put }.should change(@network.organizations, :count).by(-1)
+  end
+  
+  it "should redirect to the network show page" do
+    do_put
+    response.should redirect_to(network_path(@network))
+  end
+  
+  describe "when the organization being evicted is the current organization" do
+    it " should not remove the organization from the network" do
+      @params = {:id => @network.id, :organization_id => @current_organization.id}
+      lambda { do_put }.should_not change(@network.organizations, :count).by(-1)
+    end
+  end
+  
 end
