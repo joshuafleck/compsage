@@ -110,6 +110,8 @@ class Survey < ActiveRecord::Base
   MAXIMUM_DAYS_TO_RUN = 21
   # the number of participations required to provide results for each question
   REQUIRED_NUMBER_OF_PARTICIPATIONS = 5
+  # the minumum number of invitations required to create a survey
+  REQUIRED_NUMBER_OF_INVITATIONS = 4
 
   # Default set of questions to prepopulate when sponsoring a survey. This will find the PDQs when the model is first
   # loaded, meaning changes to PDQs will require a server bounce.
@@ -196,6 +198,10 @@ class Survey < ActiveRecord::Base
   
   def enough_responses?
     self.enough_participations? && !self.no_reportable_questions?
+  end
+  
+  def enough_invitations_to_create?
+    self.internal_and_external_invitations.count < REQUIRED_NUMBER_OF_INVITATIONS
   end
   
   # determine if all questions can be reported
