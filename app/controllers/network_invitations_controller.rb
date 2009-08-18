@@ -1,17 +1,12 @@
 class NetworkInvitationsController < ApplicationController
   before_filter :login_required
   layout 'logged_in'
-  
-  def index
-    @network = current_organization.owned_networks.find(params[:network_id])
-    @invitations = @network.all_invitations
-    
-    respond_to do |wants|
-      wants.html {} # render the template
-      wants.xml { render :xml => @invitations.to_xml }
-    end
-  end
-  
+
+  # Network invitations are created via the Network show view.
+  # The type of invitation depends on the params passed:
+  # If an organization_id is passed, an internal network invitation is created
+  # If an external_invitation is passed (email and org name), an external invitation is created
+  #
   def create
     @network = current_organization.owned_networks.find(params[:network_id]) 
 
@@ -36,25 +31,15 @@ class NetworkInvitationsController < ApplicationController
       render :template => '/networks/show'
     end
   end    
-  
-  def destroy
-    network = current_organization.owned_networks.find(params[:network_id])
-    invitation = network.invitations.find(params[:id])
-    invitation.destroy
-    
-    respond_to do |wants|
-      wants.html { redirect_to network_invitations_path(params[:network_id]) }
-      wants.xml { head :status => :ok }
-    end
-  end
-  
+
   def decline
     invitation = current_organization.network_invitations.find(params[:id])
     invitation.destroy
     
     respond_to do |wants|
-      wants.html { redirect_to networks_path() }
-      wants.xml { head :status => :ok }
+      wants.html do
+        redirect_to networks_path()
+      end
     end    
   end  
   
