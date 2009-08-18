@@ -77,6 +77,7 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
       this.editableQuestions[i].position -= 1;
     }
     this.updateFollowups();
+    this.restripeQuestions();
   };
 
   /* Registers the specified question with the root level question set. This allows getting any question, regardless of
@@ -108,7 +109,8 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
       }
 
       this.editableQuestions.each(function(question) {
-        question.toOptions().each(function(option) {
+        var ary = question.toOptions();
+        ary.each(function(option) {
           followUpSelect.options.add(option);
         });
       });
@@ -127,13 +129,12 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
     else {
       swapPos = question.position + 1;
     }
-
     // Swap the array positions
     this.editableQuestions[question.position] = this.editableQuestions[swapPos];
     this.editableQuestions[swapPos] = question;
     
     // Swap the DOM elements
-    tmp = document.createElement('div');
+    tmp = new Element('div');
     var first = this.editableQuestions[question.position].listItem.replace(tmp);
     var second = this.editableQuestions[swapPos].listItem.replace(first);
     tmp = tmp.replace(second);
@@ -145,6 +146,7 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
 
     // Update follow-ups with the new order.
     this.updateFollowups();
+    this.restripeQuestions();
   }
 
   /* Adds a new question at the request of the user from the question form
@@ -156,6 +158,9 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
     var selectedQuestion = $F(pdqSelect);
     var selectedParentQuestion = $F(followUpSelect);
     var questionParameters = null;
+
+    if(!selectedQuestion)
+      return false;
 
     if(selectedQuestion == "0") {      //The user selected custom question
       if($F('custom_question_text') == '') {
@@ -210,12 +215,25 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
       parentQuestion.followUpQuestions.insertQuestions(questions, null);
     }
   }
+  
+  this.restripeQuestions = function() {
+    if(parentQuestionSet) {
+      parentQuestionSet.restripeQuestions();
+      return;
+    }
+    var i = 0;
+    $(list).select('li').each( function(question) {  
+      question.className = (i ? 'odd' : 'even');
+      i = 1 - i;
+    });
+    
+  }
 
   /* Private Functions */
   
   /* Observes the form that the user uses to add questions. */
   function observeNewQuestionForm() {
-    addForm.observe('submit', questionSet.addNewQuestion);
+    addForm.select('input.question_submit').first().observe('click', questionSet.addNewQuestion);
     pdqSelect = addForm.select('#predefined_questions').first();
     pdqSelect.observe('change', customQuestionSelect);
     followUpSelect = addForm.select('#follow_up_question_select').first();
@@ -231,8 +249,9 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
       var question = new EditableQuestion(questionSet, surveyId, li, index); 
       questionSet.editableQuestions.push(question);
       questionSet.registerQuestion(question);
-    })
+    });
     questionSet.updateFollowups();
+    questionSet.restripeQuestions();
   }
 
   /* Handles when the user selects a predefined question. This will hide or show the custom question form. */
@@ -324,6 +343,7 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
     new Effect.Fade(listItem, {'duration': 0.5,
      'afterFinish': function() {
         listItem.remove();
+        questionSet.removeQuestion(question);
       }
     })
 
@@ -331,7 +351,6 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
       'method': 'delete'
     });  
 
-    questionSet.removeQuestion(question);
   }
 
   /* Move this question up in the list */
@@ -375,9 +394,12 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
 
   /* Create some DOM option elements. */
   this.toOptions = function() {
-    var options = new Array();
-    options.push(new Element('option', {'value': this.id}).update(textDiv.innerHTML));
+    var options = [];
+    var option = document.createElement('OPTION');
+    option.value = this.id;
+    option.text = textDiv.innerHTML;
 
+    options.push(option);
     this.followUpQuestions.editableQuestions.each(function(question) {
       options = options.concat(question.toOptions());
     });

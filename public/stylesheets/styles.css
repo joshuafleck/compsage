@@ -661,8 +661,15 @@ ol#new_questions {
   padding: 0;
 }
 
+ol#new_questions ol {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
 ol#new_questions li {
   margin: 0;
+  padding: 0;
 }
 
 /* In IE6, with nested lists, the child li inherits from the parent li styles, thus we need to ensure the padding only applies within the li, but not to its children (otherwise the padding compounds) */
@@ -853,13 +860,13 @@ ol#questions li {
   padding: 0 1em;
 }
 
-ol#questions li.odd {
+ol#questions li.odd, ol#new_questions li.odd {
   background-color: #f1f3f0;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
 }
 
-ol#questions li.even {
+ol#questions li.even, ol#new_questions li.even {
   background-color: #ffffff;
 }
 

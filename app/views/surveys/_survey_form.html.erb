@@ -9,7 +9,7 @@
 <% end %>
 <div id="step_container">
   <%=flash_messages%>
-  <% form_for(@survey) do |f| %>
+  <% form_for @survey, :html => {:id => 'survey_form'} do |f| %>
     <% if @survey.pending? then %>
       <div class="info_box">
         <%= link_to "Tips for survey sponsorship", home_path('tips'), :target => '_blank' %>
@@ -28,12 +28,10 @@
       <p>Extend deadline by
       <%=f.select :days_to_extend, (Survey::MINIMUM_DAYS_TO_EXTEND..(@survey.maximum_days_to_extend)).to_a, :include_blank => true %> days.</p>
     <% end %>
-  <% end %>
-  <h3>Questions</h3>
-  <ol id="new_questions" class="entity_list">
-    <%=render(:partial => "questions/question", :collection => @survey.top_level_questions, :locals => {:level => 0})%>
-  </ol>
-  <% form_tag '', :id => 'new_question_form' do %>
+    <h3>Questions</h3>
+    <ol id="new_questions" class="entity_list">
+      <%=render(:partial => "questions/question", :collection => @survey.top_level_questions, :locals => {:level => 0})%>
+    </ol>
     <label for='predefined_questions'>Add a Question</label>
     <select id="predefined_questions">
       <option value="">Choose which question...</option>
@@ -76,126 +74,12 @@
 <script type="text/javascript">
 
 function initializeObservers() {
-  var set = new EditableQuestionSet('new_questions', $('new_question_form'), <%= @survey.id %>);
-/*
-  //hook up observers for each question's actions
-  <% @survey.questions.each do |question| %>
-    observeQuestion('<%= question.id %>');
-  <% end %>
-  
-  //hook up observers for the 'add question' form
-  $('predefined_questions').observe('change', selectQuestion);
-  $('question_submit').observe('click', addQuestion);
-  callFunctionOnEnterForm($('custom_question_form'), addQuestion);
-    
-  //Reset the select box
-  $('predefined_questions').clear();  
-  $('follow_up_question_select').clear();
- */ 
+  var set = new EditableQuestionSet('new_questions', $('survey_form'), <%= @survey.id %>);
 }
 
 /**
  * This will ensure proper zebra-striping for the questions list
  */
-function restripeQuestions() {
-
-  var i = 0;
-  
-  $$('ol#new_questions li').each( function(question) {  
-
-    if (i % 2 == 0) {
-      question.className = 'even';
-    } else {
-      question.className = 'odd';
-    }
-    i++;
-    
-  });
-  
-}
-
-/**
- * Action taken when the user selects from the questions drop-down
- * This will hide or expose the custom question form
- */
-function selectQuestion() {
-
-
-}
-
-/**
- * This will handle the action when a user selects 'add' in the question form
- * This will add a custom or predefined question, depending on what was selected
- */
-function addQuestion(e) {
-   
-}
-
-/** 
- * This will handle the response of question_controller.create/update, which could be n number of list items.
- * This will add the question items to the DOM, and initialize the observers
- */
-function insertQuestions(questions, parent_question_id, replacing_question_id) {
-
-    //Determine the IDs of the questions we have added
-    question_ids = [];
-    questions.match(/id\='question_\d+'/g).each( function(question) {
-      question_ids.push(question.match(/(\d+)/).first());
-    });
-
-    var isInsertion = false;
-    if (replacing_question_id) {
-      Element.replace($('question_'+replacing_question_id), questions);
-    } else {
-      isInsertion = true;
-      if(parent_question_id) {    
-        $('question_children_'+parent_question_id).insert(questions, { 'position':'bottom' });
-      } else {
-        $('new_questions').insert(questions, { 'position':'bottom' });
-      }
-    }
-    
-    restripeQuestions();
-
-    updateParentCandidateQuestions();
-         
-    question_ids.each( function(question_id) {
-      if(isInsertion) {
-        $('question_'+question_id).hide();
-        $('question_'+question_id).appear({'duration': 0.5});
-      }
-      observeQuestion(question_id);
-    });
-         
-};
-
-/**
- * This will update the list of follow-up questions, hiding the box if necessary. 
- */
-function updateParentCandidateQuestions() {
-  //Remove any existing options
-  var selectBox = $('follow_up_question_select');
-  for(i = selectBox.length - 1; i > 0; i--) {
-    selectBox.remove(i);
-  }
-
-  $$('ol#new_questions li').each(function(question) {  
-    var option = document.createElement("OPTION");
-    option.value = question.id.match(/(\d+)/).first();
-    option.text = $('question_display_text_' + option.value).innerHTML;
-    selectBox.options.add(option);
-  });
-
-  var followUpQuestionsDiv = $('follow_up_question');
-  if(selectBox.childNodes.length > 0) {
-    followUpQuestionsDiv.show();
-  } 
-  else {
-    followUpQuestionsDiv.hide();
-  }
-  
-}
-
 </script>
 
 <% content_for :initialize_js, "initializeObservers();"%>
