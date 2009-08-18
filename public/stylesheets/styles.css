@@ -66,13 +66,6 @@ img {
   border: 0;
 }
 
-input[type=text], input[type=password] {
-  padding: 5px;
-  font-size: 1em;
-  border: 1px solid #3f3f3e;
-  background-color: #f4f6f3;
-}
-
 input[disabled=true] {
   background-color: #ccc;
 }
@@ -395,6 +388,7 @@ div.tutorial {
   border: 1px solid #e2ffcd;
   padding: 1em;
 }
+
 /* My Surveys */
 div#my_surveys ul {
   padding: 0 0 1em 0;
@@ -645,9 +639,6 @@ div.submit_row {
   border-bottom: 1px solid #ddd;
   clear: both;
   width: 745px; /* A hard-coded width is required for IE6 to prevent overflow */
-}
-
-div.submit_row .previous {
 }
 
 div.submit_row .next {
@@ -987,16 +978,6 @@ table#networks h3 {
   margin: 0;
 }
 
-div#search_organizations {
-  float: right;
-  width: 31%;
-  padding-right: 1%
-}
-
-div#search_organizations p {
-  margin-top: .5em;
-}
-
 ul#network_invitations h4 {
   margin-top: 0;
 }
@@ -1004,6 +985,7 @@ ul#network_invitations h4 {
 ul#network_invitations li {
   margin-bottom: .5em;
 }
+
 /* Networks show page */
 div#network_content {
   margin: 0 1em;
@@ -1049,46 +1031,6 @@ form.edit_network ul li label {
   display: inline;
   font-weight: normal;
 }
-
-/* Organization Search / Browse */
-ul#organizations {
-  margin: 1em 0 0 0;
-}
-
-ul#organizations li {
-  margin-bottom: 1em;
-}
-
-ul#organizations h3 {
-  margin-top: 0em;
-}
-
-ul#organizations div.organization_logo {
-  float: left;
-  margin-right: .2em;
-}
-
-ul#organizations form {
-  display: inline;
-}
-
-dl#organization_information dt {
-  width: 5em;
-  text-align: right;
-  float: left;
-  color: #666;
-  clear: both;
-  margin: 0;
-}
-
-dl#organization_information dd {
-  margin-left: 6em;
-}
-
-div#change_password_link {
-  margin-top: 1em;
-}
-
 /* Flash Notices */
 div.flash_notice {
   border: 1px solid #6c8272;
