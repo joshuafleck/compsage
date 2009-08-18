@@ -2,18 +2,7 @@
   <div class="subject">
     <span id="discussion_subject_<%=discussion_topic.id%>"><%= discussion_topic.subject %></span>
   </div>
-  <% if discussion_topic.responder.eql?(@survey.sponsor) && !discussion_topic.body.blank? then %>
-    <span class="sponsor">From the Survey Sponsor: </span>
-  <% end %>
-  <div id="discussion_body_<%=discussion_topic.id%>"><%= link_and_format(discussion_topic.body) %></div>
-  <div class="date"><%= I18n.localize discussion_topic.created_at %>
-    <% if !current_organization_or_survey_invitation.eql?(discussion_topic.responder) then %>
-      <%= link_to "Report Abuse", 
-                   report_survey_discussion_path(@survey, discussion_topic), 
-                   :class => "abuse",
-                   :confirm => "Are you sure you want to report this comment?" %>  
-    <% end %>
-  </div>  
+  <%= render :partial => 'discussions/discussion_body', :locals => {:discussion => discussion_topic} %>
   <ul id="discussion_<%=discussion_topic.id%>_replies">
       <%= render :partial => "discussions/discussion", 
                  :collection => discussion_topic.all_children.find_all(&:not_abuse?).sort %>
