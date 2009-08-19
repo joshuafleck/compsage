@@ -7,7 +7,7 @@
       <p>You currently don't have any survey results.  You can search for surveys to participate in to the right, as well
         as <%=link_to "sponsor a survey", new_survey_path%>.</p>
     <% else %>
-      <ul>
+      <ul class="text">
         <% @my_results.each do |survey| %>
           <li><%=link_to survey, survey_report_path(survey)%></li>
         <% end %>

@@ -4,7 +4,7 @@
 <div id="new_network"><%= link_to image_tag("new_network_button.gif"), new_network_path %></div>
 <% if @network_invitations.any? then %>
   <h3>Network Invitations</h3>
-  <ul id="network_invitations">
+  <ul id="network_invitations" class="text">
     <% @network_invitations.each do |invitation| %>
       <li>
         <h4><%= invitation.network.name %></h4>

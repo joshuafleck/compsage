@@ -94,6 +94,10 @@ ul li {
   padding: 0;
 }
 
+ul.text li {
+  margin-bottom: 0.5em;
+}
+
 /* Specific element styles */
 
 /* Header stuff*/
@@ -319,6 +323,7 @@ div.image_header {
   font-size: 1.1em;
   line-height: 1.4em;
 }
+
 /* Survey Sidebar */
 #surveys_sidebar {
   width: 239px;
@@ -328,10 +333,6 @@ div.image_header {
 
 #surveys_sidebar h2 {
   margin-top: .5em;
-}
-
-#surveys_sidebar li {
-  padding-bottom: 0.5em;
 }
 
 /* Search box */
@@ -373,13 +374,6 @@ div.image_header {
   float: left;
   cursor: pointer;
 }
-#my_search_box {
-  float: right;
-}
-
-#my_search_box input#search_text {
-  width: 200px;
-}
 
 /* Tutorial */
 div.tutorial {
@@ -394,14 +388,6 @@ div#my_surveys ul {
   padding: 0 0 1em 0;
   margin-bottom: 1em;
   background: url('../images/embellish.gif') bottom center no-repeat;
-}
-
-div#my_surveys li {
-  margin-bottom: 0.64285em;
-}
-
-div#my_surveys li h3 {
-  margin-top: 0;
 }
 
 div#my_surveys .status {
@@ -445,11 +431,8 @@ div#my_surveys .deadline {
 }
 
 #invitation_list ol {
-  padding-left: 1.5em;
-  margin-left: 0;
-  margin-right: 0;
-  margin-top: 0;
-  padding-top: 0;
+  padding-left: 0 0 0 1.5em;
+  margin: 0;
 }
 
 #invitation_list .deadline {
@@ -470,10 +453,6 @@ div.link_bar a {
 
 #end_break {
   clear: both;
-}
-
-ul.surveys li {
-  margin-bottom: 1.2857em;
 }
 
 div#invitations ul{
@@ -842,12 +821,11 @@ div.comments .field {
 ol#questions {
   font-size: 1.2em;
   list-style-type: none;
-  margin: 0 -5px;
+  margin: 0 -10px;
   padding: 0;
 }
 
 ol#questions li {
-  margin: 0;
   padding: 0 1em;
 }
 
@@ -876,11 +854,6 @@ div#why_section {
   margin-top: -1em;
 }
 
-ol.questions {
-  margin: 0 -1em;
-  padding: 0;
-  list-style-type: none;
-}
 /* Survey Reports */
 div.report_item h3 {
   margin-top: 1.5em;
@@ -982,10 +955,6 @@ ul#network_invitations h4 {
   margin-top: 0;
 }
 
-ul#network_invitations li {
-  margin-bottom: .5em;
-}
-
 /* Networks show page */
 div#network_content {
   margin: 0 1em;
@@ -1006,9 +975,6 @@ div#network_actions h3 {
   margin-top: .25em;
 }
 
-ul#network_menu li {
-  margin-bottom: .25em;
-}
 ul#network_members {
   margin: 0 0 0 10px;
 }
