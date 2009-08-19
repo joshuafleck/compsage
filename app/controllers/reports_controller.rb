@@ -3,11 +3,10 @@ class ReportsController < ApplicationController
   before_filter :login_or_survey_invitation_required, :must_have_responded_or_sponsored
   
   def show
-    @survey = Survey.finished.find(params[:survey_id])
-    @invitations = @survey.all_invitations(true)
+    @survey         = Survey.finished.find(params[:survey_id])
+    @invitations    = @survey.all_invitations(true)
     @participations = @survey.participations
-    @total_participation_count = @participations.size
-    @format = params[:wage_format] || "Annually"
+    @format         = params[:wage_format] || "Annually"
     
     respond_to do |wants|
       wants.html do
@@ -36,19 +35,18 @@ class ReportsController < ApplicationController
     
   end
   
-  # for for flash charts
+  # for building charts
   def chart
-    @question = Question.find(params[:question_id])
-    @survey = @question.survey
+    @question       = Question.find(params[:question_id])
+    @survey         = @question.survey
     @participations = @survey.participations
-    @total_participation_count = @participations.size
     
     respond_to do |wants|
       wants.xml { render(:layout => false) }
     end
   end
   
-  #email the admins the report of a suspected result along with comment.
+  # email the admins the report of a suspected result along with comment.
   def suspect
     @survey = Survey.finished.find(params[:survey_id])
     Notifier.deliver_report_suspect_results_notification(@survey, params[:comment])
@@ -60,29 +58,26 @@ class ReportsController < ApplicationController
     end
   end
   
-  protected
+  private
   
+  # Filters access users who did not participate in a survey.
+  # Redirects to another page if user did not participate.
+  # Used as a before filter.
   def must_have_responded_or_sponsored
     @survey = Survey.finished.find(params[:survey_id])
     if (current_organization_or_survey_invitation.participations.find_by_survey_id(@survey.id).nil? &&
       current_organization != @survey.sponsor) 
     then
-      respond_to do |wants|
-        wants.html do
-          flash[:notice] = "The response deadline has passed. You may not view the results unless you have responded to the survey."
-          if logged_in_from_survey_invitation? then
-            redirect_to new_account_path
-          else
-            redirect_to surveys_path
-          end
-        end
-        wants.xml do
-          render :text => "You must first respond to the survey before getting results.", :status => :unauthorized
-        end
+      flash[:notice] = "The response deadline has passed. You may not view the results unless you have responded to the survey."
+      
+      if logged_in_from_survey_invitation? then
+        redirect_to new_account_path
+      else
+        redirect_to surveys_path
       end
-       
+      
       return false
     end
   end
-     
+  
 end

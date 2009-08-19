@@ -11,152 +11,140 @@ describe ReportsController, "#route_for" do
   
 end
 
-describe ReportsController, "handling GET /survey/1/report with current organization uninvited" do
+describe ReportsController, "handling GET /survey/1/report" do
   before do
-
-    @current_organization_or_survey_invitation = mock_model(Organization, :id => 1)
+    @current_organization_or_survey_invitation = Factory(:organization)
     login_as(@current_organization_or_survey_invitation)
     
-    @survey = mock_model(
-      Survey, 
-      :all_invitations => [], 
-      :required_number_of_participations => 5, 
-      :sponsor => mock_model(Organization),
-      :id => "1"
-    )
-    @participation = mock_model(Participation)
-    @participations = mock('participations proxy', :size => 5, :find_by_survey_id => @participation)
-    
-    @finished_surveys_proxy = mock('finished_survey_proxy', :find => @survey)
-    Survey.stub!(:finished).and_return(@finished_surveys_proxy)
-    @survey.stub!(:participations).and_return(@participations)
-    @current_organization_or_survey_invitation.stub!(:participations).and_return(@participations)
-    @participations.stub!(:belongs_to_invitee).and_return(@participations)
-    @participations.stub!(:include?).and_return(false)
+    @survey = Factory(:finished_survey, :sponsor => @current_organization_or_survey_invitation)
+    Factory(:participation, :survey => @survey, :participant => @current_organization_or_survey_invitation)
+    Factory(:invoice, :survey => @survey)
+    5.times do
+      @org = Factory(:organization)
+      Factory(:participation, :survey => @survey, :participant => @org)
+      Factory(:survey_invitation, :survey => @survey, :inviter => @current_organization_or_survey_invitation, :invitee => @org)
+    end
   end
   
   def do_get
-    get :show, :survey_id => 1
+    get :show, :survey_id => @survey.id
+    @survey.reload
   end
   
   it "should be successful" do
     do_get
-    
     response.should be_success
   end
-  
-  it "should find the finished survey" do
-    @finished_surveys_proxy.should_receive(:find).and_return(@survey)
     
+  it "should assign the invitations to the view" do
     do_get
+    assigns[:invitations].should_not be_nil
   end
   
-  it "should locate the participation for the current organization or survey invitation" do
-    @current_organization_or_survey_invitation.should_receive(:participations).and_return(@participations)
+  it "should assign the survey to the view" do
     do_get
+    assigns[:survey].should == @survey
   end
   
-  it "should check if the organization participated" do
-    @participations.should_receive(:find_by_survey_id).and_return(@participation)
+  it "should assign the participations to the view" do
     do_get
-  end  
-      
-  it "should assign the total participation count" do
-    do_get
-    assigns[:total_participation_count].should eql(@participations.size)
+    assigns[:participations].should == @survey.participations
   end
-  
-  it "should assign the invitations, survey, and participations to the view" do
-    do_get
-    assigns[:invitations].should eql(@survey.all_invitations)
-    assigns[:survey].should eql(@survey)
-    assigns[:participations].should eql(@participations)
-  end   
-    
 end
 
+describe ReportsController, "handling GET /survey/1/report with an undelivered invoiced" do
+  before(:each) do
+    @current_organization_or_survey_invitation = Factory(:organization)
+     login_as(@current_organization_or_survey_invitation)
 
-describe ReportsController, "with access limits" do
-  before do
-    @survey = mock_model(Survey, :required_number_of_participations => 5, 
-      :sponsor => mock_model(Organization))
-    @organization = mock_model( Organization,
-      valid_organization_attributes.with(
-        :participations => mock(
-          'participations_proxy', :find_by_survey_id => nil
-        )
-      )
-    )
-    
-    login_as(@organization)
-    
-    Survey.stub!(:find).and_return(@survey)
+     @survey = Factory(:finished_survey, :sponsor => @current_organization_or_survey_invitation)
+     Factory(:participation, :survey => @survey, :participant => @current_organization_or_survey_invitation)
+     Factory(:invoice, :survey => @survey, :payment_type => 'invoice')
   end
   
   def do_get
-    get :show, :survey_id => 1
+    get :show, :survey_id => @survey.id
+    @survey.reload
+  end
+
+  it "should redirect the user to the billing page" do
+    do_get
+    response.should redirect_to(survey_billing_path(@survey))
+  end
+end
+
+
+describe ReportsController, "handling GET /survey/1/report with a user who didn't respond" do
+  before do
+    @survey = Factory(:finished_survey)
+    @organization = Factory(:organization)
+    
+    login_as(@organization)
+  end
+  
+  def do_get
+    get :show, :survey_id => @survey.id
   end
   
   it "should return an error if the organization has not responded to the survey or isn't the sponsor" do
     do_get
-    
     response.should_not be_success
   end
-  
 end
 
 describe ReportsController, "handling GET /survey/1/chart.xml" do
   before do
-
-    @current_organization_or_survey_invitation = mock_model(Organization, :id => 1)
+    @current_organization_or_survey_invitation = Factory(:organization)
     login_as(@current_organization_or_survey_invitation)
     
-    @survey = mock_model(Survey, :all_invitations => [], :required_number_of_participations => 5, 
-      :sponsor => mock_model(Organization))
-    @participation = mock_model(Participation)
-    @participations = mock('participations proxy', :size => 3, :find_by_survey_id => @participation)
+    @survey = Factory(:finished_survey, :sponsor => @current_organization_or_survey_invitation )
+    Factory(:participation, :survey => @survey, :participant => @current_organization_or_survey_invitation)
     
-    Survey.stub!(:find).and_return(@survey)
-    @survey.stub!(:participations).and_return(@participations)
-    @current_organization_or_survey_invitation.stub!(:participations).and_return(@participations)
-    @participations.stub!(:belongs_to_invitee).and_return(@participations)
+    5.times do
+      Factory(:participation, :survey => @survey, :participant => Factory(:organization))
+    end
     
-    @question = mock_model(Question, :survey => @survey)
-    Question.stub!(:find).and_return(@question)
-    
+    @question = Factory(:question, :survey => @survey, :responses => [])
   end
   
   def do_get
-    get :chart, :survey_id => 1, :question_id => 1
+    get :chart, :survey_id => @survey.id, :question_id => @question.id, :format => "xml"
   end
   
   it "should be successful" do
     do_get
-    
     response.should be_success
-  end
-  
-  it "should find the specified question" do
-    Question.should_receive(:find, :with => 1)
-    
-    do_get
-  end
-  
-  it "should assign the total participation count" do
-    do_get
-    assigns[:total_participation_count].should eql(@participations.size)
   end
   
   it "should assign the survey and participations to the view" do
     do_get
-    assigns[:survey].should eql(@survey)
-    assigns[:participations].should eql(@participations)
-  end   
+    assigns[:survey].should == @survey
+  end
+  
+  it "should assign the survey participations to the view" do
+    do_get
+    assigns[:participations].should == @survey.participations
+  end
 end
 
-describe ReportsController, "handling GET /responses/1.xml" do
-  it "should be successful"
-  it "should find all the survey's questions"
-  it "should find all the survey's questions' responses"
-  it "should render the aggregate report as xml"
+describe ReportsController, "handling PUT /survey/1/suspect" do
+  before(:each) do
+    @current_organization_or_survey_invitation = Factory(:organization)
+    login_as(@current_organization_or_survey_invitation)
+    
+    @survey = Factory(:finished_survey, :sponsor => @current_organization_or_survey_invitation )
+  end
+  
+  def do_post
+    post :suspect, :survey_id => @survey.id, :comment => 'This is a comment!', :format => 'js'
+    
+  end
+  
+  it "should be successful" do
+    do_post
+    response.should be_success
+  end
+  
+  it "should note the survey as being reported suspect"
+  
 end
