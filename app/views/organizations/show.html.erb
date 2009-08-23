@@ -2,9 +2,6 @@
 <% highlight_tab "networks" %>
 <h2><%=@organization.name%></h2>
 <%= flash_messages %>
-<% if !@organization.logo.nil? then %>
-  <p><%=image_tag @organization.logo.public_filename %></p>
-<% end %>
 <dl id="organization_information">
   <% unless @organization.location.blank? %>
     <dt>Branch:</dt>
@@ -22,7 +19,7 @@
   <% end %>
 </dl>
 
-<% if current_organization && (current_organization.sponsored_surveys.running.any? || current_organization.owned_networks.any?) then %>
+<% if current_organization && (current_organization.sponsored_surveys.with_aasm_state(:running).any? || current_organization.owned_networks.any?) then %>
   <% if current_organization.owned_networks.any? then %>
     <% form_tag invitations_path do %>
       <label for="network_id">Invite to a Network</label>
@@ -40,7 +37,7 @@
     <% end %>
   <% end %>
   
-  <% if current_organization.sponsored_surveys.running.any? then %>
+  <% if current_organization.sponsored_surveys.with_aasm_state(:running).any? then %>
     <% form_tag invitations_path do %>
       <label for="survey_id">Invite to a Survey</label>
       <div id="survey_error_content" style="display: none;"></div>

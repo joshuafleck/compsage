@@ -48,7 +48,7 @@ class ReportsController < ApplicationController
   
   # email the admins the report of a suspected result along with comment.
   def suspect
-    @survey = Survey.finished.find(params[:survey_id])
+    @survey = Survey.with_aasm_state(:finished).find(params[:survey_id])
     Notifier.deliver_report_suspect_results_notification(@survey, params[:comment])
     
     respond_to do |wants|
