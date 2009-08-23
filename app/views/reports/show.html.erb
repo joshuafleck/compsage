@@ -24,7 +24,7 @@
 <h2><%=@survey.job_title%></h2>
 <h4>Job Description</h4>
 <div class="description_box"><%=link_and_format(@survey.description)%></div>
-<div><%= @survey.participations.count %> participants out of <%= @survey.all_invitations(true).size %> firms on the
+<div><%= @survey.participations.count %> participants out of <%= @invitations.size %> firms on the
 <a href="#" id="invitation_list_link">invitation list</a>.</div>
 <div id="invitation_section_container">
   <div id="invitation_section" class="hidden">
@@ -32,11 +32,7 @@
     <ul class="invitations">
         <% @invitations.each do |invitation| %>
           <li>
-            <%if invitation.is_a?(SurveyInvitation) then%>
-              <%= link_to_organization(invitation.invitee) %>
-            <%else%>      
-              <%=invitation.organization_name%>
-            <%end%>          
+            <%= format_invitation(invitation, :link_to_invitation => true) %>       
           </li>
         <% end %>
       </ul>

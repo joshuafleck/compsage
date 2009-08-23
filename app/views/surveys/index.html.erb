@@ -85,7 +85,7 @@
               <div class="status">
                 <span class="state expired">Expired</span>
                 <span class="participants"><%= pluralize(survey.participations.count, 'participant') %></span>
-                <span class="invitations"><%= pluralize(survey.all_invitations(true).size, 'invitation') %></span>
+                <span class="invitations"><%= pluralize(survey.internal_and_external_invitations.size, 'invitation') %></span>
               </div>
             </li>
           <% end %>
@@ -95,7 +95,7 @@
             <div class="status">
               <span class="state running">Running</span> 
               <span class="participants"><%= pluralize(survey.participations.count, 'participant') %></span>
-              <span class="invitations"><%= pluralize(survey.all_invitations(true).size, 'invitation') %></span>
+              <span class="invitations"><%= pluralize(survey.internal_and_external_invitations.size, 'invitation') %></span>
             </div>
             <div class="deadline">Participation deadline in <%=better_time_ago_in_words(survey.end_date)%></div>
           </li>

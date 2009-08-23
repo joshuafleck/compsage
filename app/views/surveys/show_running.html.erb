@@ -21,18 +21,11 @@
     <ol>
       <% @invitations.each do |invitation| %>
         <li>
-          <% if invitation.is_a?(SurveyInvitation) then %>
-            <%=link_to_organization(invitation.invitee)%>     
-          <% else %>      
-            <%=invitation.organization_name%>
-          <% end %>
+          <%= format_invitation(invitation, :link_to_invitation => true) %>     
         </li>
       <% end %>
     </ol>
     <p>Participants: <%= @survey.participations.count %></p>
-    <% if @survey.sponsor == current_organization && !@survey.enough_invitations? then %>
-      <p><%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%> participants are required to provide results. We recommend you invite at least <%=pluralize(@survey.recommended_number_of_invitations, 'additional organization')%>.</p>
-    <% end %>
   </div>
 <% end %>
   <h2><%= @survey.job_title %><br />

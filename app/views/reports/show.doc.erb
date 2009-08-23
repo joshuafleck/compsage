@@ -229,7 +229,7 @@
           <% end %>
           <% @invitations.each do |invitation| %>
             <% word_p do %>
-              <%= invitation.to_s %>
+              <%= format_invitation(invitation) %>
             <% end %>
           <% end %>
           <w:p/>

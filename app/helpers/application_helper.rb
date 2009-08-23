@@ -45,6 +45,29 @@ module ApplicationHelper
       end
   end
   
+  # Determines how to display the invitation, depending on the invitation type.
+  # Options:
+  #   :link_to_invitation - will link to the invitee show page (for internal invitations)
+  #   :expose_external_invitation_email - will expose the external invitee's email (should only be exposed to sponsor)
+  def format_invitation(invitation, options = {}) 
+    expose_external_invitation_email = options.delete(:expose_external_invitation_email) || false
+    link_to_invitation = options.delete(:link_to_invitation) || false
+    
+    if invitation.is_a? SurveyInvitation || NetworkInvitation then
+      if link_to_invitation then
+        link_to_organization(invitation.invitee)
+      else
+        invitation.invitee.name_and_location
+      end
+    else
+      if expose_external_invitation_email then
+        invitation.organization_name_and_email
+      else
+        invitation.organization_name
+      end
+    end
+  end
+  
   # Appends the required image to the text
   def required(text)
     text + image_tag("required.gif")

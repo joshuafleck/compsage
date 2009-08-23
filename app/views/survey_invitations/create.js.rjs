@@ -4,7 +4,7 @@ if @invitation.valid? then
   if @invitation.is_a?(SurveyInvitation) then
     page.call :addInvitationToList, @invitation.id, @invitation.invitee.name_and_location, @invitation.invitee_id
   elsif @invitation.is_a?(ExternalSurveyInvitation) then
-    page.call :addInvitationToList, @invitation.id, @invitation.organization_name, nil 
+    page.call :addInvitationToList, @invitation.id, @invitation.organization_name_and_email, nil 
   end
 else
   page['error_content'].replace_html error_messages_for(:invitation)

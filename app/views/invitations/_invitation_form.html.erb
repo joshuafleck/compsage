@@ -33,17 +33,12 @@
 <div class="two_third_main_column">
   <h3>Invitation List</h3>
   <ul id="invitations" class="entity_list">
-    <li><%=link_to_organization(current_organization)%></li>
     <% @invitations.each do |invitation| %>
       <li id="invitation_<%= invitation.id %>">
         <% if invitation.pending? then %>
           <a href="#" class="remove"><%= image_tag "remove_button.gif" %></a>
         <% end %>
-        <% if invitation.is_a?(SurveyInvitation) then %>
-          <%= link_to_organization(invitation.invitee) %>
-        <% else %>      
-          <%= invitation.organization_name %>
-        <% end %>
+        <%= format_invitation(invitation, {:expose_external_invitation_email => true, :link_to_invitation => true}) %>
       </li>
     <% end %>
   </ul>
@@ -157,7 +152,7 @@ function addInvitationByForm(e) {
 }
 
 
-function addInvitationToList(invitation_id, organization_name, organization_id) {
+function addInvitationToList(invitation_id, invitation_display, organization_id) {
   $('external_invitation_organization_name').value = '';
   $('external_invitation_email').value = '';
 
@@ -168,9 +163,9 @@ function addInvitationToList(invitation_id, organization_name, organization_id) 
   newListElement.insert(removeLink);
 
   if(organization_id)
-    newListElement.insert('<a href="<%= organizations_path %>/' + organization_id + '">' + organization_name + '</a>');
+    newListElement.insert('<a href="<%= organizations_path %>/' + organization_id + '">' + invitation_display + '</a>');
   else
-    newListElement.insert(organization_name);
+    newListElement.insert(invitation_display);
 
   $('invitations').insert(newListElement);
   newListElement.hide();

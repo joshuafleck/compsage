@@ -59,11 +59,7 @@ pdf.bounding_box(
   end
 
   @invitations.each do |invitation| 
-    if invitation.is_a?(SurveyInvitation) then
-      pdf.text "#{invitation.invitee.name_and_location}"
-    else
-      pdf.text "#{invitation.organization_name} (#{invitation.email})"
-    end   
+    pdf.text "#{format_invitation(invitation)}"
   end
   
   # end: survey metadata
