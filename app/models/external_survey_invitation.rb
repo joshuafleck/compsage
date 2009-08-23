@@ -28,7 +28,6 @@ class ExternalSurveyInvitation < ExternalInvitation
   
     # Move the participation to the new organization, and create a survey subscription
     if self.participations.count > 0 then
-      self.fulfill!
       organization.participations << self.participations.first      
       organization.participations.first.create_participant_subscription
     end

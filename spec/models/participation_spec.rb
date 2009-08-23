@@ -62,6 +62,19 @@ describe Participation do
     @participation.destroy
     invitation.destroy
   end
+  
+  it "should fulfill the external invitation when an invited organization has responded" do
+    @survey = Factory.create(:survey)
+    invitation = Factory.create(:sent_external_survey_invitation,
+      :inviter => @survey.sponsor, 
+      :invitee => @participant, 
+      :survey => @survey)
+    @participation = Factory.create(:participation, :survey => @survey, :participant => invitation)
+    invitation.reload
+    invitation.aasm_state.should == "fulfilled"
+    @participation.destroy
+    invitation.destroy
+  end  
 end
 
 module ParticipationCreationHelper

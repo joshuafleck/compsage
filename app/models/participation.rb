@@ -52,10 +52,12 @@ class Participation < ActiveRecord::Base
   # After participation is created this will transtition the status of the users invitation 
   # to fufilled so it will no longer be listed among the users current survey invitations.
   def fulfill_invitation
-    if self.participant.is_a?(Organization) then
-      invitation = self.participant.survey_invitations.find_by_survey_id(self.survey.id)
-      invitation.fulfill! unless invitation.nil?
-    end
+    invitation = if self.participant.is_a?(Organization) then
+      self.participant.survey_invitations.sent.find_by_survey_id(self.survey.id)
+    else
+      self.participant
+    end    
+    invitation.fulfill! unless invitation.nil?
   end
   
   # Makes a subscription to the survey which allows us to link a participation to it's
