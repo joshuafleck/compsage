@@ -3,8 +3,8 @@ class ReportsController < ApplicationController
   before_filter :login_or_survey_invitation_required, :must_have_responded_or_sponsored
   
   def show
-    @survey         = Survey.finished.find(params[:survey_id])
-    @invitations    = @survey.all_invitations(true)
+    @survey         = Survey.with_aasm_state(:finished).find(params[:survey_id])
+    @invitations    = @survey.internal_and_external_invitations.not_pending.sort    
     @participations = @survey.participations
     @format         = params[:wage_format] || "Annually"
     
@@ -64,7 +64,7 @@ class ReportsController < ApplicationController
   # Redirects to another page if user did not participate.
   # Used as a before filter.
   def must_have_responded_or_sponsored
-    @survey = Survey.finished.find(params[:survey_id])
+    @survey = Survey.with_aasm_state(:finished).find(params[:survey_id])
     if (current_organization_or_survey_invitation.participations.find_by_survey_id(@survey.id).nil? &&
       current_organization != @survey.sponsor) 
     then

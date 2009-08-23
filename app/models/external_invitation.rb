@@ -13,7 +13,11 @@ class ExternalInvitation < Invitation
   before_create :create_key
   
   def to_s
-    "#{self[:organization_name]} (#{self[:email]})"
+    self.organization_name_and_email
+  end
+  
+  def organization_name_and_email
+    "#{self.organization_name} (#{self.email})"
   end
   
   protected

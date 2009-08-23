@@ -659,12 +659,18 @@ describe SurveysController, " handling GET /surveys/1/rerun with error" do
 end
 
 describe SurveysController, "handling GET /surveys/1/finish_partial" do
-  before do
+  before(:each) do
     @current_organization = Factory(:organization)
     login_as(@current_organization)
 
-    @survey = Factory(:stalled_survey, :sponsor => @current_organization, :start_date => Time.now - 30.days)
+    @survey = Factory(:stalled_survey, :sponsor => @current_organization)
+    @surveys_proxy = mock(:surveys_proxy, :find => @survey)
     @invoice = Factory(:invoice, :survey => @survey)
+    
+    @current_organization.stub!(:sponsored_surveys).and_return(@surveys_proxy)
+    @surveys_proxy.stub!(:with_aasm_state).and_return(@surveys_proxy)
+    @survey.stub!(:enough_responses?).and_return(true)
+    
   end
 
   def do_get

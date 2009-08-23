@@ -8,16 +8,16 @@ class SurveysController < ApplicationController
   ssl_required :respond
   
   def index    
-    @surveys = Survey.running.paginate(:page => params[:page], :order => 'job_title')  
+    @surveys = Survey.with_aasm_state(:running).paginate(:page => params[:page], :order => 'job_title')  
     @invited_surveys = current_organization.survey_invitations.sent.running.ordered_by('invitations.created_at DESC')
-    @my_surveys = current_organization.sponsored_surveys.running_or_stalled.find(:all, :order => 'end_date DESC');
+    @my_surveys = current_organization.sponsored_surveys.with_aasm_states(:running, :stalled).find(:all, :order => 'end_date DESC');
     @survey_participations = current_organization.participations.recent.not_sponsored_by(current_organization)
-    @my_results = current_organization.surveys.finished.recent
+    @my_results = current_organization.surveys.with_aasm_state(:finished).recent
   end
 
   def show
     @survey = Survey.find(params[:id], :include => [:invitations, :external_invitations])  
-    @invitations = @survey.all_invitations(true) 
+    @invitations = @survey.internal_and_external_invitations.not_pending.sort
     @discussions = @survey.discussions.within_abuse_threshold.roots
     @discussion = flash[:discussion] || @survey.discussions.new
     @participation = current_organization_or_survey_invitation.participations.find_by_survey_id(@survey)
@@ -30,7 +30,7 @@ class SurveysController < ApplicationController
   end
 
   def edit
-    @survey = current_organization.sponsored_surveys.running_or_pending.find(params[:id])
+    @survey = current_organization.sponsored_surveys.with_aasm_states(:running, :pending).find(params[:id])
 
     if @survey.participations.any? then # Can't make changes if there are participations.
       flash[:notice] = "You cannot edit the questions for a survey once a response has been collected."
@@ -39,7 +39,7 @@ class SurveysController < ApplicationController
   end
   
   def update
-    @survey = current_organization.sponsored_surveys.running_or_pending.find(params[:id])
+    @survey = current_organization.sponsored_surveys.with_aasm_states(:running, :pending).find(params[:id])
 
     if @survey.participations.any? then  # Can't make changes if there are participations.
       flash[:notice] = "You cannot edit the questions for a survey once a response has been collected."
@@ -133,7 +133,7 @@ class SurveysController < ApplicationController
   end
       
   def destroy
-    @survey = current_organization.sponsored_surveys.deletable.find(params[:id])
+    @survey = current_organization.sponsored_surveys.with_aasm_states(:pending,:stalled).find(params[:id])
     @survey.destroy
     
     redirect_to surveys_path

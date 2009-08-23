@@ -115,6 +115,7 @@ end
 
 # So we can be explicit in our specs when using a pending invitation.
 Factory.define :pending_survey_invitation, :parent => :survey_invitation do |i|
+  i.aasm_state 'pending'
 end
 
 #definition and setup for network invitation
@@ -135,6 +136,11 @@ end
 Factory.define :sent_external_survey_invitation, :parent => :external_survey_invitation do |i|
   i.aasm_state 'sent'
 end
+
+Factory.define :pending_external_survey_invitation, :parent => :external_survey_invitation do |i|
+  i.aasm_state 'pending'
+end
+
 #definition and setup for external invitation
 Factory.define :external_invitation do |i|
   i.inviter {|a| a.association(:organization)}

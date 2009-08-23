@@ -10,10 +10,10 @@ class Invitation < ActiveRecord::Base
   named_scope :ordered_by, lambda { |o| {:order => o } }
   
   def to_s
-    invitee.name_and_location
+    self.invitee.name_and_location
   end
     
-  #This will sort the invitations by invitee organization name, regardless of type
+  # This will sort the invitations by invitee organization name, regardless of type
   def <=>(o)
     self.to_s.casecmp(o.to_s)
   end

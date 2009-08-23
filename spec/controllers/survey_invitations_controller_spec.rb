@@ -36,7 +36,9 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
     @network = Factory.create(:network, :owner => @current_organization)
     @member = Factory.create(:organization)
     @network.organizations << @member
-    @invitation = Factory.create(:survey_invitation, :survey => @survey, :inviter => @current_organization)
+    @sent_invitation = Factory.create(:sent_survey_invitation, :survey => @survey, :inviter => @current_organization)
+    @pending_invitation = Factory.create(:pending_survey_invitation, :survey => @survey, :inviter => @current_organization)
+    @external_invitation = Factory.create(:external_survey_invitation, :survey => @survey, :inviter => @current_organization)
     session[:survey_network_id] = @network.id
 
     @params = {:survey_id => @survey.id}
@@ -61,11 +63,21 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
     response.should render_template('index')
   end
   
-  it "should assign the found survey invitations for the view" do    
+  it "should assign the sent invitations for the view" do    
     do_get
-    assigns(:invitations).size.should == 2
+    assigns(:invitations).should include(@sent_invitation)
   end
    
+  it "should assign the pending invitations for the view" do    
+    do_get
+    assigns(:invitations).should include(@pending_invitation)
+  end
+      
+  it "should assign the external invitations for the view" do    
+    do_get
+    assigns(:invitations).should include(@external_invitation)
+  end
+       
   it "should assign the networks for the view" do    
     do_get
     assigns(:networks).size.should == 1
@@ -179,7 +191,7 @@ describe SurveyInvitationsController, " handling DELETE /surveys/1/invitations/1
     login_as(@current_organization)
     
     @survey = Factory(:survey, :sponsor => @current_organization)
-    @invitation = Factory(:survey_invitation, :survey => @survey, :inviter => @current_organization)
+    @invitation = Factory(:pending_survey_invitation, :survey => @survey, :inviter => @current_organization)
     
     @params = {:survey_id => @survey.id, :id => @invitation.id}
   end
@@ -216,8 +228,7 @@ describe SurveyInvitationsController,  "handling PUT /surveys/1/invitations/1/de
     login_as(@current_organization)
     
     @survey = Factory(:running_survey)
-    @invitation = Factory(:survey_invitation, :survey => @survey, :invitee => @current_organization)
-    @invitation.send_invitation!
+    @invitation = Factory(:sent_survey_invitation, :survey => @survey, :invitee => @current_organization)
     
     @params = {:survey_id => @survey.id, :id => @invitation.id}
   end
@@ -244,8 +255,8 @@ describe SurveyInvitationsController, "sending pending invitations" do
     login_as(@organization)
 
     @survey = Factory(:running_survey, :sponsor => @organization)
-    @pending_invitations = [Factory(:survey_invitation, :survey => @survey),
-                            Factory(:external_survey_invitation, :survey => @survey)]
+    @pending_invitations = [Factory(:pending_survey_invitation, :survey => @survey),
+                            Factory(:pending_external_survey_invitation, :survey => @survey)]
   end
 
   def do_post

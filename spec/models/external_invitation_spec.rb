@@ -39,6 +39,10 @@ describe ExternalInvitation do
     @invitation.should have(1).errors_on(:organization_name)
   end   
   
+  it "should have an organization name and email" do
+    @invitation.organization_name_and_email.should_not be_blank
+  end    
+    
   it "should have a key" do   
     @invitation.save!
     @invitation.key.should_not be_blank

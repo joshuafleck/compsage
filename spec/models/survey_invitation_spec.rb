@@ -39,18 +39,13 @@ describe SurveyInvitation do
     @duplicate_invitation.should have(1).error_on(:base)
     @invitation.destroy
   end  
-  
-  it "should be invalid if the invitee is the survey sponsor" do        
-    @invitation.invitee = @survey.sponsor    
-    @invitation.should have(1).error_on(:base)
-  end  
-  
+
   it "should have a sent status after sending the invitation" do
     @invitation.save!
     lambda{ @invitation.send_invitation! }.should change(@invitation, :aasm_state).from("pending").to("sent")
     @invitation.destroy
   end   
-  
+ 
   it "should send a notification email when asked" do
     @invitation.save!
     Notifier.should_receive(:deliver_survey_invitation_notification)

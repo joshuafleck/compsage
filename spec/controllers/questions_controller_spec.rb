@@ -195,9 +195,10 @@ describe QuestionsController, "handling PUT /questions/1/move" do
     login_as(@current_organization)
     
     @survey = Factory(:survey, :sponsor => @current_organization)
-    @question = Factory(:question, :survey => @survey)
+    @question = Factory(:question, :survey => @survey, :position => 1)
+    Factory(:question, :survey => @survey, :position => 0)
+    Factory(:question, :survey => @survey, :position => 2)
     @params = {:survey_id => @survey.id, :id => @question.id}
-    @position = @question.position
   end
   
   def do_move
@@ -216,8 +217,7 @@ describe QuestionsController, "handling PUT /questions/1/move" do
     end
   
     it "should move the question higher" do
-      do_move
-      @question.position.should == @position - 1
+      lambda{ do_move }.should change(@question,:position).by(-1)
     end   
     
   end
@@ -228,8 +228,7 @@ describe QuestionsController, "handling PUT /questions/1/move" do
     end
   
     it "should move the question lower" do
-      do_move
-      @question.position.should == @position + 1
+      lambda{ do_move }.should change(@question,:position).by(1)
     end   
     
   end

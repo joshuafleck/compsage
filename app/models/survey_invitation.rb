@@ -25,9 +25,9 @@ class SurveyInvitation < Invitation
   
   private
   
-  # adds an error if the invitee was already invited (or the sponsor)
+  # adds an error if the invitee was already invited
   def not_already_invited  
-    errors.add_to_base "That organization is already invited" if invitee && survey && (invitee.invited_surveys.include?(survey) || invitee == survey.sponsor)
+    errors.add_to_base "That organization is already invited" if invitee && survey && invitee.invited_surveys.include?(survey)
   end
 
   def send_invitation_email

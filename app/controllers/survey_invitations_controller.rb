@@ -12,7 +12,7 @@ class SurveyInvitationsController < ApplicationController
       session.delete(:survey_network_id)
     end
 
-    @invitations = @survey.internal_and_external_invitations   
+    @invitations = @survey.internal_and_external_invitations
 
     respond_to do |wants|
       wants.html # render the template
