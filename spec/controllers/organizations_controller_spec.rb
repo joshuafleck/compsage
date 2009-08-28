@@ -177,7 +177,7 @@ describe OrganizationsController, "handling POST /organizations/1/invite_to_surv
     @current_organization = Factory.create(:organization)
     login_as(@current_organization)
     
-    @survey = Factory.create(:survey, :sponsor => @current_organization)    
+    @survey = Factory.create(:running_survey, :sponsor => @current_organization)    
     @other_organization = Factory(:organization)
     
   end

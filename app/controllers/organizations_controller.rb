@@ -80,7 +80,8 @@ class OrganizationsController < ApplicationController
   # JS only function for inviting an organization to a survey
   def invite_to_survey
     @survey = current_organization.sponsored_surveys.find(params[:survey_id])
-    find_invitee_and_create_invitation(@survey)
+    @invitation = find_invitee_and_create_invitation(@survey)
+    @invitation.send_invitation! if @invitation.valid?
     
     respond_to do |wants|
       wants.js
@@ -90,7 +91,7 @@ class OrganizationsController < ApplicationController
   # JS only function for inviting an organization to a network
   def invite_to_network
     @network = current_organization.owned_networks.find(params[:network_id]) 
-    find_invitee_and_create_invitation(@network)
+    @invitation = find_invitee_and_create_invitation(@network)
     
     respond_to do |wants|
       wants.js
@@ -103,7 +104,7 @@ class OrganizationsController < ApplicationController
   #  to the specified network or survey.
   #
   def find_invitee_and_create_invitation(network_or_survey)
-    @organization = Organization.find(params[:id])
-    @invitation = network_or_survey.invitations.create(:invitee => @organization, :inviter => current_organization)
+    organization = Organization.find(params[:id])
+    return network_or_survey.invitations.create(:invitee => organization, :inviter => current_organization)
   end
 end
