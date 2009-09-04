@@ -475,6 +475,278 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
   this.followUpQuestions = new EditableQuestionSet(followUpList, null, surveyId, questionSet);
 }
 
+
+/* Holds a response to a survey. Will initialize the various observers needed to facilitate responding to a survey.
+ * @listElement The list element containing this question.
+ */ 
+function Response(listElement) {
+  var me = this;
+
+  var parentList             = null; 
+  var followUpList           = null;
+  var container              = null;
+  var commentsContainer      = null;
+  var commentsFieldContainer = null;
+  var commentsField          = null;
+  var commentsLink           = null;
+  var inputs                 = null;
+  var questionInputs         = null;
+  var responseType           = null;
+  var unitSelect             = null;
+
+  /* Returns the value of this response.
+   * TODO support checkboxes, if needed.
+   */
+  this.value = function() {
+    if(responseType == "options") {
+      var val = null;
+      for(var i = 0; i < questionInputs.length; i++) {
+        if(questionInputs[i].checked)
+          return $F(questionInputs[i]);
+      }
+    } else {
+      return $F(questionInputs.first());
+    }
+  }
+
+  /* Allows this question to be answered.
+   */
+  this.enable = function() {
+    inputs.each(function(input) {
+      input.removeAttribute('disabled');
+    })
+  }
+
+  /* Disallows this question from being answered. Clears any input.
+   */
+  this.disable = function() {
+    inputs.each(function(input) {
+      if(responseType == 'options') {
+        input.checked = false;
+      } else {
+        input.value = '';
+      }
+      input.setAttribute('disabled', true);
+    })
+
+    me.disableComments();
+    me.disableFollowups();
+  }
+
+  /* Disallows this question from being commented on. Clears any comments that are entered.
+   */
+  this.disableComments = function() { 
+    if(!me.hasComments())
+      return;
+
+    me.hideComments();
+    commentsContainer.hide();
+  }
+
+  /* Allows this question to be commented on.
+   */
+  this.enableComments = function() {
+    if(!me.hasComments())
+      return;
+
+    commentsContainer.show();
+  }
+
+  /* Shows the comments field.
+   */
+  this.showComments = function() {
+    commentsFieldContainer.show();
+    commentsLink.innerHTML = 'Cancel';
+  }
+
+  /* Hides the comments field, clearing any input.
+   */
+  this.hideComments = function() {
+    commentsField.value = '';
+    commentsFieldContainer.hide();
+    commentsLink.innerHTML = 'Add Comment'
+  }
+
+  /* Enables follow-ups to this question by firing an event on the follow-up list. Important: if there are no listeners
+   * bound to the follow-up list, this will cause an infinite loop due to the event bubbling up to this question's
+   * parent list. Then this question will think that it has been asked to be disabled, disable itself, and then tell
+   * its follow-up questions to be disabled, repeating the above process ad infinitum. So, make sure that if there is a
+   * follow-up questions list, you have observers observing questions:enable/questions:disable before attempting to
+   * enable/disable follow-ups.
+   */
+  this.enableFollowups = function() {
+    if(followUpList)
+      followUpList.fire('questions:enable')
+  }
+
+  /* Disables follow-ups to this question by firing questions:disable. See important information above.
+   */
+  this.disableFollowups = function() {
+    if(followUpList)
+      followUpList.fire('questions:disable');
+  }
+
+  /* Whether or not this question has been answered.
+   */
+  this.answered = function() {
+    return me.value() != null && me.value() !== '';
+  }
+
+  /* Whether or not this question can have comments or not, determined by the presence of the comments div in the
+   * response from the server.
+   */
+  this.hasComments = function() {
+    return commentsFieldContainer != null;
+  }
+
+  /* Sets up some variables for convenience
+   */
+  function initializeChrome() {
+    parentList        = $(listElement).parentNode;
+    followUpList      = $(listElement).select('ol').first();
+    container         = $(listElement).select('div').first();
+    commentsContainer = $(container).select('div.comments').first();
+    if(commentsContainer) {
+      commentsFieldContainer = $(commentsContainer).select('div.field').first();
+      commentsField          = $(commentsFieldContainer).select('input').first();
+      commentsLink           = $(commentsContainer).select('a').first();
+    }
+    inputs            = $(container).select('input');
+    questionInputs    = $(container).select('input:not([id$=comments])');
+    unitSelect        = $(container).select('select.units').first();
+
+    if(questionInputs.first().getAttribute('type').match(/checkbox|radio/)) {
+      responseType = 'options';
+    } else {
+      responseType = 'text';
+    }
+
+  }
+
+  /* Handles questions events by simply stopping the event and then calling the specified function. The event must be
+   * stopped to prevent the event from bubbling up the DOM.
+   */
+  function questionsEventHandler(func, e) {
+    e.stop();
+    func.call();
+  }
+
+  /* Called when a user has entered valid data.
+   */
+  function validInputReceived() {
+    if(!me.answered()) {
+      // User removed their response, so disable comments and follow-ups.
+      me.disableFollowups();
+      me.disableComments();
+    } else {
+      // User added a valid response, so enable comments.
+      me.enableComments();
+
+      // If the user chose "No" from a yes/no question, disable follow-ups, otherwise, enable them.
+      if(responseType == 'options' && questionInputs.length == 2 && me.value() == '1.0') {
+        me.disableFollowups();
+      } else {
+        me.enableFollowups();
+      }
+    }
+  }
+
+  /* Initializes observers needed for various functionality.
+   */
+  function initializeObservers() {
+    // Make sure we do the right thing for enabling/disabling follow-ups.
+    parentList.observe('questions:disable', questionsEventHandler.curry(me.disable));
+    parentList.observe('questions:enable', questionsEventHandler.curry(me.enable));
+
+    // Call validInputReceived when we've got valid input.
+    if(responseType == "options") {
+      questionInputs.each(function(input) {
+        input.observe('click', validInputReceived);
+      });
+    } else {
+      questionInputs.first().observe('question:validinput', validInputReceived);
+    }
+
+    // Observe the comments link to show/hide comments if we have comments.
+    if(me.hasComments()) {
+      commentsLink.observe('click', function(e) {
+        e.stop();
+        if(commentsLink.innerHTML == 'Cancel')
+          me.hideComments();
+        else
+          me.showComments();
+      });
+    }
+
+    // Observe the unit selects to set all the units to the same thing if we have units.
+    if(unitSelect) {
+      unitSelect.observe('change', function(e) {
+        var value = e.target.value;
+        var css_class = e.target.className;
+        $$('select.units').each(function(select) {
+          if(select.value == '' && select.className == css_class) {
+            select.value = value;
+          }
+        });
+      });
+    }
+  }
+  
+  /* Creates new responses for all the follow-up questions (Assuming there are any).
+   */
+  function initializeFollowups() {
+    if(followUpList) {
+      $(followUpList).childElements().each(function(li) {
+        new Response(li);
+      });
+    }
+  }
+
+  /* Does the initial setup required for the question form. This includes:
+   * * Setting the comments link text to cancel (it is hidden so users without javascript don't get confused)
+   * * Disabling/Enabling both comments/follow-ups depending on the situation.
+   * * Initializing the input masks if needed.
+   */
+  function initialSetup() {
+    if(me.hasComments())
+      commentsLink.innerHTML = 'Cancel';
+    
+    if(!me.answered()) {
+      // Haven't answered the question, so, can't add comments and can't add follow-ups.
+      me.disableComments();
+      me.disableFollowups();
+    } else {
+      if(me.hasComments() && commentsField.value == '') {
+        me.hideComments();
+      }
+    }
+    if(responseType == 'text') {
+      // Set up our masks if needed for the question type.
+      var field = questionInputs.first();
+      switch(field.className) {
+        case "WageResponse":
+        case "BaseWageResponse":
+          new inputMask(field, 'currency', unitSelect); 
+          break;
+        case "NumericalResponse":
+          new inputMask(field, 'number'); 
+          break;
+        case "PercentResponse":
+          new inputMask(field, 'percent'); 
+          break;
+        case "TextualResponse":
+          new inputMask(field, 'text'); 
+          break;
+      }
+    }
+  }
+
+  initializeChrome();
+  initializeObservers();
+  initializeFollowups();
+  initialSetup();
+}
+
 /*
  * inputMask creates a new mask object that will only allow certain inputs. Currently supports only currency, percent,
  * and plain number.
