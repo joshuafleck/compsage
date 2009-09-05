@@ -1,51 +1,3 @@
-
-/**
- * This will sanity check a percentage response
- * @response The numeric response entered by the user
- */
-function checkPercentResponse(response) {
-  if(response < 1 && response > -1 && response != 0) {
-    return "Percentages should be entered in whole percents. Is this correct?";
-  }  
-}
-
-/**
- * This will sanity check a numeric response
- * @response The numeric response entered by the user
- */
-function checkNumericResponse(response) {
-  if(response < 0) {
-    return "Your response is negative. Is this correct?";
-  }
-}
-
-/**
- * This will sanity check a wage response
- * @response The numeric response entered by the user
- * @units The units dropdown element.
- */
-function checkWageResponse(response, units) {
-  var unitsType = units.options[units.selectedIndex].text;
-  
-  if(unitsType == 'Annually') {
-    if(response < 10000) {
-      return "Your response is below minimum wage. Is this correct?";
-    }
-    if(response > 1000000) {
-      return "Your response appears too large. Is this correct?";
-    }   
-  } 
-  else if (unitsType == 'Hourly') {
-    if(response < 6.55) {
-      return "Your response is below minimum wage. Is this correct?";
-    }
-    if(response > 500) {
-      return "Response appears too large. Is this correct?";
-    }  
-  }
-
-}
-
 /* EditableQuestionSet initializes a set of questions that can be edited by the user. This class takes care of
  * observing the new question form, keeping track of all the questions, adding/removing questions from the list, and
  * various other tasks.
@@ -764,6 +716,53 @@ function inputMask(element, data_type, units) {
   var check_response = null;
   var error_message = "";
   var units = units;
+
+  /**
+   * This will sanity check a percentage response
+   * @response The numeric response entered by the user
+   */
+  function checkPercentResponse(response) {
+    if(response < 1 && response > -1 && response != 0) {
+      return "Percentages should be entered in whole percents. Is this correct?";
+    }  
+  }
+
+  /**
+   * This will sanity check a numeric response
+   * @response The numeric response entered by the user
+   */
+  function checkNumericResponse(response) {
+    if(response < 0) {
+      return "Your response is negative. Is this correct?";
+    }
+  }
+
+  /**
+   * This will sanity check a wage response
+   * @response The numeric response entered by the user
+   * @units The units dropdown element.
+   */
+  function checkWageResponse(response, units) {
+    var unitsType = units.options[units.selectedIndex].text;
+    
+    if(unitsType == 'Annually') {
+      if(response < 10000) {
+        return "Your response is below minimum wage. Is this correct?";
+      }
+      if(response > 1000000) {
+        return "Your response appears too large. Is this correct?";
+      }   
+    } 
+    else if (unitsType == 'Hourly') {
+      if(response < 6.55) {
+        return "Your response is below minimum wage. Is this correct?";
+      }
+      if(response > 500) {
+        return "Response appears too large. Is this correct?";
+      }  
+    }
+
+  }
 
   if(data_type == 'currency') {
     char_mask = /^\$?(\d*,?)*\.?\d{0,2}$/
