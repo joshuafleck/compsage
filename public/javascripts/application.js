@@ -844,6 +844,165 @@ function inputMask(element, data_type, units) {
     units.observe('change',reviewer);
 }
 
+/* Invitation List object. Should be initialized on the survey invitation page. Requires the fast autocompleter to
+ * function, so make sure that is included as well.
+ * @survey_id The ID of the survey the invite list is for.
+ */
+function InviteList(survey_id) {
+  function initializeObservers() {
+    var cachedBackend = new Autocompleter.Cache(liveOrganizationSearch,{'choices': 10, 'dataToQueryParam': function(data) {return data.name;}});
+    var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+
+    new Autocompleter.Json('external_invitation_organization_name', 'search_results', cachedLookup, {
+      'list_generator': function(choices) {
+        var list = new Element('ul');
+
+        choices.each(function(choice) {
+          var li = new Element('li');
+          li.insert('<div class="actions"><a href="javascript:;"><img src="/images/add_invitation_button.gif" /></a></div>' + 
+            '<div class="name">' + choice.name + '</div>') 
+          if(choice.location) {
+            li.insert('<div class="location description_box">Location: ' + choice.location + '</div>');
+          }
+          li.data = choice;
+          list.insert(li);
+        });
+
+        return list;
+        },
+      'minChars': 2,
+      'delay': 0.1,
+      'updateElement': function(li) {
+        addInvitation(li.data);
+      }
+    });
+
+    $$('#networks > li').each(function(network_li) {
+      var network_id = network_li.id.match(/\d+/)[0]
+      var expand_link = network_li.select('a.expand_network').first();
+      var collapse_link = network_li.select('a.collapse_network').first();
+
+      expand_link.observe('click', function(e) {
+        e.stop();
+        $('network_' + network_id + '_members').show(); 
+        this.hide();
+      });
+
+      network_li.select('a.collapse_network').first().observe('click', function(e) {
+        e.stop();
+        $('network_' + network_id + '_members').hide(); 
+        expand_link.show();
+      });
+
+      network_li.select('a.invite').first().observe('click', inviteNetwork.curry(network_id));
+    });
+
+    $('invitation_form').observe('submit', addInvitationByForm);
+
+    $$('ul#invitations > li').each(function(invitation_li) {
+      var id_match = invitation_li.id.match(/\d+/);
+      var invitation_id = '';
+      if(id_match == null)
+        return;
+      else
+        invitation_id = id_match[0];
+
+      var remove_link = invitation_li.select('a.remove').first();
+      if(remove_link)
+        remove_link.observe('click', removeInvitation.curry(invitation_id));
+    });
+  }
+
+  /*
+   * This will send an ajax request to the server with the search text
+   */
+  function liveOrganizationSearch(value, suggest) {
+    new Ajax.Request('/organizations/search.json', {
+      'method': 'get',
+      'parameters': {'search_text': value},
+      'requestHeaders': {'Accept':'application/json'},
+      'onSuccess': function(transport) {
+        suggest(transport.responseText.evalJSON());
+      },
+      'onCreate': function() {
+        $('live_load_indicator').show();
+      },
+      'onComplete': function() {
+        $('live_load_indicator').hide();
+      }
+    });
+  }
+
+  /* Sends the ajax request to invite the specified organization.
+   */
+  function addInvitation(organization) {
+    new Ajax.Request('/surveys/' + survey_id + '/invitations', {
+      'method': 'post',
+      'parameters': {'organization_id': organization.id},
+      'onCreate': function() {$('submit_load_indicator').show();},
+      'onComplete': function() {$('submit_load_indicator').hide();}
+    });
+  }
+
+  function addInvitationByForm(e) {
+    e.stop();
+    var org_name = $F('external_invitation_organization_name');
+    new Ajax.Request('/surveys/' + survey_id + '/invitations', {
+      'method': 'post',
+      'parameters': $('invitation_form').serialize(),
+      'onCreate': function() {$('submit_load_indicator').show();},
+      'onComplete': function() {$('submit_load_indicator').hide();}
+    });
+  }
+
+
+  function addInvitationToList(invitation_id, invitation_display, organization_id) {
+    $('external_invitation_organization_name').value = '';
+    $('external_invitation_email').value = '';
+
+    var newListElement = new Element('li', {'id': 'invitation_' + invitation_id});
+    var removeLink = new Element('a', {'href':'#', 'class':'remove'});
+    removeLink.insert('<img src="/images/remove_button.gif" />');
+    removeLink.observe('click', removeInvitation.curry(invitation_id));
+    newListElement.insert(removeLink);
+
+    if(organization_id)
+      newListElement.insert('<a href="/organizations/' + organization_id + '">' + invitation_display + '</a>');
+    else
+      newListElement.insert(invitation_display);
+
+    $('invitations').insert(newListElement);
+    newListElement.hide();
+    newListElement.appear({'duration':0.5});
+  }
+
+  function removeInvitation(invitation_id, e) {
+    e.stop();
+    new Effect.Fade('invitation_' + invitation_id, {
+      'duration': 0.5,
+      'afterFinish': function() {
+        $('invitation_' + invitation_id).remove();
+      }
+    });
+
+    new Ajax.Request('/surveys/' + survey_id + '/invitations/' + invitation_id, {
+      'method': 'delete'
+    });
+  }
+
+  function inviteNetwork(network_id, e) {
+    e.stop();
+    new Ajax.Request('/surveys/' + survey_id + '/invitations/create_for_network', {
+      'method': 'post',
+      'parameters': {'network_id': network_id},
+      'onCreate': function() {$('load_indicator_' + network_id).show();$('network_' + network_id + '_invite').hide();},
+      'onComplete': function() {$('load_indicator_' + network_id).hide();$('network_' + network_id + '_invite').show();}
+    });
+  }
+
+  initializeObservers();
+}
+
 /*
  * This will add observers to all form inputs that will call the specified method when enter is pushed
  * @form the form
