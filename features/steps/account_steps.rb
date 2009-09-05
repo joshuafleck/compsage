@@ -1,20 +1,45 @@
 Given /I am on the new account page/ do
-  visit new_account_url
+  goto(new_account_url)
 end
 
 Given /I am on the edit account page/ do
-  visit edit_account_url
+  goto(edit_account_url)
 end
 
-Given /I am on the login page/ do
-  visit new_session_url
+Given /I have requested a password reset/ do
+  @current_organization.create_reset_key_and_send_reset_notification
 end
 
-Given /I am on the reset password page/ do  
-  @current_organization = Organization.find_by_email("test@test.com")
-  visit reset_account_url(:key => @current_organization.reset_password_key)
+Given /I am on the reset password page/ do
+  goto(reset_account_url(:key => @current_organization.reset_password_key))
 end
 
-Given /there is an organization/ do
-  @current_organization = Factory.create(:organization, :name => "Organization 0", :email => "test@test.com")
+When /I add an account/ do
+    fills_in "Your Name", :with => "test name"
+    fills_in "Zip", :with => "12345"
+    fills_in "Password", :with => "test12"
+    fills_in "Confirm password", :with => "test12"
+    clicks_button 'Sign Up'
 end
+
+When /I edit the account/ do
+    fills_in "Email address", :with => "test@example.com"
+    fills_in "Your Name", :with => "test name"
+    fills_in "Zip", :with => "12345"
+    fills_in "Password", :with => "test123"
+    fills_in "Confirm password", :with => "test123"
+    clicks_button 'Update'
+end
+
+When /I request a password reset/ do
+    fills_in "Email Address", :with => @current_organization.email
+    clicks_button 'Reset My Password'
+end
+
+When /I reset my password/ do
+    fills_in "Password", :with => "reset password"
+    fills_in "Password confirmation", :with => "reset password"
+    clicks_button 'Reset My Password'
+end
+
+

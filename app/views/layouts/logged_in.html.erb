@@ -17,7 +17,7 @@
 		<div id="account_settings">
 			<% if logged_in? && current_organization then %>
 				<%=link_to "Account Settings", edit_account_path%>
-				<%=link_to "Log Out", session_path, :method => :delete%>
+				<%=link_to "Log Out", session_path, :method => :delete, :name => 'Log Out'%>
 			<% end %>
 		</div>
 		<ul id="nav" class="<%=yield :highlighted_tab %>_nav">

@@ -1,11 +1,18 @@
 development:
   enable_star: true
   min_prefix_len: 2
+  port: 3312
+test:
+  enable_star: true
+  min_prefix_len: 2  
+  port: 3313
 staging:
   enable_star: true
   min_prefix_len: 2
+  port: 3312
   config_file: /var/www/compsage/shared/config-files/staging.sphinx.conf
 production:
   enable_star: true
   min_prefix_len: 2
+  port: 3312
   config_file: /var/www/compsage/shared/config-files/production.sphinx.conf
