@@ -826,16 +826,23 @@ ol#questions {
 }
 
 ol#questions li {
-  padding: 0 1em;
+  margin: 0;
+  padding: 0;
 }
 
-ol#questions li.odd, ol#new_questions li.odd {
+ol#questions ol {
+  margin: 0 -10px;
+  list-style-type: none;
+  padding: 0;
+}
+
+ol#questions li.odd, ol.questions li.odd, ol#new_questions li.odd {
   background-color: #f1f3f0;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
 }
 
-ol#questions li.even, ol#new_questions li.even {
+ol#questions li.even, ol.questions li.even, ol#new_questions li.even {
   background-color: #ffffff;
 }
 
@@ -847,6 +854,7 @@ ol#questions label, ol#questions div.label {
 }
 
 ol#questions li div.question_container {
+  margin: 0 1em;
   padding: 0.5em 0;
 }
 
