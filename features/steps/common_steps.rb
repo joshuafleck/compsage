@@ -75,3 +75,11 @@ Given /^I am on the network page$/ do
   goto(network_url(@network))
 end
 
+Given /^there is an organization named "([^\"]*)"$/ do |name|
+  create_organization(name)
+end
+
+Given /^there are organizations named ((?:\"[^\"]*\",? ?)+)$/ do |names|
+  names = names.split(",").collect{|n| n.strip.gsub(/^"|"$/, "") }
+  create_organization(names)
+end

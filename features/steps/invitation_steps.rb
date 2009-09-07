@@ -1,12 +1,13 @@
-Given /^there is an organization named "([^\"]*)"$/ do |name|
-  @organization = Factory(:organization, :name => name)
-end
-
 Given /^I am on the survey invitations page$/ do
   goto(survey_invitations_url(@survey))
 end
 
-When /^I create an invitation$/ do
+When "I type in an existing organization" do
+  create_organization("Existing Organization")
+  @browser.text_field(:id, 'external_invitation_organization_name').set_without_blur("Exis")
+end
+
+When /^I create an external invitation$/ do
   @browser.text_field(:id,'external_invitation_organization_name').value = 'invited organization'
   @browser.text_field(:id,'external_invitation_email').value = 'test1@example.com'
   @browser.button(:value,'Add').click
