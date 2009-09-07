@@ -849,6 +849,27 @@ function inputMask(element, data_type, units) {
  * @survey_id The ID of the survey the invite list is for.
  */
 function InviteList(survey_id) {
+  
+  this.addInvitationToList = function(invitation_id, invitation_display, organization_id) {
+    $('external_invitation_organization_name').value = '';
+    $('external_invitation_email').value = '';
+
+    var newListElement = new Element('li', {'id': 'invitation_' + invitation_id});
+    var removeLink = new Element('a', {'href':'#', 'class':'remove'});
+    removeLink.insert('<img src="/images/remove_button.gif" />');
+    removeLink.observe('click', removeInvitation.curry(invitation_id));
+    newListElement.insert(removeLink);
+
+    if(organization_id)
+      newListElement.insert('<a href="/organizations/' + organization_id + '">' + invitation_display + '</a>');
+    else
+      newListElement.insert(invitation_display);
+
+    $('invitations').insert(newListElement);
+    newListElement.hide();
+    newListElement.appear({'duration':0.5});
+  }
+
   function initializeObservers() {
     var cachedBackend = new Autocompleter.Cache(liveOrganizationSearch,{'choices': 10, 'dataToQueryParam': function(data) {return data.name;}});
     var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
@@ -956,25 +977,7 @@ function InviteList(survey_id) {
   }
 
 
-  function addInvitationToList(invitation_id, invitation_display, organization_id) {
-    $('external_invitation_organization_name').value = '';
-    $('external_invitation_email').value = '';
-
-    var newListElement = new Element('li', {'id': 'invitation_' + invitation_id});
-    var removeLink = new Element('a', {'href':'#', 'class':'remove'});
-    removeLink.insert('<img src="/images/remove_button.gif" />');
-    removeLink.observe('click', removeInvitation.curry(invitation_id));
-    newListElement.insert(removeLink);
-
-    if(organization_id)
-      newListElement.insert('<a href="/organizations/' + organization_id + '">' + invitation_display + '</a>');
-    else
-      newListElement.insert(invitation_display);
-
-    $('invitations').insert(newListElement);
-    newListElement.hide();
-    newListElement.appear({'duration':0.5});
-  }
+  
 
   function removeInvitation(invitation_id, e) {
     e.stop();

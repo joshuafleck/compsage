@@ -46,4 +46,4 @@
   <%= render :partial => 'invitations/invite_organization' %>
 </div>
 <script type="text/javascript" src="/javascripts/fast_autocompleter.js"></script>
-<% content_for :initialize_js, "var inviteList = new InviteList(#{@survey.id});"%>
+<% content_for :initialize_js, "inviteList = new InviteList(#{@survey.id});"%>
