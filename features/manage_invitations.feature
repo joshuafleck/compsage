@@ -1,6 +1,6 @@
 Feature: Manage Invitations
 
-  Scenario: Remove survey invitation
+  Scenario: Creating an internal survey invitation
     Given I am testing javascript
     And I am logged in
     And I am sponsoring a "pending" survey
