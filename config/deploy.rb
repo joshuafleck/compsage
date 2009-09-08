@@ -47,8 +47,12 @@ namespace :deploy do
   task :link_ts, :roles => :app do
     run "ln -s #{shared_path}/sphinx #{current_path}/db/sphinx"
   end  
-
+  
+  desc "Run asset packager to merge JS and CSS files"
+  task :merge_files, :role => :app do
+    run "cd #{current_path}; rake rake asset:packager:build_all"
+  end
 
 end
 
-after 'deploy', 'deploy:link_logos', 'deploy:link_ts', 'deploy:copy_database_yml', 'deploy:migrations', 'deploy:load_pdq'
+after 'deploy', 'deploy:link_logos', 'deploy:link_ts', 'deploy:copy_database_yml', 'deploy:migrations', 'deploy:load_pdq', 'deploy:merge_files'

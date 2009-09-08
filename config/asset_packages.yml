@@ -1,0 +1,15 @@
+--- 
+javascripts: 
+- base: 
+  - prototype
+  - FusionCharts
+  - effects
+  - dragdrop
+  - controls
+  - fast_autocompleter
+  - application
+stylesheets: 
+- base: 
+  - styles  
+- printer:
+    - printer-friendly
