@@ -30,7 +30,7 @@ end
 
 #defining an organization.
 Factory.define :organization do |o|
-  o.name 'Iced Inc'
+  o.name { Factory.next(:organization_name) }
   o.email { Factory.next(:email) }
   o.city 'Minneapolis'
   o.state 'MN'

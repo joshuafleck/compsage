@@ -9,13 +9,17 @@ When "I type in an existing organization and select it from the dropdown" do
   @browser.div(:id, 'search_results').link(:href, 'javascript:;').click
 end
 
+When "I invite the network" do
+  @browser.link(:id, "network_#{@network.id}_invite").click
+end
+
 When /^I create an external invitation$/ do
   @browser.text_field(:id,'external_invitation_organization_name').value = 'external organization'
   @browser.text_field(:id,'external_invitation_email').value = 'test1@example.com'
   @browser.button(:value,'Add').click
 end
 
-Then /^I should be able to see the invitation$/ do
+Then /^I should see the invitation$/ do
   wait_for_ajax
   assert(@browser.link(:class,'remove').exists?)
 end

@@ -67,6 +67,11 @@ Given /^I own a network$/ do
   @network = Factory(:network, :owner => @current_organization)
 end
 
+Given "I am in a network" do
+  @network = Factory(:network)
+  @network.organizations << @current_organization
+end
+
 Given /^I am sponsoring a "([^\"]*)" survey$/ do |state|
   @survey = Factory("#{state}_survey".to_sym, :sponsor => @current_organization)
 end
