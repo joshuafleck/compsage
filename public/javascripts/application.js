@@ -99,7 +99,7 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
     // Update follow-ups with the new order.
     this.updateFollowups();
     this.restripeQuestions();
-  }
+  };
 
   /* Adds a new question at the request of the user from the question form
    */
@@ -111,8 +111,9 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
     var selectedParentQuestion = $F(followUpSelect);
     var questionParameters = null;
 
-    if(!selectedQuestion)
+    if(!selectedQuestion){
       return false;
+	}
 
     if(selectedQuestion == "0") {      //The user selected custom question
       if($F('custom_question_text') == '') {
@@ -131,7 +132,7 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
     } 
     else if(selectedQuestion != '') {  //The user selected a predefined question
       questionParameters = {'predefined_question_id': selectedQuestion,
-                            'parent_question_id': selectedParentQuestion}
+                            'parent_question_id': selectedParentQuestion};
     }  
       
     new Ajax.Request('/surveys/' + surveyId + '/questions', {
@@ -147,7 +148,7 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
     //Reset the select box
     $('predefined_questions').clear();
     $('follow_up_question_select').clear();
-  }
+  };
 
   /* Inserts the specified question under the specified parent question. Called when the server responds to a user's
    * request to add questions.
@@ -163,10 +164,10 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
     else {
       // Find the question that this is a follow-up to and send the insert request to that question set containing that
       // question's follow-ups.
-      parentQuestion = questionsById[parentQuestion]
+      parentQuestion = questionsById[parentQuestion];
       parentQuestion.followUpQuestions.insertQuestions(questions, null);
     }
-  }
+  };
   
   this.restripeQuestions = function() {
     if(parentQuestionSet) {
@@ -179,7 +180,7 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
       i = 1 - i;
     });
     
-  }
+  };
 
   /* Private Functions */
   
@@ -195,9 +196,9 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
   /* Sets up the questions that are in the DOM */
   function initializeQuestions() {
     $(list).immediateDescendants().each(function(li, index) {
-      if(index < questionSet.editableQuestions.length)
+      if(index < questionSet.editableQuestions.length){
         return;   // Don't want to re-initialize existing questions.
-
+	  }
       var question = new EditableQuestion(questionSet, surveyId, li, index); 
       questionSet.editableQuestions.push(question);
       questionSet.registerQuestion(question);
@@ -221,11 +222,11 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
     }
   }
 
-  if(addForm)
+  if(addForm){
     observeNewQuestionForm();
-
+  }
   // Get the list of questions and set up our objects
-  initializeQuestions()
+  initializeQuestions();
 }
 
 /* An editable question is a question that can be edited by the user.
@@ -278,14 +279,14 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
     if(e) { e.stop(); }
     displayDiv.blindUp({'duration': 0.25});
     editDiv.blindDown({'duration': 0.25});
-  }
+  };
 
   /* Cancels editing of this question. Hides the edit fields. */
   this.cancelEdit = function(e) {
     if(e) { e.stop(); }
     editDiv.blindUp({'duration': 0.25});
     displayDiv.blindDown({'duration': 0.25});
-  }
+  };
 
   /* Delete this question. Removes its list item from the DOM, notifies the server of the deletion, and notifies its
    * question set that this question has been deleted.
@@ -297,33 +298,33 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
         listItem.remove();
         questionSet.removeQuestion(question);
       }
-    })
+    });
 
     new Ajax.Request(questionUri, {
       'method': 'delete'
     });  
 
-  }
+  };
 
   /* Move this question up in the list */
   this.moveUp = function(e) {
     if(e) { e.stop(); }
-    if(question.position == 0)
+    if(question.position == 0){
       return;
-    
+    }
     questionSet.swapQuestionWith(question, 'previous');
     sendPositionUpdate('higher');
-  }
+  };
   
   /* Move this question down in the list */
   this.moveDown = function(e) {
     if(e) { e.stop(); }
-    if(question.position == questionSet.editableQuestions.length - 1)
+    if(question.position == questionSet.editableQuestions.length - 1){
       return;
-
+	}
     questionSet.swapQuestionWith(question, 'next');
     sendPositionUpdate('lower');
-  }
+  };
 
   /* Saves the question, hiding the edit form once finished. */
   this.save = function(e) {
@@ -342,7 +343,7 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
       'onCreate': function() {loadIndicator.show();},
       'onComplete': function() {loadIndicator.hide();}
     });
-  }
+  };
 
   /* Create some DOM option elements. */
   this.toOptions = function() {
@@ -357,7 +358,7 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
     });
 
     return options;
-  }
+  };
 
   /* Private Functions */
 
@@ -394,7 +395,7 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
     downButton.observe('click', question.moveDown);
     saveButton.observe('click', question.save);
     listItem.select('input[type=text]').invoke('observe', 'keydown', function(e) {
-      if (!e) var e = window.event;
+      if (!e) { var e = window.event; }
       if(e.keyCode==13){
         e.stop();
         question.save();
@@ -453,21 +454,22 @@ function Response(listElement) {
     if(responseType == "options") {
       var val = null;
       for(var i = 0; i < questionInputs.length; i++) {
-        if(questionInputs[i].checked)
+        if(questionInputs[i].checked){
           return $F(questionInputs[i]);
+		}
       }
     } else {
       return $F(questionInputs.first());
     }
-  }
+  };
 
   /* Allows this question to be answered.
    */
   this.enable = function() {
     inputs.each(function(input) {
       input.removeAttribute('disabled');
-    })
-  }
+    });
+  };
 
   /* Disallows this question from being answered. Clears any input.
    */
@@ -479,45 +481,46 @@ function Response(listElement) {
         input.value = '';
       }
       input.setAttribute('disabled', true);
-    })
+    });
 
     me.disableComments();
     me.disableFollowups();
-  }
+  };
 
   /* Disallows this question from being commented on. Clears any comments that are entered.
    */
   this.disableComments = function() { 
-    if(!me.hasComments())
+    if(!me.hasComments()){
       return;
+	}
 
     me.hideComments();
     commentsContainer.hide();
-  }
+  };
 
   /* Allows this question to be commented on.
    */
   this.enableComments = function() {
-    if(!me.hasComments())
+    if(!me.hasComments()){
       return;
-
+	}
     commentsContainer.show();
-  }
+  };
 
   /* Shows the comments field.
    */
   this.showComments = function() {
     commentsFieldContainer.show();
     commentsLink.innerHTML = 'Cancel';
-  }
+  };
 
   /* Hides the comments field, clearing any input.
    */
   this.hideComments = function() {
     commentsField.value = '';
     commentsFieldContainer.hide();
-    commentsLink.innerHTML = 'Add Comment'
-  }
+    commentsLink.innerHTML = 'Add Comment';
+  };
 
   /* Enables follow-ups to this question by firing an event on the follow-up list. Important: if there are no listeners
    * bound to the follow-up list, this will cause an infinite loop due to the event bubbling up to this question's
@@ -527,29 +530,31 @@ function Response(listElement) {
    * enable/disable follow-ups.
    */
   this.enableFollowups = function() {
-    if(followUpList)
-      followUpList.fire('questions:enable')
-  }
+    if(followUpList){
+      followUpList.fire('questions:enable');
+	}
+  };
 
   /* Disables follow-ups to this question by firing questions:disable. See important information above.
    */
   this.disableFollowups = function() {
-    if(followUpList)
+    if(followUpList){
       followUpList.fire('questions:disable');
-  }
+	}
+  };
 
   /* Whether or not this question has been answered.
    */
   this.answered = function() {
     return me.value() != null && me.value() !== '';
-  }
+  };
 
   /* Whether or not this question can have comments or not, determined by the presence of the comments div in the
    * response from the server.
    */
   this.hasComments = function() {
     return commentsFieldContainer != null;
-  }
+  };
 
   /* Sets up some variables for convenience
    */
@@ -623,10 +628,12 @@ function Response(listElement) {
     if(me.hasComments()) {
       commentsLink.observe('click', function(e) {
         e.stop();
-        if(commentsLink.innerHTML == 'Cancel')
+        if(commentsLink.innerHTML == 'Cancel'){
           me.hideComments();
-        else
+		}
+        else {
           me.showComments();
+		}
       });
     }
 
@@ -660,8 +667,9 @@ function Response(listElement) {
    * * Initializing the input masks if needed.
    */
   function initialSetup() {
-    if(me.hasComments())
+    if(me.hasComments()){
       commentsLink.innerHTML = 'Cancel';
+	}
     
     if(!me.answered()) {
       // Haven't answered the question, so, can't add comments and can't add follow-ups.
@@ -765,30 +773,31 @@ function inputMask(element, data_type, units) {
   }
 
   if(data_type == 'currency') {
-    char_mask = /^\$?(\d*,?)*\.?\d{0,2}$/
+    char_mask = /^\$?(\d*,?)*\.?\d{0,2}$/;
     data_template = "$#{number}";
     precision = 2;
-    error_message = "Response must be a valid wage or salary, e.g. $10.50, 20,000"
+    error_message = "Response must be a valid wage or salary, e.g. $10.50, 20,000";
     check_response = checkWageResponse;
   } else if(data_type == 'percent') {
     char_mask = /^\-?\d*\.?\d*\%?$/;
     data_template = "#{number}%";
     check_response = checkPercentResponse;
-    error_message = "Response must be a valid percentage, e.g. 25%, 10.2%, -25%"
+    error_message = "Response must be a valid percentage, e.g. 25%, 10.2%, -25%";
   } else if(data_type == 'number') {
     char_mask = /^\-?(\d*,?)*\.?\d*$/;
     data_template = "#{number}";
     check_response = checkNumericResponse;
-    error_message = "Response must be a valid number, e.g. 3, 23,000, -5.2"
+    error_message = "Response must be a valid number, e.g. 3, 23,000, -5.2";
   } else if(data_type == 'text') {
     char_mask = /.*/;
   }
 
   element.observe('keydown', function(e) {
     //need to check for match here in case of double-keydown
-    if(last_valid == "" && e.element().value != '' && e.element().value.match(char_mask))
+    if(last_valid == "" && e.element().value != '' && e.element().value.match(char_mask)){
       last_valid = e.element().value;
-  })
+	}
+  });
 
   element.observe('keyup', function(e) {
     question_id = e.element().id.match(/(\d+)/)[0];
@@ -801,31 +810,33 @@ function inputMask(element, data_type, units) {
       $("warning_"+question_id).update('');
       element.fire('question:validinput');
     }
-  })
+  });
 
   //This will review the input to make sure it falls within expected range
   var reviewer = function(e) {
     var clean_value = element.value.replace(/,/g,'').match(/(\-?\d+\.?\d*)|(\-?\.\d+)/);
     var number = parseFloat(clean_value);
 
-    if(precision)
+    if(precision){
       number = number.toFixed(precision);
-    
-    if(isNaN(number))
+    }
+    if(isNaN(number)){
       element.value = "";
+	  }
     else {
       parts = number.toString().split('.');
       integer_part = parts[0];
 
-      if(parts.length > 1)
+      if(parts.length > 1){
         decimal_part = '.' + parts[1];
-      else
+	    }
+      else {
         decimal_part = '';
-
-      need_comma_regex = /(\d+)(\d{3})/
-      while(integer_part.match(need_comma_regex))
+      }
+      need_comma_regex = /(\d+)(\d{3})/;
+      while(integer_part.match(need_comma_regex)){
         integer_part = integer_part.replace(need_comma_regex, '$1,$2');
-      
+      }
       var formatted_number = integer_part + decimal_part;
       element.value = data_template.interpolate({'number': formatted_number});
 
@@ -837,11 +848,12 @@ function inputMask(element, data_type, units) {
     last_valid = element.value;
   };
 
-  if(data_type != 'text')
+  if(data_type != 'text'){
     element.observe('change', reviewer);
-
-  if(units)
+  }
+  if(units){
     units.observe('change',reviewer);
+  }
 }
 
 /* Invitation List object. Should be initialized on the survey invitation page. Requires the fast autocompleter to
@@ -860,15 +872,17 @@ function InviteList(survey_id) {
     removeLink.observe('click', removeInvitation.curry(invitation_id));
     newListElement.insert(removeLink);
 
-    if(organization_id)
+    if(organization_id){
       newListElement.insert('<a href="/organizations/' + organization_id + '">' + invitation_display + '</a>');
-    else
+    }
+    else{
       newListElement.insert(invitation_display);
+    }
 
     $('invitations').insert(newListElement);
     newListElement.hide();
     newListElement.appear({'duration':0.5});
-  }
+  };
 
   function initializeObservers() {
     var cachedBackend = new Autocompleter.Cache(liveOrganizationSearch,{'choices': 10, 'dataToQueryParam': function(data) {return data.name;}});
@@ -881,7 +895,7 @@ function InviteList(survey_id) {
         choices.each(function(choice) {
           var li = new Element('li');
           li.insert('<div class="actions"><a href="javascript:;"><img src="/images/add_invitation_button.gif" /></a></div>' + 
-            '<div class="name">' + choice.name + '</div>') 
+            '<div class="name">' + choice.name + '</div>');
           if(choice.location) {
             li.insert('<div class="location description_box">Location: ' + choice.location + '</div>');
           }
@@ -899,7 +913,7 @@ function InviteList(survey_id) {
     });
 
     $$('#networks > li').each(function(network_li) {
-      var network_id = network_li.id.match(/\d+/)[0]
+      var network_id = network_li.id.match(/\d+/)[0];
       var expand_link = network_li.select('a.expand_network').first();
       var collapse_link = network_li.select('a.collapse_network').first();
 
@@ -923,14 +937,17 @@ function InviteList(survey_id) {
     $$('ul#invitations > li').each(function(invitation_li) {
       var id_match = invitation_li.id.match(/\d+/);
       var invitation_id = '';
-      if(id_match == null)
+      if(id_match == null){
         return;
-      else
+      }
+      else{
         invitation_id = id_match[0];
+      }
 
       var remove_link = invitation_li.select('a.remove').first();
-      if(remove_link)
+      if(remove_link){
         remove_link.observe('click', removeInvitation.curry(invitation_id));
+      }
     });
   }
 
