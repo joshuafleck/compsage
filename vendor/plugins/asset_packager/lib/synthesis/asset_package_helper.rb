@@ -2,7 +2,7 @@ module Synthesis
   module AssetPackageHelper
     
     def should_merge?
-      AssetPackage.merge_environments.include?('production')#RAILS_ENV)
+      AssetPackage.merge_environments.include?(RAILS_ENV)
     end
 
     def javascript_include_merged(*sources)
