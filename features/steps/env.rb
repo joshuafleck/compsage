@@ -10,6 +10,7 @@ require 'firewatir'
 
 require 'features/steps/text_box_extension.rb'
 require 'features/helpers/organization_helper'
+require 'features/helpers/wait_helper'
 
 Webrat.configure do |config|
   config.mode = :rails
@@ -46,8 +47,8 @@ sleep(5) # Give Mongrel some time to start. Since we are running as a daemon, th
 browser = FireWatir::Firefox.new
 
 # Add some helpers to our world object.
-class CustomWorld; end
 World(OrganizationHelper)
+World(WaitHelper)
 
 # This block is run before every feature test
 Before do
