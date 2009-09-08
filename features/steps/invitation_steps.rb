@@ -3,10 +3,17 @@ Given /^I am on the survey invitations page$/ do
 end
 
 When "I type in an existing organization and select it from the dropdown" do
-  create_organization("Existing Organization")
+  create_organization "Existing Organization"
   @browser.text_field(:id, 'external_invitation_organization_name').set_without_blur("Ex")
   wait_for_ajax
   @browser.div(:id, 'search_results').link(:href, 'javascript:;').click
+end
+
+When "I type in an existing organization and invite them" do
+  org = create_organization("Existing Organization")
+  @browser.text_field(:id, 'external_invitation_organization_name').value = org.name
+  @browser.text_field(:id, 'external_invitation_email').value = org.email
+  @browser.button(:value, 'Add').click
 end
 
 When "I invite the network" do
