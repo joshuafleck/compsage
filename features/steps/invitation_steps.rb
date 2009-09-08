@@ -14,6 +14,6 @@ When /^I create an external invitation$/ do
 end
 
 Then /^I should be able to see the invitation$/ do
-  sleep(1) # Without this, the validation happens before the server can return
+  wait_for_ajax
   assert(@browser.link(:class,'remove').exists?)
 end
