@@ -11,9 +11,9 @@ When /^I create an external invitation$/ do
   @browser.text_field(:id,'external_invitation_organization_name').value = 'external organization'
   @browser.text_field(:id,'external_invitation_email').value = 'test1@example.com'
   @browser.button(:value,'Add').click
-  sleep(1) # Without this, the click occurrs before the textbox is completely filled in.
 end
 
 Then /^I should be able to see the invitation$/ do
+  sleep(1) # Without this, the validation happens before the server can return
   assert(@browser.link(:class,'remove').exists?)
 end
