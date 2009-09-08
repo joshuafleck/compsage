@@ -34,7 +34,28 @@ Feature: Manage Invitations
     Then I should see the invitation
 
   Scenario: Sending an invalid invitation
+    Given I am testing javascript
+    And I am logged in
+    And I am sponsoring a "pending" survey
+    And I am on the survey invitations page
+    When I type in an invalid invitation
+    Then I should not see the invitation
+    And I should see an error message
 
   Scenario: Inviting someone already invited
-
+    Given I am testing javascript
+    And I am logged in
+    And I am sponsoring a "pending" survey
+    And I am on the survey invitations page
+    When I send a duplicate invitation
+    Then I should see an error message
+    
   Scenario: Removing a survey invitation
+    Given I am testing javascript
+    And I am logged in
+    And I am sponsoring a "pending" survey
+    And I have created a survey invitation
+    And I am on the survey invitations page
+    When I remove the invitation
+    Then I should not see the invitation
+    
