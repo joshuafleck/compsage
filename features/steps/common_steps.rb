@@ -72,7 +72,8 @@ Given "I am in a network" do
   @network.organizations << @current_organization
 end
 
-Given /^I am sponsoring a "([^\"]*)" survey$/ do |state|
+Given /^I am sponsoring a ?"?([^\"]*)"? survey$/ do |state|
+  state = 'pending' if state == ''
   @survey = Factory("#{state}_survey".to_sym, :sponsor => @current_organization)
 end
 

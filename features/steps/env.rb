@@ -44,6 +44,7 @@ START_MONGREL = "ruby script/server -p #{port} -e #{ENV["RAILS_ENV"]} -d"
 system 'rm log/test.log' # Remove any logs from the previous test run
 system START_MONGREL
 sleep(5) # Give Mongrel some time to start. Since we are running as a daemon, the process returns before the server can rev up.
+
 browser = FireWatir::Firefox.new
 
 # Add some helpers to our world object.

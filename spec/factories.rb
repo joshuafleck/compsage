@@ -172,10 +172,34 @@ end
 
 #definition and setup for question
 Factory.define :question do |p|
-  p.position { |a| a.object_id }
   #p.survey {|a| a.association(:survey)}
   p.text { Factory.next(:question) }
   p.response_type "NumericalResponse"
+end
+
+Factory.define :percent_question, :parent => :question do |p|
+  p.response_type "PercentResponse"
+end
+
+Factory.define :multiple_choice_question, :parent => :question do |p|
+  p.response_type "MultipleChoiceResponse"
+  p.options       ["Option 1", "Option 2", "Option 3"]
+end
+
+Factory.define :numerical_question, :parent => :question do |p|
+  # Same
+end
+
+Factory.define :text_question, :parent => :question do |p|
+  p.response_type "TextualResponse"
+end
+
+Factory.define :wage_question, :parent => :question do |p|
+  p.response_type "WageResponse"
+end
+
+Factory.define :base_wage_question, :parent => :question do |p|
+  p.response_type "BaseWageResponse"
 end
 
 #definition and setup for predefined question
