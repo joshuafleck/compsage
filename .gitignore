@@ -11,3 +11,8 @@ config/development.sphinx.conf
 *.swp
 .DS_Store
 coverage/*
+config/test.sphinx.conf
+public/javascripts/base_packaged.js
+public/stylesheets/base_packaged.css
+public/stylesheets/printer_packaged.css
+
