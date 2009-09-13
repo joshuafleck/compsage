@@ -24,7 +24,8 @@ Rails::Initializer.run do |config|
   config.gem 'activemerchant', :version => '>=1.4.0', :lib => 'active_merchant'  
   config.gem 'prawn', :version => '>=0.4.1'
   config.gem 'freelancing-god-thinking-sphinx', :lib => 'thinking_sphinx', :source => 'http://gems.github.com'
-  config.load_paths += ["app/workers", "app/builders"]
+
+  config.load_paths += [RAILS_ROOT + "/app/workers", RAILS_ROOT + "/app/builders"]
 end
 
 # This will include our custom DateHelper method: 'better_time_ago_in_words' in ActionView so it is accessible to our views and email templates
