@@ -34,3 +34,25 @@ end
 Then "I should not see a response warning" do
   @browser.div(:id, "warning_#{@question.id}").text.should be_blank
 end
+
+When "I am on the survey show page" do
+  goto(survey_url(@survey))
+end
+
+Given "the survey to which I am invited is stalled" do
+  @current_survey_invitation.survey.aasm_state = 'stalled'
+  @current_survey_invitation.survey.save!
+end
+
+Given "the survey has a partial response" do
+  5.times do
+    Factory(:participation, :survey => @survey)
+  end
+  question = Factory(:text_question, :survey => @survey)
+  response = Factory.build(:response, :question => question)
+  Factory(:invoice, :survey => @survey)
+  participation = Factory(:participation, :survey => @survey, :responses => [response])
+end
+
+
+

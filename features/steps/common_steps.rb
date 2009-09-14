@@ -35,7 +35,8 @@ end
 def login_with_external_invitation
   
   logout
-  goto(survey_login_url(:survey_id => @current_survey_invitation.survey.id, :key => @current_survey_invitation.key))
+  @survey = @current_survey_invitation.survey
+  goto(survey_login_url(:survey_id => @survey.id, :key => @current_survey_invitation.key))
   
 end
 
