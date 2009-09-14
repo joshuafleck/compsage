@@ -1,12 +1,31 @@
 module WaitHelper
   # Wait for all ajax requests to finish, timing out after the specified number of seconds.
   def wait_for_ajax(timeout = 30)
+    wait_for(timeout) { @browser.document.js_eval("document.defaultView.Ajax.activeRequestCount").to_i == 0 }
+  end
+
+  # Wait for all javascript effects to finish, timing out after the specified number of seconds.
+  def wait_for_effects(timeout = 30)
+    wait_for(timeout) { @browser.document.js_eval("document.defaultView.Effect.Queue.size()").to_i == 0 }
+  end
+
+  # Wait for both effects and ajax. If effects toggle ajax when the effects finish, this will not wait for them.
+  def wait_for_javascript(timeout = 30)
+    wait_for_ajax(timeout)
+    wait_for_effects(timeout)
+  end
+
+  private
+
+
+  # Waits for the block to become true, up until the specified timeout, at which time a runtime exception will be
+  # raised.
+  def wait_for(timeout = 30, &block)
     start = Time.now
     while true
-      connections = @browser.document.js_eval("document.defaultView.Ajax.activeRequestCount").to_i
+      raise RuntimeError, "Timed out waiting for event" if Time.now - start > timeout
 
-      raise RuntimeError, "Timed out waiting for Ajax" if Time.now - start > timeout
-      break if connections == 0
+      break if yield
 
       sleep(0.1)
     end

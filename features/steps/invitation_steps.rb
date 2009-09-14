@@ -47,20 +47,19 @@ end
 
 When "I remove the invitation" do
   @browser.link(:class, 'remove').click
-  sleep(0.25) # Sleep to wait for the fade to happen.
 end
 
 Then /^I should see the invitation$/ do
-  wait_for_ajax
+  wait_for_javascript
   assert(@browser.link(:class,'remove').exists?)
 end
 
 Then "I should not see the invitation" do
-  wait_for_ajax
+  wait_for_javascript
   assert(!@browser.link(:class,'remove').exists?)
 end
 
 Then "I should see an error message" do
-  wait_for_ajax
+  wait_for_javascript
   assert(@browser.div(:id, 'errorExplanation').exists?)
 end
