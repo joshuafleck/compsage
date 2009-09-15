@@ -21,7 +21,11 @@ class QuestionFormBuilder < ActionView::Helpers::FormBuilder
     when "radio"
       @template.content_tag(:div, question_text, :class => "label") +
       question.options.to_enum(:each_with_index).collect { |option, index|
-        @template.content_tag(:label, radio_button(:response, index.to_f) + " " + option, :class => 'option')
+        @template.content_tag(:label,
+          radio_button(:response,
+            index.to_f,
+            :id => "#{@object_name.sub('[', '_').chop}_#{@options[:index]}_response_#{index}"
+          ) + " " + option, :class => 'option')
       }.join("") + 
       error_text # error should be displayed in the case that a comment was entered, but no response
     when "text_area"
