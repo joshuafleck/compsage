@@ -7,6 +7,7 @@ table {
 table th {
   background-color: #eee;
   border-bottom: 1px solid #666;
+  text-align: left;
 }
 
 caption {

@@ -58,10 +58,6 @@ a img {
   vertical-align: middle;
 }
 
-table th {
-  text-align: left; 
-}
-
 img {
   border: 0;
 }
@@ -347,13 +343,6 @@ div.image_header {
   line-height: 20px;
 }
 
-#search_box img {
-  margin: 0 -10px 0 0;
-  padding: 0;
-  vertical-align: middle;
-}
-
-
 #search_box input#search_text {
   padding: 5px 5px 0 5px;
   width: 114px;
@@ -441,16 +430,6 @@ div#my_surveys .deadline {
   padding-right: 10px;
 }
 
-div.link_bar {
-  margin-bottom: 1.2857em;
-}
-
-div.link_bar a {
-  font-size: 1.2857em;
-  font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
-  padding: 0 1em 0 0;
-}
-
 #end_break {
   clear: both;
 }
@@ -492,14 +471,6 @@ ul#discussions P {
 
 ul#discussions .subject {
   font-weight: bold;
-  margin-bottom: 0;
-}
-
-ul#discussions .actions {
-  margin-bottom: .25em;
-} 
-
-ul#discussions .body {
   margin-bottom: 0;
 }
 
@@ -587,11 +558,11 @@ div#step_container .third_column {
   margin-left: 0;
 }
 
-form.new_survey input#survey_job_title, form.edit_survey input#survey_job_title {
+form.edit_survey input#survey_job_title {
   width: 500px;
 }
 
-form.new_survey textarea, form.edit_survey textarea {
+form.edit_survey textarea {
   width: 500px;
 }
 
@@ -671,27 +642,6 @@ p.preview_text {
 
 /* Invitations Page */
 
-#current_invitation_list {
-  width: 246px;
-  padding: 0 10px;
-  float: left;
-}
-
-#current_invitation_list ol {
-  padding-left: 1.5em;
-  margin: 0;
-  padding-top: 0;
-}
-
-#current_invitation_list ol li {
-  /* required for IE6 to wrap long invitations, prevents from pushing the invitations input down */
-  word-wrap: break-word;
-}
-
-#current_invitation_list h3 {
-  margin-top: 0;
-}
-
 #invite_network_list h3 {
   margin-top: 0;
 }
@@ -712,11 +662,6 @@ p.preview_text {
   clear: left;
 }
 
-#send_invitations .description {
-  font-style: italic;
-  color: #666;
-}
-
 #send_invitations label {
   margin: 0.5em 0 0 0;
   font-size: 0.9em;
@@ -725,30 +670,8 @@ p.preview_text {
   display: block;
 }
 
-#send_invitations li label {
-  display: inline;
-}
-
-#send_invitations .contact {
-  color: #666;
-}
-
-#invite_organizations {
-  margin-bottom: 2em;
-  margin-left: 0.5em;
-}
-
-ul#external_invitation_form_errors {
-  margin-bottom: 1em;
-  margin-top: -1em;
-}
-
 input#external_invitation_submit {
   margin-top: 1em;}
-
-#invite_organizations p {
-  margin: .5em 0;
-}
 
 a.expand_network {
   outline: none;
@@ -792,17 +715,6 @@ ul#invitations li {
 
 ul#invitations a.remove {
   float: right;
-}
-
-#survey_finish_links {
-  text-align: center;
-  font-size: 1.4em;
-  font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
-}
-
-#question_response_rates {
-  width: 512px;
-  margin-left: 266px;  
 }
 
 /* Survey Questions Page */
@@ -893,11 +805,6 @@ div.report_item_suppressed h3 {
 div.report_item_suppressed {
   color: #666;
   font-size: .9em;
-}
-
-div.top_join_link {
-  float: right;
-  padding: 0 1em 0 1em;
 }
 
 div#report_download_options {
@@ -1080,24 +987,6 @@ form.button-to div {
   display: inline;
 }
 
-div.separator {
-  margin-top: 1em;
-  margin-bottom: 1em;
-  text-align: center;
-}
-
-div.fieldWithErrors label {
-  color: #900;
-}
-
-div.fieldWithErrors {
-  display: inline;
-}
-
-div.fieldWithErrors input {
-  background-color: #fcc;
-}
-
 div.errorExplanation {
  font-size: 1.1em; 
 }
@@ -1125,10 +1014,6 @@ div.left_column {
 
 form.inplaceeditor-form {
   margin-bottom: 1em;
-}
-
-a.editor_cancel_link {
-  padding-left: 1em;
 }
 
 img.load_indicator {
