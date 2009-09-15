@@ -37,7 +37,7 @@ When "I edit the network" do
     clicks_button 'Update'  
 end
 
-When "the netwok survey has a question" do
+When "the network survey has a question" do
     survey = @current_organization.sponsored_surveys.with_aasm_state(:pending).first    
     survey.questions << Factory(:question, :survey => survey)    
 end

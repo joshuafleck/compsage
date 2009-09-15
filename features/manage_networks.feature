@@ -56,7 +56,7 @@ Feature: Manage Networks
     And the network has members
     And I am on the network page
     When I follow "Survey Network"
-    And the netwok survey has a question
+    And the network survey has a question
     And I fill in "Job title" with "Test"
     And I press "form_submit"
     Then I should see "network member"
