@@ -65,11 +65,11 @@ Given /^I am on the login page$/ do
 end
 
 Given /^I own a network$/ do
-  @network = Factory(:network, :owner => @current_organization)
+  @network = Factory(:network, :owner => @current_organization, :name => "Owned network")
 end
 
 Given "I am in a network" do
-  @network = Factory(:network)
+  @network = Factory(:network, :name => "Belonged network")
   @network.organizations << @current_organization
 end
 
