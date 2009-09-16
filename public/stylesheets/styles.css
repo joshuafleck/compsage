@@ -987,6 +987,19 @@ form.button-to div {
   display: inline;
 }
 
+div.fieldWithErrors label {
+  color: #900;
+}
+
+div.fieldWithErrors {
+  display: inline;
+}
+
+div.fieldWithErrors input {
+  background-color: #fcc;
+}
+
+
 div.errorExplanation {
  font-size: 1.1em; 
 }
@@ -1015,6 +1028,11 @@ div.left_column {
 form.inplaceeditor-form {
   margin-bottom: 1em;
 }
+
+a.editor_cancel_link {	
+  padding-left: 1em;
+}
+
 
 img.load_indicator {
   vertical-align: middle;
