@@ -11,6 +11,7 @@ require 'firewatir'
 require 'features/steps/text_box_extension.rb'
 require 'features/helpers/organization_helper'
 require 'features/helpers/wait_helper'
+require 'features/helpers/dom_interface_helper'
 
 Webrat.configure do |config|
   config.mode = :rails
@@ -50,6 +51,7 @@ browser = FireWatir::Firefox.new
 # Add some helpers to our world object.
 World(OrganizationHelper)
 World(WaitHelper)
+World(DomInterfaceHelper)
 
 # This block is run before every feature test
 Before do
