@@ -1,5 +1,5 @@
 Given /I am on the new pending account page/ do
-  goto(signup_url)
+  visit signup_url
 end
 
 When /^I add a pending account$/ do

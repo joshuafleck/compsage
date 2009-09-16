@@ -1,9 +1,9 @@
 Given /I am on the new account page/ do
-  goto(new_account_url)
+  visit new_account_url
 end
 
 Given /I am on the edit account page/ do
-  goto(edit_account_url)
+  visit edit_account_url
 end
 
 Given /I have requested a password reset/ do
@@ -16,7 +16,7 @@ Given /the password reset request is expired/ do
 end
 
 Given /I am on the reset password page/ do
-  goto(reset_account_url(:key => @current_organization.reset_password_key))
+  visit reset_account_url(:key => @current_organization.reset_password_key)
 end
 
 Given "I am logged in via network invitation" do

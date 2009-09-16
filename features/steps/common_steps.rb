@@ -1,55 +1,34 @@
-
 def logout
-
-  goto(root_url)
-  
-  if @testing_javascript then
-    log_out = @browser.link(:name,'Log Out')
-    log_out.click if log_out.exists?
-  else      
-    click_link "Log Out" if response.body =~ /Log Out/m
-  end
-  
+  visit(root_url)
+  click_link "Log Out" if response_body =~ /Log Out/m
 end
 
 def login
-
   email = @current_organization.email
   password = "test12"
   
   logout
-  goto(new_session_url)
+  visit(new_session_url)
   
-  if @testing_javascript then  
-    @browser.text_field(:name,'email').value = email
-    @browser.text_field(:name,'password').value = password
-    @browser.button(:value,'Log in').click
-  else
-    fill_in("Email", :with => email)
-    fill_in("Password", :with => password)
-    click_button "Log in"
-  end
-  
+  fill_in("email", :with => email)
+  fill_in("password", :with => password)
+  click_button "Log in"
 end
 
 def login_with_external_invitation
-  
   logout
   @survey = @current_survey_invitation.survey
-  goto(survey_login_url(:survey_id => @survey.id, :key => @current_survey_invitation.key))
-  
-end
-
-def goto(url)
-  if @testing_javascript then  
-    @browser.goto(url.sub('http://www.example.com',@base_url))
-  else
-    visit(url)
-  end
+  visit survey_login_url(:survey_id => @survey.id, :key => @current_survey_invitation.key)
 end
 
 Given /^I am testing javascript$/ do
-  @testing_javascript = true
+  self.dom_interface = :firewatir 
+  self.dom_browser   = @browser
+end
+
+Given /^I am testing with (.*)$/ do |interface|
+  self.dom_interface = interface.intern
+  self.dom_browser   = @browser
 end
 
 Given /^I am logged in$/ do
@@ -61,7 +40,7 @@ Given /^I am logged in via survey invitation$/ do
 end
 
 Given /^I am on the login page$/ do
-  goto(new_session_url)
+  visit(new_session_url)
 end
 
 Given /^I own a network$/ do
@@ -79,7 +58,7 @@ Given /^I am sponsoring a ?"?([^\"]*)"? survey$/ do |state|
 end
 
 Given /^I am on the network page$/ do
-  goto(network_url(@network))
+  visit(network_url(@network))
 end
 
 Given /^there is an organization named "([^\"]*)"$/ do |name|
