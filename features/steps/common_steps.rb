@@ -43,6 +43,10 @@ Given /^I am on the login page$/ do
   visit(new_session_url)
 end
 
+Given "I am on the home page" do
+  visit(root_url)
+end
+
 Given /^I own a network$/ do
   @network = Factory(:network, :owner => @current_organization, :name => "Owned network")
 end
@@ -68,4 +72,9 @@ end
 Given /^there are organizations named ((?:\"[^\"]*\",? ?)+)$/ do |names|
   names = names.split(",").collect{|n| n.strip.gsub(/^"|"$/, "") }
   create_organization(names)
+end
+
+
+When /^I click "([^\"]*)"$/ do |link_text|
+  click_link link_text
 end
