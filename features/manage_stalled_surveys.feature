@@ -16,7 +16,7 @@ Feature: Manage stalled surveys
     
   Scenario: View
     Given I am logged in via survey invitation
-    And the survey to which I am invited is stalled
+    And the survey to which I am invited is "stalled"
     When I am on the survey show page
     Then I should see "insufficient participation" 
     

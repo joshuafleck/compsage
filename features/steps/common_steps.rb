@@ -21,6 +21,11 @@ def login_with_external_invitation
   visit survey_login_url(:survey_id => @survey.id, :key => @current_survey_invitation.key)
 end
 
+def create_survey(state, sponsor)
+  state = 'pending' if state == ''
+  Factory("#{state}_survey".to_sym, :sponsor => sponsor)
+end
+
 Given /^I am testing javascript$/ do
   self.dom_interface = :firewatir 
   self.dom_browser   = @browser
@@ -57,8 +62,12 @@ Given "I am in a network" do
 end
 
 Given /^I am sponsoring a ?"?([^\"]*)"? survey$/ do |state|
-  state = 'pending' if state == ''
-  @survey = Factory("#{state}_survey".to_sym, :sponsor => @current_organization)
+  @survey = create_survey(state, @current_organization)
+end
+
+Given /^I am participating in a ?"?([^\"]*)"? survey$/ do |state|
+  @survey = create_survey(state, Factory(:organization))
+  Factory(:participation, :participant => @current_organization, :survey => @survey)
 end
 
 Given /^I am on the network page$/ do

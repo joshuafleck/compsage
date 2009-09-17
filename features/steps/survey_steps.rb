@@ -23,8 +23,8 @@ Given "I am sponsoring a survey with every question type" do
                     :questions => @questions)
 end
 
-Given "the survey to which I am invited is stalled" do
-  @current_survey_invitation.survey.aasm_state = 'stalled'
+Given /^the survey to which I am invited is "([^\"]*)"$/ do |state|
+  @current_survey_invitation.survey.aasm_state = state
   @current_survey_invitation.survey.save!
 end
 
@@ -36,6 +36,14 @@ Given "the survey has a partial response" do
   response = Factory.build(:response, :question => question)
   Factory(:invoice, :survey => @survey)
   participation = Factory(:participation, :survey => @survey, :responses => [response])
+end
+
+And "the survey has been invoiced" do
+  Factory.create(:invoice, :survey => @survey)
+end
+
+And "I am invoicing the survey" do
+  Factory.create(:invoice, :survey => @survey, :payment_type => 'invoice')
 end
 
 When /^I enter "([^"]*)"$/ do |text|
@@ -102,3 +110,6 @@ Then "I should not see a response warning" do
   div("warning_#{@question.id}").text.should be_blank
 end
 
+When "I am on the survey report page" do
+  visit survey_report_url(@survey)
+end
