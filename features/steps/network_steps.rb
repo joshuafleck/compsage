@@ -1,13 +1,13 @@
 When "I am on the networks index" do
-  goto(networks_url)
+  visit(networks_url)
 end
 
 Given "I am on the new network page" do
-  goto(new_network_url)
+  visit(new_network_url)
 end
 
 Given /^I am on the edit network page$/ do
-  goto(edit_network_url(@network))
+  visit(edit_network_url(@network))
 end
 
 Given "I am invited to a network" do
