@@ -21,12 +21,12 @@ end
 
 Given "I am logged in via network invitation" do
   invitation = Factory(:external_network_invitation)
-  goto(new_account_path(:key => invitation.key))
+  visit new_account_path(:key => invitation.key)
 end
 
 Given "I am logged in via pending account" do
   invitation = Factory(:pending_account)
-  goto(new_account_path(:key => invitation.key))
+  visit new_account_path(:key => invitation.key)
 end
 
 When /I add an account/ do
