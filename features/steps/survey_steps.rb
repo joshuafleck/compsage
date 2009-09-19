@@ -70,9 +70,9 @@ When "I am on the edit survey page" do
 end
 
 When "I create the survey" do
-  fill_in "Job title", :with => "survey 1"
-  fill_in "Job description", :with => "text"
-  field_with_id('form_submit', 'submit').click
+  fill_in "survey_job_title", :with => "survey 1"
+  fill_in "survey_description", :with => "text"
+  click_button 'form_submit'
 end
 
 When "I edit the survey" do
@@ -171,4 +171,51 @@ Then "I should see invited, sponsored, participated, and finished surveys" do
   response.body.should =~ /#{@survey.job_title}/m
   response.body.should =~ /#{@participated_survey.job_title}/m
   response.body.should =~ /#{@finished_survey.job_title}/m
+end
+
+When "I cancel the survey" do
+  @browser.startClicker("OK")
+  click_link "Cancel"
+end
+
+Then "I should be on the survey index" do
+  @browser.url().should =~ /surveys$/m
+end
+
+Given "I am on the new survey page" do
+  visit new_survey_url
+end
+
+Then "I should be on the survey invitations page" do
+  @browser.url().should =~ /invitations$/m
+end
+
+Given "the survey has enough invitations" do
+  5.times do
+    Factory(:pending_survey_invitation,:survey => @survey)
+  end  
+end
+
+When "I am done with invitations" do
+  click_button 'invitation_form_submit'
+end
+
+Then "I should be on the survey preview page" do
+  response_body.should =~ /Preview/m
+end
+
+Given "I am on the survey preview page" do
+  visit preview_survey_questions_url(@survey)
+end
+
+When "I preview the survey" do
+  response.body.should =~ /Question/m
+end
+
+When "I am done previewing the survey" do
+  click_button 'next'
+end
+
+Then "I should be on the survey billing page" do
+  response.body.should =~ /Billing/m
 end
