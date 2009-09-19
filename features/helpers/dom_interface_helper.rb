@@ -61,6 +61,10 @@ module DomInterfaceHelper
     def field_named(locator)
       FirewatirUtils.locate_element(@_browser, :text_field, locator)
     end
+
+    def field_labeled(locator)
+      raise RuntimeException, "Not Implemented"
+    end
     
     def fill_in(locator, options = {})
       method = options.delete(:method) || :value=

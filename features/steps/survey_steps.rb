@@ -38,12 +38,32 @@ Given "the survey has a partial response" do
   participation = Factory(:participation, :survey => @survey, :responses => [response])
 end
 
-And "the survey has been invoiced" do
+Given "the survey has been invoiced" do
   Factory.create(:invoice, :survey => @survey)
 end
 
-And "I am invoicing the survey" do
+Given "I am invoicing the survey" do
   Factory.create(:invoice, :survey => @survey, :payment_type => 'invoice')
+end
+
+Given "I have previously responded to the survey" do
+  participation = Factory(:participation, :survey => @survey, :participant => @current_organization)
+
+  @survey.questions.each do |question|
+    response = participation.responses.build(:question => question, :type => question.response_type)
+    if question.response_class <= NumericalResponse then
+      response.response = "10"
+      if question.response_class <= WageResponse then
+        response.unit = "Hourly"
+      end
+    elsif question.response_class <= TextualResponse then
+      response.response = "text"
+    elsif question.response_class <= MultipleChoiceResponse then
+      response.response = 0
+    end
+
+    response.save
+  end
 end
 
 When /^I enter "([^"]*)"$/ do |text|
@@ -88,24 +108,35 @@ When "I unsuccessfully edit the survey" do
   field_with_id('form_submit', 'submit').click
 end
 
-When "I answer the entire survey" do
-  @questions ||= [@question] # Handle if we've just made a single question.
+When "I answer the entire survey( with comments)?" do |with_comments|
+  with_comments = !with_comments.blank?
+
+  if @questions.nil? then
+    if @question.nil? then
+      @questions = @survey.questions
+    else
+      @questions = [@question]
+    end
+  end
 
   @questions.each do |question|
     answer = nil
     units  = nil
-    input_field_name = "participation[response][#{question.id}][response]"
-    units_field_name = "participation[response][#{question.id}][unit]"
+    input_field_name   = "participation[response][#{question.id}][response]"
+    units_field_name   = "participation[response][#{question.id}][unit]"
+    comment_field_name = "participation[response][#{question.id}][comments]"
 
     if question.response_class <= NumericalResponse then # fill in numeric value
       fill_in input_field_name, :with => "10"
       if question.response_class <= WageResponse then    # select units
         select "Hourly", :from => units_field_name
       end
+      fill_in comment_field_name, :with => "comments" if with_comments
     elsif question.response_class <= TextualResponse then # fill in text value
       fill_in input_field_name, :with => "text"
     else # select option
       choose "participation_response_#{question.id}_response_0"
+      fill_in comment_field_name, :with => "comments" if with_comments
     end
   end
   
@@ -121,7 +152,6 @@ Then "I should be on the survey show page" do
 end
 
 Then "I should see the response success message" do
-  # response_body.should =~ /Thank you for participating in the survey/
   div("flash_notice").text.should_not be_blank
 end
 
@@ -131,6 +161,35 @@ end
 
 Then "I should not see a response warning" do
   div("warning_#{@question.id}").text.should be_blank
+end
+
+Then "I should see my previous responses" do
+  @questions.each do |question|
+    input_field_name = "participation[response][#{question.id}][response]"
+    units_field_name = "participation[response][#{question.id}][unit]"
+
+    if question.response_class == NumericalResponse then
+      field_named(input_field_name).value.should == "10.0"
+    elsif question.response_class == PercentResponse then
+      field_named(input_field_name).value.should == "10.0%"
+    elsif question.response_class <= WageResponse then
+      field_named(input_field_name).value.should == "$10.00"
+      field_named(units_field_name).value.should == ["Hourly"] 
+    elsif question.response_class <= TextualResponse then
+      field_named(input_field_name).value.should == "text"
+    elsif question.response_class <= MultipleChoiceResponse then
+      field_labeled("Option 1").should be_checked
+    end
+
+  end
+end
+
+Then "I should see my comments" do
+  @questions.each do |question|
+    if question.response_class.accepts_comment? then
+      field_named("participation[response][#{question.id}][comments]").value.should_not be_blank
+    end
+  end
 end
 
 When "I am on the survey report page" do

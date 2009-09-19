@@ -38,9 +38,9 @@ When /^I attach the file at "(.*)" to "(.*)" $/ do |path, field|
 end
 
 Then /^I should see "(.*)"$/ do |text|
-  response.body.should =~ /#{text}/m
+  response_body.should =~ /#{text}/m
 end
 
 Then /^I should not see "(.*)"$/ do |text|
-  response.body.should_not =~ /#{text}/m
+  response_body.should_not =~ /#{text}/m
 end
