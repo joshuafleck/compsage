@@ -136,3 +136,39 @@ end
 When "I am on the survey report page" do
   visit survey_report_url(@survey)
 end
+
+When "I search for a running survey by name" do
+  @name = "Searchable survey"
+  @survey = Factory(:running_survey,:job_title => @name)
+  visit surveys_url
+  fills_in 'search_text', :with => @name
+  field_with_id('submit', 'submit').click
+end
+
+Then "I should see the survey I searched for" do
+  response.body.should =~ /#{@name}/m
+end
+
+Given "I am on the survey reports index" do
+  visit reports_surveys_url
+end
+
+Given "I am on the surveys index" do
+  visit surveys_url
+end
+
+Given "I have been invited, sponsored, participated, and finished surveys" do
+  @invited_survey = Factory(:sent_survey_invitation, :invitee => @current_organization).survey
+  @sponsored_survey = Factory(:running_survey, :sponsor => @current_organization)
+  @survey = Factory(:running_survey)
+  @participated_survey = Factory(:participation, :participant => @current_organization).survey
+  @finished_survey = Factory(:finished_survey, :sponsor => @current_organization)
+end
+
+Then "I should see invited, sponsored, participated, and finished surveys" do
+  response.body.should =~ /#{@invited_survey.job_title}/m
+  response.body.should =~ /#{@sponsored_survey.job_title}/m
+  response.body.should =~ /#{@survey.job_title}/m
+  response.body.should =~ /#{@participated_survey.job_title}/m
+  response.body.should =~ /#{@finished_survey.job_title}/m
+end

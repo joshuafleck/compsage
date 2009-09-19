@@ -77,7 +77,7 @@ class SurveysController < ApplicationController
 
     search_params = {
       :geo => [current_organization.latitude, current_organization.longitude],
-      :conditions => {
+      :with => {
         :aasm_state_number => Survey::AASM_STATE_NUMBER_MAP['running']
       },
       :match_mode => :extended,              # Allows us to use boolean operators in the search query
