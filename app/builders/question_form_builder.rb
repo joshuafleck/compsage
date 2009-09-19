@@ -4,8 +4,6 @@ class QuestionFormBuilder < ActionView::Helpers::FormBuilder
   def initialize(object_name, object, template, options, proc)
     super
     if @object.class < Response
-      puts object_name
-      puts @object.inspect
       @object_name.sub!(@object_name.match(/\[([\w\_]*\_)response/)[1], '')
     end
   end
