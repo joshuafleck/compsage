@@ -65,6 +65,29 @@ When "I am on the survey show page" do
   visit survey_url(@survey)
 end
 
+When "I am on the edit survey page" do
+  visit edit_survey_url(@survey)
+end
+
+When "I create the survey" do
+  fill_in "Job title", :with => "survey 1"
+  fill_in "Job description", :with => "text"
+  field_with_id('form_submit', 'submit').click
+end
+
+When "I edit the survey" do
+  fill_in "Job description", :with => "text"
+  select("4", :from => "survey_days_to_extend") 
+  field_with_id('form_submit', 'submit').click
+end
+
+When "I unsuccessfully edit the survey" do
+  fill_in "Job title", :with => ""
+  fill_in "Job description", :with => "text"
+  select("4", :from => "survey_days_to_extend") 
+  field_with_id('form_submit', 'submit').click
+end
+
 When "I answer the entire survey" do
   @questions ||= [@question] # Handle if we've just made a single question.
 

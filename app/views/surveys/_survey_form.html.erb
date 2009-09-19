@@ -64,7 +64,7 @@
         <input id="form_submit" type="submit" value="Next &ndash; Create Invitation List" class="next" />
 	      <%= link_to "Cancel", { :action => "destroy", :id => @survey.id }, :confirm => "You are about to delete this survey. Are you sure?", :method => :delete %>
       <%else%>
-        <%= button_to "Next &ndash; Preview Survey", preview_survey_questions_path(@survey), :class => "next", :method => :get, :id => "invitation_form_submit" %>
+        <input id="form_submit" type="submit" value="Next &ndash; Preview Survey" class="next" />
 	      <input type="button" onclick="window.location='<%= survey_path(@survey) %>'" value="Back" class="previous" />
 	    <%end%>
     </div>

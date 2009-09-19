@@ -13,7 +13,7 @@ class QuestionsController < ApplicationController
     @survey = current_organization.sponsored_surveys.find(params[:survey_id])
 
     # Make sure the user has sent enough invitations.
-    if @survey.enough_invitations_to_create? then
+    if @survey.pending? && @survey.enough_invitations_to_create? then
       flash[:error] = "You must invite at least #{Survey::REQUIRED_NUMBER_OF_INVITATIONS} organizations"
       redirect_to survey_invitations_path(@survey)
     end
