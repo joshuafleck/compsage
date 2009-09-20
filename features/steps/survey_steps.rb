@@ -23,6 +23,24 @@ Given "I am sponsoring a survey with every question type" do
                     :questions => @questions)
 end
 
+Given "I am sponsoring a survey with a follow-up to a (.*) question" do |type|
+  case type
+  when "yes/no"
+    @base_question = Factory.build(:multiple_choice_question, :options => ["Yes", "No"])
+  when "multiple choice"
+    @base_question = Factory.build(:multiple_choice_question, :options => ["Yes", "No", "Maybe"])
+  when "text"
+    @base_question = Factory.build(:text_question, :options => ["Yes", "No"])
+  end
+
+  @follow_up_question = Factory.build(:text_question, :parent_question => @base_question)
+
+  @survey = Factory(:survey,
+                    :aasm_state => 'running',
+                    :sponsor => @current_organization,
+                    :questions => [@base_question, @follow_up_question])
+end
+
 Given /^the survey to which I am invited is "([^\"]*)"$/ do |state|
   @current_survey_invitation.survey.aasm_state = state
   @current_survey_invitation.survey.save!
@@ -143,8 +161,34 @@ When "I answer the entire survey( with comments)?" do |with_comments|
   click_button "Submit My Responses"
 end
 
+When "I respond to the parent question" do
+  if @base_question.response_class == MultipleChoiceResponse
+    choose "participation_response_#{@base_question.id}_response_0"
+  elsif @base_question.response_class == TextualResponse
+    fill_in "participation[response][#{@base_question.id}][response]", :with => "Hi", :method => :set
+  end
+end
+
+When "I change my response to the parent question" do
+  if @base_question.response_class == MultipleChoiceResponse
+    choose "participation_response_#{@base_question.id}_response_1"
+  elsif @base_question.response_class == TextualResponse
+    fill_in "participation[response][#{@base_question.id}][response]", :with => "Bye", :method => :set
+  end
+end
+
+When "I remove my response to the parent question" do
+  fill_in "participation[response][#{@base_question.id}][response]", :with => "", :method => :set
+  field_named("participation[response][#{@base_question.id}][response]").fire_event("onkeyup")
+end
+
 When "I cancel the survey response" do
   click_link "Cancel"
+end
+
+When "I respond to just the follow-up question" do
+  fill_in "participation[response][#{@follow_up_question.id}][response]", :with => "HI!!!", :method => :set
+  click_button "Submit My Responses"
 end
 
 Then "I should be on the survey show page" do
@@ -277,4 +321,12 @@ end
 
 Then "I should be on the survey billing page" do
   response.body.should =~ /Billing/m
+end
+
+Then "the follow-up question should be disabled" do
+  field_named("participation[response][#{@follow_up_question.id}][response]").should be_disabled
+end
+
+Then "the follow-up question should not be disabled" do
+  field_named("participation[response][#{@follow_up_question.id}][response]").should_not be_disabled
 end
