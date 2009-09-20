@@ -282,7 +282,7 @@ When "I cancel the survey" do
 end
 
 Then "I should be on the survey index" do
-  @browser.url().should =~ /surveys$/m
+  response_body.should =~ /Browse Current Surveys/m
 end
 
 Given "I am on the new survey page" do
@@ -290,17 +290,13 @@ Given "I am on the new survey page" do
 end
 
 Then "I should be on the survey invitations page" do
-  @browser.url().should =~ /invitations$/m
+  response_body.should =~ /Invitations to/m
 end
 
 Given "the survey has enough invitations" do
   5.times do
     Factory(:pending_survey_invitation,:survey => @survey)
   end  
-end
-
-When "I am done with invitations" do
-  click_button 'invitation_form_submit'
 end
 
 Then "I should be on the survey preview page" do
@@ -311,16 +307,28 @@ Given "I am on the survey preview page" do
   visit preview_survey_questions_url(@survey)
 end
 
-When "I preview the survey" do
-  response.body.should =~ /Question/m
+Given "I am on the survey billing page" do
+  visit new_survey_billing_url(@survey)
 end
 
-When "I am done previewing the survey" do
+When "I preview the survey" do
+  response_body.should =~ /Question/m
+end
+
+When "I click next" do
   click_button 'next'
 end
 
+When "I click back" do
+  click_button 'previous'
+end
+
 Then "I should be on the survey billing page" do
-  response.body.should =~ /Billing/m
+  response_body.should =~ /Billing/m
+end
+
+Then "I should be on the new survey page" do
+  response_body.should =~ /Job title/m
 end
 
 Then "the follow-up question should be disabled" do
@@ -330,3 +338,70 @@ end
 Then "the follow-up question should not be disabled" do
   field_named("participation[response][#{@follow_up_question.id}][response]").should_not be_disabled
 end
+
+When "I pay via credit card" do
+  fill_in 'invoice_organization_name', :with => 'test org name'
+  fill_in 'invoice_contact_name', :with => 'test contact name'
+  fill_in 'invoice_address_line_1', :with => 'test addr 1'
+  fill_in 'invoice_address_line_2', :with => 'test addr 2'
+  fill_in 'invoice_city', :with => 'test city name'
+  fill_in 'invoice_zip_code', :with => '12345'
+  fill_in 'invoice_phone', :with => '(952) 393-1749'
+  select 'MN', :from => 'invoice_state'
+  choose "invoice_payment_type_credit"
+  fill_in 'active_merchant_billing_credit_card_first_name', :with => 'test first name'
+  fill_in 'active_merchant_billing_credit_card_last_name', :with => 'test last name'
+  fill_in 'active_merchant_billing_credit_card_number', :with => '4111111111111111'
+  fill_in 'active_merchant_billing_credit_card_verification_value', :with => '123'
+  select 'visa', :from => 'active_merchant_billing_credit_card_type'
+  select '5', :from => 'active_merchant_billing_credit_card_month'
+  select '2019', :from => 'active_merchant_billing_credit_card_year'
+  click_button 'next'
+end
+
+When "I unsuccessfully pay via credit card" do
+  fill_in 'invoice_organization_name', :with => 'test org name'
+  fill_in 'invoice_contact_name', :with => 'test contact name'
+  fill_in 'invoice_address_line_1', :with => 'test addr 1'
+  fill_in 'invoice_address_line_2', :with => 'test addr 2'
+  fill_in 'invoice_city', :with => 'test city name'
+  fill_in 'invoice_zip_code', :with => '12345'
+  fill_in 'invoice_phone', :with => '(952) 393-1749'
+  select 'MN', :from => 'invoice_state'
+  choose "invoice_payment_type_credit"
+  fill_in 'active_merchant_billing_credit_card_first_name', :with => 'test first name'
+  fill_in 'active_merchant_billing_credit_card_last_name', :with => 'test last name'
+  fill_in 'active_merchant_billing_credit_card_number', :with => '411dzvfvzdfv1111'
+  fill_in 'active_merchant_billing_credit_card_verification_value', :with => '123'
+  select 'visa', :from => 'active_merchant_billing_credit_card_type'
+  select '5', :from => 'active_merchant_billing_credit_card_month'
+  select '2019', :from => 'active_merchant_billing_credit_card_year'
+  click_button 'next'
+end
+
+When "I pay via invoice" do
+  fill_in 'invoice_organization_name', :with => 'test org name'
+  fill_in 'invoice_contact_name', :with => 'test contact name'
+  fill_in 'invoice_address_line_1', :with => 'test addr 1'
+  fill_in 'invoice_address_line_2', :with => 'test addr 2'
+  fill_in 'invoice_city', :with => 'test city name'
+  fill_in 'invoice_zip_code', :with => '12345'
+  fill_in 'invoice_phone', :with => '(952) 393-1749'
+  select 'MN', :from => 'invoice_state'
+  choose "invoice_payment_type_invoice"
+  click_button 'next'
+end
+
+When "I unsuccessfully pay via invoice" do
+  fill_in 'invoice_organization_name', :with => 'test org name'
+  fill_in 'invoice_contact_name', :with => 'test contact name'
+  fill_in 'invoice_address_line_1', :with => 'test addr 1'
+  fill_in 'invoice_address_line_2', :with => 'test addr 2'
+  fill_in 'invoice_city', :with => 'test city name'
+  fill_in 'invoice_zip_code', :with => '12345'
+  fill_in 'invoice_phone', :with => '(952)6 393-1749'
+  select 'MN', :from => 'invoice_state'
+  choose "invoice_payment_type_invoice"
+  click_button 'next'
+end
+

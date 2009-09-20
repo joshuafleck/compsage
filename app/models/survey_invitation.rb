@@ -33,4 +33,4 @@ class SurveyInvitation < Invitation
   def send_invitation_email
     Notifier.deliver_survey_invitation_notification(self)
   end
- end
+end
