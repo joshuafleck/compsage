@@ -13,6 +13,7 @@ Feature: Manage stalled surveys
     When I am on the survey show page
     And I follow "Cancel the survey"
     Then I should not see "Stalled"  
+    And I should see "Browse Current Surveys"  
     
   Scenario: View
     Given I am logged in via survey invitation
