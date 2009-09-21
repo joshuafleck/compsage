@@ -9,7 +9,7 @@ end
 When "I type in an existing organization and select it from the dropdown" do
   create_organization "Existing Organization"
   fill_in 'external_invitation_organization_name', :with => 'Ex', :method => :set_without_blur
-  wait_for_ajax
+  wait_for_javascript
   div('search_results').link(:href, 'javascript:;').click
 end
 
@@ -64,4 +64,9 @@ end
 Then "I should see an error message" do
   wait_for_javascript
   div('errorExplanation').exists?
+end
+
+Then "I should see an invitation success message" do
+  wait_for_javascript
+  response_body.should =~ /Invitation sent to/
 end
