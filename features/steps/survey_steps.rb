@@ -244,6 +244,23 @@ When "I delete the first question" do
   get_element_by_xpath("id('new_questions')/li[1]//a[@class='question_delete']").click
 end
 
+When "I respond to the invited survey" do
+  within "div#invitations" do
+    click_link @invited_survey.job_title
+  end
+  click_link "Respond to this survey"
+  fill_in "participation[response][#{@invited_survey.questions.first.id}][response]", :with => "100"
+  click_button "Submit My Responses"
+end
+
+When "I decline the survey invitation" do
+  click_link "Decline Invitation"
+end
+
+Then "I should not see the survey invitation" do
+  get_element_by_xpath("id('invitations')").should be_nil
+end
+
 Then "I should not see the deleted question" do
   wait_for_javascript
   response_body.should_not include(@deleted_question_text)
@@ -353,6 +370,13 @@ Given "I have been invited, sponsored, participated, and finished surveys" do
   @survey = Factory(:running_survey)
   @participated_survey = Factory(:participation, :participant => @current_organization).survey
   @finished_survey = Factory(:finished_survey, :sponsor => @current_organization)
+end
+
+Given "I have a survey invitation" do
+  @invited_survey = Factory(:running_survey)
+  @invitation     = Factory(:sent_survey_invitation,
+                            :survey => @invited_survey,
+                            :invitee => @current_organization)
 end
 
 Then "I should see invited, sponsored, participated, and finished surveys" do

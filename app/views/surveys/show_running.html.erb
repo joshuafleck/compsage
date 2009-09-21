@@ -3,7 +3,7 @@
 <% content_for :sidebar do %>
   <div id="invitation_list">
     <% if @participation.nil? then %>
-      <%=link_to image_tag("respond_button.gif"), survey_questions_path(@survey)%>
+      <%=link_to image_tag("respond_button.gif"), survey_questions_path(@survey), :title => "Respond to this survey"%>
       <div class="deadline">Participation deadline in <%=better_time_ago_in_words(@survey.end_date)%></div>
     <%else%>
       You responded on <%=@participation.created_at.strftime("%B %d")%>.<br />

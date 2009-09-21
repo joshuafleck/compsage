@@ -1,4 +1,23 @@
-Feature: Manage Invitations
+Feature: Manage Survey Invitations
+
+  Scenario: Accepting a survey invitation
+    Given I am logged in
+    And I have a survey invitation
+    And I am on the surveys index
+
+    When I respond to the invited survey
+
+    Then I should see the response success message
+
+  Scenario: Declining a survey invitation
+    Given I am logged in
+    And I have a survey invitation
+    And I am on the surveys index
+
+    When I decline the survey invitation
+
+    Then I should not see the survey invitation
+
 
   Scenario: Creating an external survey invitation
     Given I am testing javascript

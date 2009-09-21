@@ -29,6 +29,12 @@ module DomInterfaceHelper
     ::Webrat::XML.css_search(webrat_session.dom, "div##{name}, div.#{name}").first
   end
 
+  # This method will work to verify content, but will not work to do things like click as it returns a
+  # nokogiri node rather than a webrat object of the proper type for the element.
+  def get_element_by_xpath(xpath)
+    ::Webrat::XML.xpath_search(webrat_session.dom, xpath).first
+  end
+
   module FirewatirMethods 
     def response_body
       @_browser.js_eval("document.documentElement.innerHTML")
