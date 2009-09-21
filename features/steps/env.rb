@@ -17,6 +17,21 @@ Webrat.configure do |config|
   config.mode = :rails
 end
 
+# MONKEY PATCH ALERT!
+# Prawnto currently checks whether the request is SSL by attempting to downcase the env var SERVER_PROTOCOL. Webrat
+# does not set this. Prawnto should instead as if the request is SSL via standard means (env.request.ssl?), but it
+# doesn't. So, since all of our requests will not be over SSL, let us simply make SSL request return false, thus
+# avoiding the whole issue.
+module Prawnto
+  module TemplateHandler
+    class CompileSupport
+      def ssl_request?
+        false
+      end
+    end
+  end
+end
+
 # Load the predefined questions
 Rake.application.add_import(RAILS_ROOT + "/Rakefile")
 Rake.application.load_imports

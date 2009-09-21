@@ -70,4 +70,4 @@ Feature: Manage finished surveys
     And the survey has been invoiced
     When I am on the survey report page
     When I click "Pdf"
-    Then I should see "Pdf"
+    Then I should see "PDF"
