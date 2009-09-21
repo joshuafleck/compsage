@@ -191,6 +191,93 @@ When "I respond to just the follow-up question" do
   click_button "Submit My Responses"
 end
 
+When "I add a predefined question" do
+  select "6", :from => 'predefined_questions'
+
+  click_button "Add"
+end
+
+When "I add a custom question" do
+  select "0", :from => 'predefined_questions'
+  fill_in 'custom_question_text', :with => "Is this position exempt"
+  select "Yes/No", :from => 'custom_question_response'
+
+  click_button "Add"
+end
+
+When "I attempt to add an invalid custom question" do
+  select "0", :from => 'predefined_questions'
+
+  click_button "Add"
+end
+
+When "I move the first question down" do
+  @moved_question_text      = get_element_by_xpath("id('new_questions')/li[1]//div[@class='question_display_text']").text
+  @moved_question_position  = 2 # The new position of the question to verify later.
+  link = get_element_by_xpath("id('new_questions')/li[1]//a[@class='question_down']")
+  link.click
+end
+
+When "I move the second question up" do
+  @moved_question_text      = get_element_by_xpath("id('new_questions')/li[2]//div[@class='question_display_text']").text
+  @moved_question_position  = 1 # The new position of the question to verify later.
+  link = get_element_by_xpath("id('new_questions')/li[2]//a[@class='question_up']")
+  link.click
+end
+
+When "I edit the first question" do
+  get_element_by_xpath("id('new_questions')/li[1]//a[@class='question_edit']").click
+  get_element_by_xpath("id('new_questions')/li[1]//input[@type='text'][@class='question_text']").value = "Edited question"
+
+  click_button "Save"
+end
+
+When "I incorrectly edit the first question" do
+  get_element_by_xpath("id('new_questions')/li[1]//a[@class='question_edit']").click
+  get_element_by_xpath("id('new_questions')/li[1]//input[@type='text'][@class='question_text']").value = ""
+
+  click_button "Save"
+end
+
+When "I delete the first question" do
+  @deleted_question_text = get_element_by_xpath("id('new_questions')/li[1]//div[@class='question_display_text']").text
+  get_element_by_xpath("id('new_questions')/li[1]//a[@class='question_delete']").click
+end
+
+Then "I should not see the deleted question" do
+  wait_for_javascript
+  response_body.should_not include(@deleted_question_text)
+end
+
+Then "I should see the edited question" do
+  wait_for_javascript
+  get_element_by_xpath("id('new_questions')/li[1]//div[@class='question_display_text']").text.should == "Edited question"
+end
+
+Then "the question should be moved" do
+  wait_for_javascript
+  text = get_element_by_xpath("id('new_questions')/li[#{@moved_question_position}]//div[@class='question_display_text']").text
+  text.should == @moved_question_text
+end
+
+Then "I should see the new question" do
+  wait_for_javascript
+  # Assumed the question added is FLSA status
+  response_body.should =~ /Is this position exempt/
+end
+
+Then "I should not see the new question" do
+  wait_for_javascript
+
+  response_body.should_not =~ /Is this position exempt/
+end
+
+Then "I should see an invalid question error" do
+  wait_for_javascript
+
+  response_body.should =~ /Question text is required/
+end
+
 Then "I should be on the survey show page" do
   response_body.should =~ /Manage Your Survey/
 end
