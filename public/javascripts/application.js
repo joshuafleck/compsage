@@ -753,20 +753,23 @@ function inputMask(element, data_type, units) {
   function checkWageResponse(response, units) {
     var unitsType = units.options[units.selectedIndex].text;
     
+    var tooLargeMessage = "Your response appears too large. Is this correct?";
+    var minimumWageMessage = "Your response is below minimum wage. Is this correct?";
+    
     if(unitsType == 'Annually') {
       if(response < 10000) {
-        return "Your response is below minimum wage. Is this correct?";
+        return minimumWageMessage;
       }
       if(response > 1000000) {
-        return "Your response appears too large. Is this correct?";
+        return tooLargeMessage;
       }   
     } 
     else if (unitsType == 'Hourly') {
       if(response < 6.55) {
-        return "Your response is below minimum wage. Is this correct?";
+        return minimumWageMessage;
       }
       if(response > 500) {
-        return "Response appears too large. Is this correct?";
+        return tooLargeMessage;
       }  
     }
 
