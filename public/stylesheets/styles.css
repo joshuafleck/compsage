@@ -379,6 +379,11 @@ div#my_surveys ul {
   background: url('../images/embellish.gif') bottom center no-repeat;
 }
 
+/* Required for IE6, in FF, the H3 tags in the LI blocks create adequate list spacing without this margin */
+ul.surveys li, ul.my_surveys li, ul#survey_results li {
+  margin-bottom: 1em;
+}
+
 div#my_surveys .status {
   overflow: hidden;
   width: 100%;
@@ -420,7 +425,7 @@ div#my_surveys .deadline {
 }
 
 #invitation_list ol {
-  padding-left: 0 0 0 1.5em;
+  padding-left: 1.5em;
   margin: 0;
 }
 
@@ -733,7 +738,7 @@ div.comments .field {
 ol#questions {
   font-size: 1.2em;
   list-style-type: none;
-  margin: 0 -10px;
+  margin: 0 -10px; /* TODO: negative margins in IE6 causing problems on response page */
   padding: 0;
 }
 
