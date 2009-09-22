@@ -739,17 +739,21 @@ div.comments .field {
 }
 
 ol#questions {
-  border: 1px solid #ddd;
   font-size: 1.2em;
   list-style-type: none;
   margin: 0 0; 
   padding: 0;
 }
 
-ol#questions li {
-  margin: 0;
-  padding: 0;
+ol#questions > li {
+  margin-bottom: 10px;
+  border: 1px solid #e6e9e3;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  overflow:hidden;
+  padding-bottom: 1px;
 }
+
 
 ol#questions ol {
   margin: 0 0px;
@@ -759,8 +763,6 @@ ol#questions ol {
 
 ol#questions li.odd, ol.questions li.odd, ol#new_questions li.odd {
   background-color: #f4f6f2;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
 }
 
 ol#questions li.even, ol.questions li.even, ol#new_questions li.even {
@@ -777,6 +779,23 @@ ol#questions label, ol#questions div.label {
 ol#questions li div.question_container {
   margin: 0 1em;
   padding: 0.5em 0;
+  position: relative;
+  height: 1%;
+}
+
+ol#questions li div.question_content {
+}
+
+ol#questions li div.question_number {
+  line-height: 1em;
+  font-size: 1.5em;
+  height: 1em;
+  width: 50px;
+  color: #bbc6bb;
+  font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
+  position: absolute;
+  top: 50%;
+  margin-top: -0.5em;
 }
 
 div#why_section {
