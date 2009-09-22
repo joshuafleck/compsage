@@ -736,9 +736,10 @@ div.comments .field {
 }
 
 ol#questions {
+  border: 1px solid #ddd;
   font-size: 1.2em;
   list-style-type: none;
-  margin: 0 -10px; /* TODO: negative margins in IE6 causing problems on response page */
+  margin: 0 0; /* TODO: negative margins in IE6 causing problems on response page */
   padding: 0;
 }
 
@@ -748,13 +749,13 @@ ol#questions li {
 }
 
 ol#questions ol {
-  margin: 0 -10px;
+  margin: 0 0px;
   list-style-type: none;
   padding: 0;
 }
 
 ol#questions li.odd, ol.questions li.odd, ol#new_questions li.odd {
-  background-color: #f1f3f0;
+  background-color: #f4f6f2;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
 }
