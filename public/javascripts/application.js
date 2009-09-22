@@ -260,6 +260,7 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
   var textDiv     = null;
   var typeDiv     = null;
   var requiredDiv = null;
+  var errorDiv    = null;
 
   var editDiv        = null;
   var textInput      = null;
@@ -329,20 +330,25 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
   /* Saves the question, hiding the edit form once finished. */
   this.save = function(e) {
     if(e) { e.stop(); }
-
-    new Ajax.Request(questionUri + '.json', {
-      'method': 'put',
-      'parameters': { 'question[text]': $F(textInput),
-                      'question[question_type]': $F(typeSelect),
-                      'question[required]': $(requiredSelect).checked },
-      'onSuccess' : function(transport) {
-        editDiv.blindUp({'duration': 0.25});    
-        updateQuestion(transport.responseText.evalJSON());
-        displayDiv.blindDown({'duration': 0.25});
-      },
-      'onCreate': function() {loadIndicator.show();},
-      'onComplete': function() {loadIndicator.hide();}
-    });
+    if(question.valid()) {
+      hideErrors();
+      new Ajax.Request(questionUri + '.json', {
+        'method': 'put',
+        'parameters': { 'question[text]': $F(textInput),
+                        'question[question_type]': $F(typeSelect),
+                        'question[required]': $(requiredSelect).checked },
+        'onSuccess' : function(transport) {
+          editDiv.blindUp({'duration': 0.25});    
+          updateQuestion(transport.responseText.evalJSON());
+          displayDiv.blindDown({'duration': 0.25});
+        },
+        'onCreate': function() {loadIndicator.show();},
+        'onComplete': function() {loadIndicator.hide();}
+      });
+    }
+    else {
+      showErrors();
+    }
   };
 
   /* Create some DOM option elements. */
@@ -359,6 +365,11 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
 
     return options;
   };
+
+  /* Whether or not the form input is valid when editing this question.*/
+  this.valid = function() {
+    return textInput.value.length > 0
+  }
 
   /* Private Functions */
 
@@ -380,6 +391,7 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
     textInput  = editDiv.select('input.question_text').first();
     typeSelect = editDiv.select('select.question_type_select').first();
     requiredSelect = editDiv.select('input.required_check').first();
+    errorDiv   = editDiv.select('div.error_description').first();
 
     followUpList = listItem.select('ol').first();
 
@@ -421,6 +433,19 @@ function EditableQuestion(questionSet, surveyId, listItem, position) {
       'method': 'put',
       'parameters': {'direction': direction}
     }); 
+  }
+
+  /* Shows the errors div. For now there is only one possible error (Question text is required), but later additional
+   * checks can be made.
+   */
+  function showErrors() {
+    errorDiv.update("Question text is required");
+    errorDiv.show();
+  }
+
+  function hideErrors() {
+    errorDiv.update("");
+    errorDiv.hide();
   }
 
   initializeChrome();

@@ -15,7 +15,8 @@
   </div>
   <div class='question_edit_display' style="display:none;">
     <%= label_tag "question_#{question.id}_text", 'Question Text', :class => "survey_question_label" %>
-    <%= text_field_tag "question_#{question.id}_text", question.text, :class => 'question_text', :size => 40 %>    
+    <%= text_field_tag "question_#{question.id}_text", question.text, :class => 'question_text', :size => 40 %>
+    <div class="error_description"></div>
     <%= label_tag "question_#{question.id}_question_type", 'Response Type', :class => "survey_question_label" %>
     <%= select_tag "question_#{question.id}_question_type",
       options_for_select(Question::QUESTION_TYPES.keys, question.question_type),
