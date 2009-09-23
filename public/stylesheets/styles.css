@@ -961,6 +961,12 @@ label.option {
   margin: 0;
 }
 
+label.full_size_option {
+  font-weight: normal;
+  font-size: 1em;
+  margin: 0;
+}
+
 label.inline_option {
   font-weight: normal;
   font-size: 0.875em;
