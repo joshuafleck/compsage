@@ -739,7 +739,7 @@ ol#questions {
   border: 1px solid #ddd;
   font-size: 1.2em;
   list-style-type: none;
-  margin: 0 0; /* TODO: negative margins in IE6 causing problems on response page */
+  margin: 0 0; 
   padding: 0;
 }
 
