@@ -70,3 +70,7 @@ Then "I should see an invitation success message" do
   wait_for_javascript
   response_body.should =~ /Invitation sent to/
 end
+
+Then "I should see the survey sponsor in the invitation list" do
+  get_element_by_xpath("id('invitations')/li/a").text.should include(@survey.sponsor.name)
+end

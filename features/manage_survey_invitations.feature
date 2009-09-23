@@ -19,6 +19,13 @@ Feature: Manage Survey Invitations
     Then I should not see the survey invitation
 
 
+  Scenario: Viewing the invitation list
+    Given I am logged in
+    And I am sponsoring a "pending" survey
+
+    When I am on the survey invitations page
+
+    Then I should see the survey sponsor in the invitation list
   Scenario: Creating an external survey invitation
     Given I am testing javascript
     And I am logged in
