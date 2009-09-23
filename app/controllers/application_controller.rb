@@ -14,6 +14,6 @@ class ApplicationController < ActionController::Base
   
 
   def ssl_required?
-    Rails.env.production? && super
+    (Rails.env.staging? || Rails.env.production?) && super
   end
 end
