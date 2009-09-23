@@ -1,5 +1,5 @@
 class Admin::BilledSurveysController < Admin::AdminController
   def index
-    @surveys = Survey.closed
+    @surveys = Survey.with_aasm_state(:finished)
   end
 end

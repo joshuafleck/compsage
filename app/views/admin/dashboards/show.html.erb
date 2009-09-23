@@ -20,7 +20,7 @@
         <td><%= survey.sponsor.name %></td>
         <td><%= survey.start_date.to_date %></td>
         <td><%= survey.job_title %></td>
-        <td><%= survey.all_invitations.size + 1 %></td>
+        <td><%= survey.internal_and_external_invitations.size %></td>
         <td><%= survey.participations.count %></td>
       </tr>
     <% end %>
