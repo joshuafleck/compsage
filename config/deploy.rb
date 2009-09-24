@@ -50,7 +50,7 @@ namespace :deploy do
   
   desc "Run asset packager to merge JS and CSS files"
   task :merge_files, :role => :app do
-    run "cd #{current_path}; rake rake asset:packager:build_all"
+    run "cd #{current_path}; rake asset:packager:build_all"
   end
 
 end
