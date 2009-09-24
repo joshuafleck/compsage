@@ -5,6 +5,7 @@ namespace :release do
     `git push origin origin:refs/heads/release-#{date}`
     `git fetch`
     Rake::Task['release:track'].invoke
+    puts "Be sure to check out the release branch and modify config/deploy.rb before deploying to staging. The line 'set :branch' should have 'release-#{date}' as the current branch."
   end
 
   task :track do
