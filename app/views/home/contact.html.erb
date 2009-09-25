@@ -1,4 +1,29 @@
-<% title "Contact Compsage" %>
+<% title "Contact CompSage" %>
 <h2>Contact</h2>
-<p>If you have any questions or comments, we would love to hear from you! Simply send us an email at
-<a href="mailto:support@compsage.com">support@compsage.com</a> and we'll get back to you as fast as possible.</p>
+<p>We love to hear your questions and comments! Fill out the contact form below and we'll get back to you. You can
+also send us an email directly a <a href="mailto:support@compsage.com">support@compsage.com</a>.</p>
+<% form_for @contact_form_submission, :url => 'contact', :html => {:method => :post} do |f| %>
+  <%= f.error_messages %>
+  <%= f.label :name, required('Name') %>
+  <%= f.text_field :name %>
+  <%= f.label :email, required('Email Address') %>
+  <%= f.text_field :email %>
+  <div class="box_container">
+    <div class="box">
+      <%= f.label :phone, 'Phone Number' %>
+      <%= f.text_field :phone, :size => 20 %>
+    </div>
+    <div class="box">
+      <%= f.label :phone, 'Ext.'%>
+      <%= f.text_field :phone_extension, :size => 5 %>
+    </div>
+  </div>
+  <%= f.label :message, required('Message') %>
+  <%= f.text_area  :message %>
+  <br />
+  <label>Response Preference</label>
+  <label class="full_size_option"><%= f.radio_button :contact_preference, 'email' %> Email me</label>
+  <label class="full_size_option"><%= f.radio_button :contact_preference, 'phone' %> Give me a call</label>
+  <br /><br/>
+  <p><input type="submit" value="Send!" /></p>
+<% end %>

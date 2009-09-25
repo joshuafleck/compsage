@@ -151,4 +151,11 @@ class Notifier < ActionMailer::Base
     subject    "A user has requested to join CompSage"    
   end
     
+  def contact_form_submission(submission)
+    recipients "CompSage <support@compsage.com>"
+    from       "CompSage <support@compsage.com>"
+    reply_to   submission.email
+    subject    "Contact Form Submission"    
+    body       :submission => submission
+  end
 end

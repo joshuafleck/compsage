@@ -1,0 +1,11 @@
+<h1>Contact Form Submission</h1>
+<h2>Name</h2>
+<%= @submission.name %>
+<h2>Email</h2>
+<%= @submission.email %>
+<h2>Phone</h2>
+<%= @submission.phone %> <%= @submission.phone_extension %>
+<h2>Contact Preference</h2>
+<%= @submission.contact_preference.capitalize %>
+<h2>Message</h2>
+<%= simple_format(@submission.message) %>

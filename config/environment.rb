@@ -24,6 +24,7 @@ Rails::Initializer.run do |config|
   config.gem 'activemerchant', :version => '>=1.4.0', :lib => 'active_merchant'  
   config.gem 'prawn', :version => '>=0.4.1'
   config.gem 'freelancing-god-thinking-sphinx', :lib => 'thinking_sphinx', :source => 'http://gems.github.com'
+  config.gem 'validatable'
 
   config.load_paths += [RAILS_ROOT + "/app/workers", RAILS_ROOT + "/app/builders"]
 end
