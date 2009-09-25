@@ -4,30 +4,35 @@
 # will force a validation failure, which will then roll back the deletion of that very same question, resulting in a
 # duplicate. By selecting the last of the responses, we select the blank one that was added, which ensures that the
 # user sees a blank response with the validation error. TODO: A better way.
+position_prefix = '' unless defined?(position_prefix)
 -%>
 <% response = [*@participation.responses_for(participation_form_question.id)].last || participation_form_question.responses.new %>
 <% f.fields_for response.class.name.underscore, response, :index => participation_form_question.id, :builder => QuestionFormBuilder do |q| %>
   <li class="<%= cycle("even", "odd") %>">
-    <div class="question_container" style="padding-left:<%= level*2 %>em"> 
-      <%
-      # The following line is a hack to get IE6/IE7 to not add spurrious space between the comment div and the
-      # bottom of the last radio button. For some reason it insists on rendering the whitespace :( This can
-      # most likely be improved.
-      -%>
-      <%= q.form_field -%><% if participation_form_question.response_class.accepts_comment? then -%><div class="comments">
-          <div class="field">
-            <%=q.label :comments, 'Comment:' %>
-            <%=q.text_field :comments %>
+    <div class="question_container"> 
+      <div class="question_number"><%= position_prefix %><%= participation_form_question.position %></div>
+
+      <div class="question_content" style="padding-left:<%= 60 + level*30 %>px">
+        <%
+        # The following line is a hack to get IE6/IE7 to not add spurrious space between the comment div and the
+        # bottom of the last radio button. For some reason it insists on rendering the whitespace :( This can
+        # most likely be improved.
+        -%>
+        <%= q.form_field -%><% if participation_form_question.response_class.accepts_comment? then -%><div class="comments">
+            <div class="field">
+              <%=q.label :comments, 'Comment:' %>
+              <%=q.text_field :comments %>
+            </div>
+            <span class="label"><a href="#"></a></span>
           </div>
-          <span class="label"><a href="#"></a></span>
-        </div>
-      <% end %>
+        <% end %>
+      </div>
     </div>
     <% if participation_form_question.child_questions.any? then %>
       <ol class="questions">
         <%= render :collection => participation_form_question.child_questions,
           :partial => '/questions/participation_form_question',
-          :locals => {:f => f, :level => level + 1} %>
+          :locals => {:f => f, :level => level + 1, :position_prefix => "#{position_prefix}#{participation_form_question.position}." } %>
       </ol>
     <% end %>
   </li>
