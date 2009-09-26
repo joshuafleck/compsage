@@ -56,7 +56,7 @@
 
         choices.each(function(choice) {
           var li = new Element('li');
-          li.insert('<div class="actions"><a href="javascript:;"><%= image_tag "add_invitation_button.gif" %></a></div>' + 
+          li.insert('<div class="actions"><a href="#"><%= image_tag "add_invitation_button.gif" %></a></div>' + 
             '<div class="name">' + choice.name + '</div>');
           if(choice.location) {
             li.insert('<div class="location description_box">Location: ' + choice.location + '</div>');
