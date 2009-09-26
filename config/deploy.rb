@@ -20,7 +20,7 @@ set :deploy_via, :remote_cache
 namespace :deploy do
   desc "Restarting mod_rails with restart.txt"
   task :restart, :roles => :app, :except => { :no_release => true } do
-    run "touch #{current_path}/tmp/restart.txt"
+    run "touch #{release_path}/tmp/restart.txt"
   end
        
   [:start, :stop].each do |t|
@@ -30,29 +30,29 @@ namespace :deploy do
 
   desc "Copy database.yml file to the project directory"
   task :copy_database_yml, :roles => :app do
-    run "cp -pf #{shared_path}/config-files/database.yml #{current_path}/config"
+    run "cp -pf #{shared_path}/config-files/database.yml #{release_path}/config"
   end
    
   desc "Load predefined questions"
   task :load_pdq, :roles => :app do
-    run "cd #{current_path}; rake spec:db:fixtures:load FIXTURES=predefined_questions RAILS_ENV=#{rails_env}"
+    run "cd #{release_path}; rake spec:db:fixtures:load FIXTURES=predefined_questions RAILS_ENV=#{rails_env}"
   end 
   
   desc "Link the logos directory"
   task :link_logos, :role => :app do
-    run "ln -s #{shared_path}/logos/ #{current_path}/public/logos; ln -s #{shared_path}/attachment_fu/ #{current_path}/tmp/attachment_fu"
+    run "ln -s #{shared_path}/logos/ #{release_path}/public/logos; ln -s #{shared_path}/attachment_fu/ #{release_path}/tmp/attachment_fu"
   end
  
   desc "Link thinking_sphinx data directory"
   task :link_ts, :roles => :app do
-    run "ln -s #{shared_path}/sphinx #{current_path}/db/sphinx"
+    run "ln -s #{shared_path}/sphinx #{release_path}/db/sphinx"
   end  
   
   desc "Run asset packager to merge JS and CSS files"
   task :merge_files, :role => :app do
-    run "cd #{current_path}; rake asset:packager:build_all"
+    run "cd #{release_path}; rake asset:packager:build_all"
   end
 
 end
 
-after 'deploy', 'deploy:link_logos', 'deploy:link_ts', 'deploy:copy_database_yml', 'deploy:migrations', 'deploy:load_pdq', 'deploy:merge_files'
+before 'deploy:restart', 'deploy:link_logos', 'deploy:link_ts', 'deploy:copy_database_yml', 'deploy:migrate', 'deploy:load_pdq', 'deploy:merge_files'
