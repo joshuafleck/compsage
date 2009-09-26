@@ -5,7 +5,11 @@ Rake.application.load_imports
 
 class Rebuilder < BeanstalkWorker
   
-  def rebuild_sphinx_indexes(payload)    
+  def rebuild_sphinx_indexes(payload)  
+    # Specifies that the config file should not be re-generated. 
+    # We manually define the configurations in staging and prod.
+    ENV['INDEX_ONLY'] = 'true' 
+    
     Rake::Task["ts:index"].invoke
 
     # rebuild once a day
