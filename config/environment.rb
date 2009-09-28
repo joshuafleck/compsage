@@ -13,6 +13,7 @@ Rails::Initializer.run do |config|
   config.gem 'prawn', :version => '0.5.1'
   config.gem 'freelancing-god-thinking-sphinx', :lib => 'thinking_sphinx', :source => 'http://gems.github.com', :version => '1.2.8'
   config.gem 'validatable', :version => '1.6.7'
+  config.gem 'mbleigh-subdomain-fu', :version => '0.5.4'
 
   config.load_paths += [RAILS_ROOT + "/app/workers", RAILS_ROOT + "/app/builders"]
 end
