@@ -1,9 +1,4 @@
-# Uncomment below to force Rails into production mode when 
-# you don't control web/app server and can't set it the proper way
-# ENV['RAILS_ENV'] ||= 'production'
-
 RAILS_GEM_VERSION = '2.3.2' unless defined? RAILS_GEM_VERSION
-
 require File.join(File.dirname(__FILE__), 'boot')
 
 Rails::Initializer.run do |config|
@@ -21,19 +16,3 @@ Rails::Initializer.run do |config|
 
   config.load_paths += [RAILS_ROOT + "/app/workers", RAILS_ROOT + "/app/builders"]
 end
-
-# This will include our custom DateHelper method: 'better_time_ago_in_words' in ActionView so it is accessible to our views and email templates
-ActionView::Base.send(:include,BetterDateHelper)
-
-# Fix for relative paths when ActionMailer is looking for view templates. Remove after upgrading
-#  to next rails version (> 2.3.2)
-# https://rails.lighthouseapp.com/projects/8994/tickets/2263-rails-232-breaks-implicit-multipart-actionmailer-tests
-module ActionMailer
-  class Base
-    def template_path
-      File.join(template_root, mailer_name)
-    end
-  end
-end
-
-
