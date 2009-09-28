@@ -75,6 +75,16 @@ textarea {
   height: 6em;
 }
 
+ul.normal {
+  padding-left: 1em;
+  margin: inherit;
+  list-style-type: inherit;
+}
+
+ul.normal li {
+  margin-bottom: 0.5em;
+}
+
 ul {
   list-style-type: none;
   margin: 0;
