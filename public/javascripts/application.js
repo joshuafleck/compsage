@@ -187,6 +187,12 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
   /* Observes the form that the user uses to add questions. */
   function observeNewQuestionForm() {
     addForm.select('input.question_submit').first().observe('click', questionSet.addNewQuestion);
+    $('custom_question_text').observe('keydown', function(e) {
+      if(e.keyCode == Event.KEY_RETURN) {
+        e.stop();
+        questionSet.addNewQuestion();
+      }
+    });
     pdqSelect = addForm.select('#predefined_questions').first();
     pdqSelect.observe('change', customQuestionSelect);
     followUpSelect = addForm.select('#follow_up_question_select').first();
@@ -1069,6 +1075,9 @@ function callFunctionOnEnterForm(f,toCall) {
  * @e the event
  */
 function callFunctionOnEnter(toCall,e) {
+  if(e.keyCode == Event.KEY_RETURN) {
+    toCall.call();
+  }
 }
 
 /*

@@ -25,7 +25,7 @@
     <%= label_tag "question_#{question.id}_required", 'Response required', :class => 'inline_option' %>
     <%= check_box_tag "question_#{question.id}_required", true, question.required?, :class => 'required_check' %>
     <div class="question_submit">
-      <input type="submit" value="Save" class='question_save' /> or 
+      <input type="button" value="Save" class='question_save' /> or 
       <a class='question_cancel' href='#'>Cancel</a>
       <%= image_tag 'load_indicator.gif', :class => 'load_indicator', :style => 'display:none;' %>
     </div>
