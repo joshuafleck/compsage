@@ -3,8 +3,8 @@
   average = question.responses.average(:numerical_response) / 100.0
   
   if format == "Hourly" then
-    average = WageResponse.units.convert(average, :to => "Hourly", :from => "Annual")
-    percentiles.map! {|p| WageResponse.units.convert(p / 100.0, :to => "Hourly", :from => "Annual") }
+    average = WageResponse.units.convert(average, :to => "Hourly", :from => "Annually")
+    percentiles.map! {|p| WageResponse.units.convert(p / 100.0, :to => "Hourly", :from => "Annually") }
   else
     percentiles.map! {|p| p / 100.0 }
   end
