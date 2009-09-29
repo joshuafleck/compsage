@@ -41,3 +41,8 @@ end
 And "I should not see the old wage format" do
   assert(get_element_by_xpath("//dl[@class='WageResponse hidden']//dd").text == '$45,000.00')
 end
+
+When /^I download the hourly "([^\"]*)" report$/ do |format|
+  visit survey_report_url(@survey, :format => format, :wage_format => "Hourly")
+end
+

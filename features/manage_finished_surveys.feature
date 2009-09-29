@@ -56,12 +56,20 @@ Feature: Manage finished surveys
     When I click "Excel"
     Then I should see "urn:schemas-microsoft-com:office:spreadsheet"
     
+    When the report has a wage response
+    And I download the hourly "xls" report
+    Then I should see "urn:schemas-microsoft-com:office:spreadsheet"
+    
   Scenario: Download Word
     Given I am logged in
     And I am participating in a "finished" survey
     And the survey has been invoiced
     When I am on the survey report page
     When I click "Word"
+    Then I should see "schemas.microsoft.com/office/word/2003/wordml"
+    
+    When the report has a wage response
+    And I download the hourly "doc" report
     Then I should see "schemas.microsoft.com/office/word/2003/wordml"
   
   Scenario: Download PDF
@@ -70,4 +78,8 @@ Feature: Manage finished surveys
     And the survey has been invoiced
     When I am on the survey report page
     When I click "Pdf"
+    Then I should see "PDF"
+    
+    When the report has a wage response
+    And I download the hourly "pdf" report
     Then I should see "PDF"
