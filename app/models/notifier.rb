@@ -1,4 +1,5 @@
 class Notifier < ActionMailer::Base
+  helper :application
 
   # sent when an external network invitation is sent
   def external_network_invitation_notification(invitation)
