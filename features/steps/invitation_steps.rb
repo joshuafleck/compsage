@@ -10,7 +10,7 @@ When "I type in an existing organization and select it from the dropdown" do
   create_organization "Existing Organization"
   fill_in 'external_invitation_organization_name', :with => 'Ex', :method => :set_without_blur
   wait_for_javascript
-  div('search_results').link(:href, 'javascript:;').click
+  div('search_results').link(:href, '#').click
 end
 
 When "I type in an existing organization and invite them" do

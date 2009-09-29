@@ -928,7 +928,7 @@ function InviteList(survey_id) {
 
         choices.each(function(choice) {
           var li = new Element('li');
-          li.insert('<div class="actions"><a href="javascript:;"><img src="/images/add_invitation_button.gif" /></a></div>' + 
+          li.insert('<div class="actions"><a href="#"><img src="/images/add_invitation_button.gif" /></a></div>' + 
             '<div class="name">' + choice.name + '</div>');
           if(choice.location) {
             li.insert('<div class="location description_box">Location: ' + choice.location + '</div>');
