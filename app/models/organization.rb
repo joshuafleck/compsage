@@ -45,6 +45,8 @@ class Organization < ActiveRecord::Base
   has_many :network_invitations, :class_name => "NetworkInvitation", :foreign_key => "invitee_id", :dependent => :destroy
   has_many :survey_invitations, :class_name => "SurveyInvitation", :foreign_key => "invitee_id", :dependent => :destroy  
   has_many :invitations, :class_name => "Invitation", :foreign_key => "invitee_id", :dependent => :destroy
+
+  has_and_belongs_to_many :associations
   
   validates_presence_of     :name
   validates_format_of       :name,     :with => RE_NAME_OK,  :message => MSG_NAME_BAD, :allow_nil => true
