@@ -3,6 +3,7 @@
 
 class ApplicationController < ActionController::Base
   include AuthenticatedSystem
+  include InvitationAuthenticationSystem
   include Exceptions
   include ExceptionNotifiable
   include SslRequirement
