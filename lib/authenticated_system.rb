@@ -18,7 +18,7 @@ module AuthenticatedSystem
     # Accesses the current organization from the session.
     # Future calls avoid the database because nil is not equal to false.
     def current_organization
-      @current_organization ||= (login_from_session || login_from_basic_auth || login_from_cookie) unless @current_organization == false
+      @current_organization ||= (login_from_session || login_from_cookie) unless @current_organization == false
     end
 
     # Store the given organization id in the session.
@@ -42,7 +42,7 @@ module AuthenticatedSystem
     # Accesses the current organization or survey invitation from the session.  Set it to :false if login fails
     # so that future calls do not hit the database.    
     def current_organization_or_survey_invitation
-      @current_organization_or_survey_invitation ||= (login_from_session || login_from_basic_auth || login_from_cookie || login_from_survey_invitation || :false)
+      @current_organization_or_survey_invitation ||= (login_from_session || login_from_cookie || login_from_survey_invitation || :false)
     end
     
     # Check if the organization is authorized
@@ -136,13 +136,6 @@ module AuthenticatedSystem
       self.current_organization = Organization.find_by_id(session[:organization_id]) if session[:organization_id]
     end
 
-    # Called from #current_organization.  Now, attempt to login by basic authentication information.
-    def login_from_basic_auth
-      authenticate_with_http_basic do |login, password|
-        self.current_organization = Organization.authenticate(login, password)
-      end
-    end
-    
     #
     # Logout
     #
