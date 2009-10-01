@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   include Exceptions
   include ExceptionNotifiable
   include SslRequirement
+  include AssociationSystem
 
   #Use a different layout depending on how the user has entered the application
   def logged_in_or_invited_layout
