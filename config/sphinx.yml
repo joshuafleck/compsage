@@ -11,7 +11,7 @@ staging:
   min_prefix_len: 2
   port: 3312
   config_file: /var/www/compsage/shared/config-files/staging.sphinx.conf
-  searchd_file_path: /var/www/compsage/shared/sphinx
+  searchd_file_path: /var/www/compsage/shared/sphinx/staging
   searchd_log_file: /var/www/compsage/shared/log/searchd.log
   query_log_file: /var/www/compsage/shared/log/searchd.query.log
   pid_file: /var/www/compsage/shared/log/searchd.pid
@@ -22,7 +22,7 @@ production:
   min_prefix_len: 2
   port: 3312
   config_file: /var/www/compsage/shared/config-files/production.sphinx.conf
-  searchd_file_path: /var/www/compsage/shared/sphinx
+  searchd_file_path: /var/www/compsage/shared/sphinx/production
   searchd_log_file: /var/www/compsage/shared/log/searchd.log
   query_log_file: /var/www/compsage/shared/log/searchd.query.log
   pid_file: /var/www/compsage/shared/log/searchd.pid
