@@ -38,7 +38,7 @@ Feature: Manage accounts
     Given I am on the login page
     And I follow "Forgot your password?"
     When I request a password reset
-    Then I should see "Email sent to"
+    Then I should see "An email containing a link to reset your password was sent to"
     
   Scenario: Request a password reset with error
     Given I am on the login page

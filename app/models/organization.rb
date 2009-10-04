@@ -102,6 +102,12 @@ class Organization < ActiveRecord::Base
     self.reset_password_key_expires_at < Time.now
   end
   
+  # True, if the user does not already have an existing, unexpired password reset request.
+  #
+  def valid_password_reset_request_exists?
+    self.reset_password_key.blank? ? false : !reset_password_key_expired?
+  end
+  
   # Removes the reset key and expiry date.
   #
   def delete_reset_key

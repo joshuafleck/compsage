@@ -414,6 +414,23 @@ describe AccountsController, " handling PUT /account/forgot" do
     end
   
   end
+  
+  describe "when there is already a valid reset request" do
+  
+    before(:each) do
+      @current_organization.create_reset_key_and_send_reset_notification
+    end
+    
+    it "should not create the reset key and send the reset email" do
+      lambda{ do_put }.should_not change(@current_organization,:reset_password_key).from(nil)
+    end      
+  
+    it "should render the forgot template" do
+      do_put
+      response.should render_template('forgot')
+    end
+    
+  end
 
 end 
 
