@@ -1,5 +1,7 @@
 <% title "How does CompSage Work?"
    highlight_tab "how" %>
+<script type="text/javascript" src="javascripts/scriptaculous.js?load=effects,builder"></script>
+<script type="text/javascript" src="javascripts/lightbox.js"></script>
 <div class="image_header"><%= image_tag 'how_banner.gif' %></div>
 <div class="main_page">
   <p>CompSage is built around the understanding that compensation data is most relevant and useful when 
@@ -11,20 +13,23 @@
     surveys to ensure the integrity of your data.  To ensure that membership information is accurate, we personally
     verify the details provided on our <%=link_to "sign up form", has_key? ? new_account_path() : signup_path()%>.</p>
   <h3>Sponsoring a survey</h3>
+  <a href="images/how/questions_example.png" rel="lightbox[examples]" title="Creating a survey: Adding a question."><img src="images/how/questions_example.png" width="161" height="123" alt="" class="howto-left" /></a>
   <p>Sponsoring a survey allows you to create a customized online compensation survey using our standard questions or
-    questions of your own design. Sponsoring a survey is no risk and you'll only be billed when a report is made
+    questions of your own design. We also provide means to allow you to get more details about a certain practice. Sponsoring a survey is no risk and you'll only be billed via credit card or invoice when a report is made
     available.</p>
   <h3>Invite your peers to respond</h3>
-  <p>CompSage allows you to choose who responds to your survey. Enter your contacts' email addresses, or browse
-    CompSage members to find organizations in your industry or region.</p>
+  <a href="images/how/invitations_example.png" rel="lightbox[examples]" title="Creating a survey: Inviting peers."><img src="images/how/invitations_example.png" width="161" height="123" alt="" class="howto-right" /></a>
+  <p>CompSage allows you to choose who responds to your survey. You provide contacts' email addresses, names, or choose networks of peers you have created. We then notify them to respond.</p>
   <h3>Gather data</h3>
+  <a href="images/how/response_example.png" rel="lightbox[examples]" title="Responding to a survey."><img src="images/how/response_example.png" width="161" height="123" alt="" class="howto-left" /></a>
   <p>Your peers have a few days to respond to your survey. During this time, they may ask for clarification and
-    pose questions about the survey. Once the participation deadline has passed, a report will be generated. If not
+    pose questions about the survey.  We provide means to assure the integrity and <%= link_to "legality", home_path('about')%>  of the collected data. Once the participation deadline has passed, a report will be generated. If not
     enough data has been gathered to report data anonymously, you will be given the opportunity to re-run the
     survey.</p>
   <h3>See the results</h3>
-  <p>Once the participation deadline has passed, CompSage will present a clear and concise report to you and peers who
-    provided data for the survey. Data security and integrity is guaranteed.</p>
+  <a href="images/how/report_example.png" rel="lightbox[examples]" title="Viewing a report for a survey."><img src="images/how/report_example.png" width="161" height="123" alt=""  class="howto-right"/></a>
+  <p>Once the participation deadline has passed, CompSage will present a concise and organized graphical report to you and peers who
+    provided data for the survey. Each report man be viewed in a browser or downloaded for Microsoft Word, Excel and PDF format. Data security and integrity is guaranteed.</p>
 
   <p>Still have questions? <a href="mailto:support@compsage.com">Drop us a line</a> and we'll get back to you!</p> 
 </div>
