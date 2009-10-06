@@ -90,6 +90,7 @@ class Organization < ActiveRecord::Base
   #
   def create_reset_key_and_send_reset_notification
     self.reset_password_key = KeyGen.random
+    self.reset_password_key_created_at = Time.now
     self.reset_password_key_expires_at = Time.now + 5.days
     self.save!
     
@@ -102,16 +103,17 @@ class Organization < ActiveRecord::Base
     self.reset_password_key_expires_at < Time.now
   end
   
-  # True, if the user does not already have an existing, unexpired password reset request.
+  # True, if the user has not requested a password reset in the last minute
   #
-  def valid_password_reset_request_exists?
-    self.reset_password_key.blank? ? false : !reset_password_key_expired?
+  def can_request_password_reset?
+    reset_password_key_created_at.nil? || ((Time.now - reset_password_key_created_at) > 1.minute)
   end
   
   # Removes the reset key and expiry date.
   #
   def delete_reset_key
     self.reset_password_key = nil
+    self.reset_password_key_created_at = nil
     self.reset_password_key_expires_at = nil
     self.save!
   end

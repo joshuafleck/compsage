@@ -195,13 +195,13 @@ describe Organization, "that already exists" do
     lambda{ @organization.delete_reset_key }.should change(@organization, :reset_password_key_expires_at).to(nil)
   end
   
-  it "should have a valid reset request when an unexpired reset key exists" do   
-    lambda{ @organization.create_reset_key_and_send_reset_notification }.should change(@organization, :valid_password_reset_request_exists?).from(false).to(true)
+  it "should not be allowed to request a password reset within 1 minute of a previous request" do   
+    lambda{ @organization.create_reset_key_and_send_reset_notification }.should change(@organization, :can_request_password_reset?).from(true).to(false)
   end
   
-  it "should not have a valid reset request when an expired reset key exists" do 
+  it "should be allowed to request a password reset 1 minute after a previous request" do 
     @organization.create_reset_key_and_send_reset_notification      
-    lambda{ @organization.reset_password_key_expires_at = Time.now - 1.minute }.should change(@organization, :valid_password_reset_request_exists?).from(true).to(false)
+    lambda{ @organization.reset_password_key_created_at = Time.now - 2.minutes }.should change(@organization, :can_request_password_reset?).from(false).to(true)
   end  
          
   it "should send a notification email when resetting the password" do   

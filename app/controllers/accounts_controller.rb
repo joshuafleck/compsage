@@ -69,14 +69,16 @@ class AccountsController < ApplicationController
       if organization then
       
         # This will prevent email bombing of the forgot password link.
-        if organization.valid_password_reset_request_exists? then
-          flash.now[:notice] = "You have already requested a password reset. If you did not receive an email containing a link to reset your password, <a href=\"#{contact_path}\">let us know</a>."
-        else
+        if organization.can_request_password_reset? then
         
           organization.create_reset_key_and_send_reset_notification
           
           flash[:notice] = "An email containing a link to reset your password was sent to #{organization.email}."
           redirect_to new_session_path 
+         
+        else
+         
+          flash.now[:notice] = "You have already requested a password reset. If you did not receive an email containing a link to reset your password, <a href=\"#{contact_path}\">let us know</a>."
           
         end
         
