@@ -63,8 +63,8 @@ protected
 
   # Track failed survey login attempts
   def note_failed_survey_signin
-    flash.now[:error] = 'We are unable to process your request at this time. If the problem persists, '\
-                        '<a href="mailto:support@compsage.com"> let us know</a>.'
+    flash.now[:error] = "We are unable to process your request at this time. If the problem persists, "\
+                        "<a href=\"#{contact_path}\"> let us know</a>."
     logger.warn "Failed survey login for key:#{params[:key]} at #{Time.now.utc}"
   end  
 end
