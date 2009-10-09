@@ -1151,17 +1151,19 @@ div.autocomplete .actions {
 }
 
 img.howto-right {
+  position: relative;
   float: right; 
   margin: 4px;
   padding-bottom: 1px;
-  border:1px solid #888;
+  display: block;
+  /*border:1px solid #888;*/
 }
 
 img.howto-left {
+  position: relative;
   float: left; 
   margin: 4px;
   padding-bottom: 1px;
-  border:1px solid #888;
 }
 
 /* Lightbox styles */
