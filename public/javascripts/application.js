@@ -123,10 +123,12 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
       }
       questionParameters = {'question[text]': $F('custom_question_text'),
                             'question[question_type]': $F('custom_question_response'),
+                            'question[required]': $F('custom_question_required'),
                             'question[parent_question_id]': selectedParentQuestion};
 
       $('custom_question_text').clear();
       $('custom_question_response').clear();
+      $('custom_question_required').checked = false;
       $('custom_question_warning').update('');
       $('custom_question_form').blindUp({'duration': 0.5});
     } 

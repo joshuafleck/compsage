@@ -587,6 +587,10 @@ form.edit_survey textarea {
   line-height: 20px;
 }
 
+.custom_required_check {
+  display: inline;
+}
+
 .question_submit, .discussion_submit {
   margin-top: 5px;
 }

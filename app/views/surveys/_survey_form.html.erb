@@ -47,6 +47,8 @@
       <div class="error_description" id="custom_question_warning"></div>
       <label for='custom_question_response' class='survey_question_label'>Response Type</label>
       <select id='custom_question_response'><%=options_for_select Question::QUESTION_TYPES.keys %></select>
+      <label for='custom_question_required' class='survey_question_label'>Response Required?</label>
+      <input id='custom_question_required' value='true' type='checkbox' class='custom_required_check' />
     </div>
     <div id='follow_up_question' style='<%=@survey.questions.size > 0 ? "" : "display:none;"%>'>
       <label for='follow_up_question_select' class='survey_question_label'>Add as a follow-up to</label>
