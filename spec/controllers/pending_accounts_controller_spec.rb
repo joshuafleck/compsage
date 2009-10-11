@@ -42,15 +42,11 @@ describe PendingAccountsController, " handling POST /pending_account" do
   end
 
   
-  it "should redirect to the index page" do
+  it "should render the received template" do
     do_post
-    response.should redirect_to(new_session_path)
+    response.should render_template("received")
   end
   
-  it "should flash a message regarding the success of the action" do
-    do_post
-    flash[:notice].should_not be_blank
-  end
 end
 
 describe PendingAccountsController, " handling POST /pending_account with validation errors" do
