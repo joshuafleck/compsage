@@ -57,11 +57,17 @@ FireWatir::TextField.send(:include, TextBoxExtension)
 port = 3001
 base_url = "http://localhost:#{port}"
 START_MONGREL = "ruby script/server -p #{port} -e #{ENV["RAILS_ENV"]} -d"
+KILL_MONGREL_COMMAND = "kill `ps aux | grep -e '#{START_MONGREL}' | grep -v grep | awk '{ print $2 }'`"
 system 'rm log/test.log' # Remove any logs from the previous test run
 system START_MONGREL
 sleep(5) # Give Mongrel some time to start. Since we are running as a daemon, the process returns before the server can rev up.
 
-browser = FireWatir::Firefox.new
+begin
+  browser = FireWatir::Firefox.new
+rescue Watir::Exception::UnableToStartJSShException
+  system KILL_MONGREL_COMMAND
+  raise Watir::Exception::UnableToStartJSShException
+end
 
 # Add some helpers to our world object.
 World(OrganizationHelper)
@@ -88,6 +94,6 @@ end
 at_exit do
   ts.controller.stop
   browser.close # Closes the watir browser
-  system "kill `ps aux | grep -e '#{START_MONGREL}' | grep -v grep | awk '{ print $2 }'`" # Kills the mongrel instance
+  system KILL_MONGREL_COMMAND
 end
 
