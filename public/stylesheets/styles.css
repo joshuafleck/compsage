@@ -1154,20 +1154,31 @@ div.autocomplete .actions {
   padding-right: 5px;
 }
 
-img.howto-right {
+div.howto-right {
   position: relative;
-  float: right; 
+  float: right;
+  vertical-align: left;
   margin: 4px;
   padding-bottom: 1px;
   display: block;
   /*border:1px solid #888;*/
 }
 
-img.howto-left {
+div.howto-left {
   position: relative;
   float: left; 
   margin: 4px;
   padding-bottom: 1px;
+}
+
+span.caption {
+  position: relative;
+  font-size: 0.8em;
+  color: #937979;
+}
+
+div.how p {
+  position: relative;
 }
 
 /* Lightbox styles */
