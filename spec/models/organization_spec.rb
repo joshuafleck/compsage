@@ -163,6 +163,11 @@ describe Organization do
     @organization.attributes = valid_organization_attributes.with(:zip_code => 'adamm')
     @organization.should have(1).errors_on(:zip_code)
   end
+  
+  it "Should be invalid without accepting the Terms of Use" do
+    @organization.attributes = valid_organization_attributes.with(:terms_of_use => false)
+    @organization.should have(1).errors_on(:terms_of_use)
+  end
 
 end
 

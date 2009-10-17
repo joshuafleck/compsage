@@ -65,9 +65,11 @@ class Organization < ActiveRecord::Base
   validates_length_of       :crypted_password, :maximum => 40, :allow_nil => :true
   validates_length_of       :salt, :maximum => 40, :allow_nil => :true
   
+  validates_acceptance_of :terms_of_use, :on => :create  
+  attr_accessor :terms_of_use
 
   attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name,
-                  :industry, :logo
+                  :industry, :logo, :terms_of_use
   
   # This organization's name and location if they have one.
   #
