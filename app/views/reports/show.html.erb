@@ -64,9 +64,9 @@
 <% end %>
 
 <div id="suspect_results">
-  <p>Seeing inaccurate, inconsistent or problematic data? <%= link_to "Report Incorrect Data", '#', :id => "suspect_result_form_link" %></p>
+  <p><%= link_to "Suspect incorrect data?", '#', :id => "suspect_result_form_link" %></p>
   <div id ="suspect_report_form" class="hidden">
-    <p>Tell us which question(s) has problematic data and describe the problem. The disputed data will be reviewed and handled accordingly by the CompSage staff.</p>
+    <p>List which questions may have incorrect data and explain why you suspect the data is incorrect. We will review the data and make changes if necessary.</p>
     <div id="success_notification" class="hidden"><span id="success_report_message">Successfully Reported!</span></div>
     <label for="comment">Comment:</label>
     <textarea id="comment"></textarea>
