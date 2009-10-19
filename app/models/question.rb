@@ -18,7 +18,6 @@ class Question < ActiveRecord::Base
   
   before_save :determine_level
   before_validation :set_type
-  before_validation_on_create :determine_required
   
   named_scope :required, :conditions => "required = 1"
                        
@@ -84,12 +83,6 @@ class Question < ActiveRecord::Base
     else
       self.level = self.parent_question.level + 1
     end
-  end
-  
-  # Determines if required set to true
-  def determine_required
-     # by default, set pay or wage response types as required for custom questions
-     self.required = true if !attribute_present?("predefined_question_id") && self.question_type == 'Pay or wage response'
   end
   
   # Sets the type and options for the question

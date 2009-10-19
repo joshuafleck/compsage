@@ -37,7 +37,7 @@ class QuestionsController < ApplicationController
       end
       
     else # creating a predefined question (could result in multiple questions created)
-      @questions = PredefinedQuestion.find(params[:predefined_question_id]).build_questions(@survey, params[:parent_question_id])
+      @questions = PredefinedQuestion.find(params[:predefined_question_id]).build_questions(@survey, params[:parent_question_id], params[:required])
       respond_to do |wants|
         wants.js do
           render(:partial => "question", :collection => @questions, :locals => {:level => @questions.first.level})
