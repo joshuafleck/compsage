@@ -51,7 +51,16 @@ ts.controller.index
 #  as the mongrel instance needs to be able to see the database objects we have created.
 DatabaseCleaner.strategy = :truncation, {:except => %w[predefined_questions]} # Don't truncate the PDQ table after tests
 
-# Setup for watir browser testing
+## Setup for watir browser testing
+
+# If running headless, set this environment variable. This will start a virtual framebuffer and run FF with the vfb display.
+run_headless = ENV["RUN_HEADLESS"]
+if run_headless then
+  system 'Xvfb :99 -ac&'
+  sleep(2) # Give Xvfb some time to start
+  system 'DISPLAY=:99 firefox -jssh&' # FireWatir runs in an existing FF session, if we have one open one ahead of time.
+end
+
 # Creates a test instance of mongrel on port 3001
 FireWatir::TextField.send(:include, TextBoxExtension)
 port = 3001
@@ -95,5 +104,9 @@ at_exit do
   ts.controller.stop
   browser.close # Closes the watir browser
   system KILL_MONGREL_COMMAND
+  if run_headless then
+    # call to browser.close, above, kills FF
+    system "kill `ps aux | grep -e 'Xvfb :99' | grep -v grep | awk '{ print $2 }'`"
+  end
 end
 
