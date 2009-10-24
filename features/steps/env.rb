@@ -51,6 +51,18 @@ ts.controller.index
 #  as the mongrel instance needs to be able to see the database objects we have created.
 DatabaseCleaner.strategy = :truncation, {:except => %w[predefined_questions]} # Don't truncate the PDQ table after tests
 
+# Starting with Cucumber version 1.3.102, Cucumber breaks not using transactional fixtures. This monkeypatch ensures that
+# use_transactional_fixtures is always false. Remove this once cucumber #457 is functioning properly.
+class << Cucumber::Rails::World
+  def use_transactional_fixtures
+    false
+  end
+  def use_transactional_fixtures=(other)
+    # do nothing
+  end
+end
+
+
 ## Setup for watir browser testing
 
 # If running headless, set this environment variable. This will start a virtual framebuffer and run FF with the vfb display.
