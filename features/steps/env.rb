@@ -58,7 +58,7 @@ run_headless = ENV["RUN_HEADLESS"]
 if run_headless then
   system 'Xvfb :99 -ac&'
   sleep(2) # Give Xvfb some time to start
-  system 'DISPLAY=:99 firefox -jssh&' # FireWatir runs in an existing FF session, if we have one open one ahead of time.
+  system 'DISPLAY=:99 firefox -jssh --display=:99.0&' # FireWatir runs in an existing FF session, if we have one open one ahead of time.
 end
 
 # Creates a test instance of mongrel on port 3001
@@ -105,7 +105,7 @@ at_exit do
   browser.close # Closes the watir browser
   system KILL_MONGREL_COMMAND
   if run_headless then
-    # call to browser.close, above, kills FF
+    system "kill `ps aux | grep -e 'firefox -jssh' | grep -v grep | awk '{ print $2 }'`"
     system "kill `ps aux | grep -e 'Xvfb :99' | grep -v grep | awk '{ print $2 }'`"
   end
 end
