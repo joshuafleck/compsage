@@ -26,5 +26,5 @@ config.action_mailer.default_url_options = {:host => "localhost", :port => 3000}
 config.gem 'cucumber', :version => '>=0.3.99'
 config.gem 'thoughtbot-factory_girl', :lib => 'factory_girl', :source => 'http://gems.github.com'
 config.gem 'firewatir', :version => '>=1.6.2'
-config.gem 'bmabey-database_cleaner', :lib => 'database_cleaner', :version => '>=0.2.3'
+config.gem 'bmabey-database_cleaner', :lib => 'database_cleaner', :version => '>=0.2.3', :source => 'http://gems.github.com'
 config.gem 'webrat', :version => '>=0.4.4'
