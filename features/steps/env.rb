@@ -70,7 +70,8 @@ run_headless = ENV["RUN_HEADLESS"]
 if run_headless then
   system 'Xvfb :99 -ac&'
   sleep(2) # Give Xvfb some time to start
-  system 'DISPLAY=:99 firefox -jssh --display=:99.0&' # FireWatir runs in an existing FF session, if we have one open one ahead of time.
+  system 'DISPLAY=:99 firefox -jssh --display=:99.0&' # FireWatir runs in an existing FF session, if we have one open ahead of time.
+  sleep(30) # Give FF some time to start
 end
 
 # Creates a test instance of mongrel on port 3001
