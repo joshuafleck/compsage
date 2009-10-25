@@ -13,6 +13,8 @@ require 'features/helpers/organization_helper'
 require 'features/helpers/wait_helper'
 require 'features/helpers/dom_interface_helper'
 
+include WaitHelper
+
 Webrat.configure do |config|
   config.mode = :rails
 end
@@ -67,22 +69,23 @@ end
 
 # If running headless, set this environment variable. This will start a virtual framebuffer and run FF with the vfb display.
 run_headless = ENV["RUN_HEADLESS"]
+XVFB = "Xvfb :99 -ac"
+FIREFOX = "firefox -jssh --display=:99.0"
 if run_headless then
-  system 'Xvfb :99 -ac&'
-  sleep(2) # Give Xvfb some time to start
-  system 'DISPLAY=:99 firefox -jssh --display=:99.0&' # FireWatir runs in an existing FF session, if we have one open ahead of time.
-  sleep(30) # Give FF some time to start
+  system "#{XVFB} &"
+  wait_for_process(XVFB) 
+  system "DISPLAY=:99 #{FIREFOX} &" # FireWatir runs in an existing FF session, if we have one open ahead of time.
+  wait_for_process(FIREFOX) 
 end
 
 # Creates a test instance of mongrel on port 3001
 FireWatir::TextField.send(:include, TextBoxExtension)
 port = 3001
 base_url = "http://localhost:#{port}"
-START_MONGREL = "ruby script/server -p #{port} -e #{ENV["RAILS_ENV"]} -d"
-KILL_MONGREL_COMMAND = "kill `ps aux | grep -e '#{START_MONGREL}' | grep -v grep | awk '{ print $2 }'`"
+MONGREL = "ruby script/server -p #{port} -e #{ENV["RAILS_ENV"]} -d"
 system 'rm log/test.log' # Remove any logs from the previous test run
-system START_MONGREL
-sleep(5) # Give Mongrel some time to start. Since we are running as a daemon, the process returns before the server can rev up.
+system MONGREL
+wait_for_process(MONGREL)
 
 begin
   browser = FireWatir::Firefox.new
@@ -114,12 +117,13 @@ end
 
 # This will close the browser and kill the mongrel instance when testing is complete
 at_exit do
+  KILL_COMMAND = "kill `ps aux | grep -e '<process>' | grep -v grep | awk '{ print $2 }'`"
   ts.controller.stop
   browser.close # Closes the watir browser
-  system KILL_MONGREL_COMMAND
+  system KILL_COMMAND.gsub("<process>",MONGREL)
   if run_headless then
-    system "kill `ps aux | grep -e 'firefox -jssh' | grep -v grep | awk '{ print $2 }'`"
-    system "kill `ps aux | grep -e 'Xvfb :99' | grep -v grep | awk '{ print $2 }'`"
+    system KILL_COMMAND.gsub("<process>",FIREFOX)
+    system KILL_COMMAND.gsub("<process>",XVFB)
   end
 end
 
