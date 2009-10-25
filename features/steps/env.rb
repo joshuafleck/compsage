@@ -82,6 +82,7 @@ end
 FireWatir::TextField.send(:include, TextBoxExtension)
 port = 3001
 base_url = "http://localhost:#{port}"
+KILL_COMMAND = "kill `ps aux | grep -e '<process>' | grep -v grep | awk '{ print $2 }'`"
 MONGREL = "ruby script/server -p #{port} -e #{ENV["RAILS_ENV"]} -d"
 system 'rm log/test.log' # Remove any logs from the previous test run
 system MONGREL
@@ -90,7 +91,7 @@ wait_for_process(MONGREL)
 begin
   browser = FireWatir::Firefox.new
 rescue Watir::Exception::UnableToStartJSShException
-  system KILL_MONGREL_COMMAND
+  system KILL_COMMAND.gsub("<process>",MONGREL)
   raise Watir::Exception::UnableToStartJSShException
 end
 
@@ -117,7 +118,6 @@ end
 
 # This will close the browser and kill the mongrel instance when testing is complete
 at_exit do
-  KILL_COMMAND = "kill `ps aux | grep -e '<process>' | grep -v grep | awk '{ print $2 }'`"
   ts.controller.stop
   browser.close # Closes the watir browser
   system KILL_COMMAND.gsub("<process>",MONGREL)
