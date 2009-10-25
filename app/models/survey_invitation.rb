@@ -5,6 +5,8 @@ class SurveyInvitation < Invitation
   validates_presence_of :survey
   validate_on_create :not_already_invited
   
+  before_create :create_key
+    
   named_scope :running, :include => :survey, :conditions => ["surveys.aasm_state = ?", 'running']
 
   state_machine 'aasm_state', :initial => :pending do

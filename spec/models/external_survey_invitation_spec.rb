@@ -49,6 +49,11 @@ describe ExternalSurveyInvitation do
     @invitation.destroy
   end
   
+  it "should have a key after creating the invitation" do    
+    lambda{ @invitation.save! }.should change(@invitation, :key).from(nil)
+    @invitation.destroy
+  end  
+  
   it "should send a notification email when asked" do
     @invitation.save!
     Notifier.should_receive(:deliver_external_survey_invitation_notification)

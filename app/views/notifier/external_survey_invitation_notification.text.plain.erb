@@ -2,7 +2,7 @@ Your organization has been invited by <%=@invitation.inviter.name%> to participa
 By taking a few minutes to respond to this survey, you will be allowed to view the results of the survey for free.
 There is no signup required. Go to the following link to get started.
 
-<%=url_for(survey_login_path(:survey_id => @survey.id, :key => @invitation.key, :only_path => false))%>
+<%=url_for(survey_login_path(:key => @invitation.key, :only_path => false))%>
 
 If you would like to verify this request, feel free to email the survey sponsor at <%= @survey.sponsor.email %>.
 

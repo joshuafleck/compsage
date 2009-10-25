@@ -29,5 +29,10 @@ class Invitation < ActiveRecord::Base
       return network_or_survey.external_invitations.new(params)
     end
   end
-
+  
+  protected
+   
+  def create_key
+    self.key = KeyGen.random
+  end
 end

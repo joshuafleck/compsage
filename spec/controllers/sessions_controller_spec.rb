@@ -5,13 +5,14 @@ describe SessionsController do
   before(:each) do
     # set up an organization
     @brian = Organization.create(valid_organization_attributes)    
-    @invitation = Factory.create(:external_survey_invitation)
-      
+    @external_invitation = Factory.create(:external_survey_invitation)
+    @internal_invitation = Factory.create(:survey_invitation)      
   end
   
   after(:each) do
     @brian.destroy
-    @invitation.destroy
+    @external_invitation.destroy
+    @internal_invitation.destroy
   end
   
   it 'logins and redirects' do
@@ -21,8 +22,8 @@ describe SessionsController do
   end
   
   it 'logins and redirects when there is a valid survey invitation' do
-    get :create_survey_session, :key => @invitation.key, :survey_id => @invitation.survey.id
-    session[:external_survey_invitation_id].should eql(@invitation.id)
+    get :create_survey_session, :key => @external_invitation.key, :survey_id => @external_invitation.survey.id
+    session[:external_survey_invitation_id].should eql(@external_invitation.id)
     response.should be_redirect
   end
   
@@ -33,7 +34,7 @@ describe SessionsController do
   end
 
   it 'fails login and does not redirect when the survey is invalid' do
-    post :create_survey_session, :key => 'hahahahano', :survey_id => @invitation.survey.id
+    post :create_survey_session, :key => 'hahahahano', :survey_id => @external_invitation.survey.id
     response.should render_template('new')
   end
 
@@ -81,6 +82,12 @@ describe SessionsController do
     get :new
     controller.send(:logged_in?).should_not be_true
   end
+  
+  it 'logins and redirects for an internal survey invitation' do
+    get :create_survey_session, :key => @internal_invitation.key, :survey_id => @internal_invitation.survey.id
+    session[:organization_id].should_not be_nil
+    response.should be_redirect
+  end  
   
   def auth_token(token)
     request.cookies['auth_token'] = token
