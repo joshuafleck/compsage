@@ -1155,15 +1155,13 @@ div.autocomplete .actions {
 }
 
 div.howto-right {
-  position: relative;
   float: right;
   margin: 0.2em 1em 0em 1em;
 }
 
 div.howto-left {
-  position: relative;
   float: left; 
-  margin: 0.1em 1em 0em 1em;
+  margin: 0.2em 1em 0em 1em;
 }
 
 div.howto-left div.caption, div.howto-right div.caption {
