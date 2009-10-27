@@ -7,7 +7,10 @@
       <%= render :partial => "discussions/discussion", 
                  :collection => discussion_topic.all_children.find_all(&:not_abuse?).sort %>
       <li class="discussion_reply_link">
-        <div id="discussion_reply_box_<%=discussion_topic.id%>" style='display: none;' class="discussion_reply_box">
+        <div id="discussion_reply_box_<%=discussion_topic.id%>"
+             style="<%='display: none;' unless discussion.visible_errors?(discussion_topic) %>"
+             class="discussion_reply_box">
+          <%= error_messages_for :discussion if discussion.visible_errors?(discussion_topic) %>
           <% form_tag survey_discussions_url(@survey), :method => :post do %>
             <%= text_area_tag 'discussion[body]',
                               '', 
@@ -20,7 +23,9 @@
             </div>
           <% end %>
         </div>
-        <a id="discussion_reply_<%=discussion_topic.id%>" href="#">Reply</a>
+        <a id="discussion_reply_<%=discussion_topic.id%>" 
+          style="<%='display: none;' unless !discussion.visible_errors?(discussion_topic) %>"
+          href="#">Reply</a>
       </li>
   </ul>
 </li>
