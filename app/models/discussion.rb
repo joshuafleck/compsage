@@ -49,7 +49,7 @@ class Discussion < ActiveRecord::Base
     if discussion_topic.nil? then
       return self.errors.size > 0 && self.topic?
     else
-      return self.errors.size && self.parent_discussion_id.to_s == discussion_topic.id.to_s
+      return self.errors.size > 0 && self.parent_discussion_id.to_s == discussion_topic.id.to_s
     end
   end
   
