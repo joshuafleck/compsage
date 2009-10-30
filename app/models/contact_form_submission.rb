@@ -1,5 +1,6 @@
 class ContactFormSubmission
   include Validatable
+
   attr_accessor :name, :email, :phone, :phone_extension, :contact_preference, :message, :stripped_phone
 
   validates_presence_of :name, :message
