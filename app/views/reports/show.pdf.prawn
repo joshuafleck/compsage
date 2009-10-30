@@ -32,6 +32,23 @@ pdf.bounding_box(
   # start: survey metadata
   pdf.text "Job Description", :style => :bold
   pdf.text "#{@survey.description}"
+
+  pdf.pad_top(inner_padding) do
+    pdf.text "Sponsor", :style => :bold
+    pdf.text "#{@survey.sponsor.name_and_location}"
+  end
+
+  pdf.pad_top(inner_padding) do 
+    pdf.text "Invitation List", :style => :bold
+  end
+
+  @invitations.each do |invitation| 
+    pdf.text "#{format_invitation(invitation)}"
+  end
+
+  pdf.pad_top(inner_padding) do 
+    pdf.text "#{@survey.participations.count} firms participating"
+  end
   
     pdf.table(
       [[
@@ -45,22 +62,6 @@ pdf.bounding_box(
       :width => pdf.margin_box.width, 
       :align => { 0=> :left, 1 => :left, 2 => :right, 3 => :left},
       :column_widths => {0 => 73, 1 => 110, 2 => 90, 3 => 110})
-
-  pdf.pad_top(inner_padding) do
-    pdf.text "<b>Sponsor:</b> #{@survey.sponsor.name_and_location}"
-  end
-
-  pdf.pad_top(inner_padding) do 
-    pdf.text "#{@survey.participations.count} firms participating"
-  end
-
-  pdf.pad_top(inner_padding) do 
-    pdf.text "Invitation List", :style => :bold
-  end
-
-  @invitations.each do |invitation| 
-    pdf.text "#{format_invitation(invitation)}"
-  end
   
   # end: survey metadata
   pdf.pad_top(inner_padding) do 
