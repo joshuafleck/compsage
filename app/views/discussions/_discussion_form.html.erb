@@ -1,8 +1,8 @@
 <%= error_messages_for :discussion if discussion.visible_errors?%>
  <% form_tag survey_discussions_url(@survey), :method => :post do %>
-    <%= label_tag :subject, nil, :class => 'discussion_label' %>
-    <%= text_field_tag 'discussion[subject]' %>
-    <%= label_tag :body, nil, :class => 'discussion_label' %>
+    <%= label_tag 'discussion[subject]', 'Subject', :class => 'discussion_label' %>
+    <%= text_field_tag 'discussion[subject]', '', :size => 40 %>
+    <%= label_tag 'discussion[body]', 'Body', :class => 'discussion_label' %>
     <%= text_area_tag 'discussion[body]' %>
     <div class="discussion_submit">
       <input type="submit"  value="<%=discussion.new_record? ? 'Post Discussion' : 'Update Discussion' %>" /> or <a href="#" id='new_discussion_link_cancel'>Cancel</a>
