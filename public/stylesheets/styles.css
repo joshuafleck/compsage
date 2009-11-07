@@ -600,13 +600,18 @@ form.edit_survey textarea {
   font-size: .9em;
 }
 
+/* Since the preview box is narrower, we need a smaller width */
+div#survey_preview_box div.submit_row {
+  width: 665px;
+}
+
 div.submit_row {
   margin-top: 1em;
   padding: 10px;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #ddd;
   clear: both;
-  width: 745px; /* A hard-coded width is required for IE6 to prevent overflow */
+  width: 755px; /* A hard-coded width is required for IE6 to prevent overflow */
 }
 
 div.submit_row .next {
@@ -751,24 +756,35 @@ div.comments .field {
 ol#questions {
   font-size: 1.2em;
   list-style-type: none;
-  margin: 0 0; 
-  padding: 0;
+  margin: 0px; 
+  padding: 0px;
 }
 
-ol#questions > li {
+/* Since the preview box is narrower, we need a smaller width */
+div#survey_preview_box ol#questions li {
+  width: 685px;
+}
+
+/* A hard-coded width is required for IE6 to prevent overlap with questions */
+ol#questions li {
   margin-bottom: 10px;
   border: 1px solid #e6e9e3;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
-  overflow:hidden;
-  padding-bottom: 1px;
+  overflow: hidden;
+  width: 775px;
+}
+
+ol#questions li li {
+  margin-bottom: 0px;
+  border: none;
 }
 
 
 ol#questions ol {
-  margin: 0 0px;
+  margin: 0px;
   list-style-type: none;
-  padding: 0;
+  padding: 0px;
 }
 
 ol#questions li.odd, ol.questions li.odd, ol#new_questions li.odd {
@@ -782,25 +798,28 @@ ol#questions li.even, ol.questions li.even, ol#new_questions li.even {
 ol#questions label, ol#questions div.label {
   font-weight: normal;
   font-size: 1em;
-  margin: 0;
-  padding: 0;
+  margin: 0px;
+  padding: 0px;
 }
 
+/* Since the preview box is narrower, we need a smaller width. Will ensure deep nests wrap in survey preview. */
+div#survey_preview_box ol#questions li div.question_container {
+  width: 645px;
+}
+
+/* A hard-coded width is required for IE6 to prevent movement of question numbers */
 ol#questions li div.question_container {
   margin: 0 1em;
   padding: 0.5em 0;
+  width: 735px;
   position: relative;
-  height: 1%;
 }
 
 ol#questions li div.question_content {
 }
 
 ol#questions li div.question_number {
-  line-height: 1em;
   font-size: 1.5em;
-  height: 1em;
-  width: 50px;
   color: #bbc6bb;
   font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
   position: absolute;
