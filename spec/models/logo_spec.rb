@@ -9,8 +9,10 @@ describe Logo do
     Logo.reflect_on_association(:organization).should_not be_nil
   end
   
-  it 'should be invalid without an organization' do
+  it 'should be invalid without an organization or association' do
     @logo.save
     @logo.should have(1).errors_on(:organization)
+    @logo.should have(1).errors_on(:association)
   end
+
 end  

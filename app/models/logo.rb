@@ -1,6 +1,7 @@
 class Logo < ActiveRecord::Base
   
   belongs_to :organization
+  belongs_to :association
   
   has_attachment :content_type => :image,
                  :storage => :file_system,
@@ -13,9 +14,9 @@ class Logo < ActiveRecord::Base
                  },
                  :processor => 'ImageScience'
 
+  validates_presence_of :organization, :if => lambda { |l| l.association.nil? }
+  validates_presence_of :association, :if => lambda { |l| l.organization.nil? }
   validates_as_attachment
-  
-  validates_presence_of :organization
   
   before_thumbnail_saved do |thumbnail|
     thumbnail.organization = thumbnail.parent.organization

@@ -263,3 +263,8 @@ Factory.define :pending_account do |p|
   p.contact_last_name  "Terlson"
   p.phone              "7634983633"
 end
+
+Factory.define :association do |a|
+  a.name      "Association Name"
+  a.subdomain "mfrall"
+end
