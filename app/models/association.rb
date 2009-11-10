@@ -1,7 +1,4 @@
 class Association < ActiveRecord::Base
-  include Authentication
-  include Authentication::ByPassword
-  include Authentication::ByCookieToken
   
   has_and_belongs_to_many :organizations
   has_many :predefined_questions
@@ -21,10 +18,4 @@ class Association < ActiveRecord::Base
   attr_accessible :owner_email, :password, :password_confirmation, :name, :subdomain,
                   :logo
 
-  # Authenticates an association by their login name and unencrypted password.  Returns the user or nil.
-  #
-  def self.authenticate(email, password)
-    u = find_by_email(email) # need to get the salt
-    u && u.authenticated?(password) ? u : nil
-  end
 end
