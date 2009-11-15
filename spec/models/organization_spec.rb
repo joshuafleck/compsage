@@ -163,10 +163,20 @@ describe Organization do
     @organization.should have(1).errors_on(:zip_code)
   end
 
-  it "Should be invalid with a zip code that is not numbers" do
+  it "should be invalid with a zip code that is not numbers" do
     @organization.attributes = valid_organization_attributes.with(:zip_code => 'adamm')
     @organization.should have(1).errors_on(:zip_code)
   end
+  
+  it "should not be an uninitialized association member" do
+    @organization.is_uninitialized_association_member.should be_false
+  end
+  
+  it 'should not require a password for uninitialized association members' do
+    @organization.attributes = valid_organization_attributes.except(:password)
+    @organization.is_uninitialized_association_member = true
+    @organization.should have(0).errors_on(:password)
+  end  
 
 end
 

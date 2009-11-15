@@ -44,6 +44,12 @@ Factory.define :organization do |o|
   o.contact_name 'David Peterson'
 end
 
+Factory.define :uninitialized_association_member, :parent => :organization do |o|
+  o.crypted_password nil
+  o.salt nil
+  o.is_uninitialized_association_member true
+end
+
 #definition and set up for survey
 Factory.define :survey do |s|
   s.job_title 'Trailer Park Supervisor'

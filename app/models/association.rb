@@ -1,4 +1,5 @@
 class Association < ActiveRecord::Base
+  include Authentication
   
   has_and_belongs_to_many :organizations
   has_many :predefined_questions

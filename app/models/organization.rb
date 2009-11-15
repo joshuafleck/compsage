@@ -48,6 +48,8 @@ class Organization < ActiveRecord::Base
 
   has_and_belongs_to_many :associations
   
+  named_scope :is_not_uninitialized_association_member, :conditions => {:is_uninitialized_association_member => false}  
+  
   validates_presence_of     :name
   validates_format_of       :name,     :with => RE_NAME_OK,  :message => MSG_NAME_BAD, :allow_nil => true
   validates_length_of       :name,     :within => 3..100

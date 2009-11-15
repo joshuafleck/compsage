@@ -101,7 +101,10 @@ class SurveyInvitationsController < ApplicationController
   def invite_organization
     organization = Organization.find(params[:organization_id]) 
 
-    return @survey.invitations.new(:inviter => current_organization, :invitee => organization)
+    return Invitation.new_invitation_to(@survey, { 
+        :invitee => organization, 
+        :inviter => current_organization
+      })
   end
   
   # Invite the organization contained in the external_invitation param. This is used to invite an organization by email

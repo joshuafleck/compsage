@@ -12,7 +12,10 @@ class NetworkInvitationsController < ApplicationController
 
     @invitation = if params[:organization_id] then
       organization = Organization.find(params[:organization_id])
-      @network.invitations.new(:invitee => organization, :inviter => current_organization)
+      Invitation.new_invitation_to(@network, { 
+        :invitee => organization, 
+        :inviter => current_organization
+      })
     elsif params[:external_invitation] then
       Invitation.new_external_invitation_to(@network, params[:external_invitation].merge(:inviter => current_organization))
     end
