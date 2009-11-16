@@ -5,7 +5,8 @@ class SurveyInvitationsController < ApplicationController
   def index
     @networks = current_organization.networks   
     @survey   = current_organization.sponsored_surveys.find(params[:survey_id])
-
+    @organizations = current_association.organizations
+    
     if session[:survey_network_id] then
       # Why, it looks like we want to survey a network!
       create_invitations_for_network(current_organization.networks.find(session[:survey_network_id]))

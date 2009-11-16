@@ -444,6 +444,19 @@ div#my_surveys .deadline {
   padding-right: 10px;
 }
 
+#association_organizations ul{
+  border: 1px solid;
+}
+
+#association_organizations li {
+  margin-bottom: 2px;
+  border-bottom: 1px solid;
+}
+
+#association_search {
+  margin-bottom: 2px;
+}
+
 #end_break {
   clear: both;
 }

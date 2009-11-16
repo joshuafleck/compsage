@@ -86,7 +86,16 @@ namespace :data_generator do
     end
     puts "External invitation link: /survey_login?key=#{CGI.escape(invite.key)}&survey_id=#{survey.id}"
   end
-
+  
+  #usage: rake 'data_generator:load_association[25]'
+  desc "Generate an association with a given number of organizations"
+  task :load_association, :total, :needs => [:environment] do |task,args|
+    total = (args[:total] || NUM_ORGANIZATIONS).to_i
+    
+    before
+    generate_association_organizations(total)
+    after
+  end
 
   # usage: rake 'data_generator:load_all[5]'
   desc "Generate a fake set of data for all types."
@@ -204,6 +213,34 @@ namespace :data_generator do
         :state => Faker::Address.us_state_abbr,
         :zip_code => Faker::Address.zip_code.slice(0..4),
         :industry => AccountsHelper::INDUSTRIES[rand(53)])
+    end
+    
+    puts "generating organizations complete"
+  end
+  
+  def generate_association_organizations(total)    
+    puts "creating association"
+    association = Factory(:association, 
+                          :name => Faker::Company.name,
+                          :subdomain => Faker::Internet.domain_word
+                          )
+    puts "generating #{total} organizations..."
+    
+    total.times do |index|
+      print_percent_complete(index,total)
+      organization = Factory(:organization, 
+        :password => 'test12', 
+        :password_confirmation => 'test12', 
+        :name => Faker::Company.name, 
+        :email => Faker::Internet.email,
+        :location => Faker::Address.city,
+        :contact_name => Faker::Name.name,
+        :city => Faker::Address.city,
+        :state => Faker::Address.us_state_abbr,
+        :zip_code => Faker::Address.zip_code.slice(0..4),
+        :industry => AccountsHelper::INDUSTRIES[rand(53)])
+        
+        association.organizations << organization
     end
     
     puts "generating organizations complete"
