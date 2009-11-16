@@ -273,4 +273,7 @@ end
 Factory.define :association do |a|
   a.name      "Association Name"
   a.subdomain "mfrall"
+  a.owner_email { Factory.next(:email) }
+  a.crypted_password '27e5532e75526ff4574e3e8c8c2a48fb97415765'
+  a.salt 'asdf'
 end

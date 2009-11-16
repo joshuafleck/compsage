@@ -31,6 +31,8 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
   before do
     @current_organization = Factory.create(:organization)
     login_as(@current_organization)
+    @current_association = Factory.create(:association)
+    controller.stub!(:current_association).and_return(@current_association)
     
     @survey = Factory.create(:survey, :sponsor => @current_organization)
     @network = Factory.create(:network, :owner => @current_organization)

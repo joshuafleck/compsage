@@ -7,7 +7,7 @@ describe Association do
       :subdomain => "mfrall",
       :owner_email => "joe@domain.com",
       :password => 'test12',
-      :password_confirmation => 'test12',
+      :password_confirmation => 'test12'
     }
     @association = Association.new
   end
