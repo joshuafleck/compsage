@@ -48,4 +48,9 @@ class Invitation < ActiveRecord::Base
     end
   end  
 
+  protected
+   
+  def create_key
+    self.key = KeyGen.random
+  end
 end

@@ -1,7 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
   map.root :controller => 'home'
   map.contact 'contact', :controller => 'home', :action => 'contact'
-  map.home ':page', :controller => 'home', :action => 'show', :page => /about|contact|privacy|how|tips/
+  map.home ':page', :controller => 'home', :action => 'show', :page => /about|contact|privacy|how|tips|terms/
 
   map.resources :organizations, :collection => {:search => :any}, :member => {:invite_to_survey => :post, :invite_to_network => :post}
   
@@ -26,6 +26,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :account, :member => {:forgot => :any, :reset => :any}
   
   map.signup 'signup', :controller => 'pending_accounts', :action => 'new', :conditions => { :method => :get }
+  map.signup 'signup', :controller => 'pending_accounts', :action => 'received', :conditions => { :method => :get }
   map.signup 'signup', :controller => 'pending_accounts', :action => 'create', :conditions => { :method => :post }
   
   map.login 'login', :controller => 'sessions', :action => 'new'

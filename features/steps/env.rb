@@ -13,6 +13,8 @@ require 'features/helpers/organization_helper'
 require 'features/helpers/wait_helper'
 require 'features/helpers/dom_interface_helper'
 
+include WaitHelper
+
 Webrat.configure do |config|
   config.mode = :rails
 end
@@ -51,17 +53,47 @@ ts.controller.index
 #  as the mongrel instance needs to be able to see the database objects we have created.
 DatabaseCleaner.strategy = :truncation, {:except => %w[predefined_questions]} # Don't truncate the PDQ table after tests
 
-# Setup for watir browser testing
+# Starting with Cucumber version 1.3.102, Cucumber breaks not using transactional fixtures. This monkeypatch ensures that
+# use_transactional_fixtures is always false. Remove this once cucumber #457 is functioning properly.
+class << Cucumber::Rails::World
+  def use_transactional_fixtures
+    false
+  end
+  def use_transactional_fixtures=(other)
+    # do nothing
+  end
+end
+
+
+## Setup for watir browser testing
+
+# If running headless, set this environment variable. This will start a virtual framebuffer and run FF with the vfb display.
+run_headless = ENV["RUN_HEADLESS"]
+XVFB = "Xvfb :99 -ac"
+FIREFOX = "firefox -jssh --display=:99.0"
+if run_headless then
+  system "#{XVFB} &"
+  wait_for_process(XVFB) 
+  system "DISPLAY=:99 #{FIREFOX} &" # FireWatir runs in an existing FF session, if we have one open ahead of time.
+  wait_for_process(FIREFOX) 
+end
+
 # Creates a test instance of mongrel on port 3001
 FireWatir::TextField.send(:include, TextBoxExtension)
 port = 3001
 base_url = "http://localhost:#{port}"
-START_MONGREL = "ruby script/server -p #{port} -e #{ENV["RAILS_ENV"]} -d"
+KILL_COMMAND = "kill `ps aux | grep -e '<process>' | grep -v grep | awk '{ print $2 }'`"
+MONGREL = "ruby script/server -p #{port} -e #{ENV["RAILS_ENV"]} -d"
 system 'rm log/test.log' # Remove any logs from the previous test run
-system START_MONGREL
-sleep(5) # Give Mongrel some time to start. Since we are running as a daemon, the process returns before the server can rev up.
+system MONGREL
+wait_for_process(MONGREL)
 
-browser = FireWatir::Firefox.new
+begin
+  browser = FireWatir::Firefox.new
+rescue Watir::Exception::UnableToStartJSShException
+  system KILL_COMMAND.gsub("<process>",MONGREL)
+  raise Watir::Exception::UnableToStartJSShException
+end
 
 # Add some helpers to our world object.
 World(OrganizationHelper)
@@ -88,6 +120,10 @@ end
 at_exit do
   ts.controller.stop
   browser.close # Closes the watir browser
-  system "kill `ps aux | grep -e '#{START_MONGREL}' | grep -v grep | awk '{ print $2 }'`" # Kills the mongrel instance
+  system KILL_COMMAND.gsub("<process>",MONGREL)
+  if run_headless then
+    system KILL_COMMAND.gsub("<process>",FIREFOX)
+    system KILL_COMMAND.gsub("<process>",XVFB)
+  end
 end
 

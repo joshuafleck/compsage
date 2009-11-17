@@ -600,6 +600,10 @@ form.edit_survey textarea {
   line-height: 20px;
 }
 
+.custom_required_check {
+  display: inline;
+}
+
 .question_submit, .discussion_submit {
   margin-top: 5px;
 }
@@ -609,13 +613,18 @@ form.edit_survey textarea {
   font-size: .9em;
 }
 
+/* Since the preview box is narrower, we need a smaller width */
+div#survey_preview_box div.submit_row {
+  width: 665px;
+}
+
 div.submit_row {
   margin-top: 1em;
   padding: 10px;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #ddd;
   clear: both;
-  width: 745px; /* A hard-coded width is required for IE6 to prevent overflow */
+  width: 755px; /* A hard-coded width is required for IE6 to prevent overflow */
 }
 
 div.submit_row .next {
@@ -760,24 +769,35 @@ div.comments .field {
 ol#questions {
   font-size: 1.2em;
   list-style-type: none;
-  margin: 0 0; 
-  padding: 0;
+  margin: 0px; 
+  padding: 0px;
 }
 
-ol#questions > li {
+/* Since the preview box is narrower, we need a smaller width */
+div#survey_preview_box ol#questions li {
+  width: 685px;
+}
+
+/* A hard-coded width is required for IE6 to prevent overlap with questions */
+ol#questions li {
   margin-bottom: 10px;
   border: 1px solid #e6e9e3;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
-  overflow:hidden;
-  padding-bottom: 1px;
+  overflow: hidden;
+  width: 775px;
+}
+
+ol#questions li li {
+  margin-bottom: 0px;
+  border: none;
 }
 
 
 ol#questions ol {
-  margin: 0 0px;
+  margin: 0px;
   list-style-type: none;
-  padding: 0;
+  padding: 0px;
 }
 
 ol#questions li.odd, ol.questions li.odd, ol#new_questions li.odd {
@@ -791,25 +811,28 @@ ol#questions li.even, ol.questions li.even, ol#new_questions li.even {
 ol#questions label, ol#questions div.label {
   font-weight: normal;
   font-size: 1em;
-  margin: 0;
-  padding: 0;
+  margin: 0px;
+  padding: 0px;
 }
 
+/* Since the preview box is narrower, we need a smaller width. Will ensure deep nests wrap in survey preview. */
+div#survey_preview_box ol#questions li div.question_container {
+  width: 645px;
+}
+
+/* A hard-coded width is required for IE6 to prevent movement of question numbers */
 ol#questions li div.question_container {
   margin: 0 1em;
   padding: 0.5em 0;
+  width: 735px;
   position: relative;
-  height: 1%;
 }
 
 ol#questions li div.question_content {
 }
 
 ol#questions li div.question_number {
-  line-height: 1em;
   font-size: 1.5em;
-  height: 1em;
-  width: 50px;
   color: #bbc6bb;
   font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
   position: absolute;
@@ -1162,4 +1185,53 @@ div.autocomplete .actions {
   float: right;
   padding-right: 5px;
 }
+
+div.howto-right {
+  float: right;
+  margin: 0.2em 1em 0em 1em;
+}
+
+div.howto-left {
+  float: left; 
+  margin: 0.2em 1em 0em 1em;
+}
+
+div.howto-left div.caption, div.howto-right div.caption {
+  position: relative;
+  font-size: 0.8em;
+  color: #666;
+  display: block;
+  padding-left: 7px;
+  top: -5px;
+}
+
+/* Lightbox styles */
+#lightbox{	position: absolute;	left: 0; width: 100%; z-index: 100; text-align: center; line-height: 0;}
+#lightbox img{ width: auto; height: auto;}
+#lightbox a img{ border: none; }
+
+#outerImageContainer{ position: relative; background-color: #fff; width: 250px; height: 250px; margin: 0 auto; }
+#imageContainer{ padding: 10px; }
+
+#loading{ position: absolute; top: 40%; left: 0%; height: 25%; width: 100%; text-align: center; line-height: 0; }
+#hoverNav{ position: absolute; top: 0; left: 0; height: 100%; width: 100%; z-index: 10; }
+#imageContainer>#hoverNav{ left: 0;}
+#hoverNav a{ outline: none;}
+
+#prevLink, #nextLink{ width: 49%; height: 100%; background-image: url(data:image/gif;base64,AAAA); /* Trick IE into showing hover */ display: block; }
+#prevLink { left: 0; float: left;}
+#nextLink { right: 0; float: right;}
+#prevLink:hover, #prevLink:visited:hover { background: url(../images/prevlabel.gif) left 15% no-repeat; }
+#nextLink:hover, #nextLink:visited:hover { background: url(../images/nextlabel.gif) right 15% no-repeat; }
+
+#imageDataContainer{ font: 10px Verdana, Helvetica, sans-serif; background-color: #fff; margin: 0 auto; line-height: 1.4em; overflow: auto; width: 100%	; }
+
+#imageData{	padding:0 10px; color: #666; }
+#imageData #imageDetails{ width: 70%; float: left; text-align: left; }	
+#imageData #caption{ font-weight: bold;	}
+#imageData #numberDisplay{ display: block; clear: left; padding-bottom: 1.0em;	}			
+#imageData #bottomNavClose{ width: 66px; float: right;  padding-bottom: 0.7em; outline: none;}	 	
+
+#overlay{ position: absolute; top: 0; left: 0; z-index: 90; width: 100%; height: 500px; background-color: #000; }
+
 

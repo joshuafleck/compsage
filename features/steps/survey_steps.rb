@@ -191,6 +191,10 @@ When "I respond to just the follow-up question" do
   click_button "Submit My Responses"
 end
 
+When "I check the required button" do
+  check "question_required"
+end
+
 When "I add a predefined question" do
   select "6", :from => 'predefined_questions'
 
@@ -281,6 +285,12 @@ Then "I should see the new question" do
   wait_for_javascript
   # Assumed the question added is FLSA status
   response_body.should =~ /Is this position exempt/
+end
+
+Then "I should see required" do
+  wait_for_javascript
+  # Assumed the question added is FLSA status
+  response_body.should =~ /Required/
 end
 
 Then "I should not see the new question" do

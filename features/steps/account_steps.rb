@@ -34,6 +34,7 @@ When /I add an account/ do
     fills_in "Zip", :with => "12345"
     fills_in "Password", :with => "test12"
     fills_in "Confirm password", :with => "test12"
+    check "I have read and understand the Terms of Use"
     clicks_button 'Sign Up'
 end
 

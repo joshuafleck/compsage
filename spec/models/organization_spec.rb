@@ -171,6 +171,11 @@ describe Organization do
   it "should not be an uninitialized association member" do
     @organization.is_uninitialized_association_member.should be_false
   end
+
+  it "Should be invalid without accepting the Terms of Use" do
+    @organization.attributes = valid_organization_attributes.with(:terms_of_use => false)
+    @organization.should have(1).errors_on(:terms_of_use)
+  end
   
   it 'should not require a password for uninitialized association members' do
     @organization.attributes = valid_organization_attributes.except(:password)
@@ -208,6 +213,15 @@ describe Organization, "that already exists" do
     @organization.create_reset_key_and_send_reset_notification
     lambda{ @organization.delete_reset_key }.should change(@organization, :reset_password_key_expires_at).to(nil)
   end
+  
+  it "should not be allowed to request a password reset within 1 minute of a previous request" do   
+    lambda{ @organization.create_reset_key_and_send_reset_notification }.should change(@organization, :can_request_password_reset?).from(true).to(false)
+  end
+  
+  it "should be allowed to request a password reset 1 minute after a previous request" do 
+    @organization.create_reset_key_and_send_reset_notification      
+    lambda{ @organization.reset_password_key_created_at = Time.now - 2.minutes }.should change(@organization, :can_request_password_reset?).from(false).to(true)
+  end  
          
   it "should send a notification email when resetting the password" do   
     Notifier.should_receive(:deliver_reset_password_key_notification) 

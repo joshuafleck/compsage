@@ -18,7 +18,18 @@ Feature: Creating survey questions
     When I add a predefined question
 
     Then I should see the new question
+    
+  Scenario: Adding a required PDQ
+    Given I am testing with firewatir
+    And I am logged in
+    And I am on the new survey page
+    And I check the required button
 
+    When I add a predefined question
+
+    Then I should see the new question
+    And I should see required
+  
   Scenario: Adding a custom question
     Given I am testing with firewatir
     And I am logged in
@@ -27,6 +38,17 @@ Feature: Creating survey questions
     When I add a custom question
 
     Then I should see the new question
+    
+  Scenario: Adding a required custom question
+    Given I am testing with firewatir
+    And I am logged in
+    And I am on the new survey page
+    And I check the required button
+
+    When I add a custom question
+
+    Then I should see the new question
+    And I should see required
 
   Scenario: Attempting to add an invalid question
     Given I am testing with firewatir

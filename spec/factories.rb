@@ -42,6 +42,7 @@ Factory.define :organization do |o|
   o.salt 'asdf'
   o.created_at 40.days.ago.to_s(:db)
   o.contact_name 'David Peterson'
+  o.terms_of_use '1'
 end
 
 Factory.define :uninitialized_association_member, :parent => :organization do |o|

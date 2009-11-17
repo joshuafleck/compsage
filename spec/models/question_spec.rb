@@ -52,12 +52,6 @@ describe Question do
     @question.should have(1).error_on(:text)
   end
   
-  it "should set custom questions with wage responses as required by default" do
-    @question.attributes = valid_question_attributes.with(:question_type => "Pay or wage response")
-    @question.valid?
-    @question.required?.should == true
-  end
-  
   it "should not set predefined questions with wage responses as required by default" do
     @question.attributes = valid_question_attributes.with(:question_type => "Pay or wage response", :predefined_question_id => "1")
     @question.valid?

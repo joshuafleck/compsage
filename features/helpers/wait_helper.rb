@@ -15,6 +15,14 @@ module WaitHelper
     wait_for_effects(timeout)
   end
 
+  # Waits until the specified process is found to be executing
+  def wait_for_process(process_name, timeout = 60)
+    wait_for(timeout) do
+      system "ps aux | grep -e '#{process_name}' | grep -v grep 1>/dev/null"
+      $?.exitstatus == 0
+    end
+  end
+  
   private
 
 

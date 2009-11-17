@@ -68,10 +68,19 @@ class AccountsController < ApplicationController
       organization = Organization.find_by_email(params[:email])      
       if organization then
       
-        organization.create_reset_key_and_send_reset_notification
+        # This will prevent email bombing of the forgot password link.
+        if organization.can_request_password_reset? then
         
-        flash[:notice] = "Email sent to #{organization.email}."
-        redirect_to new_session_path 
+          organization.create_reset_key_and_send_reset_notification
+          
+          flash[:notice] = "An email containing a link to reset your password was sent to #{organization.email}."
+          redirect_to new_session_path 
+         
+        else
+         
+          flash.now[:notice] = "You have already requested a password reset. If you did not receive an email containing a link to reset your password, <a href=\"#{contact_path}\">let us know</a>."
+          
+        end
         
       else
         flash.now[:notice] = "There was no account found for #{params[:email]}."
@@ -145,7 +154,7 @@ class AccountsController < ApplicationController
 
     # No invitation or pending account, kick them back to the login page.
     if !@invitation_or_pending_account then
-      flash[:notice] = "We are unable to process your request at this time. If the problem persists, <a href=\"mailto:support@compsage.com\">let us know</a>."
+      flash[:notice] = "We are unable to process your request at this time. If the problem persists, <a href=\"#{contact_path}\">let us know</a>."
       redirect_to new_session_path
     end
     

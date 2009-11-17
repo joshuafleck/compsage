@@ -25,4 +25,5 @@ ActionMailer::Base.smtp_settings = {
   :port => 2525,
 }
 
-
+#Added factory girl gem for running data builder task
+config.gem 'thoughtbot-factory_girl', :lib => 'factory_girl', :source => 'http://gems.github.com'

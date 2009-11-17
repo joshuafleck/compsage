@@ -27,11 +27,11 @@
   <%=f.label :industry %> 
   <%=f.select :industry, AccountsHelper::INDUSTRIES, :include_blank => true %>
   <% if !@organization.new_record? then %>  
-  <div id="change_password_link">
+    <div id="change_password_link">
         <%= link_to_function "Change My Password", "new Effect.toggle('change_password', 'blind', {duration: .5});return false;" %>
     </div>
   <% end %>
-  <div id="change_password" style='<%=@organization.new_record? ? "" : "display: none;"%>'>
+  <div id="change_password" style='<%=@organization.new_record? || !@organization.errors.on(:password).blank? ? "" : "display: none;"%>'>
   <% form_row do %>
     <% form_box do %>
       <%=f.label :password, required('Password') %> 
@@ -43,6 +43,12 @@
     <% end %>
   <% end %>  
   </div>
+  <% if @organization.new_record? %>
+    <div style="margin-top: 1em;">  
+    <%=f.label :terms_of_use, "I have read and understand the #{link_to 'Terms of Use', home_path('terms'), :target => '_blank'}", :style => "display: inline;" %>
+    <%=f.check_box :terms_of_use %>
+    </div>
+  <% end %>  
   <div class="submit">
     <input type="submit" value='<%=@organization.new_record? ? "Sign Up" : "Update"%>' /> or
     <% if @organization.new_record? && logged_in_from_survey_invitation? then %>

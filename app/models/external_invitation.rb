@@ -19,10 +19,5 @@ class ExternalInvitation < Invitation
   def organization_name_and_email
     "#{self.organization_name} (#{self.email})"
   end
-  
-  protected
-   
-  def create_key
-    self.key = KeyGen.random
-  end
+
 end

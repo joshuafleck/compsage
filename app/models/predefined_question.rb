@@ -12,7 +12,7 @@ class PredefinedQuestion < ActiveRecord::Base
   # ==== Options
   # +parent_question+:: The question that all new questions should be a follow up to.
   #
-  def build_questions(survey, parent_question_id = nil)
+  def build_questions(survey, parent_question_id = nil, required = nil)
 
     new_questions = [];
     
@@ -29,6 +29,10 @@ class PredefinedQuestion < ActiveRecord::Base
         question_attributes[:parent_question_id] = parent_question_id
       elsif !parent_question_index.nil? then
         question_attributes[:parent_question] = new_questions[parent_question_index]
+      end
+      
+      if !required.nil? then
+        question_attributes[:required] = required
       end
 
       new_questions << survey.questions.create(question_attributes) 

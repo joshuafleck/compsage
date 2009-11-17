@@ -44,6 +44,15 @@ class Discussion < ActiveRecord::Base
     self.parent_id.nil? && self.parent_discussion_id.nil?
   end
   
+  # determines if the discussion is editable
+  def visible_errors?(discussion_topic = nil)
+    if discussion_topic.nil? then
+      return self.errors.size > 0 && self.topic?
+    else
+      return self.errors.size > 0 && self.parent_discussion_id.to_s == discussion_topic.id.to_s
+    end
+  end
+  
   private
 
   # After the creation of a discussion, this will assign the discussion to its parent in the case of a reply

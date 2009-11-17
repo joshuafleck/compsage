@@ -65,6 +65,12 @@ describe SurveyInvitation do
     @invitation.send_invitation!
     lambda{ @invitation.fulfill! }.should change(@invitation, :aasm_state).from("sent").to("fulfilled")
     @invitation.destroy
-  end     
+  end 
+    
+  it "should have a key after creating the invitation" do    
+    lambda{ @invitation.save! }.should change(@invitation, :key).from(nil)
+    @invitation.destroy
+  end  
+        
   
 end 

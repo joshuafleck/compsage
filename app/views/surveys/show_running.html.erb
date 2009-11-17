@@ -37,11 +37,11 @@
   <% if !@discussions.any? then %>
     No questions or clarifications have been asked.
   <% end %>
-  <div id="new_discussion_form" style="<%='display: none;' unless @discussion.errors.size > 0%>">
+  <div id="new_discussion_form" style="<%='display: none;' unless @discussion.visible_errors? %>">
     <%=render :partial => 'discussions/discussion_form', :locals => { :discussion => @discussion } %>
   </div>
   <ul id="discussions">
-    <%=render :partial => 'discussions/discussion_topic', :collection => @discussions.sort %>
+    <%=render :partial => 'discussions/discussion_topic', :collection => @discussions.sort, :locals => { :discussion => @discussion } %>
   </ul>
   <p class="discussion_warning">You must preserve your anonymity and the anonymity of the other participants. The posting of
     compensation information is unlawful.</p>

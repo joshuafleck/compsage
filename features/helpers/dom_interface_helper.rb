@@ -43,6 +43,10 @@ module DomInterfaceHelper
     def attach_file(locator, path, content_type = nil)
       raise RuntimeException, "Not Implemented"
     end
+    
+    def check(locator)
+      FirewatirUtils.locate_element(@_browser, :checkbox, locator).click
+    end
 
     def choose(locator)
       FirewatirUtils.locate_element(@_browser, :radio, locator).set

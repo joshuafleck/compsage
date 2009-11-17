@@ -109,6 +109,7 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
     }
     var selectedQuestion = $F(pdqSelect);
     var selectedParentQuestion = $F(followUpSelect);
+    var questionRequired = $F('question_required')
     var questionParameters = null;
 
     if(!selectedQuestion){
@@ -123,6 +124,7 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
       }
       questionParameters = {'question[text]': $F('custom_question_text'),
                             'question[question_type]': $F('custom_question_response'),
+                            'question[required]': questionRequired,
                             'question[parent_question_id]': selectedParentQuestion};
 
       $('custom_question_text').clear();
@@ -132,6 +134,7 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
     } 
     else if(selectedQuestion != '') {  //The user selected a predefined question
       questionParameters = {'predefined_question_id': selectedQuestion,
+                            'required': questionRequired,
                             'parent_question_id': selectedParentQuestion};
     }  
       
@@ -148,6 +151,7 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
     //Reset the select box
     $('predefined_questions').clear();
     $('follow_up_question_select').clear();
+    $('question_required').checked = false;
   };
 
   /* Inserts the specified question under the specified parent question. Called when the server responds to a user's

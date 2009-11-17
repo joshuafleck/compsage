@@ -69,9 +69,11 @@ class Organization < ActiveRecord::Base
   validates_length_of       :crypted_password, :maximum => 40, :allow_nil => :true
   validates_length_of       :salt, :maximum => 40, :allow_nil => :true
   
+  validates_acceptance_of :terms_of_use, :on => :create  
+  attr_accessor :terms_of_use
 
   attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name,
-                  :industry, :logo
+                  :industry, :logo, :terms_of_use
   
   # This organization's name and location if they have one.
   #
@@ -94,6 +96,7 @@ class Organization < ActiveRecord::Base
   #
   def create_reset_key_and_send_reset_notification
     self.reset_password_key = KeyGen.random
+    self.reset_password_key_created_at = Time.now
     self.reset_password_key_expires_at = Time.now + 5.days
     self.save!
     
@@ -106,10 +109,17 @@ class Organization < ActiveRecord::Base
     self.reset_password_key_expires_at < Time.now
   end
   
+  # True, if the user has not requested a password reset in the last minute
+  #
+  def can_request_password_reset?
+    reset_password_key_created_at.nil? || ((Time.now - reset_password_key_created_at) > 1.minute)
+  end
+  
   # Removes the reset key and expiry date.
   #
   def delete_reset_key
     self.reset_password_key = nil
+    self.reset_password_key_created_at = nil
     self.reset_password_key_expires_at = nil
     self.save!
   end
