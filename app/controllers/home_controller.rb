@@ -9,10 +9,10 @@ class HomeController < ApplicationController
 
     @form_options = Rails.env.production? ? {:protocol => 'https://', :host => 'www.compsage.com', :only_path => false} : {}
 
-    if current_subdomain && current_association then
-      # Looking for an association page
-      render 'association_index'
-    end
+    #if current_subdomain && current_association then
+    #  # Looking for an association page
+    #  redirect_to associations_path
+    #end
   end
   
   def show

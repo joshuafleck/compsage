@@ -14,6 +14,7 @@ require 'features/helpers/wait_helper'
 require 'features/helpers/dom_interface_helper'
 
 include WaitHelper
+include URLHelper
 
 Webrat.configure do |config|
   config.mode = :rails
@@ -64,6 +65,11 @@ class << Cucumber::Rails::World
   end
 end
 
+# another hack regarding errors coming from redirects via subdomain
+class Webrat::Session
+  alias internal_redirect? redirect?
+end
+
 
 ## Setup for watir browser testing
 
@@ -81,7 +87,8 @@ end
 # Creates a test instance of mongrel on port 3001
 FireWatir::TextField.send(:include, TextBoxExtension)
 port = 3001
-base_url = "http://localhost:#{port}"
+subdomain = "sub"
+base_url = "http://#{subdomain}.localhost:#{port}"
 KILL_COMMAND = "kill `ps aux | grep -e '<process>' | grep -v grep | awk '{ print $2 }'`"
 MONGREL = "ruby script/server -p #{port} -e #{ENV["RAILS_ENV"]} -d"
 system 'rm log/test.log' # Remove any logs from the previous test run
@@ -99,6 +106,7 @@ end
 World(OrganizationHelper)
 World(WaitHelper)
 World(DomInterfaceHelper)
+World(URLHelper)
 
 # This block is run before every feature test
 Before do
@@ -107,8 +115,10 @@ Before do
   @testing_javascript = false # This flag tells our cucumber steps how to test (webrat or watir)
   @browser = browser # This is the browser to be used in watir tests
   @base_url = base_url # This is the base URL for watir tests
+  @subdomain = subdomain # This is the subdomain for all webrat tests for AI. Need to set variable in route creation.
   @current_organization = Factory.create(:organization) # We need an organization for most steps, have one ready
   @current_survey_invitation = Factory.create(:sent_external_survey_invitation) # We need an external invitation for many steps, have one ready
+  Factory.create(:association, :subdomain => @subdomain)
 end
 
 # This block is run after every feature test

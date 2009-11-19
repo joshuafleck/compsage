@@ -1,5 +1,5 @@
 Given "I am on the survey response page" do
-  visit survey_questions_url(@survey)
+  visit add_subdomain(survey_questions_url(@survey))
 end
 
 Given /^I am sponsoring a running survey with a (.*) question/ do |type|
@@ -100,11 +100,11 @@ When /^I choose the (hourly|annual) pay type$/ do |type|
 end
 
 When "I am on the survey show page" do
-  visit survey_url(@survey)
+  visit add_subdomain(survey_url(@survey))
 end
 
 When "I am on the edit survey page" do
-  visit edit_survey_url(@survey)
+  visit add_subdomain(edit_survey_url(@survey))
 end
 
 When "I create the survey" do
@@ -351,13 +351,13 @@ Then "I should see my comments" do
 end
 
 When "I am on the survey report page" do
-  visit survey_report_url(@survey)
+  visit add_subdomain(survey_report_url(@survey))
 end
 
 When "I search for a running survey by name" do
   @name = "Searchable survey"
   @survey = Factory(:running_survey,:job_title => @name)
-  visit surveys_url
+  visit add_subdomain(surveys_url)
   fills_in 'search_text', :with => @name
   field_with_id('submit', 'submit').click
 end
@@ -367,11 +367,11 @@ Then "I should see the survey I searched for" do
 end
 
 Given "I am on the survey reports index" do
-  visit reports_surveys_url
+  visit add_subdomain(reports_surveys_url)
 end
 
 Given "I am on the surveys index" do
-  visit surveys_url
+  visit add_subdomain(surveys_url)
 end
 
 Given "I have been invited, sponsored, participated, and finished surveys" do
@@ -407,7 +407,7 @@ Then "I should be on the survey index" do
 end
 
 Given "I am on the new survey page" do
-  visit new_survey_url
+  visit add_subdomain(new_survey_url)
 end
 
 Then "I should be on the survey invitations page" do
@@ -425,11 +425,11 @@ Then "I should be on the survey preview page" do
 end
 
 Given "I am on the survey preview page" do
-  visit preview_survey_questions_url(@survey)
+  visit add_subdomain(preview_survey_questions_url(@survey))
 end
 
 Given "I am on the survey billing page" do
-  visit new_survey_billing_url(@survey)
+  visit add_subdomain(new_survey_billing_url(@survey))
 end
 
 When "I preview the survey" do

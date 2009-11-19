@@ -43,6 +43,6 @@ And "I should not see the old wage format" do
 end
 
 When /^I download the hourly "([^\"]*)" report$/ do |format|
-  visit survey_report_url(@survey, :format => format, :wage_format => "Hourly")
+  visit add_subdomain(survey_report_url(@survey, :format => format, :wage_format => "Hourly"))
 end
 

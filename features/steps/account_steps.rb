@@ -1,9 +1,9 @@
 Given /I am on the new account page/ do
-  visit new_account_url
+  visit add_subdomain(new_account_url)
 end
 
 Given /I am on the edit account page/ do
-  visit edit_account_url
+  visit add_subdomain(edit_account_url)
 end
 
 Given /I have requested a password reset/ do
@@ -16,17 +16,17 @@ Given /the password reset request is expired/ do
 end
 
 Given /I am on the reset password page/ do
-  visit reset_account_url(:key => @current_organization.reset_password_key)
+  visit add_subdomain(reset_account_url(:key => @current_organization.reset_password_key))
 end
 
 Given "I am logged in via network invitation" do
   invitation = Factory(:external_network_invitation)
-  visit new_account_path(:key => invitation.key)
+  visit add_subdomain(new_account_path(:key => invitation.key))
 end
 
 Given "I am logged in via pending account" do
   invitation = Factory(:pending_account)
-  visit new_account_path(:key => invitation.key)
+  visit add_subdomain(new_account_path(:key => invitation.key))
 end
 
 When /I add an account/ do

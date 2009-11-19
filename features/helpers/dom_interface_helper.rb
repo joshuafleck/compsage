@@ -99,7 +99,7 @@ module DomInterfaceHelper
     end
 
     def visit(url)
-      @_browser.goto(url.gsub('http://www.example.com', @base_url))
+      @_browser.goto(url)
     end
 
     def set_hidden_field(locator, options)

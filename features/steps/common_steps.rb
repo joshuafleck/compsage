@@ -1,5 +1,5 @@
 def logout
-  visit(root_url)
+  visit add_subdomain(root_url)
   click_link "Log Out" if response_body =~ /Log Out/m
 end
 
@@ -8,7 +8,7 @@ def login
   password = "test12"
   
   logout
-  visit(new_session_url)
+  visit add_subdomain(new_session_url)
   
   fill_in("email", :with => email)
   fill_in("password", :with => password)
@@ -18,7 +18,7 @@ end
 def login_with_external_invitation
   logout
   @survey = @current_survey_invitation.survey
-  visit survey_login_url(:survey_id => @survey.id, :key => @current_survey_invitation.key)
+  visit add_subdomain(survey_login_url(:survey_id => @survey.id, :key => @current_survey_invitation.key))
 end
 
 def create_survey(state, sponsor)
@@ -45,11 +45,11 @@ Given /^I am logged in via survey invitation$/ do
 end
 
 Given /^I am on the login page$/ do
-  visit(new_session_url)
+  visit add_subdomain(new_session_url)
 end
 
 Given "I am on the home page" do
-  visit(root_url)
+  visit add_subdomain(root_url)
 end
 
 Given /^I own a network$/ do
@@ -71,7 +71,7 @@ Given /^I am participating in a ?"?([^\"]*)"? survey$/ do |state|
 end
 
 Given /^I am on the network page$/ do
-  visit(network_url(@network))
+  visit add_subdomain(network_url(@network))
 end
 
 Given /^there is an organization named "([^\"]*)"$/ do |name|

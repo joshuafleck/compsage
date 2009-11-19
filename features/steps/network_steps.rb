@@ -1,13 +1,13 @@
 When "I am on the networks index" do
-  visit(networks_url)
+  visit add_subdomain(networks_url)
 end
 
 Given "I am on the new network page" do
-  visit(new_network_url)
+  visit add_subdomain(new_network_url)
 end
 
 Given /^I am on the edit network page$/ do
-  visit(edit_network_url(@network))
+  visit add_subdomain(edit_network_url(@network))
 end
 
 Given "I am invited to a network" do

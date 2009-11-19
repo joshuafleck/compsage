@@ -1,5 +1,5 @@
 Given /^I am on the survey invitations page$/ do
-  visit survey_invitations_url(@survey)
+  visit add_subdomain(survey_invitations_url(@survey))
 end
 
 Given "I have created a survey invitation" do

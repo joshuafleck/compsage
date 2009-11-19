@@ -1,5 +1,5 @@
 Given /I am on the new pending account page/ do
-  visit signup_url
+  visit add_subdomain(signup_url)
 end
 
 When /^I add a pending account$/ do
