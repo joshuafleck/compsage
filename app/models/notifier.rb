@@ -71,6 +71,15 @@ class Notifier < ActionMailer::Base
     body       :organization => organization
   end
   
+  #sent when a user requests a key for resetting their password
+  def association_member_initialization_notification(organization,association)
+    recipients organization.email
+    from       "CompSage <support@compsage.com>"
+    reply_to   "support@compsage.com"
+    subject    "CompSage.com account initialization"
+    body       :organization => organization, :association => association
+  end  
+  
   #sent when a survey sponsor posts a new discussion
   def discussion_thread_notification(discussion, recipient)
     recipients recipient.email

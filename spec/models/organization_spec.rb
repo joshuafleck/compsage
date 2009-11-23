@@ -96,6 +96,13 @@ describe Organization do
     Organization.authenticate(valid_organization_attributes[:email], valid_organization_attributes[:password]).should == @organization
   end
   
+  it 'should not authenticate uninitialized association members' do
+    @organization.attributes = valid_organization_attributes
+    @organization.is_uninitialized_association_member = true
+    @organization.save
+    Organization.authenticate(valid_organization_attributes[:email], valid_organization_attributes[:password]).should be_nil
+  end
+  
   it "should be invalid when location is longer than 60 characters" do
   	@organization.attributes = valid_organization_attributes.with(:location => "0"*61)
     @organization.should have(1).errors_on(:location)
@@ -344,5 +351,64 @@ describe Organization, "built from a pending account" do
   it "should have a contact name" do
     @organization.contact_name.should_not be_blank
   end   
+
+end
+
+describe Organization, "that is an uninitialized association member" do
+  
+  before(:each) do
+    @organization = Factory.create(:uninitialized_association_member)
+    @association  = Factory.create(:association)
+  end
+  
+  after(:each) do
+    @organization.destroy
+    @association.destroy
+  end  
+  
+  it "should not be able to create a login if a login was created in the last minute" do
+    @organization.association_member_initialization_key_created_at = Time.now
+    @organization.can_create_login?.should be_false
+  end
+  
+  it "should not allow a blank password when creating the login" do
+    @organization.create_login(@association, {
+      :password => "",
+      :password_confirmation => ""
+    }).should be_false  
+    
+    @organization.should have(1).errors_on(:password)
+  end
+  
+  it "should not allow a mismatched password when creating the login" do
+    @organization.create_login(@association, {
+      :password => "test12",
+      :password_confirmation => ""
+    }).should be_false  
+    
+    @organization.should have(1).errors_on(:password)
+  end  
+  
+  it "should set the initialization key when creating the login" do
+    lambda{ @organization.create_login(@association, {
+      :password => "test12",
+      :password_confirmation => "test12"
+    }) }.should change(@organization, :association_member_initialization_key).from(nil)
+  end
+  
+  it "should set the initialization date when creating the login" do
+    lambda{ @organization.create_login(@association, {
+      :password => "test12",
+      :password_confirmation => "test12"
+    }) }.should change(@organization, :association_member_initialization_key_created_at).from(nil)
+  end
+  
+  it "should send a notification email when creating the login" do   
+    Notifier.should_receive(:deliver_association_member_initialization_notification).with(@organization,@association)
+    @organization.create_login(@association, {
+      :password => "test12",
+      :password_confirmation => "test12"
+    })
+  end  
 
 end

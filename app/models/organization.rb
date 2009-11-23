@@ -72,8 +72,8 @@ class Organization < ActiveRecord::Base
   validates_acceptance_of :terms_of_use, :on => :create  
   attr_accessor :terms_of_use
 
-  attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name,
-                  :industry, :logo, :terms_of_use
+  attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, 
+                  :zip_code, :contact_name, :industry, :logo, :terms_of_use
   
   # This organization's name and location if they have one.
   #
@@ -88,7 +88,7 @@ class Organization < ActiveRecord::Base
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   #
   def self.authenticate(email, password)
-    u = find_by_email(email) # need to get the salt
+    u = Organization.is_not_uninitialized_association_member.find_by_email(email) # need to get the salt
     u && u.authenticated?(password) ? u : nil
   end
   
@@ -122,6 +122,36 @@ class Organization < ActiveRecord::Base
     self.reset_password_key_created_at = nil
     self.reset_password_key_expires_at = nil
     self.save!
+  end
+  
+  # True, if the user has not requested initialization in the past minute
+  def can_create_login?
+    association_member_initialization_key_created_at.nil? || ((Time.now - association_member_initialization_key_created_at) > 1.minute)
+  end
+  
+  # Will attempt to set the password for an uninitialized association member
+  # If successful, the organization will receive an email with a link for activating their account
+  # If unsuccessful, the organization will have errors
+  def create_login(association, params = {})
+  
+    # Hack to ensure authentication will check the password in the chance that the user forgot to enter one
+    if params[:password].blank? then
+      params[:password] = "*"
+      params[:password_confirmation] = params[:password]
+    end
+  
+    # Attempt to set password
+    if self.update_attributes(params)
+      self.association_member_initialization_key_created_at = Time.now
+      self.association_member_initialization_key = KeyGen.random
+      self.save!
+      # TODO beef up notification email
+      Notifier.deliver_association_member_initialization_notification(self, association)
+      return true
+    end  
+      
+    return false
+    
   end
   
   # overriding the default constructor in order to autofill some attributes

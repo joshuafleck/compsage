@@ -49,7 +49,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.path '', :controller => 'surveys', :action => 'index'
   
-  map.resource :association_member, :member => {:sign_in => :any}
+  map.resource :association_member, :member => {:sign_in => :any, :login_received => :get, :initialize_account => :get}
 
   
 end
