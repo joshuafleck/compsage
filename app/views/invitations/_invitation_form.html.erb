@@ -44,7 +44,9 @@
   </ul>
 
   <%= render :partial => 'invitations/invite_organization' %>
-  <%= render :partial => 'invitations/association_invitation_form', :locals => {:organizations => @organizations} %>
+  <%if !@association.nil? then %>
+    <%= render :partial => 'invitations/association_invitation_form', :locals => {:organizations => @association.organizations} %>
+  <% end %>
 </div>
 <script type="text/javascript" src="/javascripts/fast_autocompleter.js"></script>
 <% content_for :initialize_js, "inviteList = new InviteList(#{@survey.id});"%>
