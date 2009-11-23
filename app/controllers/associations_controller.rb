@@ -1,7 +1,7 @@
 class AssociationsController < ApplicationController
   layout :logged_in_or_invited_layout
   ssl_required :sign_in
-  before_filter :association_owner_login_required, :only => [:edit, :update, :index]
+  before_filter :association_owner_login_required, :only => [:edit, :update, :show]
   
   #this is the association owner login
   def sign_in
