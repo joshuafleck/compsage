@@ -9,4 +9,60 @@ module AssociationSystem
     
     @association ||= Association.find_by_subdomain(current_subdomain)
   end
+  
+  
+  module AssociationAuthenticatedSystem
+    protected
+    
+    def association_owner_login_required
+      logged_in_as_association_owner? || access_denied
+    end
+    
+    def logged_in_as_association_owner?
+      !!current_association_by_owner
+    end
+    
+    def current_association_by_owner
+      @current_association_by_owner ||= (login_owner_from_session || login_owner_from_basic_auth ) unless @current_association_owner == false
+    end
+    
+    # Store the given association id in the session.
+    def current_association_by_owner=(new_association_owner)
+      session[:association_id] = new_association_owner ? new_association_owner.id : nil
+      @current_association_owner = new_association_owner || false
+    end
+    
+    def login_owner_from_basic_auth
+      authenticate_with_http_basic do |login, password|
+        self.current_association_by_owner = Association.authenticate(login, password)
+      end
+    end
+    
+    def login_owner_from_session
+      self.current_association_by_owner = Association.find_by_id(session[:association_id]) if session[:association_id]
+    end
+    
+    def logout_killing_owner_session
+      logout_keeping_owner_session
+      reset_session
+    end
+    
+    def logout_keeping_owner_session
+      @current_association_by_owner = false
+      session[:association_id] = nil
+    end
+    
+    def access_denied
+      respond_to do |format|
+        format.html do
+          store_location
+          redirect_to sign_in_associations_path
+        end
+      end
+    end
+    
+    def self.included(base)
+      base.send :helper_method, :current_association_by_owner, :logged_in_as_association_owner?, :association_owner_login_required if base.respond_to? :helper_method
+    end
+  end
 end

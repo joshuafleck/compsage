@@ -28,6 +28,14 @@ Factory.sequence :counter do |n|
   n
 end
 
+Factory.sequence :subdomain do |n|
+  "mfrall#{n}"
+end
+
+Factory.sequence :name do |n|
+  "Association Name#{n}"
+end
+
 #defining an organization.
 Factory.define :organization do |o|
   o.name { Factory.next(:organization_name) }
@@ -272,8 +280,8 @@ Factory.define :pending_account do |p|
 end
 
 Factory.define :association do |a|
-  a.name      "Association Name"
-  a.subdomain "mfrall"
+  a.name      { Factory.next(:name) }
+  a.subdomain { Factory.next(:subdomain) }
   a.owner_email { Factory.next(:email) }
   a.crypted_password '27e5532e75526ff4574e3e8c8c2a48fb97415765'
   a.salt 'asdf'

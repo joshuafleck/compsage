@@ -68,4 +68,10 @@ describe Association do
   	@association.attributes = @valid_attributes.with(:owner_email => '@johnson@.com')
     @association.should have(1).errors_on(:owner_email)
   end
+  
+  it 'should authenticate an association by owner email and password' do
+    @association.attributes = @valid_attributes
+    @association.save
+    Organization.authenticate(valid_organization_attributes[:email], valid_organization_attributes[:password]).should == @organization
+  end
 end

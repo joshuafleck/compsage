@@ -1,0 +1,8 @@
+<%=error_messages_for :association%>
+<% form_for @association, :url => associations_path do |f| %>
+  <%=f.label :name, 'Name' %>
+  <%=f.text_field :name %>
+  <div class="submit">
+    <%= submit_tag 'Save' %>&nbsp;&nbsp;<%=link_to "Cancel", associations_path%>
+  </div>
+<% end %>

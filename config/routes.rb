@@ -1,6 +1,4 @@
 ActionController::Routing::Routes.draw do |map|
-
-  
   # If a subdomain is specified (excludes www) will direct to association member login
   map.root :controller => 'association_members', :action => 'sign_in', :conditions =>{ :subdomain => /[^(www)]/ }
 
@@ -49,7 +47,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.path '', :controller => 'surveys', :action => 'index'
   
+  map.resource :associations, :member => {:sign_in => :any}
   map.resource :association_member, :member => {:sign_in => :any, :login_received => :get, :initialize_account => :get}
-
   
 end

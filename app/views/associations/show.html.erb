@@ -1,0 +1,13 @@
+<% title @association.name %>
+<div id="assocation_info">
+<h2><%= @association.name%></h2>
+<span>Owner: </span><%= @association.owner_email%>
+</div>
+<div id="association_members">
+  <h3>Association Members</h3>
+  <ul>
+  <% @association.organizations.each do |organization|%>
+    <li><%=organization.name%> (<a href="mailto:<%=organization.email%>"><%=organization.email%>)</a></li>
+  <%end%>
+  </ul>
+</div>
