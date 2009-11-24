@@ -167,27 +167,39 @@ describe AssociationMembersController, "handling GET /association_member/initial
     @association = Factory.create(:association)
     controller.stub!(:current_association).and_return(@association)
     
+    @organization = Factory.create(:uninitialized_association_member)
+    @organization.create_login(@association, { :password => 'test12', :password_confirmation => 'test12'})
+    
+    @association.organizations << @organization
+    
+    @params = { :key => @organization.association_member_initialization_key }
   end
   
   def do_get
-    get :initialize_account
+    get :initialize_account, @params
+    @organization.reload
   end
   
-  it "should be successful" do    
-    do_get
-    response.should be_success
-  end
-
   it "should require an association" do
     controller.stub!(:current_association).and_return(nil)
     do_get
     response.should redirect_to(new_session_path)
   end
   
-  it "should unset the uninitialized flag on the association member"
+  it "should unset the uninitialized flag on the association member" do
+    lambda{ do_get }.should change(@organization, :is_uninitialized_association_member).from(true).to(false)
+  end
   
-  it "should redirect to the new session path if the organization is not a member of the current association"
+  it "should render the new session path if the organization is not a member of the current association" do
+    @params[:key]='blah'
+    do_get
+    response.should render_template('sign_in')
+  end
   
-  it "should log the user in"
+  it "should log the user in" do
+    do_get
+    session[:organization_id].should_not be_nil
+    response.should be_redirect
+  end
     
 end

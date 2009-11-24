@@ -54,12 +54,13 @@ class AssociationMembersController < ApplicationController
               :password_confirmation => password_confirmation
             }) then            
             
+            # The login was created auccessfully
             render :action => 'login_received' 
              
           else
           
-            # Password mismatch when attempting to create login  
-            # TODO render errors from @association_member in the view        
+            # There was a problem updating the organization, 
+            #  the view will display any errors on the organization      
             render :action => 'sign_in'  
             
           end 
@@ -89,9 +90,26 @@ class AssociationMembersController < ApplicationController
     # Show a view stating their login information was received, they need to check their email to activate account
   end
   
+  # This will look up the organization by the provided key.
+  # If an organization is found, it will be initialized and logged in
   def initialize_account
-    # Validate initialization key
-    # Initialize their account, log them in (be sure they belong to current association)
+    association_member = current_association.organizations.find_by_association_member_initialization_key(params[:key])
+    
+    if association_member then
+      
+      # Attempt to initialize the organization, log them in
+      association_member.is_uninitialized_association_member = false
+      association_member.save!
+      login_organization(association_member)
+      redirect_back_or_default('/')  
+          
+    else
+    
+      # There was no one belonging to this association with a matching key
+      flash.now[:notice] = "We are unable to initialize your account at this time. If the problem persists, <a href=\"#{contact_path}\">let us know</a>."
+      render :action => 'sign_in'
+      
+    end
   end
   
   protected
