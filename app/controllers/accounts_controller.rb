@@ -65,7 +65,7 @@ class AccountsController < ApplicationController
   
     if request.put?
     
-      organization = Organization.find_by_email(params[:email])      
+      organization = Organization.is_not_uninitialized_association_member.find_by_email(params[:email])      
       if organization then
       
         # This will prevent email bombing of the forgot password link.

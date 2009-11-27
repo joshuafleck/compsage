@@ -55,7 +55,7 @@ class AssociationMembersController < ApplicationController
             }) then            
             
             # The login was created auccessfully
-            render :action => 'login_received' 
+            redirect_to login_received_association_member_path 
              
           else
           
@@ -83,11 +83,12 @@ class AssociationMembersController < ApplicationController
       
     end
    
-    # TODO Prompt for email and password in view, auto expand link for 'First time loggin in?' the opens password confirmation box
   end
   
+  # Shows a view stating their login information was received and they 
+  #  need to check their email to activate account 
   def login_received
-    # Show a view stating their login information was received, they need to check their email to activate account
+
   end
   
   # This will look up the organization by the provided key.
@@ -131,16 +132,14 @@ class AssociationMembersController < ApplicationController
       organization.save
 
       self.current_organization = organization
-  end  
+  end 
   
   private
   
-  # Will redirect to the new session page if an association cannot be found by the subdomain
+  # Will render 404 (not found) if the association cannot be found by the subdomain
   def association_required
     if !current_association then
-      # TODO improve this message, strip subdomain off of URL?
-      flash[:error] = "We do not know of the association: #{current_subdomain}"
-      redirect_to new_session_path
+      render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
     end
   end
 

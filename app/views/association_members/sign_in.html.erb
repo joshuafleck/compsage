@@ -1,4 +1,5 @@
-<% title "Association Member - Sign In" %>
+<% title "#{current_association.name} &ndash; Sign In" %>
+<p>First time logging in? Be sure to enter your password again in the <a href="#" onClick="javascript:$('password_confirmation').focus();$('password_confirmation').select();return false;">Password Confirmation</a> box. Once we receive your information, we will send you an email with a link for activating your account.</p>
 <div style="display:none;">Need this div for flash notices in IE6</div>
 <%=flash_messages%>
 <%=error_messages_for :association_member%>
@@ -7,7 +8,7 @@
   <%= text_field_tag 'email', @login, :size => 25 %>
   <label for="password">Password</label>
   <%= password_field_tag 'password', '', :size => 10 %>  
-  <label for="password_confirmation">Password Confirmation</label>
+  <label for="password_confirmation" style="color: gray;">Password Confirmation</label>
   <%= password_field_tag 'password_confirmation', '', :size => 10 %>
   <label for="remember_me">Remember me <%= check_box_tag 'remember_me' %></label>  
   <div class="submit">

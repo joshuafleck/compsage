@@ -42,7 +42,7 @@ describe AssociationMembersController, "handling GET /association_member/sign_in
   it "should require an association" do
     controller.stub!(:current_association).and_return(nil)
     do_get
-    response.should redirect_to(new_session_path)
+    assert_response 404
   end
   
   it "should assign the login to the view" do
@@ -123,11 +123,11 @@ describe AssociationMembersController, "handling POST /association_member/sign_i
       response.should render_template('sign_in')
     end
     
-    it "should render the login received page if the association member when the login is created" do
+    it "should redirect to the login received page if the association member when the login is created" do
       @params[:password] = "test12"
       @params[:password_confirmation] = @params[:password]
       do_post
-      response.should render_template('login_received')
+      response.should be_redirect
     end    
    
   end  
@@ -155,7 +155,7 @@ describe AssociationMembersController, "handling GET /association_member/login_r
   it "should require an association" do
     controller.stub!(:current_association).and_return(nil)
     do_get
-    response.should redirect_to(new_session_path)
+    assert_response 404
   end
     
 end 
@@ -183,7 +183,7 @@ describe AssociationMembersController, "handling GET /association_member/initial
   it "should require an association" do
     controller.stub!(:current_association).and_return(nil)
     do_get
-    response.should redirect_to(new_session_path)
+    assert_response 404
   end
   
   it "should unset the uninitialized flag on the association member" do

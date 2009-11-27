@@ -1,0 +1,17 @@
+<% title "#{current_association.name} &ndash; Login Received" %>
+<div style="display:none;">Need this div for flash notices in IE6</div>
+<%=flash_messages%>
+<div class="main_page">
+<h3>Thanks! We have received your information.</h3>
+<h4>What's next?</h4>
+<ol>
+<li>
+Check your email. You should receive an email with a link for activating your account momentarily.
+</li>
+<li>
+If you do not receive an email in the next minute, verify your email client did not file the email as junk. Otherwise, you can <%= link_to 'try activating your account', sign_in_association_member_path %> again.
+</li>
+</ol>
+<p>
+In the meantime, read more about <%= link_to 'how CompSage works', home_path('how') %> and <%= link_to 'contact us', contact_path %> if you have any questions.</p>
+</div>
