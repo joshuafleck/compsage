@@ -8,22 +8,23 @@ class AssociationMembersController < ApplicationController
   # This will also handle login creation for uninitialized association members
   def sign_in
   
+    # If they are already logged in, send them to the surveys page
     if logged_in?
       redirect_to surveys_path
     end
   
     @login = params[:email]
       
-    # For a GET request, show the form  
+    # For a GET request, show the sign in form  
     if request.get? then
     
-      # TODO - fix host with subdomain
+      # Be sure the sign in request is submitted with https
       @form_options = Rails.env.production? ? {
         :protocol => 'https://', 
-        :host => 'www.compsage.com', 
+        :host => "www.#{current_subdomain}.compsage.com", 
         :only_path => false} : {} 
     
-    # For a PUT or POST request, attempt to authenticate       
+    # For a PUT or POST request, attempt to authenticate and/or create a login    
     else
     
       logout_keeping_session!
@@ -35,19 +36,21 @@ class AssociationMembersController < ApplicationController
       organization          = Organization.authenticate(@login, password)
       should_initialize     = @association_member && @association_member.is_uninitialized_association_member?
       
+      # The email belongs to an association member that either provided a valid login, or needs initialization
       if @association_member && (should_initialize || organization) then
                      
         if organization
         
           # Account is initialized; valid login
-          login_organization(organization)
           new_cookie_flag = (@remember_me == "1")
-          handle_remember_cookie! new_cookie_flag
-          redirect_back_or_default('/')
+          login_organization({
+          :organization => organization, 
+          :new_cookie_flag => new_cookie_flag, 
+          :url => '/'})
           
         elsif @association_member.can_create_login?
         
-          # Account is uninitialized, attempt to create the login
+          # Account is uninitialized; attempt to create the login
           if @association_member.create_login(current_association, 
             {
               :password => password, 
@@ -68,7 +71,7 @@ class AssociationMembersController < ApplicationController
         else
           
             # Possible email bomb            
-            flash.now[:notice] = "You have already requested account initialization. If you did not receive an email containing a link to initialize your account, <a href=\"#{contact_path}\">let us know</a>."
+            flash.now[:notice] = "You have already requested account activation. If you did not receive an email containing a link to activate your account, <a href=\"#{contact_path}\">let us know</a>."
             render :action => 'sign_in'  
             
         end       
@@ -101,38 +104,19 @@ class AssociationMembersController < ApplicationController
       # Attempt to initialize the organization, log them in
       association_member.is_uninitialized_association_member = false
       association_member.save!
-      login_organization(association_member)
-      redirect_back_or_default('/')  
+      login_organization({
+          :organization => association_member, 
+          :new_cookie_flag => false, 
+          :url => '/'})
           
     else
     
       # There was no one belonging to this association with a matching key
-      flash.now[:notice] = "We are unable to initialize your account at this time. If the problem persists, <a href=\"#{contact_path}\">let us know</a>."
+      flash.now[:notice] = "We are unable to activate your account at this time. If the problem persists, <a href=\"#{contact_path}\">let us know</a>."
       render :action => 'sign_in'
       
     end
   end
-  
-  protected
-  
-  # TODO - remove duplication with session_controller methods
-
-  # Track failed login attempts
-  def note_failed_signin
-    flash.now[:error] = "Incorrect email or password"
-    logger.warn "Failed login for '#{params[:email]}' from #{request.remote_ip} at #{Time.now.utc}"
-  end
-  
-  # Saves the organization in the session, sets last login date
-  def login_organization(organization)
-      # Set first_login in the session so we can show a tutorial if the user is new.
-      session[:first_login] = true if organization.last_login_at.nil?
-      
-      organization.last_login_at = Time.now
-      organization.save
-
-      self.current_organization = organization
-  end 
   
   private
   

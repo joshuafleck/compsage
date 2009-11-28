@@ -105,7 +105,37 @@ module AuthenticatedSystem
     def login_from_session
       self.current_organization = Organization.find_by_id(session[:organization_id]) if session[:organization_id]
     end
+    
+  
+    # Saves the organization in the session, sets last login date
+    # Arguments that should be in the params hash:
+    #  @organization - the organization to log in
+    #  @url - the URL to redirect to after login
+    #  @new_cookie_flag - if true, this will create a new cookie
+    def login_organization(params = {})
+      organization    = params[:organization]
+      url             = params[:url]
+      new_cookie_flag = params[:new_cookie_flag]
+  
+      # Set first_login in the session so we can show a tutorial if the user is new.
+      session[:first_login] = true if organization.last_login_at.nil?
+      
+      organization.last_login_at = Time.now
+      organization.save
 
+      self.current_organization = organization
+      
+      handle_remember_cookie! new_cookie_flag
+      
+      redirect_back_or_default(url)
+    end 
+    
+    # Track failed login attempts
+    def note_failed_signin
+      flash.now[:error] = "Incorrect email or password"
+      logger.warn "Failed login for '#{params[:email]}' from #{request.remote_ip} at #{Time.now.utc}"
+    end
+       
     #
     # Logout
     #
