@@ -66,18 +66,15 @@ class SurveysController < ApplicationController
   end
 
   # Search running surveys.
-  # TODO: Hightlight search text in survey description (if applicable)
+  # TODO: Hightlight search text in survey description (if applicable) - see TS 'Excerpts' feature
   def search
     @search_text = params[:search_text] || ""
     
     escaped_search_text = Riddle.escape(@search_text)
       
-    search_params = {
+    @surveys = Survey.search escaped_search_text,
       :geo => [current_organization.latitude, current_organization.longitude],
       :order => '@weight desc, @geodist asc' # Sort by relevance, then distance
-    }
-    
-    @surveys = Survey.search escaped_search_text, search_params
   end
   
   # Respond to a survey. Creates the participatoin object for either the organization or invitation responding.
