@@ -35,12 +35,12 @@ class SessionsController < ApplicationController
     invitation = Invitation.find_by_key(params[:key])     
     if invitation then
     
-      url = survey_path(invitation.survey_id)
+      survey_url = survey_path(invitation.survey_id)
       
       if invitation.is_a?(ExternalSurveyInvitation) then
         # External survey invitation logins are saved in the session, and users have restricted access
         self.current_survey_invitation = invitation
-        redirect_to url
+        redirect_to survey_url
       else
         # Internal survey invitation logins authenticate the organization 
         #  as if they logged in from the login page
@@ -48,7 +48,7 @@ class SessionsController < ApplicationController
         login_organization({
           :organization => organization, 
           :new_cookie_flag => false, 
-          :url => url})
+          :url => survey_url})
       end
       
     else
