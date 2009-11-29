@@ -31,7 +31,7 @@ class Survey < ActiveRecord::Base
     
   after_create :add_sponsor_subscription, :add_default_questions, :invite_sponsor
   before_destroy :cancel_survey
-  before_save :set_aasm_state_number, :recalculate_end_date
+  before_save :recalculate_end_date
   
   # The number of days to extend the survey deadline.
   # Used for recalculating the end date.
@@ -42,12 +42,11 @@ class Survey < ActiveRecord::Base
   define_index do
     indexes job_title
     indexes description
-    indexes sponsor.industry, :as => :industry
     
-    has subscriptions.organization_id, :as => :subscribed_by
     has sponsor.latitude, :as => :latitude, :type => :float
     has sponsor.longitude, :as => :longitude, :type => :float
-    has aasm_state_number
+    
+    where "aasm_state = 'running'"
 
     set_property :latitude_attr   => "latitude"
     set_property :longitude_attr  => "longitude"
@@ -90,15 +89,6 @@ class Survey < ActiveRecord::Base
       transition :stalled => :billing_error, :if => [:closed?, :enough_responses?]
     end
   end
-
-  # hack, for filtering surveys by aasm_state in sphinx
-  AASM_STATE_NUMBER_MAP = {
-    'pending' => 0,
-    'running' => 1,
-    'stalled' => 2,
-    'billing_error' => 3,
-    'finished' => 4
-  }
 
   ############### State Machine Configuration: END ###################
        
@@ -320,11 +310,6 @@ class Survey < ActiveRecord::Base
   # Validates whether or not questions have been chosen.
   def questions_exist
     errors.add_to_base("You must choose at least one question to ask") if questions.empty?
-  end
-  
-  # Set the aasm state number using the current aasm_state (hack for survey sphinx search filter by state attribute)
-  def set_aasm_state_number
-    self.aasm_state_number = AASM_STATE_NUMBER_MAP[self.aasm_state]
   end
 
   # Once the survey is finalized, we need to send the invitations.

@@ -141,16 +141,6 @@ describe Survey do
     @survey.days_to_extend.should be_blank
     @survey.destroy
   end  
-  
-  it "should update the aasm_state_number on save" do
-    @survey.aasm_state = 'running'
-    @survey.save!
-    @survey.aasm_state_number.should eql(1)
-    @survey.aasm_state = 'stalled'
-    @survey.save!
-    @survey.aasm_state_number.should eql(2)
-    @survey.destroy
-  end
 
 end
 

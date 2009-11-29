@@ -72,19 +72,12 @@ class SurveysController < ApplicationController
     
     escaped_search_text = Riddle.escape(@search_text)
       
-    # Escaped search text is included twice in order to allow for weighting by industry (TODO: Clarify)
-    search_query = "#{escaped_search_text} #{escaped_search_text} | @industry \"#{current_organization.industry}\""
-
     search_params = {
       :geo => [current_organization.latitude, current_organization.longitude],
-      :with => {
-        :aasm_state_number => Survey::AASM_STATE_NUMBER_MAP['running']
-      },
-      :match_mode => :extended,              # Allows us to use boolean operators in the search query
       :order => '@weight desc, @geodist asc' # Sort by relevance, then distance
     }
     
-    @surveys = Survey.search search_query, search_params
+    @surveys = Survey.search escaped_search_text, search_params
   end
   
   # Respond to a survey. Creates the participatoin object for either the organization or invitation responding.
