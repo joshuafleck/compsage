@@ -13,7 +13,7 @@ ActionController::Routing::Routes.draw do |map|
     survey.resources :discussions, :member => {:report => :any}
     survey.resources :invitations, :controller => :survey_invitations,
       :member => {:decline => :put},
-      :collection => {:create_for_network => :post, :send_pending => :post}
+      :collection => {:create_for_network => :post, :update_message => :post}
     survey.resource :report, :member => {:chart => :get, :suspect => :any}
     survey.resource :billing, :controller => :billing, :member => {:invoice => :any}
   end

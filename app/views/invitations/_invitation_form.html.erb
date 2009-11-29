@@ -42,8 +42,30 @@
       </li>
     <% end %>
   </ul>
-
+  <br />
+  <a id="custom_message_link" href="#" <% if !@survey.custom_invitation_message.blank? then %>style="display:none;"<% end %>>Set a Custom Invitation Message</a>
+  <div id="custom_message" <% if @survey.custom_invitation_message.blank? then %>style="display:none;"<% end %>>
+    <h4>Custom Invitation Message</h4>
+    <% form_for :survey, :url => update_message_survey_invitations_path(@survey), :html => {:id => 'survey_form'} do |f| %>
+      <%= f.text_area :custom_invitation_message %>
+    <% end %>
+    <p>This message will be sent with the email invitations.</p>
+  </div>
   <%= render :partial => 'invitations/invite_organization' %>
 </div>
 <script type="text/javascript" src="/javascripts/fast_autocompleter.js"></script>
-<% content_for :initialize_js, "inviteList = new InviteList(#{@survey.id});"%>
+<% content_for :initialize_js, "inviteList = new InviteList(#{@survey.id});initializeObservers();"%>
+<script type="text/javascript">
+  function initializeObservers() {
+    $('invitation_form_submit').observe('click', function(e) {
+      e.stop();
+      $('survey_form').submit();
+    });
+
+    $('custom_message_link').observe('click', function(e) {
+      e.stop();
+      $('custom_message').show();
+      $('custom_message_link').hide()
+    });
+  }
+</script>

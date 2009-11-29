@@ -21,8 +21,8 @@ describe SurveyInvitationsController, " #route for" do
     route_for(:controller => "survey_invitations", :action => "create_for_network", :survey_id => '1').should == { :path => "/surveys/1/invitations/create_for_network", :method => :post }
   end 
   
-  it "should map { :controller => 'invitations', :action => 'send_pending', :survey_id => '1'} to /surveys/1/invitations/send_pending" do
-    route_for(:controller => "survey_invitations", :action => "send_pending", :survey_id => '1').should == { :path => "/surveys/1/invitations/send_pending", :method => :post }
+  it "should map { :controller => 'invitations', :action => 'update_message', :survey_id => '1'} to /surveys/1/invitations/update_message" do
+    route_for(:controller => "survey_invitations", :action => "update_message", :survey_id => '1').should == { :path => "/surveys/1/invitations/update_message", :method => :post }
   end   
 end
 
@@ -249,31 +249,69 @@ describe SurveyInvitationsController,  "handling PUT /surveys/1/invitations/1/de
   
 end
 
-describe SurveyInvitationsController, "sending pending invitations" do
+describe SurveyInvitationsController, "updating the invitation message and invitation list" do
   before do
     @organization = Factory(:organization)
     login_as(@organization)
-
-    @survey = Factory(:running_survey, :sponsor => @organization)
-    @pending_invitations = [Factory(:pending_survey_invitation, :survey => @survey),
-                            Factory(:pending_external_survey_invitation, :survey => @survey)]
   end
 
   def do_post
-    post :send_pending, :survey_id => @survey.id
+    post :update_message, :survey_id => @survey.id, :survey => {:custom_invitation_message => "new message"}
   end
   
-  it "should send the invitations" do
-    do_post
-    @pending_invitations.each do |invitation|
-      invitation.reload
-      invitation.should be_sent
+  describe "with a pending survey" do
+    before do
+      @survey = Factory(:pending_survey, :sponsor => @organization)
+      @pending_invitations = [Factory(:pending_survey_invitation, :survey => @survey),
+                              Factory(:pending_external_survey_invitation, :survey => @survey)]
+    end
+
+    it "should update the invitation message" do
+      do_post
+      @survey.reload
+      @survey.custom_invitation_message.should == "new message"
+    end
+
+    it "should not send any pending invitations" do
+      do_post
+      @pending_invitations.each do |invitation|
+        invitation.reload
+        invitation.should_not be_sent
+      end
+    end
+
+    it "should redirect to the survey preview page" do
+      do_post
+      response.should be_redirect
+      response.should redirect_to(preview_survey_questions_path(@survey))
     end
   end
+  
+  describe "with a running survey" do
+    before do
+      @survey = Factory(:running_survey, :sponsor => @organization)
+      @pending_invitations = [Factory(:pending_survey_invitation, :survey => @survey),
+                              Factory(:pending_external_survey_invitation, :survey => @survey)]
+    end
 
-  it "should redirect to the survey show page" do
-    do_post
-    response.should be_redirect
-    response.should redirect_to(survey_path(@survey))
+    it "should update the invitation message" do
+      do_post
+      @survey.reload
+      @survey.custom_invitation_message.should == "new message"
+    end
+
+    it "should send the invitations" do
+      do_post
+      @pending_invitations.each do |invitation|
+        invitation.reload
+        invitation.should be_sent
+      end
+    end
+
+    it "should redirect to the survey show page" do
+      do_post
+      response.should be_redirect
+      response.should redirect_to(survey_path(@survey))
+    end
   end
 end

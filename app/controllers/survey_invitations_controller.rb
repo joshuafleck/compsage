@@ -80,18 +80,27 @@ class SurveyInvitationsController < ApplicationController
     end    
   end
 
-  # This will send out all of the pending invitations, typically when a survey is started.
-  # The purpose of this is twofold. 
-  # 1. It allows the sponsor to edit the invitation list
-  # 2. It does not send invitations before the billing information has been received
+  # This action receives the post data from the invitation page. If the survey is pending, it will simply update the
+  # survey's invitation message, as no invitations are sent until billing info is received. If the survey is running,
+  # we assume the user is editing their invitation list only.
   #
-  def send_pending
+  def update_message
     @survey = current_organization.sponsored_surveys.find(params[:survey_id])
-    @survey.internal_and_external_invitations.pending.each do |invitation|
-      invitation.send_invitation!
-    end
 
-    redirect_to survey_path(@survey)
+    @survey.attributes = params[:survey]
+    @survey.save
+
+    if @survey.pending? then
+      # Show the preview page.
+      redirect_to preview_survey_questions_path(@survey)
+    else
+      # Send the new invitations and go back to the survey show page.
+      @survey.internal_and_external_invitations.pending.each do |invitation|
+        invitation.send_invitation!
+      end
+
+      redirect_to survey_path(@survey)
+    end
   end
   
   private

@@ -6,6 +6,10 @@ Survey: <%=@survey.job_title%>
 Description: <%=@survey.description%>
 Sponsor: <%=@survey.sponsor.name%>
 Response deadline: <%=better_time_ago_in_words(@survey.end_date)%>
+<% unless @survey.custom_invitation_message.blank? %>
+  Message:
+  <%= @survey.custom_invitation_message %>
+<% end %>
 
 Thanks,
 CompSage.com

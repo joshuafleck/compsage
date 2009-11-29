@@ -13,14 +13,14 @@
 </div>
 <% if @survey.pending? then %>
   <div class="submit_row">
-    <%= button_to "Next &ndash; Preview Survey", preview_survey_questions_path(@survey), :class => "next", :method => :get, :id => "invitation_form_submit" %>
+    <%= button_to "Next &ndash; Preview Survey", update_message_survey_invitations_path(@survey), :class => "next", :id => "invitation_form_submit" %>
     <%= button_to "Back &ndash; Edit Survey Design", edit_survey_path(@survey), :class => "previous", :method => :get %>
   </div>
 <% else %>
   <div class="two_third_main_column">
     <p>
-    <%= button_to "Update Invitation List", send_pending_survey_invitations_path(@survey) %>&nbsp;or
-    <%= link_to "Cancel", survey_path(@survey) %>
+      <%= button_to "Update Invitation List", update_message_survey_invitations_path(@survey), :id => "invitation_form_submit" %>&nbsp;or
+      <%= link_to "Cancel", survey_path(@survey) %>
     </p>
   </div>
 <% end %>

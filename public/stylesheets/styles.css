@@ -740,6 +740,26 @@ ul#invitations a.remove {
   float: right;
 }
 
+a#custom_message_link {
+  font-size: 0.9em;
+  color: #666;
+}
+
+div#custom_message textarea {
+  font-size: 0.9em;
+  width: 480px;
+  height: 100px;
+}
+
+div#custom_message h4 {
+  margin-top: 0;
+  font-size: 1em;
+}
+
+div#custom_message p {
+  margin-top: 0.25em;
+  color: #666;
+}
 /* Survey Questions Page */
 
 div.comments a {
