@@ -38,38 +38,39 @@ class OrganizationsController < ApplicationController
   
     @search_text = params[:search_text] || ""
     
-    @esc_search_text = Riddle.escape(@search_text) 
+    escaped_search_text = Riddle.escape(@search_text) 
     
-    # This basically says, find everything that matches the query, and everything that matches the query and industry
-    #  this will give a higher score to organizations with the same industry, but will not allow irrelevant matches
-    @search_query = "#{@esc_search_text}* #{@esc_search_text}* | @industry \"#{current_organization.industry}\""    
+    # Search only non-uninitialized association members
+    organizations = Organization.search escaped_search_text,
+      :with     => { :is_uninitialized_association_member => 0 },
+      :per_page => 1000,
+      :star     => true      
     
-    # @geo: required for geodistance searching, which enables us tell how far away the organization is from the user
-    # @match_mode: 
-    #   fullscan, used if the search string is empty, this will bring back all organizations (similar to browse, but with sorting)
-    #     TODO we lose industry ranking in fullscan mode, we need to still give higher rank to industry matches
-    #   extended, allows us to use boolean operators in the search query
-    # @order: sorts the organizations by relevance (e.g. name and industry), then distance
-    @search_params = {
-      :geo        => [current_organization.latitude, current_organization.longitude],
-      :conditions => {},
-      :with       => {},
-      :match_mode => @esc_search_text.blank? ? :fullscan : :extended,
-      :order      => '@weight desc, @geodist asc' 
-    }
-        
-       
+    if current_association then
+      
+      # Search uninitialized association members
+      association_organizations = Organization.search escaped_search_text, 
+        :with     => { 
+          :association_ids                     => current_association.id, 
+          :is_uninitialized_association_member => 1 
+        },
+        :per_page => 1000,
+        :star     => true
+      
+      # Join the association/non-association member results together
+      organizations = organizations.concat(association_organizations)
+    end
+               
     respond_to do |wants|
     
       wants.json do
       
-        organizations = Organization.search @search_query, @search_params.merge(:per_page => 1000, :order => :name);
-        
         # When rendering the organizations as json, we only want to render certain attributes/methods. Rendering
         #  all of the attributes hurts performance as well as exposes sensitive information that
         #  should not be shared.
-        render :json => organizations.to_json(:only => [:name, :location, :id, :contact_name],
-                                               :methods => 'name_and_location')
+        render :json => organizations.sort {|x,y| x.name <=> y.name }.to_json(
+          :only    => [:name, :location, :id, :contact_name],
+          :methods => 'name_and_location')
                                                
       end
       

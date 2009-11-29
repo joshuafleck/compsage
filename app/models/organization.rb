@@ -4,23 +4,7 @@ class Organization < ActiveRecord::Base
   include Authentication::ByCookieToken
 
   before_save :assign_latitude_and_longitude
-  
-  define_index do
-    indexes :name, :sortable => true
-    indexes :contact_name
-    indexes :email
-    indexes :industry
-    
-    has 'latitude', :as => :latitude, :type => :float
-    has 'longitude', :as => :longitude, :type => :float
 
-    set_property :latitude_attr   => "latitude"
-    set_property :longitude_attr  => "longitude"
-    
-    # This will cause any changes to surveys between index rebuilds to be stored in a delta index until the next rebuild
-    set_property :delta => true
-  end
-    
   has_many :networks, :through => :network_memberships, :after_remove => :delete_empty_network_or_promote_owner
   has_many :network_memberships, :dependent => :destroy
   has_many :owned_networks, :class_name => "Network", :foreign_key => "owner_id", :after_add => :join_created_network
@@ -75,6 +59,26 @@ class Organization < ActiveRecord::Base
   attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, 
                   :zip_code, :contact_name, :industry, :logo, :terms_of_use
   
+  # Sphinx setup
+  define_index do
+    indexes :name, :sortable => true
+    indexes :contact_name
+    indexes :email
+    
+    has is_uninitialized_association_member
+    has associations(:id), :as => :association_ids
+    
+    has 'latitude', :as => :latitude, :type => :float
+    has 'longitude', :as => :longitude, :type => :float
+
+    set_property :latitude_attr   => "latitude"
+    set_property :longitude_attr  => "longitude"
+    
+    # This will cause any changes to surveys between index rebuilds to be 
+    #  stored in a delta index until the next rebuild
+    set_property :delta => true
+  end
+      
   # This organization's name and location if they have one.
   #
   def name_and_location
