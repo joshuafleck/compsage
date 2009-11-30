@@ -987,6 +987,58 @@ function InviteList(survey_id) {
         remove_link.observe('click', removeInvitation.curry(invitation_id));
       }
     });
+    
+    // observe the add invitation links for association organization list
+    $$('ul#association_organizations > li').each(function(organization_li){
+       var id_match = organization_li.id.match(/\d+/);
+      invite_link = organization_li.select('a').first();
+      invite_link.observe('click', addAssociationInvitation.curry(id_match));
+    });
+    
+    //observer for the association integration form
+    $('organization_name').observe('keyup', liveAssociationFilter);
+  }
+  
+  function addAssociationInvitation(organization_id, e){
+    e.stop();
+    addInvitationByID(organization_id);
+  }
+  
+  function liveAssociationFilter(){
+    var value = $('organization_name').value
+    if(value.length > 2){
+      new Ajax.Request('/organizations/search.json', {
+        'method': 'get',
+        'parameters': {'search_text': value},
+        'requestHeaders': {'Accept':'application/json'},
+        'onSuccess': function(transport) {
+          toggleOrganizations(transport.responseText.evalJSON());
+        },
+        'onCreate': function() {
+          $('association_live_load_indicator').show();
+        },
+        'onComplete': function() {
+          $('association_live_load_indicator').hide();
+        }
+      });
+    }
+    else {
+      $('live_load_indicator').show();
+      $$('ul#association_organizations > li').each(function(organization_li){
+        organization_li.show();
+      });
+      $('live_load_indicator').hide();
+    }
+  }
+  
+  function toggleOrganizations(organizations) {
+    $$('ul#association_organizations > li').each(function(organization_li){
+      organization_li.hide();
+    });
+    
+    organizations.each(function(organization) {
+      $("organization_" + organization.id).show();
+    });
   }
 
   /*
@@ -1012,9 +1064,15 @@ function InviteList(survey_id) {
   /* Sends the ajax request to invite the specified organization.
    */
   function addInvitation(organization) {
+    addInvitationByID(organization.id);
+  }
+  
+  /* Sends the ajax request to invite the specified organization.
+   */
+  function addInvitationByID(organization_id) {
     new Ajax.Request('/surveys/' + survey_id + '/invitations', {
       'method': 'post',
-      'parameters': {'organization_id': organization.id},
+      'parameters': {'organization_id': organization_id},
       'onCreate': function() {$('submit_load_indicator').show();},
       'onComplete': function() {$('submit_load_indicator').hide();}
     });

@@ -4,16 +4,17 @@
   <input id="organization_name" type="textbox"/>
   <label style="display: inline;">Location: </label>
   <input id="organization_location" type="textbox"/>
-  <span id="live_load_indicator" class="load_indicator_message" style="display: none;">
+  <span id="association_live_load_indicator" class="load_indicator_message" style="display: none;">
     <%= image_tag 'load_indicator.gif', :class => 'load_indicator' %>
-    Searching for firms...
+    Updating List...
   </span>
 </div>
 <ul id="association_organizations" class="organization_list">
 <% organizations.each do |organization| %>
   <li id="organization_<%= organization.id %>">
-    <a href="#"><img src="/images/add_invitation_button.gif" /></a>
-    <%= organization.name %> 
+    <a id="invite" href="#"><img src="/images/add_invitation_button.gif" /></a>
+    <%= organization.name %> - 
+    <%= organization.location%>
   </li>
 <% end %>  
 </ul>
