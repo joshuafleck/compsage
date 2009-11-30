@@ -444,13 +444,31 @@ div#my_surveys .deadline {
   padding-right: 10px;
 }
 
-#association_organizations ul{
-  border: 1px solid;
+#organization_list {
+  overflow: auto;
+  height: 400px;
+  border: 1px solid #EEEEEE;
+  background-color:#F6F6F6;
+}
+
+#organization_list ul {
+  padding: 0 0.5em 0 0.5em;
 }
 
 #association_organizations li {
-  margin-bottom: 2px;
-  border-bottom: 1px solid;
+  background-color:#F6F6F6;
+  border-bottom:1px solid #EEEEEE;
+  border-top:1px solid #EEEEEE;
+  padding:2px 1px 3px;
+}
+
+#association_organizations a {
+  float: left; 
+  padding-right: 2px;
+}
+
+#association_organizations .grey {
+  color: grey;
 }
 
 #association_search {

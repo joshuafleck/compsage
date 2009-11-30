@@ -9,12 +9,16 @@
     Updating List...
   </span>
 </div>
-<ul id="association_organizations" class="organization_list">
+<div id="organization_list">
+<ul id="association_organizations">
 <% organizations.each do |organization| %>
   <li id="organization_<%= organization.id %>">
     <a id="invite" href="#"><img src="/images/add_invitation_button.gif" /></a>
-    <%= organization.name %> - 
-    <%= organization.location%>
+    <div>
+      <%= organization.name %> <br /> 
+      <span class="grey">Location: </span><%= organization.location%>
+    </div>
   </li>
 <% end %>  
 </ul>
+</div>

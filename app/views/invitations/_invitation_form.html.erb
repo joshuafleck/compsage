@@ -45,7 +45,7 @@
 
   <%= render :partial => 'invitations/invite_organization' %>
   <%if !@association.nil? then %>
-    <%= render :partial => 'invitations/association_invitation_form', :locals => {:organizations => @association.organizations} %>
+    <%= render :partial => 'invitations/association_invitation_form', :locals => {:organizations => @association.organizations.sort {|x,y| x.name <=> y.name }} %>
   <% end %>
 </div>
 <script type="text/javascript" src="/javascripts/fast_autocompleter.js"></script>
