@@ -4,10 +4,6 @@
   <input id="organization_name" type="textbox"/>
   <label style="display: inline;">Location: </label>
   <input id="organization_location" type="textbox"/>
-  <span id="association_live_load_indicator" class="load_indicator_message" style="display: none;">
-    <%= image_tag 'load_indicator.gif', :class => 'load_indicator' %>
-    Updating List...
-  </span>
 </div>
 <div id="organization_list">
 <ul id="association_organizations">
@@ -15,10 +11,58 @@
   <li id="organization_<%= organization.id %>">
     <a id="invite" href="#"><img src="/images/add_invitation_button.gif" /></a>
     <div>
-      <span id="organization_<%= organization.id %>_name"><%= organization.name %></span> <br /> 
-      <span class="grey">Location: </span><span id="organization_<%= organization.id %>_location"><%= organization.location%></span>
+      <span id="organization_<%= organization.id %>_name">
+        <%= organization.name %>
+      </span> 
+      <br /> 
+      <span class="grey">
+        Location: 
+      </span>
+      <span id="organization_<%= organization.id %>_location">
+        <%= organization.location%>
+      </span>
+      <span id="organization_<%= organization.id %>_data"
+            style="display: none;">
+        <%= organization.name %> 
+        <%= organization.email %> 
+        <%= organization.contact_name %>
+      </span>
     </div>
   </li>
 <% end %>  
 </ul>
 </div>
+<p style="text-align: right; margin-top:5px; font-size:70%;">
+  <a id="expand" href="#">Expand</a> / <a id="contract" href="#">Contract</a>
+</p>
+<script>
+  $('expand').observe('click', changeDivSize.curry('expand','organization_list'));
+  $('contract').observe('click', changeDivSize.curry('contract', 'organization_list'));
+  
+  /* handles expand/contract clicks *
+  @option - expand or contract (show more or show less)
+  @div the name of the div to change the size */
+  function changeDivSize(option, div, e){
+    e.stop();
+    //get the current heigh of the div
+    current_height = parseInt($(div).getStyle('height').match(/\d+/));
+    //change the height by 50 pixels
+    switch(option){
+      case 'expand':
+        current_height +=50;
+      break;
+      
+      case 'contract':
+        if (current_height > 400){
+          current_height -=50;
+        }
+      break;
+      
+      default:
+        current_height = 400;
+      break;
+    }
+    //update the height
+    $(div).setStyle("height: " + current_height.toString() + "px");
+  }
+</script>

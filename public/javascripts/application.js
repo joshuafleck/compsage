@@ -999,59 +999,41 @@ function InviteList(survey_id) {
     $('organization_name').observe('keyup', liveAssociationFilter);
     $('organization_location').observe('keyup', liveAssociationFilter);
   }
-  
+  /* Adds an invitation for an association id
+    @organization_id: the id to invite */
   function addAssociationInvitation(organization_id, e){
     e.stop();
     addInvitationByID(organization_id);
   }
-  
+  /*
+    event handler for association live search, filters the list based 
+    on the strings in the 'organization_name' and 'organization_location'
+    text fields and compares to the organization_{id}_data and
+    organization_{id}_location fields. Case insensitve.
+  */
   function liveAssociationFilter(){
+    //get the search parameters
     var name = $('organization_name').value.toLowerCase();
     var location = $('organization_location').value.toLowerCase();
-    
+    //if there is anything in the params, filter the list
     if(name.length > 0 || location.length > 0){
-      /*new Ajax.Request('/organizations/search.json', {
-        'method': 'get',
-        'parameters': {'search_text': name, 'location': location},
-        'requestHeaders': {'Accept':'application/json'},
-        'onSuccess': function(transport) {
-          toggleOrganizations(transport.responseText.evalJSON());
-        },
-        'onCreate': function() {
-          $('association_live_load_indicator').show();
-        },
-        'onComplete': function() {
-          $('association_live_load_indicator').hide();
-        }
-      });*/
-      $('live_load_indicator').show();
       $$('ul#association_organizations > li').each(function(organization_li){
-        var organization_name = $(organization_li.id + "_name").innerHTML;
+        var organization_name = $(organization_li.id + "_data").innerHTML;
         var organization_location = $(organization_li.id + "_location").innerHTML;
-        if(organization_name.toLowerCase().include(name) && organization_location.toLowerCase().include(location))
+        //if the search param is a substring of the name or location show
+        if(organization_name.toLowerCase().include(name) && 
+           organization_location.toLowerCase().include(location))
           organization_li.show();
         else
           organization_li.hide();
       });
-      $('live_load_indicator').hide();
     }
+    //we have a blank form, show all the orgs
     else {
-      $('live_load_indicator').show();
       $$('ul#association_organizations > li').each(function(organization_li){
         organization_li.show();
       });
-      $('live_load_indicator').hide();
     }
-  }
-  
-  function toggleOrganizations(organizations) {
-    $$('ul#association_organizations > li').each(function(organization_li){
-      organization_li.hide();
-    });
-    
-    organizations.each(function(organization) {
-      $("organization_" + organization.id).show();
-    });
   }
 
   /*
@@ -1080,7 +1062,7 @@ function InviteList(survey_id) {
     addInvitationByID(organization.id);
   }
   
-  /* Sends the ajax request to invite the specified organization.
+  /* Sends the ajax request to invite the specified organization by ID.
    */
   function addInvitationByID(organization_id) {
     new Ajax.Request('/surveys/' + survey_id + '/invitations', {
