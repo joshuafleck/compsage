@@ -15,8 +15,8 @@
   <li id="organization_<%= organization.id %>">
     <a id="invite" href="#"><img src="/images/add_invitation_button.gif" /></a>
     <div>
-      <%= organization.name %> <br /> 
-      <span class="grey">Location: </span><%= organization.location%>
+      <span id="organization_<%= organization.id %>_name"><%= organization.name %></span> <br /> 
+      <span class="grey">Location: </span><span id="organization_<%= organization.id %>_location"><%= organization.location%></span>
     </div>
   </li>
 <% end %>  

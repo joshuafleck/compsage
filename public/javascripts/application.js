@@ -997,6 +997,7 @@ function InviteList(survey_id) {
     
     //observer for the association integration form
     $('organization_name').observe('keyup', liveAssociationFilter);
+    $('organization_location').observe('keyup', liveAssociationFilter);
   }
   
   function addAssociationInvitation(organization_id, e){
@@ -1005,11 +1006,12 @@ function InviteList(survey_id) {
   }
   
   function liveAssociationFilter(){
-    var value = $('organization_name').value
-    if(value.length > 2){
-      new Ajax.Request('/organizations/search.json', {
+    var name = $('organization_name').value
+    var location = $('organization_location').value
+    if(name.length > 2 || location.length > 2){
+      /*new Ajax.Request('/organizations/search.json', {
         'method': 'get',
-        'parameters': {'search_text': value},
+        'parameters': {'search_text': name, 'location': location},
         'requestHeaders': {'Accept':'application/json'},
         'onSuccess': function(transport) {
           toggleOrganizations(transport.responseText.evalJSON());
@@ -1020,7 +1022,17 @@ function InviteList(survey_id) {
         'onComplete': function() {
           $('association_live_load_indicator').hide();
         }
+      });*/
+      $('live_load_indicator').show();
+      $$('ul#association_organizations > li').each(function(organization_li){
+        var organization_name = $(organization_li.id + "_name").innerHTML;
+        var organization_location = $(organization_li.id + "_location").innerHTML;
+        if(organization_name.include(name) && organization_location.include(location))
+          organization_li.show();
+        else
+          organization_li.hide();
       });
+      $('live_load_indicator').hide();
     }
     else {
       $('live_load_indicator').show();
