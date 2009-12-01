@@ -1006,9 +1006,10 @@ function InviteList(survey_id) {
   }
   
   function liveAssociationFilter(){
-    var name = $('organization_name').value
-    var location = $('organization_location').value
-    if(name.length > 2 || location.length > 2){
+    var name = $('organization_name').value.toLowerCase();
+    var location = $('organization_location').value.toLowerCase();
+    
+    if(name.length > 0 || location.length > 0){
       /*new Ajax.Request('/organizations/search.json', {
         'method': 'get',
         'parameters': {'search_text': name, 'location': location},
@@ -1027,7 +1028,7 @@ function InviteList(survey_id) {
       $$('ul#association_organizations > li').each(function(organization_li){
         var organization_name = $(organization_li.id + "_name").innerHTML;
         var organization_location = $(organization_li.id + "_location").innerHTML;
-        if(organization_name.include(name) && organization_location.include(location))
+        if(organization_name.toLowerCase().include(name) && organization_location.toLowerCase().include(location))
           organization_li.show();
         else
           organization_li.hide();
