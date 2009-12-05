@@ -9,15 +9,6 @@ class Notifier < ActionMailer::Base
     subject    "#{invitation.inviter.name} invited you to join CompSage"
     body       :invitation => invitation, :network => invitation.network
   end
-  
-  # sent when a global external invitation is sent
-  def external_invitation_notification(invitation)
-    recipients invitation.email
-    from       "CompSage <support@compsage.com>"
-    reply_to   "support@compsage.com"
-    subject    "#{invitation.inviter.name} invited you to join CompSage"
-    body       :invitation => invitation    
-  end
     
   # sent when an external survey invitation is sent
   def external_survey_invitation_notification(invitation)
