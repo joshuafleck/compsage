@@ -21,9 +21,11 @@
         <li id="surveys"><%= link_to "Survey", survey_path(current_survey_invitation.survey_id) %></li>
       <% end %>
       <li id="how"><%= link_to "How it works", home_path('how') %></li>     
-      <li id="join">
-      		<%= link_to "Sign Up", has_key? ? new_account_path() : signup_path() %>
-      </li>
+      <% unless current_subdomain then %>
+        <li id="join">
+            <%= link_to "Sign Up", has_key? ? new_account_path() : signup_path() %>
+        </li>
+      <% end %>
 		</ul> 
 	</div>
 	<div id="container">
