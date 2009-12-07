@@ -49,7 +49,7 @@
     <% form_for :survey, :url => update_message_survey_invitations_path(@survey), :html => {:id => 'survey_form'} do |f| %>
       <%= f.text_area :custom_invitation_message %>
     <% end %>
-    <p>This message will be sent with the email invitations.</p>
+    <p>This message will be included in the email invitations.</p>
   </div>
   <%= render :partial => 'invitations/invite_organization' %>
 </div>

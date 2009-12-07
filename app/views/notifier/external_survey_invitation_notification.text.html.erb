@@ -19,8 +19,8 @@ If you would like to verify this request, feel free to email the survey sponsor 
   <b>Response deadline: </b><%=better_time_ago_in_words(@survey.end_date)%>
   </p>
 <% unless @survey.custom_invitation_message.blank? %>
-  <p><b>Sponsor's Message:</b></p>
-    <%= simple_format(@survey.custom_invitation_message) %>
+  <p><b>Sponsor's Message:</b><br />
+  <%= simple_format(@survey.custom_invitation_message) %></p>
 <% end %>
 <p>
   Thanks,
