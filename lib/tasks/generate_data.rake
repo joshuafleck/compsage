@@ -87,13 +87,14 @@ namespace :data_generator do
     puts "External invitation link: /survey_login?key=#{CGI.escape(invite.key)}&survey_id=#{survey.id}"
   end
   
-  #usage: rake 'data_generator:load_association[25]'
+  #usage: rake 'data_generator:association NAME="Manufacturers Alliance" SUBDOMAIN="mfrall" MEMBERS=20'
   desc "Generate an association with a given number of organizations"
-  task :load_association, :total, :needs => [:environment] do |task,args|
-    total = (args[:total] || NUM_ORGANIZATIONS).to_i
+  task :association, :name, :subdomain, :members, :needs => [:environment] do |task,args|
+    members = (args[:members] || NUM_ORGANIZATIONS).to_i
     
     before
-    generate_association_organizations(total)
+
+    generate_association_organizations(args.name, args.subdomain, members)
     after
   end
 
@@ -218,12 +219,13 @@ namespace :data_generator do
     puts "generating organizations complete"
   end
   
-  def generate_association_organizations(total)    
+  def generate_association_organizations(name, subdomain, total)
     puts "creating association"
     association = Factory(:association, 
-                          :name => Faker::Company.name,
-                          :subdomain => Faker::Internet.domain_word
+                          :name => name || Faker::Company.name,
+                          :subdomain => subdomain || Faker::Internet.domain_word
                           )
+    puts "Association created with subdomain #{association.subdomain}"
     puts "generating #{total} organizations..."
     
     total.times do |index|
