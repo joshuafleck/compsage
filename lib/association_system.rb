@@ -59,10 +59,17 @@ module AssociationSystem
           redirect_to sign_in_associations_path
         end
       end
-    end
+    end    
+  
+    # Will render 404 (not found) if the association cannot be found by the subdomain
+    def association_required
+      if !current_association then
+        render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
+      end
+    end    
     
     def self.included(base)
-      base.send :helper_method, :current_association_by_owner, :logged_in_as_association_owner?, :association_owner_login_required if base.respond_to? :helper_method
+      base.send :helper_method, :current_association_by_owner, :logged_in_as_association_owner?, :association_owner_login_required, :association_required  if base.respond_to? :helper_method
     end
   end
 end

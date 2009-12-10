@@ -117,14 +117,5 @@ class AssociationMembersController < ApplicationController
       
     end
   end
-  
-  private
-  
-  # Will render 404 (not found) if the association cannot be found by the subdomain
-  def association_required
-    if !current_association then
-      render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
-    end
-  end
 
 end
