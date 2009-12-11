@@ -124,18 +124,13 @@ class Organization < ActiveRecord::Base
   def initialize(params = nil) 
     super
     
-    invitation_or_pending_account = params[:invitation_or_pending_account] if params
+    invitation = params[:invitation] if params
     
-    if invitation_or_pending_account then 
+    if invitation then 
     
-      self.name = invitation_or_pending_account.organization_name
-      self.email = invitation_or_pending_account.email
-      
-      if invitation_or_pending_account.is_a? PendingAccount then
-        self.contact_name = invitation_or_pending_account.contact_first_name + 
-          " " + invitation_or_pending_account.contact_last_name
-      end
-      
+      self.name = invitation.organization_name
+      self.email = invitation.email
+            
     end
     
   end  

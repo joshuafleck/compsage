@@ -18,7 +18,7 @@
   </div>
 </div>
 <div class="image_header"><%= image_tag 'free_banner.gif' %></div>
-<p class="main_page">CompSage is free to use! <%= link_to "Sign up now", has_key? ? new_account_path() : signup_path() %> and sponsor as many surveys as
+<p class="main_page">CompSage is free to use! <%= link_to "Sign up now", new_account_path() %> and sponsor as many surveys as
 you like.</p>
 <div class="image_header"><%= image_tag 'sub_banner.gif' %></div>
 <p class="main_page">CompSage compensation surveys allow you to collect relevant data one job at a time.  Ask our
@@ -53,5 +53,5 @@ standard questions, or design your own, it's completely up to you.</p>
 <br clear="both" />
 <p>&nbsp;</p>
 <p class="main_page">Find out how our <%= link_to "revolutionary approach", home_path('how') %> to compensation surveys
-works so well. If you're ready to go, our <%= link_to "registration form", has_key? ? new_account_path() : signup_path() %> will take mere seconds and is
+works so well. If you're ready to go, our <%= link_to "registration form", new_account_path() %> will take mere seconds and is
 completely free. And, as always, we would love to <%= link_to "hear from you", home_path('contact') %>!</p>

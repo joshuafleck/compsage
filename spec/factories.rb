@@ -257,10 +257,3 @@ Factory.define :network_membership do |p|
   p.organization {|a| a.association(:organization)}
 end
 
-Factory.define :pending_account do |p|
-  p.organization_name  "Org Name"
-  p.email              "testing@example.com"
-  p.contact_first_name "Brian"
-  p.contact_last_name  "Terlson"
-  p.phone              "7634983633"
-end

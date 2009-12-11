@@ -292,7 +292,7 @@ end
 describe Organization, "built from an invitation" do
   before(:each) do
     @invitation = Factory.create(:external_invitation)
-    @organization = Organization.new(:invitation_or_pending_account => @invitation)
+    @organization = Organization.new(:invitation => @invitation)
   end
   
   after(:each) do
@@ -309,26 +309,3 @@ describe Organization, "built from an invitation" do
 
 end
 
-describe Organization, "built from a pending account" do
-  before(:each) do
-    @pending_account = Factory.create(:pending_account)
-    @organization = Organization.new(:invitation_or_pending_account => @pending_account)
-  end
-  
-  after(:each) do
-    @pending_account.destroy
-  end
-  
-  it "should have a name" do
-    @organization.name.should == @pending_account.organization_name
-  end   
-  
-  it "should have an email" do
-    @organization.email.should == @pending_account.email
-  end   
-  
-  it "should have a contact name" do
-    @organization.contact_name.should_not be_blank
-  end   
-
-end

@@ -30,22 +30,9 @@ end
 
 describe AccountsController, " handling GET /account/new" do
 
-  it "should require an invitation or pending account" do
-    controller.should_receive(:invitation_or_pending_account_required)
+  it "should look for an invitation" do
+    controller.should_receive(:locate_invitation)
     get :new
-  end
-  
-  describe "when not invited" do
-  
-    it "should flash a message" do
-      get :new
-      flash[:notice].should_not be_blank
-    end
-     
-    it "should redirect to the login page" do
-      get :new
-      response.should redirect_to(new_session_path)    
-    end
   end
 
   describe "when invited to a network" do
@@ -79,12 +66,12 @@ describe AccountsController, " handling GET /account/new" do
          
     it "should assign the invitation to the view" do
       do_get
-      assigns[:invitation_or_pending_account].should == @invitation
+      assigns[:invitation].should == @invitation
     end
      
     it "should assign the invitation to the session" do
       do_get
-      session[:invitation_or_pending_account].should == @invitation
+      session[:invitation].should == @invitation
     end
      
   end
@@ -106,7 +93,7 @@ describe AccountsController, " handling GET /account/new" do
       
     it "should assign the invitation to the view" do
       do_get
-      assigns[:invitation_or_pending_account].should == @invitation
+      assigns[:invitation].should == @invitation
     end
      
     it "should be successful" do    
@@ -130,7 +117,7 @@ describe AccountsController, " handling GET /account/new" do
   
     before(:each) do
       @invitation = Factory.create(:external_network_invitation)
-      session[:invitation_or_pending_account] = @invitation
+      session[:invitation] = @invitation
     end
     
     after(:each) do
@@ -139,7 +126,7 @@ describe AccountsController, " handling GET /account/new" do
   
     it "should assign the invitation to the view" do
       get :new
-      assigns[:invitation_or_pending_account].should == @invitation
+      assigns[:invitation].should == @invitation
     end
      
     it "should be successful" do    
@@ -159,47 +146,6 @@ describe AccountsController, " handling GET /account/new" do
         
   end  
   
-  describe "with a pending account" do
-
-    before(:each) do
-      @pending_account = Factory.create(:pending_account)
-    end
-    
-    after(:each) do
-      @pending_account.destroy
-    end
-    
-    def do_get
-      get :new, :key => @pending_account.key
-    end
-    
-    it "should be successful" do    
-      do_get
-      response.should be_success
-    end
-     
-    it "should assign a new organization to the view" do
-      do_get
-      assigns[:organization].should_not be_blank
-    end  
-     
-    it "should render the new template" do  
-      do_get
-      response.should render_template('new')
-    end
-        
-    it "should assign the pending account to the view" do
-      do_get
-      assigns[:invitation_or_pending_account].should == @pending_account
-    end
-     
-    it "should assign the pending account to the session" do
-      do_get
-      session[:invitation_or_pending_account].should == @pending_account
-    end
-     
-  end
-
 end
 
 describe AccountsController, " handling GET /account/edit" do

@@ -1,10 +1,10 @@
 class Admin::PendingAccountsController < Admin::AdminController
   def index
-    @pending_accounts = PendingAccount.all
+    @pending_accounts = [] #PendingAccount.all
   end
   
   def approve
-    @pending_account = PendingAccount.find(params[:id])
+    @pending_account = nil #PendingAccount.find(params[:id])
 
     #update the account status to approved
     @pending_account.approve!
@@ -15,7 +15,7 @@ class Admin::PendingAccountsController < Admin::AdminController
   end
   
   def deny
-    @pending_account = PendingAccount.find(params[:id])
+    @pending_account = nil #PendingAccount.find(params[:id])
     #notify the user that they were rejected
     @pending_account.destroy
     

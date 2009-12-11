@@ -1,13 +1,13 @@
 class AccountsController < ApplicationController
   before_filter :login_required, :except => [ :new , :create, :forgot, :reset ]
-  before_filter :invitation_or_pending_account_required, :only => [ :new , :create ]
+  before_filter :locate_invitation, :only => [ :new , :create ]
   layout :logged_in_or_invited_layout 
   filter_parameter_logging :password
 
   def new
   
-    # Prepopulate the name and email fields automagically from the invitation or pending account
-    @organization = Organization.new(:invitation_or_pending_account => @invitation_or_pending_account)  
+    # Prepopulate the name and email fields automagically from the invitation
+    @organization = Organization.new(:invitation => @invitation)  
     
   end
   
@@ -21,12 +21,7 @@ class AccountsController < ApplicationController
 
     if @organization.save then
             
-      if @invitation_or_pending_account.is_a?(PendingAccount) then
-        @invitation_or_pending_account.destroy                  
-      else    
-        # The user was invited via survey or network invitation    
-        @invitation_or_pending_account.accept!(@organization)    
-      end
+      @invitation.accept!(@organization) if @invitation
   
       # Clear the existing session, we don't want any invitations hanging around
       logout_killing_session!
@@ -130,32 +125,25 @@ class AccountsController < ApplicationController
   
   private
   
-  # In order to create an account, as user must be invited to CompSage, or have an approved sign up request.
-  # This will locate the invitation or sign up request
+  # This will locate the invitation, if one is present.
   #
-  def invitation_or_pending_account_required
+  def locate_invitation
   
     # Check for a survey invitation, this will be the most common use-case.
-    @invitation_or_pending_account = current_survey_invitation
+    @invitation = current_survey_invitation
     
     # Check the session to see if a user was invited, but navigated away (lost their key).
-    @invitation_or_pending_account ||= session[:invitation_or_pending_account]
+    @invitation ||= session[:invitation]
     
     # If there was no survey invitation, see if a key was provided
-    if !@invitation_or_pending_account && !params[:key].blank? then 
+    if !@invitation && !params[:key].blank? then 
     
-      # Check to see if this key belongs to an network invitation. Check for a pending account if no network invite was found.
-      @invitation_or_pending_account = ExternalNetworkInvitation.find_by_key(params[:key]) || PendingAccount.find_by_key(params[:key])
+      # Check to see if this key belongs to an network invitation.
+      @invitation = ExternalNetworkInvitation.find_by_key(params[:key])
       
       # Save the invitation in the session, as the user may navigate to another page and lose their key.
-      session[:invitation_or_pending_account] = @invitation_or_pending_account if @invitation_or_pending_account
+      session[:invitation] = @invitation if @invitation
         
-    end
-
-    # No invitation or pending account, kick them back to the login page.
-    if !@invitation_or_pending_account then
-      flash[:notice] = "We are unable to process your request at this time. If the problem persists, <a href=\"#{contact_path}\">let us know</a>."
-      redirect_to new_session_path
     end
     
   end
