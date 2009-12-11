@@ -1,18 +1,37 @@
-<h3>Association Invitations</h3>
+<h3>Invite Members of <%=association.name%></h3>
 <div id="association_search">
+  <span style="font-size: 80%; color: grey;">Filter firms by...</span> <br />
   <label style="display: inline;">Name: </label>
   <input id="organization_name" type="textbox"/>
   <label style="display: inline;">Location: </label>
-  <input id="organization_location" type="textbox"/>
+  <select id="organization_location">
+    <option value="5">5 miles</option>
+  </select>
+</div>
+<div>
+  Select:&nbsp;
+  <a href="#" id="all_link">All</a>&nbsp;
+  <a href="#" id="none_link">None</a>&nbsp;
+  <a id="invite_link" href="#"><img src="/images/add_invitation_button.gif" /></a>
+  <span id="invite_load_indicator" style="display: none;">
+    <%= image_tag 'load_indicator.gif', :class => 'load_indicator' %>
+  </span>
 </div>
 <div id="organization_list">
 <ul id="association_organizations">
-<% organizations.each do |organization| %>
-  <li id="organization_<%= organization.id %>">
-    <a id="invite" href="#"><img src="/images/add_invitation_button.gif" /></a>
+<% association.organizations.sort {|x,y| x.name <=> y.name }.each do |organization| %>
+  <% already_invited = survey.invitees.exists?(organization) %>
+  <li id="organization_<%= organization.id %>"> 
     <div>
+      <input  style="display: inline;" 
+              type="checkbox"
+              <%= if already_invited then "DISABLED" end %>
+      />
       <span id="organization_<%= organization.id %>_name">
         <%= organization.name %>
+        <% if already_invited then%>
+          <span class="grey" style="font-size: 80%">(Firm invited)
+        <% end %>
       </span> 
       <br /> 
       <span class="grey">
@@ -32,37 +51,18 @@
 <% end %>  
 </ul>
 </div>
-<p style="text-align: right; margin-top:5px; font-size:70%;">
-  <a id="expand" href="#">Expand</a> / <a id="contract" href="#">Contract</a>
-</p>
+
 <script>
-  $('expand').observe('click', changeDivSize.curry('expand','organization_list'));
-  $('contract').observe('click', changeDivSize.curry('contract', 'organization_list'));
+  $('all_link').observe('click', updateCheckbox.curry('check'));
+  $('none_link').observe('click', updateCheckbox.curry('uncheck'));
   
-  /* handles expand/contract clicks *
-  @option - expand or contract (show more or show less)
-  @div the name of the div to change the size */
-  function changeDivSize(option, div, e){
+  function updateCheckbox(option, e) {
     e.stop();
-    //get the current heigh of the div
-    current_height = parseInt($(div).getStyle('height').match(/\d+/));
-    //change the height by 50 pixels
-    switch(option){
-      case 'expand':
-        current_height +=50;
-      break;
-      
-      case 'contract':
-        if (current_height > 400){
-          current_height -=50;
-        }
-      break;
-      
-      default:
-        current_height = 400;
-      break;
-    }
-    //update the height
-    $(div).setStyle("height: " + current_height.toString() + "px");
+    var check = (option == 'check');
+    $$('ul#association_organizations > li').each(function(org_li){
+      //only check if the element is visible and enabled
+      if(org_li.visible() && !org_li.select('input').first().disabled)
+        org_li.select('input').first().checked = check;
+    });
   }
 </script>

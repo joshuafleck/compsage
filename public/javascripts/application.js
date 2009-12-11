@@ -989,21 +989,34 @@ function InviteList(survey_id) {
     });
     
     // observe the add invitation links for association organization list
-    $$('ul#association_organizations > li').each(function(organization_li){
+    /*$$('ul#association_organizations > li').each(function(organization_li){
        var id_match = organization_li.id.match(/\d+/);
       invite_link = organization_li.select('a').first();
       invite_link.observe('click', addAssociationInvitation.curry(id_match));
-    });
+    });*/
     
     //observer for the association integration form
     $('organization_name').observe('keyup', liveAssociationFilter);
-    $('organization_location').observe('keyup', liveAssociationFilter);
+    
+    //observe invite button click for multi-select invitations
+    $('invite_link').observe('click', submitMultipleInvitations);
   }
-  /* Adds an invitation for an association id
-    @organization_id: the id to invite */
-  function addAssociationInvitation(organization_id, e){
+  
+  /* This function handles the invite link click for
+     the association pick list. It collects the checked
+     organizations and sends an ajax request to add the invites. */
+  function submitMultipleInvitations(e){
     e.stop();
-    addInvitationByID(organization_id);
+    
+    var organizations = new Array();
+    $$('ul#association_organizations > li').each(function(org_li){
+      var id_match = org_li.id.match(/\d+/);
+      if(org_li.select('input').first().checked){
+        organizations.push(id_match);
+      }
+    });
+    //function for ajax request
+    addAssociationInvitations(organizations);
   }
   /*
     event handler for association live search, filters the list based 
@@ -1014,18 +1027,16 @@ function InviteList(survey_id) {
   function liveAssociationFilter(){
     //get the search parameters
     var name = $('organization_name').value.toLowerCase();
-    var location = $('organization_location').value.toLowerCase();
     //if there is anything in the params, filter the list
-    if(name.length > 0 || location.length > 0){
+    if(name.length > 0){
       $$('ul#association_organizations > li').each(function(organization_li){
         var organization_name = $(organization_li.id + "_data").innerHTML;
-        var organization_location = $(organization_li.id + "_location").innerHTML;
         //if the search param is a substring of the name or location show
-        if(organization_name.toLowerCase().include(name) && 
-           organization_location.toLowerCase().include(location))
+        if(organization_name.toLowerCase().include(name))
           organization_li.show();
-        else
+        else {
           organization_li.hide();
+          organization_li.select('input').first().checked = false;}
       });
     }
     //we have a blank form, show all the orgs
@@ -1058,18 +1069,12 @@ function InviteList(survey_id) {
 
   /* Sends the ajax request to invite the specified organization.
    */
-  function addInvitation(organization) {
-    addInvitationByID(organization.id);
-  }
-  
-  /* Sends the ajax request to invite the specified organization by ID.
-   */
-  function addInvitationByID(organization_id) {
-    new Ajax.Request('/surveys/' + survey_id + '/invitations', {
+  function addAssociationInvitations(organizations) {
+    new Ajax.Request('/surveys/' + survey_id + '/invitations/create_for_association', {
       'method': 'post',
-      'parameters': {'organization_id': organization_id},
-      'onCreate': function() {$('submit_load_indicator').show();},
-      'onComplete': function() {$('submit_load_indicator').hide();}
+      'parameters': {'organizations': Object.toJSON(organizations)},
+      'onCreate': function() {$('invite_load_indicator').show();},
+      'onComplete': function() {$('invite_load_indicator').hide();}
     });
   }
 
@@ -1084,7 +1089,16 @@ function InviteList(survey_id) {
     });
   }
 
-
+  /* Sends the ajax request to invite the specified organization.
+   */
+  function addInvitation(organization) {
+    new Ajax.Request('/surveys/' + survey_id + '/invitations', {
+      'method': 'post',
+      'parameters': {'organization_id': organization.id},
+      'onCreate': function() {$('submit_load_indicator').show();},
+      'onComplete': function() {$('submit_load_indicator').hide();}
+    });
+  }
   
 
   function removeInvitation(invitation_id, e) {

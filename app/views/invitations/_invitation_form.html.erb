@@ -42,11 +42,11 @@
       </li>
     <% end %>
   </ul>
-
-  <%= render :partial => 'invitations/invite_organization' %>
   <%if !@association.nil? then %>
-    <%= render :partial => 'invitations/association_invitation_form', :locals => {:organizations => @association.organizations.sort {|x,y| x.name <=> y.name }} %>
+    <%= render :partial => 'invitations/association_invitation_form',
+               :locals => {:association => @association, :survey => @survey} %>
   <% end %>
+  <%= render :partial => 'invitations/invite_organization', :locals => {:association => @association} %>
 </div>
 <script type="text/javascript" src="/javascripts/fast_autocompleter.js"></script>
 <% content_for :initialize_js, "inviteList = new InviteList(#{@survey.id});"%>

@@ -28,7 +28,7 @@ class SurveyInvitationsController < ApplicationController
     @survey = current_organization.sponsored_surveys.find(params[:survey_id])    
 
     @invitation = if params[:organization_id] then
-      invite_organization
+      invite_organization params[:organization_id]
     elsif params[:external_invitation] then
       invite_external_organization
     end
@@ -53,6 +53,22 @@ class SurveyInvitationsController < ApplicationController
 
     @invitations = create_invitations_for_network(@network)
 
+    respond_to do |wants|
+      wants.js
+    end
+  end
+  
+  def create_for_association
+    @survey  = current_organization.sponsored_surveys.find(params[:survey_id])
+    @organizations = ActiveSupport::JSON.decode(params[:organizations]) #passed param is JSON array of IDs
+    @invitations = []
+
+    @organizations.each do |organization_id|
+      organization = Organization.find(organization_id.to_s) 
+      invitation = @survey.invitations.create(:inviter => current_organization, :invitee => organization)
+      @invitations << invitation if invitation.valid?
+    end
+    
     respond_to do |wants|
       wants.js
     end
@@ -99,8 +115,8 @@ class SurveyInvitationsController < ApplicationController
 
   # Invite the organization contained in the organization_id param.
   #
-  def invite_organization
-    organization = Organization.find(params[:organization_id]) 
+  def invite_organization(organization_id)
+    organization = Organization.find(organization_id) 
 
     return Invitation.new_invitation_to(@survey, { 
         :invitee => organization, 
