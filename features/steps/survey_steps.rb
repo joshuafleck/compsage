@@ -23,7 +23,7 @@ Given "I am sponsoring a survey with every question type" do
                     :questions => @questions)
 end
 
-Given "I am sponsoring a survey with a follow-up to a (.*) question" do |type|
+Given /^I am sponsoring a survey with a follow\-up to a (.*) question$/ do |type|
   case type
   when "yes/no"
     @base_question = Factory.build(:multiple_choice_question, :options => ["Yes", "No"])
@@ -126,7 +126,7 @@ When "I unsuccessfully edit the survey" do
   field_with_id('form_submit', 'submit').click
 end
 
-When "I answer the entire survey( with comments)?" do |with_comments|
+When /^I answer the entire survey( with comments)?$/ do |with_comments|
   with_comments = !with_comments.blank?
 
   if @questions.nil? then
