@@ -1,5 +1,5 @@
 class AssociationsController < ApplicationController
-  layout :logged_in_or_invited_layout
+  layout :association_layout
   ssl_required :sign_in
   before_filter :association_owner_login_required, :only => [:edit, :update, :show]
   
@@ -45,4 +45,7 @@ class AssociationsController < ApplicationController
     logger.warn "Failed association owner login for '#{params[:email]}' from #{request.remote_ip} at #{Time.now.utc}"
   end
 
+  def association_layout
+    return logged_in_as_association_owner? ? 'association_owner_logged_in' : 'front'
+  end
 end

@@ -147,7 +147,9 @@ ul.text li {
 #header #nav.how_nav li#how, 
 #header #nav.surveys_nav li#surveys_nav,
 #header #nav.surveys_nav li#surveys,
-#header #nav.networks_nav li#networks_nav {
+#header #nav.networks_nav li#networks_nav,
+#header #nav.settings_nav li#settings_nav,
+#header #nav.members_nav li#members_nav {
   background: url('../images/selected_menu_item.gif') bottom center no-repeat;
 }
 

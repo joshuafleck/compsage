@@ -1,4 +1,7 @@
-<% title @association.name %>
+<%
+  title @association.name
+  highlight_tab "members"
+%>
 <div id="assocation_info">
 <h2><%= @association.name%></h2>
 <span>Owner: </span><%= @association.owner_email%>
