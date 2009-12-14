@@ -988,18 +988,20 @@ function InviteList(survey_id) {
       }
     });
     
-    // observe the add invitation links for association organization list
-    /*$$('ul#association_organizations > li').each(function(organization_li){
-       var id_match = organization_li.id.match(/\d+/);
-      invite_link = organization_li.select('a').first();
-      invite_link.observe('click', addAssociationInvitation.curry(id_match));
-    });*/
-    
     //observer for the association integration form
     $('organization_name').observe('keyup', liveAssociationFilter);
+    $('organization_location').observe('change', liveAssociationFilter);
     
     //observe invite button click for multi-select invitations
     $('invite_link').observe('click', submitMultipleInvitations);
+    
+    //observers for each add invitation link
+    $$('ul#association_organizations > li').each(function(org_li){
+      var id_match = org_li.id.match(/\d+/);
+      var invite_link = org_li.select('a').first();
+      invite_link.observe('click', addAssociationInvitation.curry(id_match));
+    });
+    
   }
   
   /* This function handles the invite link click for
@@ -1011,40 +1013,69 @@ function InviteList(survey_id) {
     var organizations = new Array();
     $$('ul#association_organizations > li').each(function(org_li){
       var id_match = org_li.id.match(/\d+/);
-      if(org_li.select('input').first().checked){
+      if(org_li.visible()){
         organizations.push(id_match);
       }
     });
     //function for ajax request
     addAssociationInvitations(organizations);
   }
+  
+  /*
+   * Passed along the organization ID to be invited and
+     stops the event to prevent
+     @ organization_id - the organization id to invite.
+   */
+  function addAssociationInvitation(organization_id, e){
+    e.stop();
+    addInvitationByID(organization_id);
+  }
+  
   /*
     event handler for association live search, filters the list based 
     on the strings in the 'organization_name' and 'organization_location'
-    text fields and compares to the organization_{id}_data and
-    organization_{id}_location fields. Case insensitve.
+    inputs and submits it to Thinking Sphinx to search.
   */
   function liveAssociationFilter(){
-    //get the search parameters
-    var name = $('organization_name').value.toLowerCase();
-    //if there is anything in the params, filter the list
-    if(name.length > 0){
-      $$('ul#association_organizations > li').each(function(organization_li){
-        var organization_name = $(organization_li.id + "_data").innerHTML;
-        //if the search param is a substring of the name or location show
-        if(organization_name.toLowerCase().include(name))
-          organization_li.show();
-        else {
-          organization_li.hide();
-          organization_li.select('input').first().checked = false;}
+    var value = $('organization_name').value
+    //if value length is less than 3, set to blank so it is ignored.
+    value = value.length > 2 ? value : "";
+    var distance = $('organization_location').value;
+    if(value != ""  || distance != ""){
+      new Ajax.Request('/organizations/search_for_association_list.json', {
+        'method': 'get',
+        'parameters': {'search_text': value, 'distance': distance},
+        'requestHeaders': {'Accept':'application/json'},
+        'onSuccess': function(transport) {
+          toggleOrganizations(transport.responseText.evalJSON());
+        },
+        'onCreate': function() {
+          $('invite_load_indicator').show();
+        },
+        'onComplete': function() {
+          $('invite_load_indicator').hide();
+        }
       });
     }
-    //we have a blank form, show all the orgs
     else {
-      $$('ul#association_organizations > li').each(function(organization_li){
-        organization_li.show();
+      $$('ul#association_organizations > li').each(function(org_li){
+        org_li.show();
       });
     }
+  }
+  
+  /*
+   * Shows or hides the organizations depending upon the passed list.
+     @ organizations - a list of organizations to show.
+   */
+  function toggleOrganizations(organizations) {
+    $$('ul#association_organizations > li').each(function(organization_li){
+      organization_li.hide();
+    });
+    
+    organizations.each(function(organization) {
+      $("organization_" + organization.id).show();
+    });
   }
 
   /*
@@ -1067,7 +1098,8 @@ function InviteList(survey_id) {
     });
   }
 
-  /* Sends the ajax request to invite the specified organization.
+  /* Sends the ajax request to invite an array of organizations.
+      @organizations - a JavaScript array of IDs.
    */
   function addAssociationInvitations(organizations) {
     new Ajax.Request('/surveys/' + survey_id + '/invitations/create_for_association', {
@@ -1089,12 +1121,23 @@ function InviteList(survey_id) {
     });
   }
 
-  /* Sends the ajax request to invite the specified organization.
+  /* Function to allow Polymorphism of the add invitation function. Takes
+     the organization and passed on only the needed params (id).
+     
+     @organization -  an object that contains an organization id.
    */
   function addInvitation(organization) {
+    addInvitationByID(organization.id);
+  }
+
+  /* Sends the ajax request to invite the specified organization.
+  
+    @organization_id -  the ID of the organization to invite.
+   */
+  function addInvitationByID(organization_id) {
     new Ajax.Request('/surveys/' + survey_id + '/invitations', {
       'method': 'post',
-      'parameters': {'organization_id': organization.id},
+      'parameters': {'organization_id': organization_id},
       'onCreate': function() {$('submit_load_indicator').show();},
       'onComplete': function() {$('submit_load_indicator').hide();}
     });

@@ -1,37 +1,30 @@
 <h3>Invite Members of <%=association.name%></h3>
 <div id="association_search">
-  <span style="font-size: 80%; color: grey;">Filter firms by...</span> <br />
+  <span style="font-size: 95%; color: grey;">Filter firms by...</span> <br />
   <label style="display: inline;">Name: </label>
   <input id="organization_name" type="textbox"/>
-  <label style="display: inline;">Location: </label>
+  <label style="display: inline;">Within: </label>
   <select id="organization_location">
-    <option value="5">5 miles</option>
+    <option value="">Anywhere</option>
+    <% (1..25).each do |i|%>
+    <option value="<%=(10*i).to_s%>"><%=(10*i).to_s%> miles</option>
+    <%end%>
   </select>
 </div>
 <div>
-  Select:&nbsp;
-  <a href="#" id="all_link">All</a>&nbsp;
-  <a href="#" id="none_link">None</a>&nbsp;
-  <a id="invite_link" href="#"><img src="/images/add_invitation_button.gif" /></a>
+  <a id="invite_link" href="#">Invite All! (Needs button)</a>
+  <a id="reset_link" href="#">Reset</a>
   <span id="invite_load_indicator" style="display: none;">
     <%= image_tag 'load_indicator.gif', :class => 'load_indicator' %>
   </span>
 </div>
 <div id="organization_list">
-<ul id="association_organizations">
+<ul id="association_organizations" class="invitations">
 <% association.organizations.sort {|x,y| x.name <=> y.name }.each do |organization| %>
-  <% already_invited = survey.invitees.exists?(organization) %>
+  <% if !survey.invitees.exists?(organization) then %>
   <li id="organization_<%= organization.id %>"> 
-    <div>
-      <input  style="display: inline;" 
-              type="checkbox"
-              <%= if already_invited then "DISABLED" end %>
-      />
       <span id="organization_<%= organization.id %>_name">
         <%= organization.name %>
-        <% if already_invited then%>
-          <span class="grey" style="font-size: 80%">(Firm invited)
-        <% end %>
       </span> 
       <br /> 
       <span class="grey">
@@ -40,29 +33,9 @@
       <span id="organization_<%= organization.id %>_location">
         <%= organization.location%>
       </span>
-      <span id="organization_<%= organization.id %>_data"
-            style="display: none;">
-        <%= organization.name %> 
-        <%= organization.email %> 
-        <%= organization.contact_name %>
-      </span>
-    </div>
+      <a id="invite" href="#"><img src="/images/add_invitation_button.gif" /></a>
   </li>
+  <% end %>
 <% end %>  
 </ul>
 </div>
-
-<script>
-  $('all_link').observe('click', updateCheckbox.curry('check'));
-  $('none_link').observe('click', updateCheckbox.curry('uncheck'));
-  
-  function updateCheckbox(option, e) {
-    e.stop();
-    var check = (option == 'check');
-    $$('ul#association_organizations > li').each(function(org_li){
-      //only check if the element is visible and enabled
-      if(org_li.visible() && !org_li.select('input').first().disabled)
-        org_li.select('input').first().checked = check;
-    });
-  }
-</script>

@@ -6,7 +6,8 @@ ActionController::Routing::Routes.draw do |map|
   map.contact 'contact', :controller => 'home', :action => 'contact'
   map.home ':page', :controller => 'home', :action => 'show', :page => /about|contact|privacy|how|tips|terms/
 
-  map.resources :organizations, :collection => {:search => :any}, :member => {:invite_to_survey => :post, :invite_to_network => :post}
+  map.resources :organizations, :collection => {:search => :any, :search_for_association_list => :any},
+                :member => {:invite_to_survey => :post, :invite_to_network => :post}
   
   map.resource :session
 

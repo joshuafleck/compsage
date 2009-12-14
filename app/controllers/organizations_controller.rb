@@ -78,6 +78,34 @@ class OrganizationsController < ApplicationController
     
   end
   
+  def search_for_association_list
+    search_text = params[:search_text] || ""
+    
+    escaped_search_text = Riddle.escape(search_text)
+    distance = params[:distance] || ""
+    
+    search_options = {
+    :per_page  => 1000,
+    :star      => :true
+    }
+    
+    with_params = {
+      :association_ids => current_association.id
+    }
+    if distance != "" then
+      search_options.merge!(:geo       => [current_organization.latitude, current_organization.longitude])
+      with_params.merge!("@geodist" => 0.0..(distance.to_f * Organization::METERS_PER_MILE) )
+    end
+
+    organizations = Organization.search escaped_search_text, search_options.merge!(:with => with_params)
+    respond_to do |wants|
+      wants.json do
+        render :json => organizations.sort {|x,y| x.name <=> y.name }.to_json(
+          :only    => [:id])
+      end
+    end
+  end
+  
   # JS only function for inviting an organization to a survey
   def invite_to_survey
     @survey = current_organization.sponsored_surveys.find(params[:survey_id])

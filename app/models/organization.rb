@@ -58,6 +58,9 @@ class Organization < ActiveRecord::Base
 
   attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, 
                   :zip_code, :contact_name, :industry, :logo, :terms_of_use
+                  
+  # Constant definition
+  METERS_PER_MILE = 1609.344
   
   # Sphinx setup
   define_index do
