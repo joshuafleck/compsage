@@ -46,7 +46,7 @@
   <a id="custom_message_link" href="#" <% if !@survey.custom_invitation_message.blank? then %>style="display:none;"<% end %>>Set a Custom Invitation Message</a>
   <div id="custom_message" <% if @survey.custom_invitation_message.blank? then %>style="display:none;"<% end %>>
     <h4>Custom Invitation Message</h4>
-    <% form_for :survey, :url => update_message_survey_invitations_path(@survey), :html => {:id => 'survey_form'} do |f| %>
+    <% form_for :survey, :url => update_message_survey_invitations_path(@survey), :html => {:id => 'survey_form', :style => 'margin: 0; padding: 0;'} do |f| %>
       <%= f.text_area :custom_invitation_message %>
     <% end %>
     <p>This message will be included in the email invitations.</p>
