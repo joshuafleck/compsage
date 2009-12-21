@@ -127,20 +127,13 @@ class Notifier < ActionMailer::Base
     subject    "Suspect Results reported for survey #{survey.id.to_s}"
     body       :survey => survey, :comment => comment
   end
-  
-  def pending_account_approval_notification(pending_account)
-    recipients  pending_account.email
-    from       "CompSage <support@compsage.com>"
-    reply_to   "support@compsage.com"
-    subject    "Your compsage.com account request has been approved"
-    body       :pending_account => pending_account
-  end
-  
-  def pending_account_creation_notification
+
+  def pending_account_creation_notification(organization)
     recipients "CompSage <support@compsage.com>"
     from       "CompSage <support@compsage.com>"
     reply_to   "support@compsage.com"
-    subject    "A user has requested to join CompSage"    
+    subject    "A new account requiring manual verification was created" 
+    body       :organization => organization   
   end
     
   def contact_form_submission(submission)

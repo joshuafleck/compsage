@@ -308,7 +308,12 @@ describe Organization, "that already exists" do
   
   it "Should have an activation key creation date after requiring activation" do
     lambda { @organization.require_activation }.should change(@organization, :activation_key_created_at).from(nil)
-  end    
+  end  
+  
+  it "Should notify us when a pending account has been created" do
+    Notifier.should_receive(:deliver_pending_account_creation_notification)
+    @organization.set_pending_and_require_activation
+  end  
     
 end
 

@@ -123,6 +123,7 @@ class Organization < ActiveRecord::Base
   # Will set the organization as needing manual review and requiring activation
   def set_pending_and_require_activation
     self.is_pending = true
+    Notifier.deliver_pending_account_creation_notification(self)
     self.require_activation
   end
   
