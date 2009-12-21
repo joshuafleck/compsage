@@ -1,5 +1,4 @@
-class Association::PdqsController < ApplicationController
-    layout :logged_in_or_invited_layout 
+class Association::PdqsController < Association::AssociationController
     before_filter :association_owner_login_required
 
     def index

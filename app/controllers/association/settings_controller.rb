@@ -1,2 +1,2 @@
-class Association::SettingsController < ApplicationController
+class Association::SettingsController < Association::AssociationController
 end

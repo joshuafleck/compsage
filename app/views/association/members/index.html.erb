@@ -1,0 +1,7 @@
+<% highlight_tab 'members' %>
+<h2>Association Members</h2>
+<ul>
+  <% @members.each do |member| %>
+    <li><%= member.name %></li>
+  <% end %>
+</ul>

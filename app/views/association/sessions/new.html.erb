@@ -1,7 +1,7 @@
 <% title "Association Owner - Sign In" %>
 <div style="display:none;">Need this div for flash notices in IE6</div>
 <%=flash_messages%>
-<% form_tag sign_in_associations_path(@form_options) do %>
+<% form_tag association_session_path(@form_options) do %>
   <label for="email">Email</label>
   <%= text_field_tag 'email', @login, :size => 25 %>
   <label for="password">Password</label>

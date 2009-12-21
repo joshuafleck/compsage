@@ -1,0 +1,2 @@
+module Association::AssociationHelper
+end

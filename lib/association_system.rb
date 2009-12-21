@@ -56,7 +56,7 @@ module AssociationSystem
       respond_to do |format|
         format.html do
           store_location
-          redirect_to sign_in_associations_path
+          redirect_to new_association_session_path
         end
       end
     end    
