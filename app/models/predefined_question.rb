@@ -1,8 +1,11 @@
 class PredefinedQuestion < ActiveRecord::Base
   acts_as_list
   serialize :question_hash
+  validates_presence_of :name
 
   xss_terminate :except => [ :question_hash ]
+  
+  named_scope :system_wide, :conditions => "association_id is NULL"
   
   # Build questions for the given +Survey+ from this +PredefinedQuestion+. Predefined questions may be composed of more
   # than one question. In such cases, this method will create multiple +Questions+, returning only the top-level
@@ -41,6 +44,31 @@ class PredefinedQuestion < ActiveRecord::Base
     # Return questions whose level is the same as the first question. This will effectively return all the questions
     # created from the PDQ that aren't specified as follow-ups.
     return new_questions.find_all { |q| q.level == new_questions.first.level }
+  end
+  
+  # Takes a Question and hashes it to work with a PredefinedQuestion
+  # question_hash attribute. This can be extended in the future to take a hash of
+  # Question objects which have a parent/child relationship for related questions.
+  def question=(question)
+    question_attributes = {}
+    #take the elements we need and throw them into a hash
+    question_attributes[:question_type] = question.question_type
+    question_attributes[:text] = question.text
+    if !question.required.nil? then
+      question_attributes[:required] = question.required
+    end
+  
+    #save the hash into another hash.
+    self.question_hash = [question_attributes]
+  end
+  
+  # Returns a Question object generated from the question_hash attribute
+  def question
+    #pull the elements out of the hash as needed
+    self.question_hash.each do |question_attributes|
+      #add the attribtutes to a new Question object
+      return Question.new(question_attributes)
+    end
   end
 
 end

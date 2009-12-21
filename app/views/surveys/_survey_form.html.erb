@@ -36,8 +36,13 @@
     <select id="predefined_questions">
       <option value="">Choose which question...</option>
       <optgroup label="Standard Questions">
-        <%= options_from_collection_for_select(PredefinedQuestion.all, 'id', 'name') %>
+        <%= options_from_collection_for_select(PredefinedQuestion.system_wide, 'id', 'name') %>
       </optgroup>
+      <% if !@association.nil?%>
+      <optgroup label="Association Questions">
+        <%= options_from_collection_for_select(@association.predefined_questions, 'id', 'name') %>
+      </optgroup>
+      <% end %>
       <optgroup label="&nbsp;"></optgroup>
       <option value="0">Custom question...</option>
     </select>

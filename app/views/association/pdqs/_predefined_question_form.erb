@@ -1,0 +1,43 @@
+<% #build the list of options for response type first
+    question_options = ''
+    Question::QUESTION_TYPES.each do |question_type, response_type|
+      question_options = question_options + '<option'
+      question_options = question_options + ' selected="selected"' if !@question.question_type.nil? && 
+                                                                      question_type == @question.question_type
+      question_options = question_options +'>' + question_type + '</option>'
+    end 
+%>
+<%= error_messages_for :predefined_question, :question %>
+<!-- build a form which takes question attributes and a name !-->
+ <% form_for @predefined_question do |f| %>
+   <%= f.label :name, required("Name"), :class => 'discussion_label' %>
+   <%= f.text_field :name, :size => 30 %>
+    <br />
+    <br />
+    <%= f.label :default, "Include by Default?",
+                :class => 'discussion_label',
+                :style => "display: inline;" %>
+    <%= f.check_box :default %>
+    <% fields_for :question, @question do |question_fields| %>
+      <%= question_fields.label :text, required("Question Text"), 
+                    :class => 'discussion_label' %>
+      <%= question_fields.text_field :text, :size => 40%>
+    <br />
+    <br />
+      <%= question_fields.label :question_type, "Response Type:",
+          :class => 'discussion_label',
+          :style => 'display: inline;' %>
+      <%= select_tag 'question[question_type]', question_options %>
+      <br />
+      <br />
+      <%= question_fields.label :required, 'Response Required?', 
+                    :class => 'discussion_label', 
+                    :style => 'display: inline;' %>
+      <%= question_fields.check_box :required %>
+    <% end %>
+    <div class="discussion_submit">
+      <input  type="submit"  
+              value="<%= predefined_question.new_record? ? 'Create' : 'Update' %>" /> or 
+      <%= link_to "Cancel", predefined_questions_path %>
+    </div>
+<% end %>

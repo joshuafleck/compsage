@@ -59,7 +59,7 @@ class SurveysController < ApplicationController
   
   def new
     @survey = current_organization.sponsored_surveys.find_or_create_by_aasm_state('pending') 
-    
+    @association = current_association
     # If we came from a 'survey network' link, save the network in the session to be accessed later when sending
     # invitations
     session[:survey_network_id] = params[:network_id] unless params[:network_id].blank?

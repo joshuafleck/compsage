@@ -1,0 +1,4 @@
+<% title "Editing #{@predefined_question.name}" %>
+<h2>Editing <%=@predefined_question.name%></h2>
+<%=render :partial => "predefined_question_form", :locals => { :predefined_question => @predefined_question,
+                                                              :question => @question } %>
