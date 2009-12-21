@@ -50,7 +50,7 @@ ActionController::Routing::Routes.draw do |map|
  
   map.namespace 'association' do |association|
     association.resource :session
-    association.resources :members
+    association.resources :members, :collection => {:upload => :get }
     association.resources :pdqs
     association.resource :settings
 
