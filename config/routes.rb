@@ -47,8 +47,16 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   map.path '', :controller => 'surveys', :action => 'index'
-  
-  map.resource :associations, :member => {:sign_in => :any}
+ 
+  map.namespace 'association' do |association|
+    association.resource :session
+    association.resources :members
+    association.resources :pdqs
+    association.resource :settings
+
+    association.map '', :controller => 'sessions', :action => 'new'
+  end
+
   map.resource :association_member, :member => {:sign_in => :any, :login_received => :get, :initialize_account => :get}
   
 end

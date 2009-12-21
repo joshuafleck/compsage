@@ -1,12 +1,12 @@
-class AssociationsController < ApplicationController
+class Association::SessionsController < ApplicationController
   layout :association_layout
   ssl_required :sign_in
   before_filter :association_owner_login_required, :only => [:edit, :update, :show]
   
   #this is the association owner login
-  def sign_in
+  def new
     if logged_in_as_association_owner?
-      redirect_to associations_path
+      redirect_to association_members_path
     end
     
     #show the form for get, authenticate post
@@ -26,17 +26,6 @@ class AssociationsController < ApplicationController
     
   end
   
-  def show
-    @association = current_association_by_owner
-  end
-  
-  def edit
-    @association = current_association_by_owner
-  end
-  
-  def update
-    
-  end
 
   private
   # Track failed login attempts
@@ -48,4 +37,5 @@ class AssociationsController < ApplicationController
   def association_layout
     return logged_in_as_association_owner? ? 'association_owner_logged_in' : 'front'
   end
+
 end
