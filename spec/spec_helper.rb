@@ -121,6 +121,13 @@ def organization_mock
       valid_organization_attributes)
 
 end
+
+# Will place the organization in the disabled state
+def disable_organization(organization)
+  organization.set_pending_and_require_activation
+  organization.increment(:times_reported)
+  organization.save!
+end
   
 def valid_survey_attributes
   {

@@ -30,19 +30,21 @@ end
 
 #defining an organization.
 Factory.define :organization do |o|
-  o.name { Factory.next(:organization_name) }
-  o.email { Factory.next(:email) }
-  o.city 'Minneapolis'
-  o.state 'MN'
-  o.zip_code '55413'
-  o.industry 'Healthcare: Managed Care'
-  o.latitude { Factory.next(:latitude) }
-  o.longitude { Factory.next(:longitude) }
-  o.crypted_password '27e5532e75526ff4574e3e8c8c2a48fb97415765'
-  o.salt 'asdf'
-  o.created_at 40.days.ago.to_s(:db)
-  o.contact_name 'David Peterson'
-  o.terms_of_use '1'
+  o.name              { Factory.next(:organization_name) }
+  o.email             { Factory.next(:email) }
+  o.city              'Minneapolis'
+  o.state             'MN'
+  o.zip_code          '55413'
+  o.industry          'Healthcare: Managed Care'
+  o.latitude          { Factory.next(:latitude) }
+  o.longitude         { Factory.next(:longitude) }
+  o.crypted_password  '27e5532e75526ff4574e3e8c8c2a48fb97415765'
+  o.salt              'asdf'
+  o.created_at        40.days.ago.to_s(:db)
+  o.contact_name      'David Peterson'
+  o.terms_of_use      '1'
+  o.activated_at      Time.now
+  o.is_pending        false
 end
 
 #definition and set up for survey

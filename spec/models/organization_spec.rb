@@ -168,18 +168,24 @@ describe Organization do
     @organization.attributes = valid_organization_attributes.with(:terms_of_use => false)
     @organization.should have(1).errors_on(:terms_of_use)
   end
-
+  
+  it "Should be activated" do
+    @organization.is_activated?.should be_true
+  end
+   
 end
 
 describe Organization, "that already exists" do
   before(:each) do
-    @organization = Organization.new(valid_organization_attributes)
+    @organization = Factory.build(:organization)
   end
   
   it 'should reset password' do
+    email    = 'brian.terlson@gmail.com'
+    password = 'new password'
     @organization.save
-    @organization.update_attributes(:password => 'new password', :password_confirmation => 'new password')
-    Organization.authenticate('brian.terlson@gmail.com', 'new password').should == @organization
+    @organization.update_attributes(:password => password, :password_confirmation => password, :email => email)
+    Organization.authenticate(email, password).should == @organization
   end
   
   it "should create a reset password key" do    
@@ -286,7 +292,24 @@ describe Organization, "that already exists" do
     @network.organizations << @organization2
     @organization.networks.delete(@network)
     @network.owner.should eql(@organization2)
+  end  
+  
+  it "Should be pending after setting pending" do
+    lambda { @organization.set_pending_and_require_activation }.should change(@organization, :is_pending?).from(false).to(true)
   end
+  
+  it "Should be inactive after setting requiring activation" do
+    lambda { @organization.require_activation }.should change(@organization, :is_activated?).from(true).to(false)
+  end  
+  
+  it "Should have an activation key after requiring activation" do
+    lambda { @organization.require_activation }.should change(@organization, :activation_key).from(nil)
+  end   
+  
+  it "Should have an activation key creation date after requiring activation" do
+    lambda { @organization.require_activation }.should change(@organization, :activation_key_created_at).from(nil)
+  end    
+    
 end
 
 describe Organization, "built from an invitation" do
@@ -306,6 +329,49 @@ describe Organization, "built from an invitation" do
   it "should have an email" do
     @organization.email.should == @invitation.email
   end   
+
+end
+
+describe Organization, "that is pending and requires activation" do
+
+  before(:each) do
+    @organization = Factory(:organization)
+    @organization.set_pending_and_require_activation
+  end
+ 
+  it "Should be activated after activation" do
+    lambda{ @organization.activate }.should change(@organization, :is_activated?).from(false).to(true)
+  end
+  
+  it "Should not have exceeded the reporting threshold" do
+    @organization.has_exceeded_reporting_threshold?.should be_false
+  end
+  
+  it "Should exceed the reporting threshold after being reported" do
+    lambda{ @organization.increment(:times_reported) }.should change(@organization, :has_exceeded_reporting_threshold?).from(false).to(true)
+  end
+  
+  it "Should not have an expired activation window" do
+    @organization.activation_window_has_expired?.should be_false
+  end
+  
+  it "Should have an expired activation window after 3 days without activation" do
+    @organization.activation_key_created_at = 4.days.ago
+    @organization.activation_window_has_expired?.should be_true
+  end 
+  
+  it "Should not be disabled" do
+    @organization.is_disabled?.should be_false
+  end
+  
+  it "Should be disabled after exceeding the times reported threshold" do
+    lambda{ @organization.increment(:times_reported) }.should change(@organization, :is_disabled?).from(false).to(true)
+  end
+  
+  it "Should be disabled after exceeding the activation window" do
+    @organization.activation_key_created_at = 4.days.ago
+    @organization.is_disabled?.should be_true
+  end  
 
 end
 

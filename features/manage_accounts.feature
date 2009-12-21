@@ -1,5 +1,10 @@
 Feature: Manage accounts
-  
+     
+  Scenario: Register new account
+    Given I am on the new account page
+    When I add an account
+    Then I should see "Welcome to CompSage!"   
+ 
   Scenario: Register new account as survey invitee
     Given I am logged in via survey invitation
     And I am on the new account page
@@ -10,12 +15,7 @@ Feature: Manage accounts
     Given I am logged in via network invitation
     When I add an account
     Then I should see "Welcome to CompSage!"   
-    
-  Scenario: Register new account with pending account
-    Given I am logged in via pending account
-    When I add an account
-    Then I should see "Welcome to CompSage!"    
-    
+
   Scenario: Register new account with error
     Given I am logged in via survey invitation
     And I am on the new account page

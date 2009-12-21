@@ -120,9 +120,56 @@ class Organization < ActiveRecord::Base
     self.save!
   end
   
+  # Will set the organization as needing manual review and requiring activation
+  def set_pending_and_require_activation
+    self.is_pending = true
+    self.require_activation
+  end
+  
+  # Will set up the activation key and send the activation notification
+  def require_activation
+    self.activated_at              = nil
+    self.activation_key            = KeyGen.random
+    self.activation_key_created_at = Time.now
+    self.save!
+  end
+  
+  # If the activated_at column is set, we know the organization is activated
+  #
+  def is_activated?
+    !!self.activated_at
+  end
+  
+  # Sets the activated_at time to signify the organization has activated their account
+  #
+  def activate
+    self.activated_at = Time.now
+    self.save!
+  end
+  
+  # If true, the user has waited too long before activating their account and will be prevented from logging in
+  #
+  def activation_window_has_expired?
+    !is_activated? && (Time.now - activation_key_created_at) > 3.days
+  end
+  
+  # If true, the user was reported while in the pending state, and will be prevented from logging in
+  #
+  def has_exceeded_reporting_threshold?
+    is_pending? && times_reported > 0
+  end
+  
+  # If true, the user's account has been disabled and will not be able to log in
+  #
+  def is_disabled?
+    activation_window_has_expired? || has_exceeded_reporting_threshold?
+  end
+  
   # overriding the default constructor in order to autofill some attributes
   def initialize(params = nil) 
     super
+    
+    self.activated_at = Time.now
     
     invitation = params[:invitation] if params
     

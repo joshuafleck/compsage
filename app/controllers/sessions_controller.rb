@@ -10,18 +10,28 @@ class SessionsController < ApplicationController
 
   def create
     logout_keeping_session!
-    organization = Organization.authenticate(params[:email], params[:password])
+    @login       = params[:email]
+    @remember_me = params[:remember_me]
+    organization = Organization.authenticate(@login, params[:password])
+    
     if organization
-      login_organization(organization)
-      new_cookie_flag = (params[:remember_me] == "1")
-      handle_remember_cookie! new_cookie_flag
-      redirect_back_or_default('/')
+      # We do not allow disabled accounts to sign in
+      if organization.is_disabled? then        
+        note_disabled_signin(organization)
+        redirect_to new_session_path
+      else
+        new_cookie_flag = (@remember_me == "1")
+        login_organization({
+            :organization => organization, 
+            :new_cookie_flag => new_cookie_flag, 
+            :url => '/'})
+      end
+      
     else
       note_failed_signin
-      @login       = params[:email]
-      @remember_me = params[:remember_me]
       render :action => 'new'
     end
+    
   end
 
   def destroy
@@ -33,16 +43,23 @@ class SessionsController < ApplicationController
     logout_keeping_session!
     invitation = Invitation.find_by_key(params[:key])     
     if invitation then
+    
+      survey_url = survey_path(invitation.survey_id)
+      
       if invitation.is_a?(ExternalSurveyInvitation) then
         # External survey invitation logins are saved in the session, and users have restricted access
         self.current_survey_invitation = invitation
+        redirect_to survey_url
       else
-        # Internal survey invitation logins authenticate the organization as if they logged in from the login page
+        # Internal survey invitation logins authenticate the organization 
+        #  as if they logged in from the login page
         organization = invitation.invitee
-        login_organization(organization)
+        login_organization({
+          :organization => organization, 
+          :new_cookie_flag => false, 
+          :url => survey_url})
       end
       
-      redirect_to survey_path(invitation.survey_id)
     else
       note_failed_survey_signin
       render :action => 'new'     
@@ -51,27 +68,11 @@ class SessionsController < ApplicationController
 
 protected
 
-  # Track failed login attempts
-  def note_failed_signin
-    flash.now[:error] = "Incorrect email or password"
-    logger.warn "Failed login for '#{params[:email]}' from #{request.remote_ip} at #{Time.now.utc}"
-  end
-
   # Track failed survey login attempts
   def note_failed_survey_signin
     flash.now[:error] = "We are unable to process your request at this time. If the problem persists, "\
                         "<a href=\"#{contact_path}\"> let us know</a>."
     logger.warn "Failed survey login for key:#{params[:key]} at #{Time.now.utc}"
   end  
-  
-  # Saves the organization in the session, sets last login date
-  def login_organization(organization)
-      # Set first_login in the session so we can show a tutorial if the user is new.
-      session[:first_login] = true if organization.last_login_at.nil?
-      
-      organization.last_login_at = Time.now
-      organization.save
 
-      self.current_organization = organization
-  end
 end

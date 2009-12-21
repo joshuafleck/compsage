@@ -105,7 +105,42 @@ module AuthenticatedSystem
     def login_from_session
       self.current_organization = Organization.find_by_id(session[:organization_id]) if session[:organization_id]
     end
+    
+  
+    # Saves the organization in the session, sets last login date
+    # Arguments that should be in the params hash:
+    #  @organization - the organization to log in
+    #  @url - the URL to redirect to after login
+    #  @new_cookie_flag - if true, this will create a new cookie
+    def login_organization(params = {})
+      organization    = params[:organization]
+      url             = params[:url]
+      new_cookie_flag = params[:new_cookie_flag]
+  
+      # Set first_login in the session so we can show a tutorial if the user is new.
+      session[:first_login] = true if organization.last_login_at.nil?
+      
+      organization.last_login_at = Time.now
+      organization.save
 
+      self.current_organization = organization
+      
+      handle_remember_cookie! new_cookie_flag
+      
+      redirect_back_or_default(url)
+    end 
+    
+    # Track failed login attempts
+    def note_failed_signin
+      flash.now[:error] = "Incorrect email or password"
+      logger.warn "Failed login for '#{params[:email]}' from #{request.remote_ip} at #{Time.now.utc}"
+    end
+    
+    # Used to inform the user that their account has been disabled and to contact us.
+    def note_disabled_signin(organization)
+      flash[:error] = "Your account has been disabled. Please <a href=\"#{contact_path}\">contact us</a> for assistance."
+    end
+       
     #
     # Logout
     #
@@ -115,9 +150,16 @@ module AuthenticatedSystem
     def login_from_cookie
       organization = cookies[:auth_token] && Organization.find_by_remember_token(cookies[:auth_token])
       if organization && organization.remember_token?
-        self.current_organization = organization
-        handle_remember_cookie! false # freshen cookie token (keeping date)
-        self.current_organization
+        # If the account has been disabled, we should not honor the cookie
+        if organization.is_disabled? then
+          note_disabled_signin(organization)
+          organization.forget_me # Remove the cookie, so we don't keep trying to authenticate with the cookie
+          return false
+        else
+          self.current_organization = organization
+          handle_remember_cookie! false # freshen cookie token (keeping date)
+          self.current_organization
+        end
       end
     end
 
@@ -149,9 +191,6 @@ module AuthenticatedSystem
     #
     # Remember_me Tokens
     #
-    # Cookies shouldn't be allowed to persist past their freshness date,
-    # and they should be changed at each login
-
     # Cookies shouldn't be allowed to persist past their freshness date,
     # and they should be changed at each login
 

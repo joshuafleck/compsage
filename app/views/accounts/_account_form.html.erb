@@ -50,6 +50,9 @@
     </div>
   <% end %>  
   <div class="submit">
+    <% if @organization.new_record? && !@invitation then %>
+      <p>After submitting your information, you will receive and email with a link for activating your account. If you do not activate within 3 days, your account will be disabled.</p>
+    <% end %>
     <input type="submit" value='<%=@organization.new_record? ? "Sign Up" : "Update"%>' /> or
     <% if @organization.new_record? && logged_in_from_survey_invitation? then %>
       <%=link_to "Cancel", survey_path(current_survey_invitation.survey.id) %>

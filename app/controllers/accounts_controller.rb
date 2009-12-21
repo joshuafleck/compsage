@@ -1,5 +1,5 @@
 class AccountsController < ApplicationController
-  before_filter :login_required, :except => [ :new , :create, :forgot, :reset ]
+  before_filter :login_required, :except => [ :new , :create, :forgot, :reset, :activate ]
   before_filter :locate_invitation, :only => [ :new , :create ]
   layout :logged_in_or_invited_layout 
   filter_parameter_logging :password
@@ -17,23 +17,53 @@ class AccountsController < ApplicationController
   
   def create
   
-    @organization = Organization.new(params[:organization].merge(:last_login_at => Time.now))
+    @organization = Organization.new(params[:organization])
 
     if @organization.save then
             
-      @invitation.accept!(@organization) if @invitation
+      # If the organization was not invited, we need to review their account and have them activate their account
+      if @invitation then
+        @invitation.accept!(@organization) 
+      else
+        @organization.set_pending_and_require_activation
+      end
+      
+      Notifier.deliver_new_organization_notification(@organization)
   
       # Clear the existing session, we don't want any invitations hanging around
       logout_killing_session!
-      # Set first_login in the session so we can show a tutorial
-      session[:first_login] = true                
-      # Mark the user as logged in            
-      self.current_organization = @organization 
-      
-      redirect_to surveys_path
+
+      login_organization({
+          :organization => @organization, 
+          :new_cookie_flag => false, 
+          :url => '/'})
       
     else      
       render :action => 'new'
+    end
+    
+  end
+  
+  # This will locate the organization by the activation key, activate the organization, and log them in
+  #
+  def activate
+    organization = Organization.find_by_activation_key(params[:key])
+    
+    if organization then 
+    
+      organization.activate
+      flash[:notice] = "Your account has been activated! Please take a few moments to tell us more about yourself."
+      
+      login_organization({
+          :organization => organization, 
+          :new_cookie_flag => false, 
+          :url => edit_account_path})      
+      
+    else
+    
+      flash[:notice] = "We are unable to activate your account at this time. If the problem persists, <a href=\"#{contact_path}\">let us know</a>."
+      redirect_to new_session_path
+      
     end
     
   end

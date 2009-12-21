@@ -3,7 +3,7 @@ require File.join(File.dirname(__FILE__), 'boot')
 
 Rails::Initializer.run do |config|
   config.action_controller.session = { :session_key => "_compsage_session", :secret => "535b541d23b19ce0e7a1090c403771d6" }
-  config.active_record.observers = :discussion_observer,:organization_observer
+  config.active_record.observers = :discussion_observer
   config.action_controller.use_accept_header = false
 
   config.gem 'state_machine', :version => '0.7.6'

@@ -1,5 +1,8 @@
 Welcome to CompSage!
-
+<% if !@organization.is_activated? then %>
+In order to activate your account, click, or copy and paste the link below into a web browser:
+<%=url_for(activate_account_path(:key => @organization.activation_key, :only_path => false))%>
+<% end %>
 Thank you for signing up for CompSage. To begin using your account, simply log in with the details you provided us at our homepage: http://www.compsage.com. Should you wish to change your account settings, you may do so from there as well.
 
 As a member of CompSage, you can sponsor compensation surveys and invite your peers to particiapte. You can also browse surveys in your area and get results for free by participating in any that interest you.

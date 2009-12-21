@@ -24,12 +24,9 @@ Given "I am logged in via network invitation" do
   visit new_account_path(:key => invitation.key)
 end
 
-Given "I am logged in via pending account" do
-  invitation = Factory(:pending_account)
-  visit new_account_path(:key => invitation.key)
-end
-
 When /I add an account/ do
+    fills_in "Name of your organization", :with => "test name"
+    fills_in "Email address", :with => "test@example.com"
     fills_in "Your Name", :with => "test name"
     fills_in "Zip", :with => "12345"
     fills_in "Password", :with => "test12"
