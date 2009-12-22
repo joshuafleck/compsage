@@ -58,5 +58,6 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   map.resource :association_member, :member => {:sign_in => :any, :login_received => :get, :initialize_account => :get}
+  map.resources :predefined_questions, :controller => "association/pdqs"
   
 end

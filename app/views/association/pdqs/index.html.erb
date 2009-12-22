@@ -3,7 +3,7 @@
 These questions will be available in the standard question list when a survey is being created through
 your association portal. They are appended to the list of standard questions for all CompSage surveys.
 </p>
-<%=link_to "Create a new  standard question!", new_predefined_question_path%>
+<%=link_to "Create a new  standard question!", new_association_pdq_path%>
 <% if @association.predefined_questions.any? %>
 <table id="association_predefined_questions">
   <th>Name</th>
@@ -20,14 +20,14 @@ your association portal. They are appended to the list of standard questions for
       <td><%=question.question_type%></td>
       <td><%=question.required%></td>
       <td><%=predefined_question.default%></td>
-      <td><%=link_to "Edit", edit_predefined_question_path(predefined_question)%>&nbsp;
+      <td><%=link_to "Edit", edit_association_pdq_path(predefined_question)%>&nbsp;
           <%=link_to "Delete",
-                      predefined_question_path(predefined_question),
+                      association_pdq_path(predefined_question),
                       :method => :delete,
                       :confirm => "Are you sure? This cannot be undone."%></td>
     </tr>
     <% end %>
 </table>
 <% else %>
-<p>You have not created any standard questions. <%=link_to "Add one now!", new_predefined_question_path%></p>
+<p>You have not created any standard questions. <%=link_to "Add one now!", new_association_pdq_path%></p>
 <% end %>
