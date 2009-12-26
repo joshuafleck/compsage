@@ -377,6 +377,15 @@ describe Organization, "that is pending and requires activation" do
     @organization.activation_key_created_at = 4.days.ago
     @organization.is_disabled?.should be_true
   end  
+  
+  it "Should increment the times reported flag when reported" do
+    lambda{ @organization.report }.should change(@organization, :times_reported).from(0).to(1)
+  end
+  
+  it "Should deliver a notification email when reported" do
+    Notifier.should_receive(:deliver_report_pending_organization)
+    @organization.report
+  end  
 
 end
 

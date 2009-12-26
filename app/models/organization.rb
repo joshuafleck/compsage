@@ -70,6 +70,8 @@ class Organization < ActiveRecord::Base
 
   attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name,
                   :industry, :logo, :terms_of_use
+                  
+  named_scope :pending, :conditions => {:is_pending => true}                  
   
   # This organization's name and location if they have one.
   #
@@ -152,6 +154,16 @@ class Organization < ActiveRecord::Base
   #
   def activation_window_has_expired?
     !is_activated? && (Time.now - activation_key_created_at) > 3.days
+  end
+  
+  # Will increment the times_reported flag and notify the admin that the organization was reported
+  #
+  def report
+    if !has_exceeded_reporting_threshold? then
+      self.increment(:times_reported)
+      self.save!
+      Notifier.deliver_report_pending_organization(self)
+    end
   end
   
   # If true, the user was reported while in the pending state, and will be prevented from logging in

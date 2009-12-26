@@ -27,5 +27,10 @@ If you would like to verify this request, feel free to email the survey sponsor 
   <br />
   CompSage.com
 </p>
+<% if @survey.sponsor.is_pending? %>
+  <p>
+  <%=link_to "Flag the contents of this message as inappropriate", report_pending_organization_path(:id => @survey.sponsor.id, :only_path => false)%>.
+  </p>
+<% end %>
 </body>
 </html>

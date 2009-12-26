@@ -7,6 +7,24 @@ Given "I am on the organization page of a survey sponsor" do
   visit organization_url(@current_survey_invitation.survey.sponsor)
 end
 
+Given "there is a survey sponsored by a pending organization" do
+  @pending_organization = Factory(:organization)
+  @pending_organization.set_pending_and_require_activation
+  @survey = Factory(:running_survey, :sponsor => @pending_organization)
+end
+
+Given "I am a member of a network owned by a pending organization" do
+  @pending_organization = Factory(:organization)
+  @pending_organization.set_pending_and_require_activation
+  @network = Factory(:network, :owner => @pending_organization)
+  @network.organizations << @current_organization
+end
+
+When "I report this user" do
+  @browser.startClicker("OK")
+  click_link "report_user"
+end
+
 When "I invite the organization to a survey" do
   select @survey.id.to_s, :from => 'survey_id'
   click_button "Send"

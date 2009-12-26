@@ -23,6 +23,13 @@ describe OrganizationsController, "#route_for" do
       :action     => "invite_to_network", 
       :id         => '1').should == { :path => "/organizations/1/invite_to_network", :method => :post }
   end  
+  
+  it "should map { :controller => 'organizations', :action => 'report_pending', :id => '1' } to /organizations/1/report_pending" do
+    route_for(
+      :controller => "organizations", 
+      :action     => "report_pending", 
+      :id         => '1').should == { :path => "/organizations/1/report_pending", :method => :get }
+  end   
     
 end
 
@@ -220,6 +227,44 @@ describe OrganizationsController, "handling POST /organizations/1/invite_to_netw
   it "should create an internal invitation to the network" do
     lambda{ do_post }.should change(@network.invitations,:count).by(1)
   end
+  
+end
+
+describe OrganizationsController, "handling GET /organizations/1/report_pending" do
+
+  before(:each) do 
+  
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
+      
+    @other_organization = Factory(:organization)
+    @other_organization.set_pending_and_require_activation
+  end
+  
+  def do_get
+    get :report_pending, { :id => @other_organization.id }
+    @other_organization.reload
+  end
+  
+  it "should require being logged in" do
+    controller.should_receive(:login_or_survey_invitation_required)
+    do_get
+  end
+  
+  it "should report the organization" do
+    lambda{ do_get }.should change(@other_organization,:times_reported).by(1)
+  end
+  
+  it "should redirect to the surveys index" do
+    do_get
+    response.should redirect_to surveys_path
+  end
+  
+  it "should not report an organization that is not pending" do
+    @other_organization.is_pending = false
+    @other_organization.save!
+    lambda{ do_get }.should raise_error
+  end  
   
 end
 

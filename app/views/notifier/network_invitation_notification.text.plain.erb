@@ -8,3 +8,6 @@ Owner: <%=@invitation.network.owner.name%>
 
 Thanks,
 CompSage.com
+<% if @invitation.inviter.is_pending? %>
+Flag the contents of this message as inappropriate: <%=url_for(report_pending_organization_path(:id => @invitation.inviter.id, :only_path => false))%>
+<% end %>
