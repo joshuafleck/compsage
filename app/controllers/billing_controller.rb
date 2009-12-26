@@ -21,14 +21,15 @@ class BillingController < ApplicationController
 
     respond_to do |wants| 
       wants.html do
-
         if (!@invoice.paying_with_credit_card? || @credit_card.valid?) && @invoice.save then        
-          @survey.billing_info_received!               
-          redirect_to survey_path(@survey)          
-        else        
-          render :action => :new                  
+          # At this time, set the association to the users current association.
+          @survey.association = current_association
+          @survey.billing_info_received!(current_association)
+
+          redirect_to survey_path(@survey)
+        else
+          render :action => :new
         end
-        
       end      
     end
   end

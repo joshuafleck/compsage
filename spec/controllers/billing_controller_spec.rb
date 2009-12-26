@@ -153,21 +153,31 @@ describe BillingController, " handling POST /surveys/1/billing" do
     @current_organization.destroy   
   end  
   
-  def do_get
+  def do_post
     post :create, @params
     @survey.reload
   end
 
+  it "should set the association if the current org is logged in through an association" do
+    association = Factory(:association)
+    controller.stub!(:current_association).and_return(association)
+
+    do_post
+    @survey.reload
+
+    @survey.association.should == association
+  end
+
   it "should place the survey in a running state" do
-    lambda{ do_get }.should change(@survey, :aasm_state).from("pending").to("running")
+    lambda{ do_post }.should change(@survey, :aasm_state).from("pending").to("running")
   end  
  
   it "should create an invoice" do
-    lambda{ do_get }.should change(Invoice, :count).by(1)
+    lambda{ do_post }.should change(Invoice, :count).by(1)
   end  
      
   it "should redirect to the survey" do
-    do_get
+    do_post
     response.should redirect_to(survey_path(@survey))
   end  
   
@@ -179,13 +189,12 @@ describe BillingController, " handling POST /surveys/1/billing" do
     end
     
     it "should render the new template" do
-      do_get
+      do_post
       response.should render_template(:new)
     end
     
     it "should not create an invoice" do
-      do_get
-    lambda{ do_get }.should_not change(Invoice, :count)
+      lambda{ do_post }.should_not change(Invoice, :count)
     end    
       
   end
@@ -197,13 +206,12 @@ describe BillingController, " handling POST /surveys/1/billing" do
     end
     
     it "should render the new template" do
-      do_get
+      do_post
       response.should render_template(:new)
     end
      
     it "should not create an invoice" do
-      do_get
-    lambda{ do_get }.should_not change(Invoice, :count)
+      lambda{ do_post }.should_not change(Invoice, :count)
     end    
         
   end
