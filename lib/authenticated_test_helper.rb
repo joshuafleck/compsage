@@ -17,12 +17,20 @@ module AuthenticatedTestHelper
     controller.stub!(:current_organization_or_survey_invitation).and_return(invitation)
   end
   
-  #determines whether to login via invitation or organization
-  def login_as(organization_or_survey_invitation)
-    if organization_or_survey_invitation.is_a?(Organization)
-      login_as_organization(organization_or_survey_invitation)
+  def login_as_association(association)
+    @request.session[:association_id] = association.id
+    controller.stub!(:association_owner_login_required).and_return(true)
+    controller.stub!(:current_association_by_owner).and_return(association)
+  end
+
+  # Logs in as the specified entity, depending on the type.
+  def login_as(entity)
+    if entity.is_a?(Organization)
+      login_as_organization(entity)
+    elsif entity.is_a?(Association)
+      login_as_association(entity)
     else
-      login_as_survey_invitation(organization_or_survey_invitation)
+      login_as_survey_invitation(entity)
     end
   end
 

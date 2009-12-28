@@ -1,0 +1,12 @@
+<% highlight_tab "members" %>
+<% title         "Add Association Member" %>
+<h2>Add Association Member</h2>
+<% form_for @member, :url => association_members_path do |f| %>
+  <%= render :partial => 'form', :locals => {:f => f} %>
+
+  <div class="submit">
+    <%= f.submit "Add Association Member" %> or
+    <%= link_to "Cancel", association_members_path %>
+  </div>
+<% end %>
+

@@ -411,4 +411,33 @@ describe Organization, "that is an uninitialized association member" do
     })
   end  
 
+  it "should delete itself when removed as an association member" do
+    @organization.should_receive(:destroy).twice # once in leave, once in cleanup.
+    @organization.associations << @association
+    @organization.leave_association(@association)
+  end
+end
+
+
+describe Organization, "That is in an association (and is initialized)" do
+  before(:each) do
+    @organization = Factory.create(:organization)
+    @association  = Factory.create(:association)
+    @association.organizations << @organization
+  end
+  
+  after(:each) do
+    @organization.destroy
+    @association.destroy
+  end
+
+  it "should not delete itself when leaving the association" do
+    @organization.leave_association(@association)
+    @organization.should_receive(:destroy).once # In cleanup.
+  end
+
+  it "should no longer be a member of the association after leaving" do
+    @organization.leave_association(@association)
+    @organization.associations.should_not include(@association)
+  end
 end

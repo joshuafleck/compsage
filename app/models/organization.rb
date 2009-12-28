@@ -181,6 +181,19 @@ class Organization < ActiveRecord::Base
     
   end  
 
+  # Leaves the given association. If this org is uninitialized (eg. the user has not created their account), we simply
+  # delete the organization. Otherwise, we remove the association affiliation.
+  #
+  def leave_association(association)
+    return unless self.associations.include?(association)
+
+    if self.is_uninitialized_association_member?
+      destroy
+    else
+      self.associations.delete(association)
+    end
+  end
+
   private
   
   # Destroy the network if it has zero members.
