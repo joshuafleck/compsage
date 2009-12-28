@@ -139,7 +139,7 @@ class Organization < ActiveRecord::Base
   
   # If the activated_at column is set, we know the organization is activated
   #
-  def is_activated?
+  def activated?
     !!self.activated_at
   end
   
@@ -153,7 +153,7 @@ class Organization < ActiveRecord::Base
   # If true, the user has waited too long before activating their account and will be prevented from logging in
   #
   def activation_window_has_expired?
-    !is_activated? && (Time.now - activation_key_created_at) > 3.days
+    !activated? && (Time.now - activation_key_created_at) > 3.days
   end
   
   # Will increment the times_reported flag and notify the admin that the organization was reported
@@ -174,7 +174,7 @@ class Organization < ActiveRecord::Base
   
   # If true, the user's account has been disabled and will not be able to log in
   #
-  def is_disabled?
+  def disabled?
     activation_window_has_expired? || has_exceeded_reporting_threshold?
   end
   

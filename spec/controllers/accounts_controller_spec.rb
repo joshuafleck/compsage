@@ -171,7 +171,7 @@ describe AccountsController, " handling GET /account/activate" do
   end
   
   it "should activate the organization" do  
-    lambda{ do_get }.should change(@current_organization, :is_activated?).from(false).to(true)
+    lambda{ do_get }.should change(@current_organization, :activated?).from(false).to(true)
   end
   
   it "should redirect to the login page if the organization is not found" do
@@ -259,7 +259,7 @@ describe AccountsController, " handling POST /account/" do
     
     it "should create an organization that does not require activation" do
       do_post
-      assigns[:organization].is_activated?.should be_true
+      assigns[:organization].activated?.should be_true
     end
   
   end
@@ -271,7 +271,7 @@ describe AccountsController, " handling POST /account/" do
   
   it "should create an organization that requires activation" do
     do_post
-    assigns[:organization].is_activated?.should be_false
+    assigns[:organization].activated?.should be_false
   end  
   
   it "should send a new organization notification" do

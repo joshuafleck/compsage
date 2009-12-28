@@ -1,5 +1,5 @@
 Welcome to CompSage!
-<% if !@organization.is_activated? then %>
+<% if !@organization.activated? then %>
 In order to activate your account, click, or copy and paste the link below into a web browser:
 <%=url_for(activate_account_path(:key => @organization.activation_key, :only_path => false))%>
 <% end %>

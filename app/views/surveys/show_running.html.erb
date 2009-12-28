@@ -25,10 +25,7 @@
         </li>
       <% end %>
     </ol>
-    <p>Participants: <%= @survey.participations.count %>
-      <% if @survey.sponsor.is_pending? && current_organization_or_survey_invitation != @survey.sponsor then %>
-        <br /><%=link_to "report inappropriate content", report_pending_organization_path(:id => @survey.sponsor.id), :class=> "pending_organization_abuse", :id => "report_user", :confirm => "Are you sure you want to report this user?" %>
-      <% end %>  
+    <p>Participants: <%= @survey.participations.count %> 
     </p>
   </div>
 <% end %>
@@ -36,6 +33,9 @@
     <div class="sponsor">Sponsored by <%=link_to_organization(@survey.sponsor)%></div>
   </h2>
   <div class="main_description"><%=link_and_format(@survey.description)%></div>
+  <% if @survey.sponsor.is_pending? && current_organization_or_survey_invitation != @survey.sponsor then %>
+    <%=link_to "Report Inappropriate Content", report_pending_organization_path(:id => @survey.sponsor.id), :class=> "abuse", :id => "report_user", :confirm => "Are you sure you want to report this user?" %>
+  <% end %>   
   <%=flash_messages%>
   <h3>Questions &amp; Clarifications</h3>
   <p>If you need more information about the survey, you can ask a question or request a clarification from the survey's sponsor: <a href="#" id="new_discussion_link">Ask something now.</a></p>

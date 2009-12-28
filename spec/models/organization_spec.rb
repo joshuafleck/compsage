@@ -170,7 +170,7 @@ describe Organization do
   end
   
   it "Should be activated" do
-    @organization.is_activated?.should be_true
+    @organization.activated?.should be_true
   end
    
 end
@@ -299,7 +299,7 @@ describe Organization, "that already exists" do
   end
   
   it "Should be inactive after setting requiring activation" do
-    lambda { @organization.require_activation }.should change(@organization, :is_activated?).from(true).to(false)
+    lambda { @organization.require_activation }.should change(@organization, :activated?).from(true).to(false)
   end  
   
   it "Should have an activation key after requiring activation" do
@@ -345,7 +345,7 @@ describe Organization, "that is pending and requires activation" do
   end
  
   it "Should be activated after activation" do
-    lambda{ @organization.activate }.should change(@organization, :is_activated?).from(false).to(true)
+    lambda{ @organization.activate }.should change(@organization, :activated?).from(false).to(true)
   end
   
   it "Should not have exceeded the reporting threshold" do
@@ -366,16 +366,16 @@ describe Organization, "that is pending and requires activation" do
   end 
   
   it "Should not be disabled" do
-    @organization.is_disabled?.should be_false
+    @organization.disabled?.should be_false
   end
   
   it "Should be disabled after exceeding the times reported threshold" do
-    lambda{ @organization.increment(:times_reported) }.should change(@organization, :is_disabled?).from(false).to(true)
+    lambda{ @organization.increment(:times_reported) }.should change(@organization, :disabled?).from(false).to(true)
   end
   
   it "Should be disabled after exceeding the activation window" do
     @organization.activation_key_created_at = 4.days.ago
-    @organization.is_disabled?.should be_true
+    @organization.disabled?.should be_true
   end  
   
   it "Should increment the times reported flag when reported" do

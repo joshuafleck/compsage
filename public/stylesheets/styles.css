@@ -529,11 +529,6 @@ a.abuse {
   font-size: .8em ;
 }
 
-a.pending_organization_abuse {
-  color: #888;
-  font-size: .7em ;
-}
-
 span.sponsor a, span.manager a, div.sponsor a {
   color: #4e728b;
   text-decoration: none;

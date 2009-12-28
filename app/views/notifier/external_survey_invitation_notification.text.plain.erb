@@ -18,7 +18,4 @@ Sponsor's Message:
 
 Thanks,
 CompSage.com
-<% if @survey.sponsor.is_pending? %>
-Flag the contents of this message as inappropriate: <%=url_for(report_pending_organization_path(:id => @survey.sponsor.id, :only_path => false))%>
-<% end %>
 

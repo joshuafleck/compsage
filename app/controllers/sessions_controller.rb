@@ -16,7 +16,7 @@ class SessionsController < ApplicationController
     
     if organization
       # We do not allow disabled accounts to sign in
-      if organization.is_disabled? then        
+      if organization.disabled? then        
         note_disabled_signin(organization)
         redirect_to new_session_path
       else

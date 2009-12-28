@@ -151,7 +151,7 @@ module AuthenticatedSystem
       organization = cookies[:auth_token] && Organization.find_by_remember_token(cookies[:auth_token])
       if organization && organization.remember_token?
         # If the account has been disabled, we should not honor the cookie
-        if organization.is_disabled? then
+        if organization.disabled? then
           note_disabled_signin(organization)
           organization.forget_me # Remove the cookie, so we don't keep trying to authenticate with the cookie
           return false

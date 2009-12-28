@@ -9,9 +9,6 @@
     <% end %>
     <li><%= link_to "Leave Network", leave_network_path(@network) %></li>
   </ul>
-  <% if @network.owner.is_pending? && current_organization != @network.owner then %>
-    <%=link_to "report inappropriate content", report_pending_organization_path(:id => @network.owner.id), :class=> "pending_organization_abuse", :id => "report_user", :confirm => "Are you sure you want to report this user?" %>
-  <% end %>
 </div>
 <div id="network_content">
   <h2>
@@ -23,6 +20,9 @@
       <%= auto_link_new_window(@network.description) %>
     </div>
   <% end %>
+  <% if @network.owner.is_pending? && current_organization != @network.owner then %>
+    <%=link_to "Report Inappropriate Content", report_pending_organization_path(:id => @network.owner.id), :class=> "abuse", :id => "report_user", :confirm => "Are you sure you want to report this user?" %>
+  <% end %>  
   <% if @members.none? && @network.owner_id == current_organization.id then %>
     <p>Your network doesn't have any members.</p>   
   <% else %>
