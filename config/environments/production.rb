@@ -33,7 +33,9 @@ ActionMailer::Base.smtp_settings = {
   :port => 25
 }
 
-
+#Each environment has its own keys for interfacing with reCAPTCHA
+ENV['RECAPTCHA_PUBLIC_KEY'] = '6LdpOQoAAAAAAGIXI5iIyrBOCmE2k7VK59DtrKEt'
+ENV['RECAPTCHA_PRIVATE_KEY'] = '6LdpOQoAAAAAANMQ4LXmHgcg0a2t8wa4hBrm3WNZ'
 
 
 

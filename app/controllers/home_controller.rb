@@ -16,7 +16,7 @@ class HomeController < ApplicationController
   def contact
     @contact_form_submission = ContactFormSubmission.new(params[:contact_form_submission])
     if request.post? then
-      if @contact_form_submission.valid? then
+      if verify_recaptcha(:model => @contact_form_submission, :message => 'You failed to match the captcha') && @contact_form_submission.valid? then
         Notifier.deliver_contact_form_submission(@contact_form_submission)
         render 'contact_success'
       end

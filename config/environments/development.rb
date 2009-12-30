@@ -27,3 +27,7 @@ ActionMailer::Base.smtp_settings = {
 
 #Added factory girl gem for running data builder task
 config.gem 'thoughtbot-factory_girl', :lib => 'factory_girl', :source => 'http://gems.github.com'
+
+#Each environment has its own keys for interfacing with reCAPTCHA
+ENV['RECAPTCHA_PUBLIC_KEY'] = '6LduOQoAAAAAAA_vla7Kqy-BDQEjOwoFJywSRjt0'
+ENV['RECAPTCHA_PRIVATE_KEY'] = '6LduOQoAAAAAANarTBR5sj66o5baD78l3DIv1Uzi'

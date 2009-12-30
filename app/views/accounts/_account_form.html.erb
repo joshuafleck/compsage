@@ -48,6 +48,8 @@
     <%=f.label :terms_of_use, "I have read and understand the #{link_to 'Terms of Use', home_path('terms'), :target => '_blank'}", :style => "display: inline;" %>
     <%=f.check_box :terms_of_use %>
     </div>
+    <br />
+    <%= recaptcha_tags %>  
   <% end %>  
   <div class="submit">
     <% if @organization.new_record? && !@invitation then %>
