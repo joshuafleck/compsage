@@ -155,8 +155,7 @@ end
 describe AccountsController, " handling GET /account/activate" do
 
   before(:each) do
-    @current_organization = Factory.create(:organization)
-    @current_organization.require_activation && @current_organization.reload
+    @current_organization = Factory.create(:pending_organization)
     @params = { :key => @current_organization.activation_key }
   end
   

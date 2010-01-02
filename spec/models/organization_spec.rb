@@ -56,7 +56,7 @@ describe Organization do
   
   it 'should require a password' do
     @organization.attributes = valid_organization_attributes.except(:password)
-    @organization.should have(3).errors_on(:password)
+    @organization.should have(2).errors_on(:password)
   end
 
   it 'should require a password confirmation' do
@@ -66,7 +66,7 @@ describe Organization do
 
   it 'should require an email' do
     @organization.attributes = valid_organization_attributes.except(:email)
-    @organization.should have(3).errors_on(:email)
+    @organization.should have(1).errors_on(:email)
   end
   
   it 'should require a unique email' do
@@ -78,12 +78,12 @@ describe Organization do
   
   it 'should require a zip code' do
     @organization.attributes = valid_organization_attributes.except(:zip_code)
-    @organization.should have(2).errors_on(:zip_code)
+    @organization.should have(1).errors_on(:zip_code)
   end
 
   it 'should require a name' do
     @organization.attributes = valid_organization_attributes.except(:name)
-    @organization.should have(2).errors_on(:name)
+    @organization.should have(1).errors_on(:name)
   end
 
   it 'should authenticate an organization by email and password' do
@@ -168,11 +168,7 @@ describe Organization do
     @organization.attributes = valid_organization_attributes.with(:terms_of_use => false)
     @organization.should have(1).errors_on(:terms_of_use)
   end
-  
-  it "Should be activated" do
-    @organization.activated?.should be_true
-  end
-   
+     
 end
 
 describe Organization, "that already exists" do
@@ -294,26 +290,23 @@ describe Organization, "that already exists" do
     @network.owner.should eql(@organization2)
   end  
   
-  it "Should be pending after setting pending" do
-    lambda { @organization.set_pending_and_require_activation }.should change(@organization, :is_pending?).from(false).to(true)
-  end
-  
-  it "Should be inactive after setting requiring activation" do
-    lambda { @organization.require_activation }.should change(@organization, :activated?).from(true).to(false)
-  end  
-  
-  it "Should have an activation key after requiring activation" do
-    lambda { @organization.require_activation }.should change(@organization, :activation_key).from(nil)
-  end   
-  
-  it "Should have an activation key creation date after requiring activation" do
-    lambda { @organization.require_activation }.should change(@organization, :activation_key_created_at).from(nil)
-  end  
-  
   it "Should notify us when a pending account has been created" do
+    @organization.is_pending = true
     Notifier.should_receive(:deliver_pending_account_creation_notification)
-    @organization.set_pending_and_require_activation
-  end  
+    @organization.save!
+  end 
+  
+  it "Should destroy any sponsored surveys" do
+    @organization.save
+    @survey = Factory(:running_survey, :sponsor => @organization)
+    @question = Factory(:question, :survey => @survey)
+    @participation = Factory.build(:participation, :survey => @survey, :participant => @organization, :responses => [])
+    
+    @participation.responses << Factory.build(:response, :question => @question)
+    @participation.save
+    
+    lambda{ @organization.destroy }.should change(@organization.sponsored_surveys, :count).from(1).to(0)
+  end 
     
 end
 
@@ -334,14 +327,44 @@ describe Organization, "built from an invitation" do
   it "should have an email" do
     @organization.email.should == @invitation.email
   end   
+  
+  it "should be activated" do
+    @organization.activated?.should be_true
+  end
+  
+  it "should not be pending" do
+    @organization.is_pending?.should be_false
+  end  
+
+end
+
+describe Organization, "not built from an invitation" do
+  before(:each) do
+    @organization = Organization.new
+  end
+    
+  it "should be pending" do
+    @organization.is_pending?.should be_true
+  end   
+  
+  it "should not be activated" do
+    @organization.activated?.should be_false
+  end   
+  
+  it "should have an activation key" do
+    @organization.activation_key.should_not be_nil
+  end
+  
+  it "should have an activation key created at" do
+    @organization.activation_key_created_at.should_not be_nil
+  end  
 
 end
 
 describe Organization, "that is pending and requires activation" do
 
   before(:each) do
-    @organization = Factory(:organization)
-    @organization.set_pending_and_require_activation
+    @organization = Factory(:pending_organization)
   end
  
   it "Should be activated after activation" do

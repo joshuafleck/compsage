@@ -11,16 +11,12 @@
 	<th>Actions</th>
 <% @pending_accounts.each do |account| %>
 <tr>
-	<td><%=account.organization_name%></td>
+	<td><%=account.name%></td>
 	<td><%=account.email%></td>
-	<td><%=account.contact_first_name + " " + account.contact_last_name%></td>
+	<td><%=account.contact_name%></td>
 	<td><%=account.phone%><%if account.phone_extension%>(<%=account.phone_extension%>)<%end%></td>
 	<td><%=account.created_at%></td>
-	<% if account.approved? then %>
-	  <td>Approved. <%=link_to "Email again?", approve_admin_pending_account_path(account)%> / <%=link_to "Cancel", deny_admin_pending_account_path(account)%>
-	<% else %>
-	  <td><%=link_to "Approve", approve_admin_pending_account_path(account)%> / <%=link_to "Deny", deny_admin_pending_account_path(account)%></td>
-	<% end %>
+  <td><%=link_to "Approve", approve_admin_pending_account_path(account)%> / <%=link_to "Deny", deny_admin_pending_account_path(account), :confirm => "Are you sure? This will remove any surveys, discussions, networks, and participations created by this user."%></td>
 </tr>
 <% end %>
 </table>

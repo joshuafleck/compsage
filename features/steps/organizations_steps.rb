@@ -8,14 +8,12 @@ Given "I am on the organization page of a survey sponsor" do
 end
 
 Given "there is a survey sponsored by a pending organization" do
-  @pending_organization = Factory(:organization)
-  @pending_organization.set_pending_and_require_activation
+  @pending_organization = Factory(:pending_organization)
   @survey = Factory(:running_survey, :sponsor => @pending_organization)
 end
 
 Given "I am a member of a network owned by a pending organization" do
-  @pending_organization = Factory(:organization)
-  @pending_organization.set_pending_and_require_activation
+  @pending_organization = Factory(:pending_organization)
   @network = Factory(:network, :owner => @pending_organization)
   @network.organizations << @current_organization
 end

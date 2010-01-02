@@ -16,18 +16,18 @@ class Invoice < ActiveRecord::Base
   validates_presence_of :payment_type
   validates_presence_of :purchase_order_number, :if => proc { |invoice| !invoice.paying_with_credit_card? }
 
-  validates_numericality_of :amount
-  validates_numericality_of :phone
-  validates_numericality_of :zip_code
-  validates_length_of :organization_name, :within => 2..100
-  validates_length_of :contact_name, :within => 2..100
-  validates_length_of :address_line_1, :within => 3..100
-  validates_length_of :city, :within => 2..100
-  validates_length_of :state, :is => 2
-  validates_length_of :address_line_2, :maximum => 100, :allow_nil => true
-  validates_length_of :zip_code, :is => 5
-  validates_length_of :phone, :is => 10
-  validates_length_of :phone_extension,  :maximum => 6, :allow_nil => true
+  validates_numericality_of :amount, :allow_blank => true
+  validates_numericality_of :phone, :allow_blank => true
+  validates_numericality_of :zip_code, :allow_blank => true
+  validates_length_of :organization_name, :within => 2..100, :allow_blank => true
+  validates_length_of :contact_name, :within => 2..100, :allow_blank => true
+  validates_length_of :address_line_1, :within => 3..100, :allow_blank => true
+  validates_length_of :city, :within => 2..100, :allow_blank => true
+  validates_length_of :state, :is => 2, :allow_blank => true
+  validates_length_of :address_line_2, :maximum => 100, :allow_blank => true
+  validates_length_of :zip_code, :is => 5, :allow_blank => true
+  validates_length_of :phone, :is => 10, :allow_blank => true
+  validates_length_of :phone_extension,  :maximum => 6, :allow_blank => true
   
   # this is the means by which a customer will reference an invoice
   def invoice_number

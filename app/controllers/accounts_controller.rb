@@ -17,15 +17,13 @@ class AccountsController < ApplicationController
   
   def create
   
-    @organization = Organization.new(params[:organization])
+    @organization = Organization.new(params[:organization].merge(:invitation => @invitation))
 
     if verify_recaptcha(:model => @organization, :message => 'You failed to match the captcha') && @organization.save then
             
       # If the organization was not invited, we need to review their account and have them activate their account
       if @invitation then
-        @invitation.accept!(@organization) 
-      else
-        @organization.set_pending_and_require_activation
+        @invitation.accept!(@organization)
       end
       
       Notifier.deliver_new_organization_notification(@organization)

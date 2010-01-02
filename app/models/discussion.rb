@@ -6,8 +6,8 @@ class Discussion < ActiveRecord::Base
   #   http://wiki.rubyonrails.org/rails/pages/BetterNestedSet
   acts_as_nested_set :scope => 'survey_id = #{survey_id}'
   
-  validates_length_of :subject, :allow_nil => true, :maximum => 128
-  validates_length_of :body, :allow_nil => true, :maximum => 1024
+  validates_length_of :subject, :allow_blank => true, :maximum => 128
+  validates_length_of :body, :allow_blank => true, :maximum => 1024
   validates_presence_of :subject, :if => :topic?
   validates_presence_of :body, :if => lambda { |d| !d.topic? }
   validates_presence_of :responder

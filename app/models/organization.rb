@@ -2,8 +2,12 @@ class Organization < ActiveRecord::Base
   include Authentication
   include Authentication::ByPassword
   include Authentication::ByCookieToken
+  include PhoneNumberFormatter
+  format_phone_fields :phone  
 
   before_save :assign_latitude_and_longitude
+  after_create :send_pending_account_notification
+  before_destroy :remove_sponsored_surveys
   
   define_index do
     indexes :name, :sortable => true
@@ -23,7 +27,7 @@ class Organization < ActiveRecord::Base
     
   has_many :networks, :through => :network_memberships, :after_remove => :delete_empty_network_or_promote_owner
   has_many :network_memberships, :dependent => :destroy
-  has_many :owned_networks, :class_name => "Network", :foreign_key => "owner_id", :after_add => :join_created_network
+  has_many :owned_networks, :class_name => "Network", :foreign_key => "owner_id", :after_add => :join_created_network, :dependent => :destroy
   has_many :sponsored_surveys, :class_name => 'Survey',
     :foreign_key => "sponsor_id"
   has_many :participated_surveys, :class_name => "Survey",
@@ -38,8 +42,8 @@ class Organization < ActiveRecord::Base
   has_many :survey_subscriptions, :dependent => :destroy
   has_many :surveys, :through => :survey_subscriptions, :order => 'created_at DESC'
   
-  has_many :participations, :as => :participant
-  has_many :discussions, :as => :responder
+  has_many :participations, :as => :participant, :dependent => :destroy
+  has_many :discussions, :as => :responder, :dependent => :destroy
   has_many :responses, :through => :participations
   
   has_many :network_invitations, :class_name => "NetworkInvitation", :foreign_key => "invitee_id", :dependent => :destroy
@@ -47,29 +51,33 @@ class Organization < ActiveRecord::Base
   has_many :invitations, :class_name => "Invitation", :foreign_key => "invitee_id", :dependent => :destroy
   
   validates_presence_of     :name
-  validates_format_of       :name,     :with => RE_NAME_OK,  :message => MSG_NAME_BAD, :allow_nil => true
-  validates_length_of       :name,     :within => 3..100
+  validates_format_of       :name,     :with => RE_NAME_OK,  :message => MSG_NAME_BAD, :allow_blank => true
+  validates_length_of       :name,     :within => 3..100, :allow_blank => true
 
   validates_presence_of     :email
-  validates_length_of       :email,    :within => 6..100 #r@a.wk
-  validates_uniqueness_of   :email,    :case_sensitive => false
-  validates_format_of       :email,    :with => RE_EMAIL_OK, :message => MSG_EMAIL_BAD
+  validates_length_of       :email,    :within => 6..100, :allow_blank => true #r@a.wk
+  validates_uniqueness_of   :email,    :case_sensitive => false, :allow_blank => true
+  validates_format_of       :email,    :with => RE_EMAIL_OK, :message => MSG_EMAIL_BAD, :allow_blank => true
 
   validates_presence_of     :zip_code
-  validates_format_of       :zip_code, :with => /^\d{5}$/
-  validates_length_of       :location, :maximum => 60, :allow_nil => :true
-  validates_length_of       :industry, :maximum => 100, :allow_nil => :true
-  validates_length_of       :contact_name, :maximum => 100, :allow_nil => :true
-  validates_length_of       :city, :maximum => 50, :allow_nil => :true
-  validates_length_of       :state, :maximum => 30, :allow_nil => :true
-  validates_length_of       :crypted_password, :maximum => 40, :allow_nil => :true
-  validates_length_of       :salt, :maximum => 40, :allow_nil => :true
+  validates_format_of       :zip_code, :with => /^\d{5}$/, :allow_blank => true
+  validates_length_of       :location, :maximum => 60, :allow_blank => true
+  validates_length_of       :industry, :maximum => 100, :allow_blank => true
+  validates_presence_of     :contact_name, :if => Proc.new { |user| user.is_pending? }
+  validates_length_of       :contact_name, :maximum => 100, :allow_blank => true
+  validates_length_of       :city, :maximum => 50, :allow_blank => true
+  validates_length_of       :state, :maximum => 30, :allow_blank => true
+  validates_length_of       :crypted_password, :maximum => 40, :allow_blank => true
+  validates_length_of       :salt, :maximum => 40, :allow_blank => true
+  validates_presence_of     :phone, :if => Proc.new { |user| user.is_pending? }
+  validates_length_of       :phone,  :is =>10, :allow_blank => true
+  validates_length_of       :phone_extension,  :maximum => 6, :allow_blank => true
   
   validates_acceptance_of :terms_of_use, :on => :create  
   attr_accessor :terms_of_use
 
   attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name,
-                  :industry, :logo, :terms_of_use
+                  :industry, :terms_of_use, :phone, :phone_extension
                   
   named_scope :pending, :conditions => {:is_pending => true}                  
   
@@ -121,22 +129,7 @@ class Organization < ActiveRecord::Base
     self.reset_password_key_expires_at = nil
     self.save!
   end
-  
-  # Will set the organization as needing manual review and requiring activation
-  def set_pending_and_require_activation
-    self.is_pending = true
-    Notifier.deliver_pending_account_creation_notification(self)
-    self.require_activation
-  end
-  
-  # Will set up the activation key and send the activation notification
-  def require_activation
-    self.activated_at              = nil
-    self.activation_key            = KeyGen.random
-    self.activation_key_created_at = Time.now
-    self.save!
-  end
-  
+ 
   # If the activated_at column is set, we know the organization is activated
   #
   def activated?
@@ -182,17 +175,26 @@ class Organization < ActiveRecord::Base
   def initialize(params = nil) 
     super
     
-    self.activated_at = Time.now
-    
     invitation = params[:invitation] if params
     
     if invitation then 
-    
-      self.name = invitation.organization_name
-      self.email = invitation.email
+      # If the organization was built from an invitation, activate the account, 
+      #  as we have already verified their email. Use the organization name and email from the invitation,
+      #  unless they have overridden that information.
+      self.activated_at = Time.now      
+      self.name         = invitation.organization_name unless self[:name]
+      self.email        = invitation.email             unless self[:email]
             
+    else
+      # If the organization was not built from an invitation, we need to verify the user's email (activation),
+      #  as well as set them as pending so that we may review their account details.
+      self.is_pending                = true
+      self.activated_at              = nil
+      self.activation_key            = KeyGen.random
+      self.activation_key_created_at = Time.now
+      
     end
-    
+        
   end  
 
   private
@@ -213,6 +215,20 @@ class Organization < ActiveRecord::Base
     networks << network
   end
   
+  # If the organization is pending, it will notify the admins so that they may verify the account
+  # 
+  def send_pending_account_notification
+    Notifier.deliver_pending_account_creation_notification(self) if self.is_pending?
+  end
+  
+  # Sponsored surveys must be destroyed before their sponsor is destroyed.
+  # 
+  def remove_sponsored_surveys
+    self.sponsored_surveys.each do |survey|
+      survey.destroy
+    end
+  end
+   
   # Finds the closest zipcode we have in our DB to the one they changed to. Convert the degrees to radians to facilitate
   # geodistance searching.
   #

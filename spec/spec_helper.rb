@@ -111,7 +111,8 @@ def valid_organization_attributes
     :location => 'Eastern Division',
     :state => 'New York',
     :industry => 'Software', 
-    :quoted_id => "1"
+    :quoted_id => "1",
+    :phone => "1234567890"
   }
 end
 
@@ -124,7 +125,7 @@ end
 
 # Will place the organization in the disabled state
 def disable_organization(organization)
-  organization.set_pending_and_require_activation
+  organization.is_pending = true
   organization.increment(:times_reported)
   organization.save!
 end

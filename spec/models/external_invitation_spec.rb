@@ -12,7 +12,7 @@ describe ExternalInvitation do
      
   it "should be invalid without an email" do
     @invitation.email = nil
-    @invitation.should have(3).errors_on(:email)
+    @invitation.should have(1).errors_on(:email)
   end  
   
   it "should be invalid if the email is shorter than 6 characters or longer than 100 characters" do
@@ -29,7 +29,7 @@ describe ExternalInvitation do
   
   it "should be invalid without an organization name" do
     @invitation.organization_name = nil
-    @invitation.should have(2).errors_on(:organization_name)
+    @invitation.should have(1).errors_on(:organization_name)
   end
   
   it "should be invalid if the organization name is shorter than 3 characters or longer than 100 characters" do

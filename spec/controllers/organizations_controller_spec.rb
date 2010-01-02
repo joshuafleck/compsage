@@ -237,8 +237,7 @@ describe OrganizationsController, "handling GET /organizations/1/report_pending"
     @current_organization = Factory(:organization)
     login_as(@current_organization)
       
-    @other_organization = Factory(:organization)
-    @other_organization.set_pending_and_require_activation
+    @other_organization = Factory(:pending_organization)
   end
   
   def do_get

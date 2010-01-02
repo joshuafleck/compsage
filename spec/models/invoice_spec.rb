@@ -21,37 +21,37 @@ describe Invoice do
    
   it "should be invalid without an organization name" do
     @invoice.organization_name = nil
-    @invoice.should have(2).errors_on(:organization_name)
+    @invoice.should have(1).errors_on(:organization_name)
   end  
     
   it "should be invalid without an address" do
     @invoice.address_line_1 = nil
-    @invoice.should have(2).errors_on(:address_line_1)
+    @invoice.should have(1).errors_on(:address_line_1)
   end  
       
   it "should be invalid without a city" do
     @invoice.city = nil
-    @invoice.should have(2).errors_on(:city)
+    @invoice.should have(1).errors_on(:city)
   end  
        
   it "should be invalid without a state" do
     @invoice.state = nil
-    @invoice.should have(2).errors_on(:state)
+    @invoice.should have(1).errors_on(:state)
   end  
         
   it "should be invalid without a zip code" do
     @invoice.zip_code = nil
-    @invoice.should have(3).errors_on(:zip_code)
+    @invoice.should have(1).errors_on(:zip_code)
   end  
          
   it "should be invalid without an amount" do
     @invoice.amount = nil
-    @invoice.should have(2).errors_on(:amount)
+    @invoice.should have(1).errors_on(:amount)
   end  
            
   it "should be invalid without a phone number" do
     @invoice.phone = nil
-    @invoice.should have(3).errors_on(:phone)
+    @invoice.should have(1).errors_on(:phone)
   end  
              
   it "should have a default payment type" do
@@ -122,7 +122,7 @@ describe Invoice do
     @invoice.phone = '9'*11
     @invoice.should have(1).errors_on(:phone)
     @invoice.phone = 'z'*10
-    @invoice.should have(3).errors_on(:phone)
+    @invoice.should have(1).errors_on(:phone)
   end  
    
   it "should be invalid if the phone extension exceeds 6 characters" do

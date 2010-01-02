@@ -45,6 +45,15 @@ Factory.define :organization do |o|
   o.terms_of_use      '1'
   o.activated_at      Time.now
   o.is_pending        false
+  o.phone             '1234567890'
+end
+
+Factory.define :pending_organization, :parent => :organization do |o|
+  o.activated_at      nil
+  o.is_pending        true 
+  o.times_reported    0
+  o.activation_key    '12345'
+  o.activation_key_created_at Time.now
 end
 
 #definition and set up for survey

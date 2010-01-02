@@ -3,7 +3,7 @@ class Survey < ActiveRecord::Base
   belongs_to :sponsor, :class_name => "Organization"
   has_one  :invoice, :dependent => :destroy
   has_many :discussions, :dependent => :destroy
-  has_many :invitations, :class_name => 'SurveyInvitation', :dependent => :destroy
+  has_many :invitations, :class_name => 'SurveyInvitation'
   has_many :invitees, :class_name => 'Organization', :through => :invitations
   has_many :external_invitations, :class_name => 'ExternalSurveyInvitation'
   has_many :internal_and_external_invitations, :class_name => 'Invitation', :order => "created_at"
@@ -18,7 +18,7 @@ class Survey < ActiveRecord::Base
   has_many :subscribed_organizations, :through => :survey_subscriptions, :source => :organization
     
   validates_presence_of :job_title, :on => :update
-  validates_length_of :job_title, :maximum => 128, :on => :update
+  validates_length_of :job_title, :maximum => 128, :on => :update, :allow_blank => true
   validates_presence_of :days_running, :on => :update
   validates_presence_of :sponsor
   validate_on_update :questions_exist

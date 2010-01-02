@@ -4,10 +4,26 @@
     <%=f.label :name, required('Name of your organization') %>
     <%=f.text_field :name %>
   <% end %>
-  <%=f.label :contact_name, 'Your name' %>
+  <% if @organization.is_pending? then %>
+    <%=f.label :contact_name, required('Your name') %>
+  <% else %>
+    <%=f.label :contact_name, 'Your name' %>
+  <% end %>
   <%=f.text_field :contact_name %>
   <%=f.label :email, required('Email address') %> 
   <%=f.text_field :email %>
+  <% if @organization.is_pending? then %>
+    <% form_row do %>
+      <% form_box do %>
+        <%=f.label :phone, required('Phone') %> 
+        <%=f.text_field :phone, :size => 15 %>
+      <% end %>
+      <% form_box do %>
+        <%=f.label :phone_extension, 'Ext.' %> 
+        <%=f.text_field :phone_extension, :size => 5 %>
+      <% end %>
+    <% end %>
+  <% end %>
   <%=f.label :location, 'Name of office or branch' %> 
   <%=f.text_field :location %>
   <% form_row do %>
