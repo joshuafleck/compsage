@@ -13,15 +13,22 @@ class Association::SessionsController < Association::AssociationController
     association = Association.authenticate(params[:email], params[:password])
     if association
       self.current_association_by_owner = association
-      redirect_back_or_default('/')
+      redirect_back_or_default('/association')
       return
     else
       note_failed_signin
       @login       = params[:email]
       @remember_me = params[:remember_me]
+
+      render :action => 'new'
     end 
   end
-  
+
+  def destroy
+    logout_killing_session!
+    redirect_back_or_default('/association')
+  end
+ 
 
   private
   # Track failed login attempts

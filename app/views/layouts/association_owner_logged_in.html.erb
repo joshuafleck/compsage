@@ -16,7 +16,7 @@
     <a href="/"><img src="/images/shawarma.gif" alt="CompSage"/></a>
     <div id="account_settings">
       <% if logged_in_as_association_owner? then %>
-        <%=link_to "Log Out", session_path, :method => :delete, :name => 'Log Out'%>
+        <%=link_to "Log Out", association_session_path, :method => :delete, :name => 'Log Out'%>
       <% end %>
     </div>
     <ul id="nav" class="<%=yield :highlighted_tab %>_nav">
