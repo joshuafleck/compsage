@@ -5,10 +5,6 @@ class Association::PdqsController < Association::AssociationController
       @association = current_association_by_owner
     end
 
-    def show
-
-    end
-
     def new
       @predefined_question = PredefinedQuestion.new
       @question = Question.new

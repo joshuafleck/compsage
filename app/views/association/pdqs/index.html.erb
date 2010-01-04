@@ -1,27 +1,23 @@
 <h2>Standard Questions for <%=@association.name%></h2>
-<p class="instructions">We allow associations to add standard questions for the members of your association.
-These questions will be available in the standard question list when a survey is being created through
-your association portal. They are appended to the list of standard questions for all CompSage surveys.
+<p class="instructions">
+These questions will be available to members when they create a survey through your association members' page.
 </p>
-<%=link_to "Create a new  standard question!", new_association_pdq_path%>
+<%=link_to "Create a new  standard question.", new_association_pdq_path%>
+<br />
+<br />
 <% if @association.predefined_questions.any? %>
 <table id="association_predefined_questions">
   <th>Name</th>
   <th>Question Text</th>
   <th>Response Type</th>
-  <th>Required?</th>
-  <th>Included by Default?</th>
-  <th>Actions</th>
+  <th>&nbsp;</th>
   <% @association.predefined_questions.each do |predefined_question|
     question = predefined_question.question %>
     <tr>
-      <td><%=predefined_question.name%></td>
+      <td><%=link_to predefined_question.name, edit_association_pdq_path(predefined_question)%></td>
       <td><%=question.text%></td>
       <td><%=question.question_type%></td>
-      <td><%=question.required%></td>
-      <td><%=predefined_question.default%></td>
-      <td><%=link_to "Edit", edit_association_pdq_path(predefined_question)%>&nbsp;
-          <%=link_to "Delete",
+      <td><%=link_to "Delete",
                       association_pdq_path(predefined_question),
                       :method => :delete,
                       :confirm => "Are you sure? This cannot be undone."%></td>
@@ -29,5 +25,5 @@ your association portal. They are appended to the list of standard questions for
     <% end %>
 </table>
 <% else %>
-<p>You have not created any standard questions. <%=link_to "Add one now!", new_association_pdq_path%></p>
+<p>You have not created any standard questions.</p>
 <% end %>
