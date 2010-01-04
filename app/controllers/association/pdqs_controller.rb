@@ -58,7 +58,7 @@ class Association::PdqsController < Association::AssociationController
        # be sure to add confirm pop-up to view for this action link
        if @question.destroy then
          flash[:message] = "This question has been deleted."
-         redirect_to predefined_questions_path
+         redirect_to association_settings_path
        end
      end
   end
