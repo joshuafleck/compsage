@@ -100,6 +100,37 @@ ul.text li {
   margin-bottom: 0.5em;
 }
 
+table {
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #dce8e0;
+}
+
+table th, table td {
+  padding: 5px 10px;
+}
+
+table thead th {
+  border-bottom: 1px solid #a8b0aa;
+  font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
+  font-weight: normal;
+  background-color: #dfebe2;
+  text-align: left;
+  color: #333;
+  font-weight: bold;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+table td {
+  border-bottom: 1px solid #eee;
+  background-color: #f5faf6;
+}
+
+table tr.odd td {
+  background-color: #ecf7ef;
+}
+
 /* Specific element styles */
 
 /* Header stuff*/
@@ -930,12 +961,7 @@ p#networks_description {
 }
 
 table#networks {
-  border: 0;
-  border-collapse: collapse;
-}
-
-table#networks tr.odd {
-  background-color: #f2f4f2;
+  border: none;
 }
 
 table#networks td {

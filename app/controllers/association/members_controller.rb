@@ -48,6 +48,6 @@ class Association::MembersController <  Association::AssociationController
     @member.leave_association(current_association_by_owner)
     
     flash[:message] = "Member removed"
-    redirect_to :action => :index
+    redirect_to association_members_path
   end
 end

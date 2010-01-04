@@ -228,21 +228,23 @@ namespace :data_generator do
     puts "Association created with subdomain #{association.subdomain}"
     puts "generating #{total} organizations..."
     
-    total.times do |index|
-      print_percent_complete(index,total)
-      organization = Factory(:organization, 
-        :password => 'test12', 
-        :password_confirmation => 'test12', 
-        :name => Faker::Company.name, 
-        :email => Faker::Internet.email,
-        :location => Faker::Address.city,
-        :contact_name => Faker::Name.name,
-        :city => Faker::Address.city,
-        :state => Faker::Address.us_state_abbr,
-        :zip_code => Faker::Address.zip_code.slice(0..4),
-        :industry => AccountsHelper::INDUSTRIES[rand(53)])
-        
-        association.organizations << organization
+    Organization.suspended_delta do
+      total.times do |index|
+        print_percent_complete(index,total)
+        organization = Factory(:organization, 
+          :password => 'test12', 
+          :password_confirmation => 'test12', 
+          :name => Faker::Company.name, 
+          :email => Faker::Internet.email,
+          :location => Faker::Address.city,
+          :contact_name => Faker::Name.name,
+          :city => Faker::Address.city,
+          :state => Faker::Address.us_state_abbr,
+          :zip_code => Faker::Address.zip_code.slice(0..4),
+          :industry => AccountsHelper::INDUSTRIES[rand(53)])
+          
+          association.organizations << organization
+      end
     end
     
     puts "generating organizations complete"
