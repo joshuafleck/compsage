@@ -222,7 +222,7 @@ Factory.define :predefined_question do |p|
   p.position { |a| a.object_id }
   p.description {|a| "#{a.name} Description" }
   p.name { Factory.next(:question) }
-  p.question_hash {|a| [{:response_type => "NumericalResponse", :text =>  "#{a.name} text" }] }
+  p.question_hash {|a| [{:question_type => "Numeric response", :text =>  "#{a.name} text" }] }
 end
 
 #definition and setup for response

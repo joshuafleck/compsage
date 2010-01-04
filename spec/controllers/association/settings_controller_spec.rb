@@ -1,10 +1,7 @@
-require 'spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe Association::SettingsController do
-
-  #Delete this example and add some real ones
-  it "should use Association::SettingsController" do
-    controller.should be_an_instance_of(Association::SettingsController)
-  end
-
+describe Association::SettingsController, "handling GET /association/settings" do
+  it "should be successful"
+  it "should require an association owner login"
+  it "should render the standard questions"
 end
