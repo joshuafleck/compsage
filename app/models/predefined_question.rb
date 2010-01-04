@@ -66,7 +66,7 @@ class PredefinedQuestion < ActiveRecord::Base
   def question
     #pull the elements out of the hash as needed
     self.question_hash.each do |question_attributes|
-      #add the attribtutes to a new Question object
+      #add the attributes to a new Question object
       return Question.new(question_attributes)
     end
   end

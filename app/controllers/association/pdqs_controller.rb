@@ -1,10 +1,6 @@
 class Association::PdqsController < Association::AssociationController
     before_filter :association_owner_login_required
 
-    def index
-      @association = current_association_by_owner
-    end
-
     def new
       @predefined_question = PredefinedQuestion.new
       @question = Question.new
@@ -21,7 +17,7 @@ class Association::PdqsController < Association::AssociationController
       if @question.valid? then
         @predefined_question.question = @question
         if @predefined_question.save then
-          redirect_to predefined_questions_path
+          redirect_to association_settings_path
           return
         end
       end
@@ -40,13 +36,14 @@ class Association::PdqsController < Association::AssociationController
       @question = Question.new(params[:question])
 
       # gather PDQ errors
+      @predefined_question.attributes = params[:predefined_question]
       @predefined_question.valid?
 
       #check if the question is valid and the PDQ saves
       if @question.valid? then
         @predefined_question.question = @question
         if @predefined_question.save then
-          redirect_to predefined_questions_path
+          redirect_to association_settings_path
           return
         end
       end
