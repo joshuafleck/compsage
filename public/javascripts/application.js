@@ -1074,7 +1074,10 @@ function InviteList(survey_id) {
     });
     
     organizations.each(function(organization) {
-      $("organization_" + organization.id).show();
+      //invited orgs are not in the list, so do not toggle.
+      if($("organization_" + organization.id)){
+        $("organization_" + organization.id).show();
+      }
     });
   }
 
