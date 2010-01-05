@@ -65,4 +65,25 @@ describe PredefinedQuestion do
       questions.first.child_questions.first.should == @survey.questions.last 
     end
   end
+  
+  describe "when setting a new question hash" do
+    before do
+      @predefined_question = Factory.create(:predefined_question)
+      @question_params = {  :text => "Question text", 
+                            :question_type=> "Numeric response",
+                            :required => false}
+      @question = Question.new(@question_params)
+    end
+    
+    it "should set the question hash from a question" do
+      @predefined_question.question= @question
+      @predefined_question.question_hash.should == [@question_params]
+    end
+    
+    it "should return a question matching the original" do
+       @predefined_question.question= @question
+      @predefined_question.question.attributes.should == @question.attributes
+    end
+  end
+  
 end
