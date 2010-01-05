@@ -9,19 +9,20 @@
 %>
 <%= error_messages_for :predefined_question, :question %>
 <br />
-<% form_for @predefined_question do |f| %> 
-  <span>The name will appear when an association member is creating a new survey.</span>
-  <%= f.label :name, required("Name"), :class => 'discussion_label' %>
+<% form_for @predefined_question do |f| %>
+  <p class="required">All fields are required.</p>
+  <%= f.label :name, "Name", :class => 'discussion_label' %>
   <%= f.text_field :name, :size => 30 %>
-  <br />
-  <%= f.label   :default, "Automatically include this question in new surveys?",
+  <p class="required">The name will appear when an association member is creating a new survey.</p>
+  <%= f.label   :default, "Automatically include this question in new surveys:",
                 :class => 'discussion_label' %>
   <span>Yes</span>
   <%= f.radio_button :default, "true" %>
+  <br />
   <span>No</span>
   <%= f.radio_button :default, "false" %>
   <% fields_for :question, @question do |question_fields| %>
-    <%= question_fields.label :text, required("Question Text"), 
+    <%= question_fields.label :text, "Question Text", 
                     :class => 'discussion_label' %>
     <%= question_fields.text_field :text, :size => 40%>
     <br />
@@ -30,14 +31,6 @@
           :class => 'discussion_label',
           :style => 'display: inline;' %>
     <%= select_tag 'question[question_type]', question_options %>
-    <br />
-    <%= question_fields.label :required, 'Should this question require a response?', 
-                    :class => 'discussion_label'
-    %>
-    <span>Yes</span>
-    <%= question_fields.radio_button :required, "true" %>
-    <span>No</span>
-    <%= question_fields.radio_button :required, "false" %>
   <% end %>
   <div class="discussion_submit">
     <input    type="submit"  

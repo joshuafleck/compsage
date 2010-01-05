@@ -10,7 +10,7 @@ These questions will be available to members when they create a survey through y
 <%=link_to "Create a new  standard question.", new_association_pdq_path%>
 <br />
 <br />
-<% if @association.predefined_questions.any? %>
+<% if @predefined_questions.any? %>
 <table id="association_predefined_questions">
   <thead>
     <th>Name</th>
@@ -19,7 +19,7 @@ These questions will be available to members when they create a survey through y
     <th>&nbsp;</th>
   </thead>
   <tbody>
-    <% @association.predefined_questions.each do |predefined_question|
+    <% @predefined_questions.each do |predefined_question|
       question = predefined_question.question %>
       <tr class="<%= cycle("even", "odd") %>">
         <td><%=link_to predefined_question.name, edit_association_pdq_path(predefined_question)%></td>
