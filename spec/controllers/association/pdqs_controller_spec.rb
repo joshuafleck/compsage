@@ -7,6 +7,30 @@ valid_pdq_attributes = { :question => {
                 :name => "My Question", 
                 :default =>"true" }
               }
+              
+describe Association::PdqsController, "#route_for" do
+
+  it "should map { :controller => 'association/pdqs', :action => 'new' } to /association/pdqs/new" do
+    route_for(:controller => "association/pdqs", :action => "new").should == "/association/pdqs/new"
+  end
+
+  it "should map { :controller => 'association/pdqs', :action => 'edit', :id => '1' } to /association/pdqs/1/edit" do
+    route_for(:controller => "association/pdqs", :action => "edit", :id => '1').should == "/association/pdqs/1/edit"
+  end  
+  
+  it "should map { :controller => 'association/pdqs', :action => 'create' } to /association/pdqs" do
+    route_for(:controller => "association/pdqs", :action => "create").should == { :path => "/association/pdqs", :method => :post }
+  end
+
+  it "should map { :controller => 'association/pdqs', :action => 'update', :id => '1'} to /association/pdqs/1" do
+    route_for(:controller => "association/pdqs", :action => "update", :id => '1').should == { :path => "/association/pdqs/1", :method => :put }
+  end
+
+  it "should map { :controller => 'association/pdqs', :action => 'destroy', :id => '1'} to /association/pdqs/1" do
+    route_for(:controller => "association/pdqs", :action => "destroy", :id => '1').should == { :path => "/association/pdqs/1", :method => :delete }
+  end
+end
+
 describe Association::PdqsController, "handling GET /association/pdqs/new" do
   before(:each) do
     @association  = Factory(:association)
