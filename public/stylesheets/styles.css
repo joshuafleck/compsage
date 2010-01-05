@@ -103,7 +103,7 @@ ul.text li {
 table {
   border-collapse: collapse;
   width: 100%;
-  border: 1px solid #dce8e0;
+  border: 1px solid #c8e0ce;
 }
 
 table th, table td {
@@ -114,7 +114,7 @@ table thead th {
   border-bottom: 1px solid #a8b0aa;
   font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
   font-weight: normal;
-  background-color: #dfebe2;
+  background-color: #cce5d3;
   text-align: left;
   color: #333;
   font-weight: bold;
@@ -1101,6 +1101,13 @@ form.button-to {
 
 form.button-to div {
   display: inline;
+}
+
+p.required {
+  font-style:italic;
+  color: #666;
+  font-size: 0.9em;
+  margin-bottom: 0;
 }
 
 div.fieldWithErrors label {

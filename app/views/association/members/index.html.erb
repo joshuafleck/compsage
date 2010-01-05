@@ -10,7 +10,7 @@
 <table>
   <thead>
     <tr>
-      <th>Firm</th>
+      <th width="66%">Firm</th>
       <th>Contact</th>
     </tr>
   </thead>
@@ -18,7 +18,7 @@
     <% @members.each do |member| %>
       <tr class="<%= cycle("even", "odd") %>">
         <td><%= link_to member.name, edit_association_member_path(member) %></td>
-        <td><%= member.name %></td>
+        <td><%= member.contact_name %></td>
       </tr>
     <% end %>
   </tbody>

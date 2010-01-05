@@ -12,22 +12,26 @@ These questions will be available to members when they create a survey through y
 <br />
 <% if @association.predefined_questions.any? %>
 <table id="association_predefined_questions">
-  <th>Name</th>
-  <th>Question Text</th>
-  <th>Response Type</th>
-  <th>&nbsp;</th>
-  <% @association.predefined_questions.each do |predefined_question|
-    question = predefined_question.question %>
-    <tr>
-      <td><%=link_to predefined_question.name, edit_association_pdq_path(predefined_question)%></td>
-      <td><%=question.text%></td>
-      <td><%=question.question_type%></td>
-      <td><%=link_to "Delete",
-                      association_pdq_path(predefined_question),
-                      :method => :delete,
-                      :confirm => "Are you sure? This cannot be undone."%></td>
-    </tr>
+  <thead>
+    <th>Name</th>
+    <th>Question Text</th>
+    <th>Response Type</th>
+    <th>&nbsp;</th>
+  </thead>
+  <tbody>
+    <% @association.predefined_questions.each do |predefined_question|
+      question = predefined_question.question %>
+      <tr class="<%= cycle("even", "odd") %>">
+        <td><%=link_to predefined_question.name, edit_association_pdq_path(predefined_question)%></td>
+        <td><%=question.text%></td>
+        <td><%=question.question_type%></td>
+        <td><%=link_to "Delete",
+                        association_pdq_path(predefined_question),
+                        :method => :delete,
+                        :confirm => "Are you sure? This cannot be undone."%></td>
+      </tr>
     <% end %>
+  </tbody>
 </table>
 <% else %>
 <p>You have not created any standard questions.</p>

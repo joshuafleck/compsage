@@ -20,7 +20,7 @@ class Association::MembersController <  Association::AssociationController
 
     if @member.save then
       flash[:message] = "Member created" 
-      redirect_to :action => :index
+      redirect_to association_members_path
     else
       render :action => :new
     end
@@ -36,7 +36,7 @@ class Association::MembersController <  Association::AssociationController
 
     if @member.save then
       flash[:message] = "Member updated" 
-      redirect_to :action => :index
+      redirect_to association_members_path
     else
       render :action => :edit
     end
