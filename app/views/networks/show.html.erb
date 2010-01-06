@@ -36,7 +36,8 @@
   <% if @network.owner_id == current_organization.id then %>
     <%= render  :partial => 'invitations/invite_organization', 
                 :locals => {  :form_action => network_invitations_path(@network),
-                              :association => nil} %>
+                              :association => nil,
+                              :organizations => nil} %>
   <% end %>
 </div>
 <% if @network.owner == current_organization then %>

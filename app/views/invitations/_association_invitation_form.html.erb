@@ -20,8 +20,7 @@
 </div>
 <div id="organization_list">
 <ul id="association_organizations" class="invitations">
-<% association.organizations.sort {|x,y| x.name <=> y.name }.each do |organization| %>
-  <% if !survey.invitees.exists?(organization) then %>
+<% organizations.each do |organization| %>
   <li id="organization_<%= organization.id %>"> 
       <span id="organization_<%= organization.id %>_name">
         <%= organization.name %>
@@ -35,7 +34,6 @@
       </span>
       <a id="invite" href="#"><img src="/images/add_invitation_button.gif" /></a>
   </li>
-  <% end %>
 <% end %>  
 </ul>
 </div>

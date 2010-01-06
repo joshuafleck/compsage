@@ -38,9 +38,9 @@
       <optgroup label="Standard Questions">
         <%= options_from_collection_for_select(PredefinedQuestion.system_wide, 'id', 'name') %>
       </optgroup>
-      <% if !@association.nil? and @association.predefined_questions.any?%>
+      <% if !current_association.nil? and current_association.predefined_questions.any?%>
       <optgroup label="Association Questions">
-        <%= options_from_collection_for_select(@association.predefined_questions, 'id', 'name') %>
+        <%= options_from_collection_for_select(current_association.predefined_questions, 'id', 'name') %>
       </optgroup>
       <% end %>
       <optgroup label="&nbsp;"></optgroup>
