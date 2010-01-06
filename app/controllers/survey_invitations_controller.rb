@@ -5,7 +5,7 @@ class SurveyInvitationsController < ApplicationController
   def index
     @networks = current_organization.networks   
     @survey   = current_organization.sponsored_surveys.find(params[:survey_id])    
-    @organizations = current_association.organizations.sort {|x,y| x.name <=> y.name } #Could sort via Sphinx
+    @organizations = current_association.organizations.all(:order => "name")
     #we only need non-invited organizations
     invitees = @survey.invitees.all
     @organizations.reject!{|o| invitees.include?(o) }
