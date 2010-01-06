@@ -103,13 +103,6 @@ class Survey < ActiveRecord::Base
   # the price of a surevy in cents
   PRICE = 9900
 
-  # Default set of questions to prepopulate when sponsoring a survey. This will find the PDQs when the model is first
-  # loaded, meaning changes to PDQs will require a server bounce.
-  DEFAULT_QUESTIONS = [
-    PredefinedQuestion.find_by_name('Base salary'),
-    PredefinedQuestion.find_by_name('Salary range')
-  ]
-
   def closed?
     Time.now > end_date
   end
@@ -319,9 +312,11 @@ class Survey < ActiveRecord::Base
   
   # This adds the default questions.
   def add_default_questions
-    DEFAULT_QUESTIONS.each do |pdq|
-      pdq.build_questions(self) unless pdq.nil? # Don't blow up if we've changed PDQs...
+    PredefinedQuestion.system_wide.reject { |pdq| !pdq.default }.each do |pdq| 
+      pdq.build_questions(self) unless pdq.nil? 
     end
+    
+    # Possible TODO: Add Association PDQs
   end
   
   # Creates an invitation for the survey sponsor. This invitation has only one state, since we do not need to 
