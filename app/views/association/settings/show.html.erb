@@ -27,6 +27,7 @@ These questions will be available to members when they create a survey through y
         <td><%=question.question_type%></td>
         <td><%=link_to "Delete",
                         association_pdq_path(predefined_question),
+                        :id => "delete_link",
                         :method => :delete,
                         :confirm => "Are you sure? This cannot be undone."%></td>
       </tr>

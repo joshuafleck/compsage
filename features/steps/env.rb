@@ -117,6 +117,7 @@ Before do
   @base_url = base_url # This is the base URL for watir tests
   @subdomain = subdomain # This is the subdomain for all webrat tests for AI. Need to set variable in route creation.
   @current_organization = Factory.create(:organization) # We need an organization for most steps, have one ready
+  @current_association_by_owner = Factory.create(:association)
   @current_survey_invitation = Factory.create(:sent_external_survey_invitation) # We need an external invitation for many steps, have one ready
   Factory.create(:association, :subdomain => @subdomain)
 end
@@ -124,6 +125,10 @@ end
 # This block is run after every feature test
 After do
   DatabaseCleaner.clean # Clears the test database
+  #We need to delete created PDQs, but not all, so it must be done seperately
+  @current_association_by_owner.predefined_questions.each do |pdq|
+    pdq.delete
+  end
 end
 
 # This will close the browser and kill the mongrel instance when testing is complete
