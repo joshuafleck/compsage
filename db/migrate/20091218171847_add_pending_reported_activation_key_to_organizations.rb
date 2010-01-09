@@ -9,7 +9,7 @@ class AddPendingReportedActivationKeyToOrganizations < ActiveRecord::Migration
     
     Organization.reset_column_information
     Organization.find(:all).each do |o|
-      o.update_attribute :activated_at, o.created_at
+      Organization.update_all(['activated_at = ?', o.created_at], "id = #{o.id}")
     end    
     
   end
