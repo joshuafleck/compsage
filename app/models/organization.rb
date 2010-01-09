@@ -59,7 +59,6 @@ class Organization < ActiveRecord::Base
   validates_uniqueness_of   :email,    :case_sensitive => false, :allow_blank => true
   validates_format_of       :email,    :with => RE_EMAIL_OK, :message => MSG_EMAIL_BAD, :allow_blank => true
 
-  validates_presence_of     :zip_code
   validates_format_of       :zip_code, :with => /^\d{5}$/, :allow_blank => true
   validates_length_of       :location, :maximum => 60, :allow_blank => true
   validates_length_of       :industry, :maximum => 100, :allow_blank => true

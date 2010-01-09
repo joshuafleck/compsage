@@ -27,10 +27,10 @@ end
 When /^I add an account without an invitation$/ do
     fills_in "Name of your organization", :with => "test name"
     fills_in "Email address", :with => "test@example.com"
-    fills_in "Your Name", :with => "test name"
-    fills_in "Zip", :with => "12345"
+    fills_in "Your name", :with => "test name"
+    fills_in "Zip code", :with => "12345"
     fills_in "Password", :with => "test12"
-    fills_in "Confirm password", :with => "test12"
+    fills_in "Password confirmation", :with => "test12"
     fills_in "Phone", :with => "(123) 456-7890"
     check "I have read and understand the Terms of Use"
     clicks_button 'Sign Up'
@@ -39,37 +39,37 @@ end
 When /^I add an account$/ do
     fills_in "Name of your organization", :with => "test name"
     fills_in "Email address", :with => "test@example.com"
-    fills_in "Your Name", :with => "test name"
-    fills_in "Zip", :with => "12345"
+    fills_in "Your name", :with => "test name"
+    fills_in "Zip code", :with => "12345"
     fills_in "Password", :with => "test12"
-    fills_in "Confirm password", :with => "test12"
+    fills_in "Password confirmation", :with => "test12"
     check "I have read and understand the Terms of Use"
     clicks_button 'Sign Up'
 end
 
 When /I unsuccessfully add an account/ do
     fills_in "Your Name", :with => "test name"
-    fills_in "Zip", :with => "12345"
+    fills_in "Zip code", :with => "12345"
     fills_in "Password", :with => "test12"
-    fills_in "Confirm password", :with => "bad boy"
+    fills_in "Password confirmation", :with => "bad boy"
     clicks_button 'Sign Up'
 end
 
 When /I edit the account/ do
     fills_in "Email address", :with => "test@example.com"
-    fills_in "Your Name", :with => "test name"
-    fills_in "Zip", :with => "12345"
+    fills_in "Your name", :with => "test name"
+    fills_in "Zip code", :with => "12345"
     fills_in "Password", :with => "test123"
-    fills_in "Confirm password", :with => "test123"
+    fills_in "Password confirmation", :with => "test123"
     clicks_button 'Update'
 end
 
 When /I unsuccessfully edit the account/ do
     fills_in "Email address", :with => "test@example.com"
-    fills_in "Your Name", :with => "test name"
-    fills_in "Zip", :with => "12345"
+    fills_in "Your name", :with => "test name"
+    fills_in "Zip code", :with => "12345"
     fills_in "Password", :with => "test123"
-    fills_in "Confirm password", :with => "bad boy"
+    fills_in "Password confirmation", :with => "bad boy"
     clicks_button 'Update'
 end
 

@@ -19,7 +19,8 @@ class AccountsController < ApplicationController
   
     @organization = Organization.new(params[:organization].merge(:invitation => @invitation))
 
-    if verify_recaptcha(:model => @organization, :message => 'You failed to match the captcha') && @organization.save then
+    # Do not require the captcha if the invitation is present, as we know it only a human can present a valid key
+    if (@invitation || verify_recaptcha(:model => @organization, :message => 'You failed to match the captcha')) && @organization.save then
             
       # If the organization was not invited, we need to review their account and have them activate their account
       if @invitation then

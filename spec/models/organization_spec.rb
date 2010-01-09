@@ -76,11 +76,6 @@ describe Organization do
     @organization1.should have(1).errors_on(:email)
   end
   
-  it 'should require a zip code' do
-    @organization.attributes = valid_organization_attributes.except(:zip_code)
-    @organization.should have(1).errors_on(:zip_code)
-  end
-
   it 'should require a name' do
     @organization.attributes = valid_organization_attributes.except(:name)
     @organization.should have(1).errors_on(:name)
