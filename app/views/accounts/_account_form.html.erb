@@ -61,7 +61,7 @@
   <% if @organization.new_record? %>
     <% if !@invitation %>
       <div style="margin-top: 1em;">  
-        <%= recaptcha_tags %>  
+        <%= recaptcha_tags :display => { :theme => :clean } %>  
       </div>
     <% end %> 
     <div style="margin-top: 1em;">  
