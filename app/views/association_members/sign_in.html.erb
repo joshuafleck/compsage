@@ -1,4 +1,7 @@
-<% title "#{current_association.name} &ndash; Sign In" %>
+<%
+  title "#{current_association.name} &ndash; Sign In"
+  highlight_tab 'home_no_graphic'
+%>
 <p>First time logging in? Be sure to enter your password again in the <a href="#" onClick="javascript:$('password_confirmation').focus();$('password_confirmation').select();return false;">Password Confirmation</a> box. Once we receive your information, we will send you an email with a link for activating your account.</p>
 <div style="display:none;">Need this div for flash notices in IE6</div>
 <%=flash_messages%>
