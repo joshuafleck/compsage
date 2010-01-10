@@ -1054,11 +1054,12 @@ div.flash_error {
 label, div.label {
   display: block;
   font-weight: bold;
-  margin-top: 0.5em;
+  margin-top: 0.35em;
   font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
   letter-spacing: -0.025em;
   font-size: 1em;
   color: #333;
+  line-height: 1.1em;
 }
 
 label.inline {
@@ -1101,7 +1102,7 @@ form div.box {
 }
 
 form div.submit {
-  margin-top: 1em;
+  margin-top: 0.5em;
 }
 
 form.button-to {
