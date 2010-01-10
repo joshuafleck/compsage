@@ -1140,6 +1140,30 @@ dl.invoice dt {
   font-weight: bold;
 }
 
+/* Account form */
+div#account_input {
+  width: 650px;
+}
+
+div#account_column_left {
+  width: 325px;
+  float: left;
+}
+
+div#account_column_right {
+  width: 325px;
+  float: right;
+}
+
+div#account_submit {
+  clear: both; 
+  padding-top: 1em;
+}
+
+div#recaptcha {
+  margin-bottom: 1em;
+}
+
 /* inline error description for survey fields eg. */
 div.error_description {
   display: inline;
