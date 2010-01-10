@@ -1023,6 +1023,14 @@ form.edit_network ul li label {
   display: inline;
   font-weight: normal;
 }
+
+div#association_member_signin h3.returning {
+  margin-top: 0;
+}
+
+div#association_member_signin h3.first_time {
+  margin-top: 2em;
+}
 /* Flash Notices */
 div.flash_notice {
   border: 1px solid #6c8272;
@@ -1111,6 +1119,11 @@ p.required {
   margin-bottom: 0;
 }
 
+p.info {
+  color: #666;
+  font-size: 0.9em;
+}
+
 div.fieldWithErrors label {
   color: #900;
 }
@@ -1145,6 +1158,19 @@ div.two_third_main_column {
   float: right; /* Had to add this for IE6 to ensure proper lineup of contained elements */
   /* margin-left: 266px; had to remove this for IE6, was overflowing */
 }
+
+div.two_third_main_column_left {
+  padding: 0 20px 0 0;
+  float: left;
+  width: 512px;
+}
+
+div.third_column_left {
+  padding: 0;
+  width: 246px;
+  float: left;
+}
+
 div.left_column {
   float: left;
 }

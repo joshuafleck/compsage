@@ -2,19 +2,50 @@
   title "#{current_association.name} &ndash; Sign In"
   highlight_tab 'home_no_graphic'
 %>
-<p>First time logging in? Be sure to enter your password again in the <a href="#" onClick="javascript:$('password_confirmation').focus();$('password_confirmation').select();return false;">Password Confirmation</a> box. Once we receive your information, we will send you an email with a link for activating your account.</p>
-<div style="display:none;">Need this div for flash notices in IE6</div>
-<%=flash_messages%>
-<%=error_messages_for :association_member%>
-<% form_tag sign_in_association_member_path(@form_options) do %>
-  <label for="email">Email</label>
-  <%= text_field_tag 'email', @login, :size => 25 %>
-  <label for="password">Password</label>
-  <%= password_field_tag 'password', '', :size => 10 %>  
-  <label for="password_confirmation" style="color: gray;">Password Confirmation</label>
-  <%= password_field_tag 'password_confirmation', '', :size => 10 %>
-  <label for="remember_me">Remember me <%= check_box_tag 'remember_me' %></label>  
-  <div class="submit">
-    <%= submit_tag 'Log in' %> &nbsp;&nbsp;<%=link_to "Forgot your password?", forgot_account_path%>
-  </div>
-<% end %>
+
+<div class="two_third_main_column_left main_page">
+  <div style="display:none;">Need this div for flash notices in IE6</div>
+  <%=flash_messages%>
+  <%=error_messages_for :association_member%>
+
+  <img width="512" height="100" src="/images/shawarma.gif" />
+  <p>
+  Welcome to CompSage, provided by <%= current_association.name %>. You may log in on the right. If this is your
+  first time logging in, fill out the form on the bottom. Contact Vickie Parks at the Manufacturers Alliance if you
+  have any problems.
+  </p>
+</div>
+
+<div class="third_column_left" id="association_member_signin">
+  <h3 class="returning">Returning Firms</h3>
+  <% form_tag sign_in_association_member_path(@form_options) do %>
+    <label for="email">Email</label>
+    <%= text_field_tag 'email', @login, :size => 25 %>
+    <label for="password">Password</label>
+    <%= password_field_tag 'password', '', :size => 10 %>  
+    <label for="remember_me">Remember me <%= check_box_tag 'remember_me' %></label>  
+    <div class="submit">
+      <%= submit_tag 'Log in' %> &nbsp;&nbsp;<%=link_to "Forgot your password?", forgot_account_path%>
+    </div>
+  <% end %>
+  <h3 class="first_time">First Time Logging In</h3>
+  <% form_tag sign_in_association_member_path(@form_options) do %>
+    <p class="info">Email must match the one on file with <%= current_association.name %>.
+    Contact them with questions regarding registration.</p>
+    <label for="email">Email</label>
+    <%= text_field_tag 'email', @login, :size => 25 %>
+    <div class="box_container">
+      <div class="box">
+        <label for="password">New Password</label>
+        <%= password_field_tag 'password', '', :size => 11 %>  
+      </div>
+      <div class="box">
+        <label for="password_confirmation">Confirmation</label>
+        <%= password_field_tag 'password_confirmation', '', :size => 10 %>
+      </div>
+    </div>
+    <div class="submit">
+      <%= submit_tag 'Sign Up' %>
+    </div>
+  <% end %>
+</div>
