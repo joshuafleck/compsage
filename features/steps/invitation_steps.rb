@@ -6,6 +6,10 @@ Given "I have created a survey invitation" do
   Factory(:survey_invitation, :survey => @survey) 
 end
 
+Given /^an organization has already been invited to the survey$/ do
+  Factory(:survey_invitation, :survey => @survey, :invitee => @association_organizations.first) 
+end
+
 When "I type in an existing organization and select it from the dropdown" do
   create_organization "Existing Organization"
   fill_in 'external_invitation_organization_name', :with => 'Ex', :method => :set_without_blur
@@ -51,12 +55,21 @@ When "I remove the invitation" do
   click_link('remove')
 end
 
-When /^I enter an organization name$/ do
-  fill_in "organization_name", :with => "ASDF", :method => :set_without_blur
-  select "10", :from => "organization_location"
+When /^I enter an organization name ?"?([^\"]*)"? and location ?"?([^\"]*)"?$/ do |name, location|
+  fill_in "organization_name", :with => name, :method => :set_without_blur
+  select location, :from => "organization_location"
   wait_for_javascript 
 end
 
+When /^I click the invite button for an organization$/ do
+  organization = @association_organizations.first
+  get_element_by_xpath("id('organization_#{organization.id.to_s}')/a").click
+end
+
+#invite_link
+When "I click invite all" do
+  click_link('invite_link')
+end
 
 Then "I should see the invitation" do
   wait_for_javascript
@@ -83,5 +96,24 @@ Then "I should see the survey sponsor in the invitation list" do
 end
 
 Then "I should see no association members" do
-  assert(get_element_by_xpath("id('association_organizations')/li").nil?)
+  @association_organizations.each do |organization|
+    assert(!visible?(get_element_by_xpath("id('organization_#{organization.id.to_s}')")))
+  end
 end
+
+Then /^I should not see the organization$/ do
+  organization = @association_organizations.first
+  assert(get_element_by_xpath("id('organization_#{organization.id.to_s}')").nil?)
+end
+
+Then /^I should see the organizations in the invited list$/ do
+  pending
+  #@survey.invitations.each do |invitation|
+  #  if !@association_organizations.include?(invitation.invitee) then
+  #    next
+  #  else
+  #    assert(get_element_by_xpath("id('invitation_#{invitation.id.to_s}')").nil?)
+  #  end
+  #end
+end
+

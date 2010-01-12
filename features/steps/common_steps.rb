@@ -79,12 +79,22 @@ Given /^there is an organization named "([^\"]*)"$/ do |name|
 end
 
 Given /^I belong to an association with members$/ do
+  #Add an organization which has a distinct name
+  o = Factory(:organization, :name => "Existing Organization")
+  o.save!
+  @current_association.organizations << o
+  
+  #Add ten generic organizations
   @current_association.organizations << @current_organization
-  5.times do
+  10.times do
     o = Factory(:organization)
     o.save!
     @current_association.organizations << o
   end
+  
+  @association_organizations = @current_association.organizations
+  invitees = @survey.invitees.all
+  @association_organizations.reject!{|o| invitees.include?(o) }
 end
 
 Given /^there are organizations named ((?:\"[^\"]*\",? ?)+)$/ do |names|

@@ -122,6 +122,16 @@ module DomInterfaceHelper
         elem
       end
     end
+    
+    # This method will similuate the visible? method, which does not work in FireWatir.
+    # @id is the id in the DOM of the element, we use this ID via some JS to get the
+    # style information and utilize that to determine if the element is visible
+    def visible?(elem)
+      displayed = @_browser.js_eval "document.getElementById('#{elem.id.to_s}').style.display"
+      visibility = @_browser.js_eval "document.getElementById('#{elem.id.to_s}').style.display"
+      @@current_level = 0
+      return !(displayed == "none" || visibility == "hidden")
+    end
   end
 
   module FirewatirUtils
