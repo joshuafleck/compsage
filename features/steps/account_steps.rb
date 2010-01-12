@@ -27,7 +27,7 @@ end
 When /^I add an account without an invitation$/ do
     fills_in "Name of your organization", :with => "test name"
     fills_in "Email address", :with => "test@example.com"
-    fills_in "Your name", :with => "test name"
+    fills_in "Your full name", :with => "test name"
     fills_in "Zip code", :with => "12345"
     fills_in "Password", :with => "test12"
     fills_in "Confirm password", :with => "test12"
@@ -39,7 +39,7 @@ end
 When /^I add an account$/ do
     fills_in "Name of your organization", :with => "test name"
     fills_in "Email address", :with => "test@example.com"
-    fills_in "Your name", :with => "test name"
+    fills_in "Your full name", :with => "test name"
     fills_in "Zip code", :with => "12345"
     fills_in "Password", :with => "test12"
     fills_in "Confirm password", :with => "test12"
@@ -48,7 +48,7 @@ When /^I add an account$/ do
 end
 
 When /I unsuccessfully add an account/ do
-    fills_in "Your Name", :with => "test name"
+    fills_in "Your full name", :with => "test name"
     fills_in "Zip code", :with => "12345"
     fills_in "Password", :with => "test12"
     fills_in "Confirm password", :with => "bad boy"
@@ -57,7 +57,7 @@ end
 
 When /I edit the account/ do
     fills_in "Email address", :with => "test@example.com"
-    fills_in "Your name", :with => "test name"
+    fills_in "Your full name", :with => "test name"
     fills_in "Zip code", :with => "12345"
     fills_in "Password", :with => "test123"
     fills_in "Confirm password", :with => "test123"
@@ -66,7 +66,7 @@ end
 
 When /I unsuccessfully edit the account/ do
     fills_in "Email address", :with => "test@example.com"
-    fills_in "Your name", :with => "test name"
+    fills_in "Your full name", :with => "test name"
     fills_in "Zip code", :with => "12345"
     fills_in "Password", :with => "test123"
     fills_in "Confirm password", :with => "bad boy"

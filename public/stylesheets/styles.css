@@ -1059,7 +1059,8 @@ form div.box {
 }
 
 form div.submit {
-  margin-top: 1em;
+  padding-top: 1em;
+  clear: both; 
 }
 
 form.button-to {
@@ -1142,22 +1143,18 @@ dl.invoice dt {
 
 /* Account form */
 div#account_input {
-  width: 650px;
+  width: 750px;
+  margin-top: 1em;
 }
 
 div#account_column_left {
-  width: 325px;
+  width: 375px;
   float: left;
 }
 
 div#account_column_right {
-  width: 325px;
+  width: 375px;
   float: right;
-}
-
-div#account_submit {
-  clear: both; 
-  padding-top: 1em;
 }
 
 div#recaptcha {
