@@ -46,8 +46,9 @@ ThinkingSphinx.deltas_enabled = true
 ThinkingSphinx.updates_enabled = true
 ThinkingSphinx.suppress_delta_output = true
 ts = ThinkingSphinx::Configuration.instance
-ts.controller.start
 ts.controller.index
+ts.controller.start
+
 
 # This will clear the test database between scenario runs.
 # We cannot use cucumber transactional fixtures with watir, 
@@ -98,6 +99,7 @@ wait_for_process(MONGREL)
 begin
   browser = FireWatir::Firefox.new
 rescue Watir::Exception::UnableToStartJSShException
+  ts.controller.stop
   system KILL_COMMAND.gsub("<process>",MONGREL)
   raise Watir::Exception::UnableToStartJSShException
 end
@@ -117,9 +119,9 @@ Before do
   @base_url = base_url # This is the base URL for watir tests
   @subdomain = subdomain # This is the subdomain for all webrat tests for AI. Need to set variable in route creation.
   @current_organization = Factory.create(:organization) # We need an organization for most steps, have one ready
-  @current_association_by_owner = Factory.create(:association)
+  @current_association_by_owner = Factory.create(:association) # association owner for setting steps
   @current_survey_invitation = Factory.create(:sent_external_survey_invitation) # We need an external invitation for many steps, have one ready
-  Factory.create(:association, :subdomain => @subdomain)
+  @current_association = Factory.create(:association, :subdomain => @subdomain) # association for association based specs
 end
 
 # This block is run after every feature test

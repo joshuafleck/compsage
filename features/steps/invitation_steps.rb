@@ -51,6 +51,13 @@ When "I remove the invitation" do
   click_link('remove')
 end
 
+When /^I enter an organization name$/ do
+  fill_in "organization_name", :with => "ASDF", :method => :set_without_blur
+  select "10", :from => "organization_location"
+  wait_for_javascript 
+end
+
+
 Then "I should see the invitation" do
   wait_for_javascript
   assert(!get_element_by_xpath("//a[@class='remove']").nil?)
@@ -73,4 +80,8 @@ end
 
 Then "I should see the survey sponsor in the invitation list" do
   get_element_by_xpath("id('invitations')/li/a").text.should include(@survey.sponsor.name)
+end
+
+Then "I should see no association members" do
+  assert(get_element_by_xpath("id('association_organizations')/li").nil?)
 end

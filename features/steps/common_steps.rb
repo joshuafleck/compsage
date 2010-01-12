@@ -78,11 +78,19 @@ Given /^there is an organization named "([^\"]*)"$/ do |name|
   create_organization(name)
 end
 
+Given /^I belong to an association with members$/ do
+  @current_association.organizations << @current_organization
+  5.times do
+    o = Factory(:organization)
+    o.save!
+    @current_association.organizations << o
+  end
+end
+
 Given /^there are organizations named ((?:\"[^\"]*\",? ?)+)$/ do |names|
   names = names.split(",").collect{|n| n.strip.gsub(/^"|"$/, "") }
   create_organization(names)
 end
-
 
 When /^I click "([^\"]*)"$/ do |link_text|
   click_link link_text
