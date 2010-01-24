@@ -27,4 +27,33 @@ class Association < ActiveRecord::Base
     
     u && u.authenticated?(password) ? u : nil
   end
+
+  # Creates a new organization that is a member of this association. If the organization already exists in the
+  # database, we just add the org to the association and return the existing org.
+  #
+  def new_member(attributes = {})
+    if !attributes[:email].blank? && member = Organization.find_by_email(attributes[:email])
+      return member
+    end
+
+    member = organizations.new
+    member.attributes = attributes
+    member.associations << self
+    member.is_uninitialized_association_member = true
+
+    return member
+  end
+
+  # Removes this member from the organization. If the org can be deleted (if it's uninitalized and only belongs to one
+  # association), go ahead and delete it, otherwise just remove the association link.
+  #
+  def remove_member(member)
+    return unless self.organizations.include?(member)
+
+    if member.association_can_delete? then
+      member.destroy
+    else
+      member.associations.delete(self)
+    end
+  end
 end

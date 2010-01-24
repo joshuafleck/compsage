@@ -1,0 +1,28 @@
+<%
+  title "Member Import Complete"
+  highlight_tab "members"
+%>
+<h2>Member Upload Complete</h2>
+<p>You have successfully imported <%= pluralize(@importer.valid_members.size, "member") %>.</p>
+<% if @importer.invalid_members.any? %>
+  <p>There were problems importing <%= pluralize(@importer.invalid_members.size, "member") %>. Please verify that you have included all required fields in
+  your import file and try again.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Possible Issues</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @importer.invalid_members.each do |organization| %>
+        <tr>
+          <td><%= organization.name %></td>
+          <td><%= organization.errors.full_messages.to_sentence %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+<br />
+<p><%= link_to "Do Another Import", upload_association_members_path %> or <%= link_to "Back to All Members", association_members_path %></p>

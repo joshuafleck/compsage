@@ -1031,6 +1031,16 @@ div#association_member_signin h3.returning {
 div#association_member_signin h3.first_time {
   margin-top: 2em;
 }
+
+
+/* Association Upload Form */
+
+#csv_fields {
+  font-family: monospace;
+  line-height: 1.5em;
+  font-weight: bold;
+}
+
 /* Flash Notices */
 div.flash_notice {
   border: 1px solid #6c8272;
@@ -1113,14 +1123,14 @@ form.button-to div {
   display: inline;
 }
 
-p.required {
+form p.required {
   font-style:italic;
   color: #666;
   font-size: 0.9em;
   margin-bottom: 0;
 }
 
-p.info {
+form .info {
   color: #666;
   font-size: 0.9em;
 }

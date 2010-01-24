@@ -11,9 +11,15 @@ Rails::Initializer.run do |config|
   config.gem 'will_paginate', :version => '2.2.2'
   config.gem 'activemerchant', :version => '1.4.2', :lib => 'active_merchant'  
   config.gem 'prawn', :version => '0.5.1'
-  config.gem 'freelancing-god-thinking-sphinx', :lib => 'thinking_sphinx', :source => 'http://gems.github.com', :version => '1.2.8'
+  config.gem 'freelancing-god-thinking-sphinx',
+              :lib => 'thinking_sphinx',
+              :source => 'http://gems.github.com',
+              :version => '1.2.8'
+
   config.gem 'validatable', :version => '1.6.7'
   config.gem 'mbleigh-subdomain-fu', :version => '0.5.3', :lib => 'subdomain-fu'
+  config.gem 'fastercsv', :version => '1.5.0'
+  config.gem 'csv-mapper', :version => '0.0.4'
 
   config.load_paths += [RAILS_ROOT + "/app/workers", RAILS_ROOT + "/app/builders"]
 end
