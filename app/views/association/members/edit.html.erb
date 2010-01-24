@@ -12,5 +12,6 @@
 <br />
 <p>
 <%= button_to "Remove #{@member.name}", association_member_path(@member), :method => :delete,
-      :confirm => "Are you sure you want to remove #{@member.name} from your association?" %>
+      :confirm => "Are you sure you want to remove #{@member.name} from your association?", 
+      :id => "remove"%>
 </p>
