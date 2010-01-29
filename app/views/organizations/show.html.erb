@@ -7,8 +7,10 @@
     <dt>Branch:</dt>
     <dd><%= @organization.location %></dd>
   <% end %>
-  <dt>Region:</dt>
-  <dd><%= @organization.city %> <%= @organization.state %> <%= @organization.zip_code %></dd>
+  <% unless @organization.city.blank? && @organization.state.blank? && @organization.zip_code.blank? %>
+    <dt>Region:</dt>
+    <dd><%= @organization.city %> <%= @organization.state %> <%= @organization.zip_code %></dd>
+  <% end %>
   <% unless @organization.contact_name.blank? %>
     <dt>Contact:</dt>
     <dd><%= @organization.contact_name %></dd>

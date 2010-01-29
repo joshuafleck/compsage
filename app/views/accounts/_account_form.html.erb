@@ -1,55 +1,80 @@
 <% form_for @organization, :url => account_path, :html => {:multipart => true} do |f| %>
   <%=error_messages_for :organization%>
-  <% if @organization.new_record? %>
-    <%=f.label :name, required('Name of your organization') %>
-    <%=f.text_field :name %>
-  <% end %>
-  <%=f.label :contact_name, 'Your name' %>
-  <%=f.text_field :contact_name %>
-  <%=f.label :email, required('Email address') %> 
-  <%=f.text_field :email %>
-  <%=f.label :location, 'Name of office or branch' %> 
-  <%=f.text_field :location %>
-  <% form_row do %>
-    <% form_box do %>
-      <%=f.label :city %> 
-      <%=f.text_field :city, :size => 13 %>
-    <% end %>
-    <% form_box do %>
-      <%= f.label :state %> 
-      <%= f.select :state, AccountsHelper::STATE_ABBR, :include_blank => true %>
-    <% end %>
-    <% form_box do %>
-      <%=f.label :zip_code, required('Zip') %> 
-      <%=f.text_field :zip_code, :size => 7 %>
-    <% end %>
-  <% end %>
-  <%=f.label :industry %> 
-  <%=f.select :industry, AccountsHelper::INDUSTRIES, :include_blank => true %>
-  <% if !@organization.new_record? then %>  
-    <div id="change_password_link">
-        <%= link_to_function "Change My Password", "new Effect.toggle('change_password', 'blind', {duration: .5});return false;" %>
+  <div id="account_input">
+    <div id="account_column_left">
+      <h3>Basic Information</h3>
+      <% if @organization.new_record? %>
+        <%=f.label :name, 'Name of your organization' %>
+        <%=f.text_field :name, :size => 34 %>
+      <% end %>
+      <%=f.label :contact_name, 'Your full name' %>
+      <%=f.text_field :contact_name, :size => 34 %>
+      <%=f.label :email, 'Email address' %> 
+      <%=f.text_field :email, :size => 34 %>
+      <% if @organization.is_pending? then %>
+        <% form_row do %>
+          <% form_box do %>
+            <%=f.label :phone %> 
+            <%=f.text_field :phone, :size => 15 %>
+          <% end %>
+          <% form_box do %>
+            <%=f.label :phone_extension, 'Ext.' %> 
+            <%=f.text_field :phone_extension, :size => 5 %>
+          <% end %>
+        <% end %>
+      <% end %>
+      <% if !@organization.new_record? then %>  
+        <div id="change_password_link">
+            <%= link_to_function "Change My Password", "new Effect.toggle('change_password', 'blind', {duration: .5});return false;" %>
+        </div>
+      <% end %>
+      <div id="change_password" style='<%=@organization.new_record? || !@organization.errors.on(:password).blank? ? "" : "display: none;"%>'>
+        <% form_row do %>
+          <% form_box do %>
+            <%=f.label :password %> 
+            <%=f.password_field :password, :size => 15, :autocomplete => "off" %>
+          <% end %>
+          <% form_box do %>
+            <%=f.label :password_confirmation, 'Confirm password' %> 
+            <%=f.password_field :password_confirmation, :size => 15 %>
+          <% end %>
+        <% end %>  
+      </div> 
     </div>
-  <% end %>
-  <div id="change_password" style='<%=@organization.new_record? || !@organization.errors.on(:password).blank? ? "" : "display: none;"%>'>
-  <% form_row do %>
-    <% form_box do %>
-      <%=f.label :password, required('Password') %> 
-      <%=f.password_field :password, :size => 20, :autocomplete => "off" %>
-    <% end %>
-    <% form_box do %>
-      <%=f.label :password_confirmation, required('Confirm password') %> 
-      <%=f.password_field :password_confirmation, :size => 20 %>
-    <% end %>
-  <% end %>  
-  </div>
-  <% if @organization.new_record? %>
-    <div style="margin-top: 1em;">  
-    <%=f.label :terms_of_use, "I have read and understand the #{link_to 'Terms of Use', home_path('terms'), :target => '_blank'}", :style => "display: inline;" %>
-    <%=f.check_box :terms_of_use %>
+    <div id="account_column_right">
+      <h3>Tell Us More</h3>
+      <%=f.label :location, 'Name of office or branch' %> 
+      <%=f.text_field :location, :size => 34 %>
+      <% form_row do %>
+        <% form_box do %>
+          <%=f.label :city %> 
+          <%=f.text_field :city, :size => 16 %>
+        <% end %>
+        <% form_box do %>
+          <%= f.label :state %> 
+          <%= f.select :state, AccountsHelper::STATE_ABBR, :include_blank => true %>
+        <% end %>
+        <% form_box do %>
+          <%=f.label :zip_code %> 
+          <%=f.text_field :zip_code, :size => 6 %>
+        <% end %>
+      <% end %>
+      <%=f.label :industry %>  
+      <%=f.select :industry, AccountsHelper::INDUSTRIES, :include_blank => true %>
     </div>
-  <% end %>  
+  </div>  
   <div class="submit">
+    <% if @organization.new_record? then %>
+      <% if !@invitation then %>
+        <%= recaptcha_tags :display => { :theme => :clean } %>  
+        <br />
+        <p>After submitting your information, you will receive and email with a link for activating your account. If you do not activate within 3 days, your account will be disabled.</p>
+      <% end %>
+      <%=f.label :terms_of_use, "I have read and understand the #{link_to 'Terms of Use', home_path('terms'), :target => '_blank'}", :style => "display: inline;" %>
+      <%=f.check_box :terms_of_use %>
+      <br />
+      <br />
+    <% end %>    
     <input type="submit" value='<%=@organization.new_record? ? "Sign Up" : "Update"%>' /> or
     <% if @organization.new_record? && logged_in_from_survey_invitation? then %>
       <%=link_to "Cancel", survey_path(current_survey_invitation.survey.id) %>

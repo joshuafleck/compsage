@@ -11,12 +11,18 @@
   </ul>
 </div>
 <div id="network_content">
-  <h2><%=@network.name%> <span class="manager">managed by <%=link_to_organization @network.owner%></span></h2>
+  <h2>
+    <%=@network.name%> 
+    <span class="manager">managed by <%=link_to_organization @network.owner%></span>
+  </h2>
   <% unless @network.description.blank? %>
     <div class="description_box">
       <%= auto_link_new_window(@network.description) %>
     </div>
   <% end %>
+  <% if @network.owner.is_pending? && current_organization != @network.owner then %>
+    <%=link_to "Report Inappropriate Content", report_pending_organization_path(:id => @network.owner.id), :class=> "abuse", :id => "report_user", :confirm => "Are you sure you want to report this user?" %>
+  <% end %>  
   <% if @members.none? && @network.owner_id == current_organization.id then %>
     <p>Your network doesn't have any members.</p>   
   <% else %>

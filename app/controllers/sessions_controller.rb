@@ -13,16 +13,25 @@ class SessionsController < ApplicationController
     @login       = params[:email]
     @remember_me = params[:remember_me]
     organization = Organization.authenticate(@login, params[:password])
+    
     if organization
-      new_cookie_flag = (@remember_me == "1")
-      login_organization({
-          :organization => organization, 
-          :new_cookie_flag => new_cookie_flag, 
-          :url => '/'})
+      # We do not allow disabled accounts to sign in
+      if organization.disabled? then        
+        note_disabled_signin(organization)
+        redirect_to new_session_path
+      else
+        new_cookie_flag = (@remember_me == "1")
+        login_organization({
+            :organization => organization, 
+            :new_cookie_flag => new_cookie_flag, 
+            :url => '/'})
+      end
+      
     else
       note_failed_signin
       render :action => 'new'
     end
+    
   end
 
   def destroy

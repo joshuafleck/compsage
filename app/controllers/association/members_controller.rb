@@ -17,6 +17,7 @@ class Association::MembersController <  Association::AssociationController
     @member.associations << current_association_by_owner
 
     @member.is_uninitialized_association_member = true
+    @member.is_pending                          = false
 
     if @member.save then
       flash[:message] = "Member created" 

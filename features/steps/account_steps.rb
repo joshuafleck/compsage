@@ -21,17 +21,26 @@ end
 
 Given "I am logged in via network invitation" do
   invitation = Factory(:external_network_invitation)
-  visit add_subdomain(new_account_path(:key => invitation.key))
+  visit add_subdomain(new_account_url(:key => invitation.key))
 end
 
-Given "I am logged in via pending account" do
-  invitation = Factory(:pending_account)
-  visit add_subdomain(new_account_path(:key => invitation.key))
+When /^I add an account without an invitation$/ do
+    fills_in "Name of your organization", :with => "test name"
+    fills_in "Email address", :with => "test@example.com"
+    fills_in "Your full name", :with => "test name"
+    fills_in "Zip code", :with => "12345"
+    fills_in "Password", :with => "test12"
+    fills_in "Confirm password", :with => "test12"
+    fills_in "Phone", :with => "(123) 456-7890"
+    check "I have read and understand the Terms of Use"
+    clicks_button 'Sign Up'
 end
 
-When /I add an account/ do
-    fills_in "Your Name", :with => "test name"
-    fills_in "Zip", :with => "12345"
+When /^I add an account$/ do
+    fills_in "Name of your organization", :with => "test name"
+    fills_in "Email address", :with => "test@example.com"
+    fills_in "Your full name", :with => "test name"
+    fills_in "Zip code", :with => "12345"
     fills_in "Password", :with => "test12"
     fills_in "Confirm password", :with => "test12"
     check "I have read and understand the Terms of Use"
@@ -39,8 +48,8 @@ When /I add an account/ do
 end
 
 When /I unsuccessfully add an account/ do
-    fills_in "Your Name", :with => "test name"
-    fills_in "Zip", :with => "12345"
+    fills_in "Your full name", :with => "test name"
+    fills_in "Zip code", :with => "12345"
     fills_in "Password", :with => "test12"
     fills_in "Confirm password", :with => "bad boy"
     clicks_button 'Sign Up'
@@ -48,8 +57,8 @@ end
 
 When /I edit the account/ do
     fills_in "Email address", :with => "test@example.com"
-    fills_in "Your Name", :with => "test name"
-    fills_in "Zip", :with => "12345"
+    fills_in "Your full name", :with => "test name"
+    fills_in "Zip code", :with => "12345"
     fills_in "Password", :with => "test123"
     fills_in "Confirm password", :with => "test123"
     clicks_button 'Update'
@@ -57,8 +66,8 @@ end
 
 When /I unsuccessfully edit the account/ do
     fills_in "Email address", :with => "test@example.com"
-    fills_in "Your Name", :with => "test name"
-    fills_in "Zip", :with => "12345"
+    fills_in "Your full name", :with => "test name"
+    fills_in "Zip code", :with => "12345"
     fills_in "Password", :with => "test123"
     fills_in "Confirm password", :with => "bad boy"
     clicks_button 'Update'
@@ -76,13 +85,13 @@ end
 
 When /I reset my password/ do
     fills_in "Password", :with => "reset password"
-    fills_in "Password confirmation", :with => "reset password"
+    fills_in "Confirm password", :with => "reset password"
     clicks_button 'Reset My Password'
 end
 
 When /I unsuccessfully reset my password/ do
     fills_in "Password", :with => "reset password"
-    fills_in "Password confirmation", :with => "bad boy"
+    fills_in "Confirm password", :with => "bad boy"
     clicks_button 'Reset My Password'
 end
 

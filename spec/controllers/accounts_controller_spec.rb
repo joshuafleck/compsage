@@ -25,27 +25,18 @@ describe AccountsController, "#route_for" do
   it "should map { :controller => 'accounts', :action => 'forgot'} to /account/forgot" do
     route_for(:controller => "accounts", :action => "forgot").should == "/account/forgot"
   end
+  
+  it "should map { :controller => 'accounts', :action => 'activate'} to /account/activate" do
+    route_for(:controller => "accounts", :action => "activate").should == "/account/activate"
+  end  
 
 end
 
 describe AccountsController, " handling GET /account/new" do
 
-  it "should require an invitation or pending account" do
-    controller.should_receive(:invitation_or_pending_account_required)
+  it "should look for an invitation" do
+    controller.should_receive(:locate_invitation)
     get :new
-  end
-  
-  describe "when not invited" do
-  
-    it "should flash a message" do
-      get :new
-      flash[:notice].should_not be_blank
-    end
-     
-    it "should redirect to the login page" do
-      get :new
-      response.should redirect_to(new_session_path)    
-    end
   end
 
   describe "when invited to a network" do
@@ -79,12 +70,12 @@ describe AccountsController, " handling GET /account/new" do
          
     it "should assign the invitation to the view" do
       do_get
-      assigns[:invitation_or_pending_account].should == @invitation
+      assigns[:invitation].should == @invitation
     end
      
     it "should assign the invitation to the session" do
       do_get
-      session[:invitation_or_pending_account].should == @invitation
+      session[:invitation].should == @invitation
     end
      
   end
@@ -106,7 +97,7 @@ describe AccountsController, " handling GET /account/new" do
       
     it "should assign the invitation to the view" do
       do_get
-      assigns[:invitation_or_pending_account].should == @invitation
+      assigns[:invitation].should == @invitation
     end
      
     it "should be successful" do    
@@ -130,7 +121,7 @@ describe AccountsController, " handling GET /account/new" do
   
     before(:each) do
       @invitation = Factory.create(:external_network_invitation)
-      session[:invitation_or_pending_account] = @invitation
+      session[:invitation] = @invitation
     end
     
     after(:each) do
@@ -139,7 +130,7 @@ describe AccountsController, " handling GET /account/new" do
   
     it "should assign the invitation to the view" do
       get :new
-      assigns[:invitation_or_pending_account].should == @invitation
+      assigns[:invitation].should == @invitation
     end
      
     it "should be successful" do    
@@ -159,48 +150,36 @@ describe AccountsController, " handling GET /account/new" do
         
   end  
   
-  describe "with a pending account" do
-
-    before(:each) do
-      @pending_account = Factory.create(:pending_account)
-    end
-    
-    after(:each) do
-      @pending_account.destroy
-    end
-    
-    def do_get
-      get :new, :key => @pending_account.key
-    end
-    
-    it "should be successful" do    
-      do_get
-      response.should be_success
-    end
-     
-    it "should assign a new organization to the view" do
-      do_get
-      assigns[:organization].should_not be_blank
-    end  
-     
-    it "should render the new template" do  
-      do_get
-      response.should render_template('new')
-    end
-        
-    it "should assign the pending account to the view" do
-      do_get
-      assigns[:invitation_or_pending_account].should == @pending_account
-    end
-     
-    it "should assign the pending account to the session" do
-      do_get
-      session[:invitation_or_pending_account].should == @pending_account
-    end
-     
-  end
-
 end
+
+describe AccountsController, " handling GET /account/activate" do
+
+  before(:each) do
+    @current_organization = Factory.create(:pending_organization)
+    @params = { :key => @current_organization.activation_key }
+  end
+  
+  def do_get
+    get :activate, @params
+    @current_organization.reload
+  end
+  
+  it "should redirect to the edit account page" do    
+    do_get
+    response.should redirect_to(edit_account_path)
+  end
+  
+  it "should activate the organization" do  
+    lambda{ do_get }.should change(@current_organization, :activated?).from(false).to(true)
+  end
+  
+  it "should redirect to the login page if the organization is not found" do
+    @params[:key] = '1234'
+    do_get
+    response.should redirect_to(new_session_path)
+  end
+ 
+end  
 
 describe AccountsController, " handling GET /account/edit" do
 
@@ -233,38 +212,72 @@ end
 describe AccountsController, " handling POST /account/" do
 
   before(:each) do
-    @invitation = Factory.create(:external_survey_invitation)
-    login_as(@invitation)
     
     @organization = Factory.build(:organization)
     
-    @params = { :survey_id => @invitation.survey.id.to_s, :organization => @organization.attributes }
+    @params = { :organization => @organization.attributes }
     @params[:organization] = @params[:organization].merge(:password => "123456")
     @params[:organization] = @params[:organization].merge(:password_confirmation => "123456")
   end
-  
-  after(:each) do
-    @invitation.destroy
-  end
-  
+
   def do_post
     post :create, @params
   end 
   
   it "should redirect to the survey index" do  
     do_post
-    response.should redirect_to(surveys_path)
+    response.should be_redirect
   end
   
   it "should create the organization" do  
     lambda{ do_post }.should change(Organization,:count).by(1)
   end
-   
-  it "should accept the invitation" do  
-    @invitation.should_receive(:accept!)
-    do_post
+  
+  describe "with inviation" do
+  
+    before(:each) do
+      @invitation = Factory.create(:external_survey_invitation)
+      login_as(@invitation)
+            
+      @params[:survey_id] = @invitation.survey.id.to_s
+    end  
+     
+    after(:each) do
+      @invitation.destroy
+    end
+       
+    it "should accept the invitation" do  
+      @invitation.should_receive(:accept!)
+      do_post
+    end 
+    
+    it "should not create a pending organization"   do 
+      do_post
+      assigns[:organization].is_pending?.should be_false
+    end
+    
+    it "should create an organization that does not require activation" do
+      do_post
+      assigns[:organization].activated?.should be_true
+    end
+  
   end
   
+  it "should create a pending organization"   do 
+    do_post
+    assigns[:organization].is_pending?.should be_true
+  end
+  
+  it "should create an organization that requires activation" do
+    do_post
+    assigns[:organization].activated?.should be_false
+  end  
+  
+  it "should send a new organization notification" do
+    Notifier.should_receive(:deliver_new_organization_notification)
+    do_post
+  end   
+   
   it "should log the user in" do  
     do_post
     session[:organization_id].should_not be_blank

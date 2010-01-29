@@ -16,12 +16,16 @@ And "the report has a wage response" do
                       :survey => @survey,
                       :response_type => "WageResponse", 
                       :text => "How much does a hammer make per year?")
+                      
   5.times do
-    Factory(:wage_response,
+    
+    participation = Factory.build(:participation, :survey => @survey, :responses => [])
+    participation.responses <<  Factory.build(:wage_response,
             :question => wage_question,
-            :participation => Factory(:participation, :survey => @survey),
             :response => '$45,000.00',
             :unit => "Annually")
+    participation.save
+      
   end
 end
 

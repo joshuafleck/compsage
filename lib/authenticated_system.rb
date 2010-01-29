@@ -135,6 +135,11 @@ module AuthenticatedSystem
       flash.now[:error] = "Incorrect email or password"
       logger.warn "Failed login for '#{params[:email]}' from #{request.remote_ip} at #{Time.now.utc}"
     end
+    
+    # Used to inform the user that their account has been disabled and to contact us.
+    def note_disabled_signin(organization)
+      flash[:error] = "Your account has been disabled. Please <a href=\"#{contact_path}\">contact us</a> for assistance."
+    end
        
     #
     # Logout
@@ -145,9 +150,16 @@ module AuthenticatedSystem
     def login_from_cookie
       organization = cookies[:auth_token] && Organization.find_by_remember_token(cookies[:auth_token])
       if organization && organization.remember_token?
-        self.current_organization = organization
-        handle_remember_cookie! false # freshen cookie token (keeping date)
-        self.current_organization
+        # If the account has been disabled, we should not honor the cookie
+        if organization.disabled? then
+          note_disabled_signin(organization)
+          organization.forget_me # Remove the cookie, so we don't keep trying to authenticate with the cookie
+          return false
+        else
+          self.current_organization = organization
+          handle_remember_cookie! false # freshen cookie token (keeping date)
+          self.current_organization
+        end
       end
     end
 
@@ -179,9 +191,6 @@ module AuthenticatedSystem
     #
     # Remember_me Tokens
     #
-    # Cookies shouldn't be allowed to persist past their freshness date,
-    # and they should be changed at each login
-
     # Cookies shouldn't be allowed to persist past their freshness date,
     # and they should be changed at each login
 

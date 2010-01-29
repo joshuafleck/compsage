@@ -79,3 +79,19 @@ Feature: Organization page
     When I invite the organization to a network
     And I invite the organization to a network
     Then I should see "network" error message
+    
+  Scenario: Report pending organization from survey
+    Given I am testing javascript
+    And I am logged in
+    And there is a survey sponsored by a pending organization
+    And I am on the survey show page
+    When I report this user
+    Then I should see "This user has been reported."
+  
+  Scenario: Report pending organization from network
+    Given I am testing javascript
+    And I am logged in
+    And I am a member of a network owned by a pending organization
+    And I am on the network page
+    When I report this user
+    Then I should see "This user has been reported."

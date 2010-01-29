@@ -1,5 +1,15 @@
 Feature: Manage Survey Invitations
 
+  Scenario: Adding an invitation message
+    Given I am testing javascript
+    And I am logged in
+    And I am sponsoring a "pending" survey
+    And I am on the survey invitations page
+    And I add a custom invitation message
+
+    When I click next
+
+    Then I should see "Custom message from sponsor."
   Scenario: Accepting a survey invitation
     Given I am logged in
     And I have a survey invitation

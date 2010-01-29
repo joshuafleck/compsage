@@ -988,12 +988,14 @@ function InviteList(survey_id) {
       }
     });
     
-    //observer for the association integration form
-    $('organization_name').observe('keyup', liveAssociationFilter);
-    $('organization_location').observe('change', liveAssociationFilter);
-    
-    //observe invite button click for multi-select invitations
-    $('invite_link').observe('click', submitMultipleInvitations);
+    //test to see if the association integration form is present, it won't be if we are not an association member
+    if( $('organization_name') ) {
+      //observer for the association integration form
+      $('organization_name').observe('keyup', liveAssociationFilter);
+      $('organization_location').observe('change', liveAssociationFilter);
+      //observe invite button click for multi-select invitations
+      $('invite_link').observe('click', submitMultipleInvitations);      
+    }
     
     //observers for each add invitation link
     $$('ul#association_organizations > li').each(function(org_li){

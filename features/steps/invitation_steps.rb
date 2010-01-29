@@ -71,6 +71,11 @@ When "I click invite all" do
   click_link('invite_link')
 end
 
+When "I add a custom invitation message" do
+  click_link('custom_message_link')
+  fill_in 'survey_custom_invitation_message', :with => 'Custom message from sponsor'  
+end
+
 Then "I should see the invitation" do
   wait_for_javascript
   assert(!get_element_by_xpath("//a[@class='remove']").nil?)

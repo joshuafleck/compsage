@@ -23,7 +23,7 @@
       <li id="how"><%= link_to "How it works", home_path('how') %></li>     
       <% unless current_subdomain then %>
         <li id="join">
-            <%= link_to "Sign Up", has_key? ? new_account_path() : signup_path() %>
+            <%= link_to "Sign Up", new_account_path() %>
         </li>
       <% end %>
 		</ul> 

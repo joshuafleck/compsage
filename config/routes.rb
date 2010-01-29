@@ -7,7 +7,7 @@ ActionController::Routing::Routes.draw do |map|
   map.home ':page', :controller => 'home', :action => 'show', :page => /about|contact|privacy|how|tips|terms/
 
   map.resources :organizations, :collection => {:search => :any, :search_for_association_list => :any},
-                :member => {:invite_to_survey => :post, :invite_to_network => :post}
+                :member => {:invite_to_survey => :post, :invite_to_network => :post, :report_pending => :any}
   
   map.resource :session
 
@@ -17,7 +17,8 @@ ActionController::Routing::Routes.draw do |map|
     survey.resources :discussions, :member => {:report => :any}
     survey.resources :invitations, :controller => :survey_invitations,
       :member => {:decline => :put},
-      :collection => {:create_for_network => :post, :send_pending => :post, :create_for_association => :post}
+      :collection => {:create_for_network => :post, :send_pending => :post, :create_for_association => :post, :update_message => :post}
+      
     survey.resource :report, :member => {:chart => :get, :suspect => :any}
     survey.resource :billing, :controller => :billing, :member => {:invoice => :any}
   end
@@ -27,12 +28,8 @@ ActionController::Routing::Routes.draw do |map|
     network.resources :invitations, :controller => :network_invitations, :member => {:decline => :put}
   end
   
-  map.resource :account, :member => {:forgot => :any, :reset => :any}
-  
-  map.signup 'signup', :controller => 'pending_accounts', :action => 'new', :conditions => { :method => :get }
-  map.signup 'signup', :controller => 'pending_accounts', :action => 'received', :conditions => { :method => :get }
-  map.signup 'signup', :controller => 'pending_accounts', :action => 'create', :conditions => { :method => :post }
-  
+  map.resource :account, :member => {:forgot => :any, :reset => :any, :activate => :any}
+ 
   map.login 'login', :controller => 'sessions', :action => 'new'
   map.survey_login 'survey_login', :controller => 'sessions', :action => 'create_survey_session'
 

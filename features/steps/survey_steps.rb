@@ -23,7 +23,7 @@ Given "I am sponsoring a survey with every question type" do
                     :questions => @questions)
 end
 
-Given "I am sponsoring a survey with a follow-up to a (.*) question" do |type|
+Given /^I am sponsoring a survey with a follow\-up to a (.*) question$/ do |type|
   case type
   when "yes/no"
     @base_question = Factory.build(:multiple_choice_question, :options => ["Yes", "No"])
@@ -51,8 +51,8 @@ Given "the survey has a partial response" do
     Factory(:participation, :survey => @survey)
   end
   question = Factory(:text_question, :survey => @survey)
-  response = Factory.build(:response, :question => question)
   Factory(:invoice, :survey => @survey)
+  response = Factory.build(:response, :question => question)
   participation = Factory(:participation, :survey => @survey, :responses => [response])
 end
 
@@ -65,7 +65,7 @@ Given "I am invoicing the survey" do
 end
 
 Given "I have previously responded to the survey" do
-  participation = Factory(:participation, :survey => @survey, :participant => @current_organization)
+  participation = Factory.build(:participation, :survey => @survey, :participant => @current_organization, :responses => [])
 
   @survey.questions.each do |question|
     response = participation.responses.build(:question => question, :type => question.response_type)
@@ -80,8 +80,9 @@ Given "I have previously responded to the survey" do
       response.response = 0
     end
 
-    response.save
   end
+  
+  participation.save
 end
 
 When /^I enter "([^"]*)"$/ do |text|
@@ -126,7 +127,7 @@ When "I unsuccessfully edit the survey" do
   field_with_id('form_submit', 'submit').click
 end
 
-When "I answer the entire survey( with comments)?" do |with_comments|
+When /^I answer the entire survey( with comments)?$/ do |with_comments|
   with_comments = !with_comments.blank?
 
   if @questions.nil? then
@@ -378,7 +379,17 @@ Given "I have been invited, sponsored, participated, and finished surveys" do
   @invited_survey = Factory(:sent_survey_invitation, :invitee => @current_organization).survey
   @sponsored_survey = Factory(:running_survey, :sponsor => @current_organization)
   @survey = Factory(:running_survey)
-  @participated_survey = Factory(:participation, :participant => @current_organization).survey
+  
+  @participated_survey =  Factory(:running_survey, :sponsor => Factory(:organization))
+  participation = Factory.build(:participation, 
+    :participant => @current_organization, 
+    :survey => @participated_survey, 
+    :responses => [])
+  @participated_survey.questions.each do |question|  
+    participation.responses << Factory.build(:numerical_response, :question => question, :response => 1)
+  end  
+  participation.save 
+    
   @finished_survey = Factory(:finished_survey, :sponsor => @current_organization)
 end
 

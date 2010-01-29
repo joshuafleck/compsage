@@ -82,12 +82,7 @@ module ApplicationHelper
   def form_box(&block)
     @template.concat @template.content_tag(:div, @template.capture(&block), :class => 'box')
   end
-  
-  # Determines if the user can create an account directly, or must use the signup page
-  def has_key?
-    current_survey_invitation || !session[:invitation_or_pending_account].nil?
-  end
-  
+    
   # Passes text through a gauntlet of functions to improve the results for an end user
   # Used for description fields.
   def link_and_format(text, options = {})

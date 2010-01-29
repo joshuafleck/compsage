@@ -38,19 +38,30 @@ end
 
 #defining an organization.
 Factory.define :organization do |o|
-  o.name { Factory.next(:organization_name) }
-  o.email { Factory.next(:email) }
-  o.city 'Minneapolis'
-  o.state 'MN'
-  o.zip_code '55413'
-  o.industry 'Healthcare: Managed Care'
-  o.latitude { Factory.next(:latitude) }
-  o.longitude { Factory.next(:longitude) }
-  o.crypted_password '27e5532e75526ff4574e3e8c8c2a48fb97415765'
-  o.salt 'asdf'
-  o.created_at 40.days.ago.to_s(:db)
-  o.contact_name 'David Peterson'
-  o.terms_of_use '1'
+  o.name              { Factory.next(:organization_name) }
+  o.email             { Factory.next(:email) }
+  o.city              'Minneapolis'
+  o.state             'MN'
+  o.zip_code          '55413'
+  o.industry          'Healthcare: Managed Care'
+  o.latitude          { Factory.next(:latitude) }
+  o.longitude         { Factory.next(:longitude) }
+  o.crypted_password  '27e5532e75526ff4574e3e8c8c2a48fb97415765'
+  o.salt              'asdf'
+  o.created_at        40.days.ago.to_s(:db)
+  o.contact_name      'David Peterson'
+  o.terms_of_use      '1'
+  o.activated_at      Time.now
+  o.is_pending        false
+  o.phone             '1234567890'
+end
+
+Factory.define :pending_organization, :parent => :organization do |o|
+  o.activated_at      nil
+  o.is_pending        true 
+  o.times_reported    0
+  o.activation_key    '12345'
+  o.activation_key_created_at Time.now
 end
 
 Factory.define :uninitialized_association_member, :parent => :organization do |o|
@@ -269,14 +280,6 @@ end
 Factory.define :network_membership do |p|
   p.network {|a| a.association(:network)}
   p.organization {|a| a.association(:organization)}
-end
-
-Factory.define :pending_account do |p|
-  p.organization_name  "Org Name"
-  p.email              "testing@example.com"
-  p.contact_first_name "Brian"
-  p.contact_last_name  "Terlson"
-  p.phone              "7634983633"
 end
 
 Factory.define :association do |a|

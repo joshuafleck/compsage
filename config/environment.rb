@@ -3,7 +3,7 @@ require File.join(File.dirname(__FILE__), 'boot')
 
 Rails::Initializer.run do |config|
   config.action_controller.session = { :session_key => "_compsage_session", :secret => "535b541d23b19ce0e7a1090c403771d6" }
-  config.active_record.observers = :discussion_observer,:organization_observer
+  config.active_record.observers = :discussion_observer
   config.action_controller.use_accept_header = false
 
   config.gem 'state_machine', :version => '0.7.6'
@@ -14,6 +14,7 @@ Rails::Initializer.run do |config|
   config.gem 'freelancing-god-thinking-sphinx', :lib => 'thinking_sphinx', :source => 'http://gems.github.com', :version => '1.2.8'
   config.gem 'validatable', :version => '1.6.7'
   config.gem 'mbleigh-subdomain-fu', :version => '0.5.3', :lib => 'subdomain-fu'
+  config.gem "ambethia-recaptcha", :lib => "recaptcha/rails", :source => "http://gems.github.com", :version => '0.2.2'
 
   config.load_paths += [RAILS_ROOT + "/app/workers", RAILS_ROOT + "/app/builders"]
 end

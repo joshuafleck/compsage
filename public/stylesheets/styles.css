@@ -799,6 +799,26 @@ ul.invitations a.remove {
   padding: 0 0.5em 0 0.5em;
 }
 
+a#custom_message_link {
+  font-size: 0.9em;
+  color: #666;
+}
+
+div#custom_message textarea {
+  font-size: 0.9em;
+  width: 480px;
+  height: 100px;
+}
+
+div#custom_message h4 {
+  margin-top: 0;
+  font-size: 1em;
+}
+
+div#custom_message p {
+  margin-top: 0.25em;
+  color: #666;
+}
 /* Survey Questions Page */
 
 div.comments a {
@@ -1054,7 +1074,7 @@ div.flash_error {
 label, div.label {
   display: block;
   font-weight: bold;
-  margin-top: 0.35em;
+  margin-top: 0.5em;
   font-family: "Neue Helvetica", "Helvetica Neue", "Liberation Sans", Helvetica, Arial, sans-serif;
   letter-spacing: -0.025em;
   font-size: 1em;
@@ -1102,7 +1122,8 @@ form div.box {
 }
 
 form div.submit {
-  margin-top: 0.5em;
+  padding-top: 1em;
+  clear: both; 
 }
 
 form.button-to {
@@ -1206,6 +1227,26 @@ dl.invoice dt {
   margin-right: 1em;
   text-align: right;
   font-weight: bold;
+}
+
+/* Account form */
+div#account_input {
+  width: 750px;
+  margin-top: 1em;
+}
+
+div#account_column_left {
+  width: 375px;
+  float: left;
+}
+
+div#account_column_right {
+  width: 375px;
+  float: right;
+}
+
+div#recaptcha {
+  margin-bottom: 1em;
 }
 
 /* inline error description for survey fields eg. */

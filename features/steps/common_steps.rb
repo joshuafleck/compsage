@@ -67,7 +67,11 @@ end
 
 Given /^I am participating in a ?"?([^\"]*)"? survey$/ do |state|
   @survey = create_survey(state, Factory(:organization))
-  Factory(:participation, :participant => @current_organization, :survey => @survey)
+  participation = Factory.build(:participation, :participant => @current_organization, :survey => @survey, :responses => [])
+  @survey.questions.each do |question|  
+    participation.responses << Factory.build(:numerical_response, :question => question, :response => 1)
+  end  
+  participation.save  
 end
 
 Given /^I am on the network page$/ do

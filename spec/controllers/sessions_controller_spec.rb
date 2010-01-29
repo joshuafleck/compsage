@@ -37,6 +37,13 @@ describe SessionsController do
     post :create_survey_session, :key => 'hahahahano', :survey_id => @external_invitation.survey.id
     response.should render_template('new')
   end
+  
+  it 'fails login when the organization is disabled' do
+    disable_organization(@brian)
+    post :create, :email => valid_organization_attributes[:email], :password => valid_organization_attributes[:password]
+    session[:organization_id].should be_nil
+    response.should be_redirect
+  end
 
   it 'logs out' do
     login_as @brian
@@ -75,6 +82,14 @@ describe SessionsController do
     get :new
     controller.send(:logged_in?).should_not be_true
   end
+  
+  it 'fails cookie login when account is disabled' do
+    @brian.remember_me
+    disable_organization(@brian)
+    request.cookies["auth_token"] = cookie_for(@brian)
+    get :new
+    controller.send(:logged_in?).should_not be_true
+  end  
   
   it 'fails cookie login' do
     @brian.remember_me

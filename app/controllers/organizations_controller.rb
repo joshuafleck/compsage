@@ -1,6 +1,6 @@
 class OrganizationsController < ApplicationController
-  before_filter :login_required, :except => [ :show ]
-  before_filter :login_or_survey_invitation_required, :only => [ :show ]
+  before_filter :login_required, :except => [ :show, :report_pending ]
+  before_filter :login_or_survey_invitation_required, :only => [ :show, :report_pending ]
   layout :logged_in_or_invited_layout 
 
   def show 
@@ -104,6 +104,16 @@ class OrganizationsController < ApplicationController
           :only    => [:id])
       end
     end
+  end
+  
+  # Action taken if a user reports suspicious activity related to a pending organization
+  def report_pending
+    organization = Organization.pending.find(params[:id])  
+    organization.report 
+    
+    flash[:notice] = "This user has been reported."
+    # Show the same page, or redirect to surveys path, if the user clicked an email link
+    redirect_to request.env['HTTP_REFERER'] || surveys_path
   end
   
   # JS only function for inviting an organization to a survey

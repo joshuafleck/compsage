@@ -1,5 +1,5 @@
 <% title "Edit My Account" %>
 <% highlight_tab "account" %>
-<h2>Account Settings</h2>
+<h2><%= @organization.name %>'s Account Settings</h2>
 <%=flash_messages%>
 <%= render :partial => "accounts/account_form" %>

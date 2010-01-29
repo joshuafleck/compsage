@@ -15,7 +15,7 @@ module AssociationSystem
     protected
     
     def association_owner_login_required
-      logged_in_as_association_owner? || access_denied
+      logged_in_as_association_owner? || association_access_denied
     end
     
     def logged_in_as_association_owner?
@@ -52,7 +52,7 @@ module AssociationSystem
       session[:association_id] = nil
     end
     
-    def access_denied
+    def association_access_denied
       respond_to do |format|
         format.html do
           store_location

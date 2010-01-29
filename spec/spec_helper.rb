@@ -111,7 +111,8 @@ def valid_organization_attributes
     :location => 'Eastern Division',
     :state => 'New York',
     :industry => 'Software', 
-    :quoted_id => "1"
+    :quoted_id => "1",
+    :phone => "1234567890"
   }
 end
 
@@ -120,6 +121,13 @@ def organization_mock
       Organization, 
       valid_organization_attributes)
 
+end
+
+# Will place the organization in the disabled state
+def disable_organization(organization)
+  organization.is_pending = true
+  organization.increment(:times_reported)
+  organization.save!
 end
   
 def valid_survey_attributes

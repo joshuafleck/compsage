@@ -60,7 +60,7 @@ describe Organization do
   
   it 'should require a password' do
     @organization.attributes = valid_organization_attributes.except(:password)
-    @organization.should have(3).errors_on(:password)
+    @organization.should have(2).errors_on(:password)
   end
 
   it 'should require a password confirmation' do
@@ -70,7 +70,7 @@ describe Organization do
 
   it 'should require an email' do
     @organization.attributes = valid_organization_attributes.except(:email)
-    @organization.should have(3).errors_on(:email)
+    @organization.should have(1).errors_on(:email)
   end
   
   it 'should require a unique email' do
@@ -80,14 +80,9 @@ describe Organization do
     @organization1.should have(1).errors_on(:email)
   end
   
-  it 'should require a zip code' do
-    @organization.attributes = valid_organization_attributes.except(:zip_code)
-    @organization.should have(2).errors_on(:zip_code)
-  end
-
   it 'should require a name' do
     @organization.attributes = valid_organization_attributes.except(:name)
-    @organization.should have(2).errors_on(:name)
+    @organization.should have(1).errors_on(:name)
   end
 
   it 'should authenticate an organization by email and password' do
@@ -194,13 +189,15 @@ end
 
 describe Organization, "that already exists" do
   before(:each) do
-    @organization = Organization.new(valid_organization_attributes)
+    @organization = Factory.build(:organization)
   end
   
   it 'should reset password' do
+    email    = 'brian.terlson@gmail.com'
+    password = 'new password'
     @organization.save
-    @organization.update_attributes(:password => 'new password', :password_confirmation => 'new password')
-    Organization.authenticate('brian.terlson@gmail.com', 'new password').should == @organization
+    @organization.update_attributes(:password => password, :password_confirmation => password, :email => email)
+    Organization.authenticate(email, password).should == @organization
   end
   
   it "should create a reset password key" do    
@@ -307,13 +304,32 @@ describe Organization, "that already exists" do
     @network.organizations << @organization2
     @organization.networks.delete(@network)
     @network.owner.should eql(@organization2)
-  end
+  end  
+  
+  it "Should notify us when a pending account has been created" do
+    @organization.is_pending = true
+    Notifier.should_receive(:deliver_pending_account_creation_notification)
+    @organization.save!
+  end 
+  
+  it "Should destroy any sponsored surveys" do
+    @organization.save
+    @survey = Factory(:running_survey, :sponsor => @organization)
+    @question = Factory(:question, :survey => @survey)
+    @participation = Factory.build(:participation, :survey => @survey, :participant => @organization, :responses => [])
+    
+    @participation.responses << Factory.build(:response, :question => @question)
+    @participation.save
+    
+    lambda{ @organization.destroy }.should change(@organization.sponsored_surveys, :count).from(1).to(0)
+  end 
+    
 end
 
 describe Organization, "built from an invitation" do
   before(:each) do
     @invitation = Factory.create(:external_invitation)
-    @organization = Organization.new(:invitation_or_pending_account => @invitation)
+    @organization = Organization.new(:invitation => @invitation)
   end
   
   after(:each) do
@@ -327,30 +343,88 @@ describe Organization, "built from an invitation" do
   it "should have an email" do
     @organization.email.should == @invitation.email
   end   
+  
+  it "should be activated" do
+    @organization.activated?.should be_true
+  end
+  
+  it "should not be pending" do
+    @organization.is_pending?.should be_false
+  end  
 
 end
 
-describe Organization, "built from a pending account" do
+describe Organization, "not built from an invitation" do
   before(:each) do
-    @pending_account = Factory.create(:pending_account)
-    @organization = Organization.new(:invitation_or_pending_account => @pending_account)
+    @organization = Organization.new
+  end
+    
+  it "should be pending" do
+    @organization.is_pending?.should be_true
+  end   
+  
+  it "should not be activated" do
+    @organization.activated?.should be_false
+  end   
+  
+  it "should have an activation key" do
+    @organization.activation_key.should_not be_nil
   end
   
-  after(:each) do
-    @pending_account.destroy
+  it "should have an activation key created at" do
+    @organization.activation_key_created_at.should_not be_nil
+  end  
+
+end
+
+describe Organization, "that is pending and requires activation" do
+
+  before(:each) do
+    @organization = Factory(:pending_organization)
+  end
+ 
+  it "Should be activated after activation" do
+    lambda{ @organization.activate }.should change(@organization, :activated?).from(false).to(true)
   end
   
-  it "should have a name" do
-    @organization.name.should == @pending_account.organization_name
-  end   
+  it "Should not have exceeded the reporting threshold" do
+    @organization.has_exceeded_reporting_threshold?.should be_false
+  end
   
-  it "should have an email" do
-    @organization.email.should == @pending_account.email
-  end   
+  it "Should exceed the reporting threshold after being reported" do
+    lambda{ @organization.increment(:times_reported) }.should change(@organization, :has_exceeded_reporting_threshold?).from(false).to(true)
+  end
   
-  it "should have a contact name" do
-    @organization.contact_name.should_not be_blank
-  end   
+  it "Should not have an expired activation window" do
+    @organization.activation_window_has_expired?.should be_false
+  end
+  
+  it "Should have an expired activation window after 3 days without activation" do
+    @organization.activation_key_created_at = 4.days.ago
+    @organization.activation_window_has_expired?.should be_true
+  end 
+  
+  it "Should not be disabled" do
+    @organization.disabled?.should be_false
+  end
+  
+  it "Should be disabled after exceeding the times reported threshold" do
+    lambda{ @organization.increment(:times_reported) }.should change(@organization, :disabled?).from(false).to(true)
+  end
+  
+  it "Should be disabled after exceeding the activation window" do
+    @organization.activation_key_created_at = 4.days.ago
+    @organization.disabled?.should be_true
+  end  
+  
+  it "Should increment the times reported flag when reported" do
+    lambda{ @organization.report }.should change(@organization, :times_reported).from(0).to(1)
+  end
+  
+  it "Should deliver a notification email when reported" do
+    Notifier.should_receive(:deliver_report_pending_organization)
+    @organization.report
+  end  
 
 end
 
