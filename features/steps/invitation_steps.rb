@@ -112,13 +112,12 @@ Then /^I should not see the organization$/ do
 end
 
 Then /^I should see the organizations in the invited list$/ do
-  pending
-  #@survey.invitations.each do |invitation|
-  #  if !@association_organizations.include?(invitation.invitee) then
-  #    next
-  #  else
-  #    assert(get_element_by_xpath("id('invitation_#{invitation.id.to_s}')").nil?)
-  #  end
-  #end
+  @survey.invitations.each do |invitation|
+    if !@association_organizations.include?(invitation.invitee) then
+      next
+    else
+      assert(get_element_by_xpath("id('invitation_#{invitation.id.to_s}')").nil?)
+    end
+  end
 end
 

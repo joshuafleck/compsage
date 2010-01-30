@@ -12,12 +12,7 @@ class Association::MembersController <  Association::AssociationController
   end
 
   def create
-    @member = current_association_by_owner.organizations.new
-    @member.attributes = params[:organization]
-    @member.associations << current_association_by_owner
-
-    @member.is_uninitialized_association_member = true
-    @member.is_pending                          = false
+    @member = current_association_by_owner.new_member(params[:organization])
 
     if @member.save then
       flash[:message] = "Member created" 
@@ -40,6 +35,18 @@ class Association::MembersController <  Association::AssociationController
       redirect_to association_members_path
     else
       render :action => :edit
+    end
+  end
+
+  def upload
+    if request.post? then
+      @importer = AssociationMemberImport.new(params[:flags])
+      @importer.association = current_association_by_owner
+      @importer.file = params[:csv_file]
+
+      @importer.import!
+
+      render :upload_success
     end
   end
 

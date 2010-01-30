@@ -1,0 +1,43 @@
+<%
+  title "Upload Members"
+  highlight_tab "members"
+%>
+<h2>Upload Members</h2>
+<% form_tag '', :multipart => true do %>
+
+  <p class="info">Your CSV file must have the following columns in exactly the following order:
+    <span id="csv_fields">
+      <span class="field">Firm Name</span>, 
+      <span class="field">Contact Name</span>, 
+      <span class="field">Contact Email</span>, 
+      <span class="field">Zip Code</span>, 
+      <span class="field"># of Employees</span>, 
+      <span class="field">SIC Code / NAICS Code</span>.
+    </span>
+    Zip code, number of employees, and NAICS code fields may be left blank if necessary, although this is
+    not recommended.
+  </p>
+
+  <label for="csv_file">Upload Member List in CSV format</label>
+  <%= file_field_tag :csv_file %>
+  
+  <h3>CSV Headers</h3>
+  <label><%= radio_button_tag 'flags[headers]', true, true %> CSV file includes a header row</label>
+  <label><%= radio_button_tag 'flags[headers]', false %> CSV file doesn't include a header row</label>
+
+  <h3>Update Current Members</h3>
+  <label><%= radio_button_tag 'flags[update]', true, true %> Update firms with new information</label>
+  <label><%= radio_button_tag 'flags[update]', false %> Ignore any new information</label>
+
+  <h3>Remove Old Members</h3>
+  <label><%= radio_button_tag 'flags[destroy]', false, true %> Keep firms not present in this import</label>
+  <label><%= radio_button_tag 'flags[destroy]', true %> Remove firms not present in this import</label>
+
+  <h3>New Members</h3>
+  <label><%= radio_button_tag 'flags[create]', true, true %> Add new members</label>
+  <label><%= radio_button_tag 'flags[create]', false %> Ignore new members</label>
+
+  <div class="submit">
+    <%= submit_tag "Upload Members" %>
+  </div>
+<% end %>

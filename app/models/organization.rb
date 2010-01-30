@@ -251,6 +251,16 @@ class Organization < ActiveRecord::Base
     end
   end
 
+  # Whether an association can update this org's information
+  def association_can_update?
+    return self.is_uninitialized_association_member?
+  end
+
+  # Whether an association can just delete this org
+  def association_can_delete?
+    return self.is_uninitialized_association_member? && self.associations.count == 1
+  end
+
   private
   
   # Destroy the network if it has zero members.
