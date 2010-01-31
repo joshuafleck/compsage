@@ -11,9 +11,6 @@
     <%if !organization.state.blank? then%><%=organization.state%><% end %>
     <%if !organization.city.blank? || !organization.state.blank? then%><br /><% end %>
     <%if !organization.contact_name.blank? then%><span class="label">Contact: </span><%=highlight(organization.contact_name,@search_text)%><br /><% end %>
-    <%if !organization.industry.blank? then%>
-      <span class="label">Industry: </span><%=highlight(organization.industry,@search_text)%>
-    <% end %>
   </div>
   <div class="actions">
     <span class="label">Invite To: </span>

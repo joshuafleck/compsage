@@ -49,7 +49,6 @@ class Organization < ActiveRecord::Base
 
   validates_format_of       :zip_code, :with => /^\d{5}$/, :allow_blank => true
   validates_length_of       :location, :maximum => 60, :allow_blank => true
-  validates_length_of       :industry, :maximum => 100, :allow_blank => true
   validates_presence_of     :contact_name, :if => Proc.new { |user| user.is_pending? }
   validates_length_of       :contact_name, :maximum => 100, :allow_blank => true
   validates_length_of       :city, :maximum => 50, :allow_blank => true
@@ -64,7 +63,7 @@ class Organization < ActiveRecord::Base
   attr_accessor :terms_of_use
 
   attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name,
-                  :industry, :terms_of_use, :phone, :phone_extension
+                  :terms_of_use, :phone, :phone_extension
 
   # Constant definition
   METERS_PER_MILE = 1609.344
