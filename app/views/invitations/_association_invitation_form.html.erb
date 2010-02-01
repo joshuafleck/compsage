@@ -36,4 +36,15 @@
   </li>
 <% end %>  
 </ul>
+<script>
+  $('reset_link').observe('click', function(e){
+    e.stop();
+    $('organization_name').value = "";
+    $('organization_location').selectedIndex = 0;
+    
+    $$('ul#association_organizations > li').each(function(org_li){
+      org_li.show();
+    });
+  });
+</script>
 </div>
