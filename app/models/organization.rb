@@ -58,12 +58,13 @@ class Organization < ActiveRecord::Base
   validates_presence_of     :phone, :if => Proc.new { |user| user.is_pending? }
   validates_length_of       :phone,  :is =>10, :allow_blank => true
   validates_length_of       :phone_extension,  :maximum => 6, :allow_blank => true
+  validates_numericality_of :size, :allow_blank => true
   
   validates_acceptance_of :terms_of_use, :on => :create  
   attr_accessor :terms_of_use
 
   attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name,
-                  :terms_of_use, :phone, :phone_extension
+                  :terms_of_use, :phone, :phone_extension, :size
 
   # Constant definition
   METERS_PER_MILE = 1609.344
@@ -81,6 +82,7 @@ class Organization < ActiveRecord::Base
     
     has 'latitude', :as => :latitude, :type => :float
     has 'longitude', :as => :longitude, :type => :float
+    has 'size', :as => :size, :type => :integer
 
     set_property :latitude_attr   => "latitude"
     set_property :longitude_attr  => "longitude"

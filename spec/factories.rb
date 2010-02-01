@@ -43,7 +43,6 @@ Factory.define :organization do |o|
   o.city              'Minneapolis'
   o.state             'MN'
   o.zip_code          '55413'
-  o.industry          'Healthcare: Managed Care'
   o.latitude          { Factory.next(:latitude) }
   o.longitude         { Factory.next(:longitude) }
   o.crypted_password  '27e5532e75526ff4574e3e8c8c2a48fb97415765'

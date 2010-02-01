@@ -213,7 +213,7 @@ namespace :data_generator do
         :city => Faker::Address.city,
         :state => Faker::Address.us_state_abbr,
         :zip_code => Faker::Address.zip_code.slice(0..4),
-        :industry => AccountsHelper::INDUSTRIES[rand(53)])
+        :size => rand(1200))
     end
     
     puts "generating organizations complete"
@@ -241,7 +241,7 @@ namespace :data_generator do
           :city => Faker::Address.city,
           :state => Faker::Address.us_state_abbr,
           :zip_code => Faker::Address.zip_code.slice(0..4),
-          :industry => AccountsHelper::INDUSTRIES[rand(53)])
+          :size => rand(1200))
           
           association.organizations << organization
       end

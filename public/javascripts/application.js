@@ -993,6 +993,7 @@ function InviteList(survey_id) {
       //observer for the association integration form
       $('organization_name').observe('keyup', liveAssociationFilter);
       $('organization_location').observe('change', liveAssociationFilter);
+      $('organization_size').observe('change', liveAssociationFilter);
       //observe invite button click for multi-select invitations
       $('invite_link').observe('click', submitMultipleInvitations);      
     }
@@ -1043,10 +1044,13 @@ function InviteList(survey_id) {
     //if value length is less than 3, set to blank so it is ignored.
     value = value.length > 2 ? value : "";
     var distance = $('organization_location').value;
-    if(value != ""  || distance != ""){
+    var size = $('organization_size').value;
+    
+    if(value != ""  || distance != "" || size !=""){
       new Ajax.Request('/organizations/search_for_association_list.json', {
         'method': 'get',
-        'parameters': {'search_text': value, 'distance': distance},
+        'parameters': {'search_text': value, 'distance': distance,
+                        'size': size},
         'requestHeaders': {'Accept':'application/json'},
         'onSuccess': function(transport) {
           toggleOrganizations(transport.responseText.evalJSON());
