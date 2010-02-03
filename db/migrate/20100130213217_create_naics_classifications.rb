@@ -20,12 +20,13 @@ class CreateNaicsClassifications < ActiveRecord::Migration
     classification_file = File.expand_path(File.join(RAILS_ROOT, 'utils/classification_data/naics_codes.csv'))
 
     FasterCSV.foreach(classification_file) do |c|
-      NaicsClassification.create!(
-        :code => c[0],
+      nc = NaicsClassification.new(
         :code_2002 => c[1],
         :sic_code => c[2],
         :description => c[3]
       )
+      nc.code = c[0]
+      nc.save!
     end
   end
 
