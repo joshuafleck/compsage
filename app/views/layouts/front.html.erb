@@ -20,7 +20,6 @@
       <% if current_survey_invitation then %>
         <li id="surveys"><%= link_to "Survey", survey_path(current_survey_invitation.survey_id) %></li>
       <% end %>
-      <li id="how"><%= link_to "How it works", home_path('how') %></li>     
       <li id="join">
       		<%= link_to "Sign Up", new_account_path() %>
       </li>
