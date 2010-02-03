@@ -353,9 +353,13 @@ div.benefit p {
   height: 40px;
 }
 
+div.first_image_header {
+  color: #455349;
+  margin: 1em 0px 0.5em 0px;
+}
 div.image_header {
   color: #455349;
-  margin: 20px 0px 10px 0px;
+  margin: 2em 0px 0.5em 0px;
 }
 
 .main_page {
