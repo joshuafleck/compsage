@@ -4,6 +4,6 @@ class AddSizeToOrganization < ActiveRecord::Migration
   end
 
   def self.down
-    remove_column :organization, :size
+    remove_column :organizations, :size
   end
 end
