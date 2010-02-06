@@ -25,10 +25,6 @@
   <label><%= radio_button_tag 'flags[headers]', true, true %> CSV file includes a header row</label>
   <label><%= radio_button_tag 'flags[headers]', false %> CSV file doesn't include a header row</label>
 
-  <h3>Update Current Members</h3>
-  <label><%= radio_button_tag 'flags[update]', true, true %> Update firms with new information</label>
-  <label><%= radio_button_tag 'flags[update]', false %> Ignore any new information</label>
-
   <h3>Remove Old Members</h3>
   <label><%= radio_button_tag 'flags[destroy]', false, true %> Keep firms not present in this import</label>
   <label><%= radio_button_tag 'flags[destroy]', true %> Remove firms not present in this import</label>
