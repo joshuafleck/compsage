@@ -21,17 +21,17 @@
   <label for="csv_file">Upload Member List in CSV format</label>
   <%= file_field_tag :csv_file %>
   
-  <h3>CSV Headers</h3>
-  <label><%= radio_button_tag 'flags[headers]', true, true %> CSV file includes a header row</label>
-  <label><%= radio_button_tag 'flags[headers]', false %> CSV file doesn't include a header row</label>
+  <h3>Import File Headers</h3>
+  <label><%= radio_button_tag 'flags[headers]', true, true %> First row is a header</label>
+  <label><%= radio_button_tag 'flags[headers]', false %> No headers present</label>
 
-  <h3>Remove Old Members</h3>
-  <label><%= radio_button_tag 'flags[destroy]', false, true %> Keep firms not present in this import</label>
-  <label><%= radio_button_tag 'flags[destroy]', true %> Remove firms not present in this import</label>
+  <h3>Remove Any Members Not Present In This Import</h3>
+  <label><%= radio_button_tag 'flags[destroy]', true %> Yes, remove firms not present in this import</label>
+  <label><%= radio_button_tag 'flags[destroy]', false, true %> No, keep firms not present in this import</label>
 
-  <h3>New Members</h3>
-  <label><%= radio_button_tag 'flags[create]', true, true %> Add new members</label>
-  <label><%= radio_button_tag 'flags[create]', false %> Ignore new members</label>
+  <h3>Add New Members</h3>
+  <label><%= radio_button_tag 'flags[create]', true, true %> Yes, add new members found in this import</label>
+  <label><%= radio_button_tag 'flags[create]', false %> No, ignore any new members</label>
 
   <div class="submit">
     <%= submit_tag "Upload Members" %>
