@@ -1,11 +1,14 @@
 class CreateNaicsClassifications < ActiveRecord::Migration
+  
   def self.up
     create_table :naics_classifications, :id => false do |t|
       t.integer :code, :null => false
       t.integer :code_2002
       t.string  :description, :null => false
-
       t.integer :sic_code
+      t.integer :lft
+      t.integer :rgt
+      t.integer :parent_id
     end
 
     add_index :naics_classifications, :code, :primary_key => :true
@@ -15,19 +18,9 @@ class CreateNaicsClassifications < ActiveRecord::Migration
     add_column :organizations, :naics_code, :string, :limit => 6
     remove_column :organizations, :industry
 
-    puts "Importing NAICS classifications."
+    # Hack to load the classifications. The betternestedset plugin is unavailable from the database migration.
+    system("rake naics_classification:load RAILS_ENV=#{Rails.env}")
 
-    classification_file = File.expand_path(File.join(RAILS_ROOT, 'utils/classification_data/naics_codes.csv'))
-
-    FasterCSV.foreach(classification_file) do |c|
-      nc = NaicsClassification.new(
-        :code_2002 => c[1],
-        :sic_code => c[2],
-        :description => c[3]
-      )
-      nc.code = c[0]
-      nc.save!
-    end
   end
 
   def self.down

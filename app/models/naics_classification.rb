@@ -1,5 +1,6 @@
 class NaicsClassification < ActiveRecord::Base
   set_primary_key :code 
+  acts_as_nested_set
 
   # In some cases we don't want to throw a record not found error if the naics code isn't found, so we can use this
   # in place of NC.find()
@@ -22,4 +23,5 @@ class NaicsClassification < ActiveRecord::Base
 
     find_by_sic_code(sic_code)
   end
+  
 end
