@@ -1,6 +1,8 @@
 class Association < ActiveRecord::Base
   include Authentication
   include Authentication::ByPassword
+  include PhoneNumberFormatter
+  format_phone_fields :contact_phone
   
   has_and_belongs_to_many :organizations
   has_many :predefined_questions
@@ -10,20 +12,22 @@ class Association < ActiveRecord::Base
   validates_length_of     :subdomain, :in => 3..20
   validates_format_of     :subdomain, :with => /^[A-Za-z0-9]*$/
   
-  validates_presence_of     :owner_email
-  validates_length_of       :owner_email,    :within => 6..100 #r@a.wk
-  validates_uniqueness_of   :owner_email,    :case_sensitive => false
-  validates_format_of       :owner_email,    :with => RE_EMAIL_OK, :message => MSG_EMAIL_BAD
+  validates_presence_of     :contact_email
+  validates_length_of       :contact_email,    :within => 6..100 #r@a.wk
+  validates_uniqueness_of   :contact_email,    :case_sensitive => false
+  validates_format_of       :contact_email,    :with => RE_EMAIL_OK, :message => MSG_EMAIL_BAD
   validates_length_of       :crypted_password, :maximum => 40, :allow_nil => :true
   validates_length_of       :salt, :maximum => 40, :allow_nil => :true
   
-  attr_accessible :owner_email, :password, :password_confirmation, :name, :subdomain,
-                  :logo
+  validates_length_of       :contact_phone,  :is =>10, :allow_blank => true
+ 
+  attr_accessible :contact_email, :password, :password_confirmation, :name, :subdomain, :member_greeting,
+                  :contact_person, :contact_name, :contact_phone, :contact_phone_extension
                   
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   #
-  def self.authenticate(owner_email, password)
-    u = find_by_owner_email(owner_email) # need to get the salt
+  def self.authenticate(contact_email, password)
+    u = find_by_contact_email(contact_email) # need to get the salt
     
     u && u.authenticated?(password) ? u : nil
   end
