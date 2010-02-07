@@ -1,4 +1,8 @@
-<% title "Association Owner - Sign In" %>
+<% title "Association Administration - Sign In" %>
+
+<p>You must login with with the email associated with this association. It is not a standard CompSage account.
+   If you do now know the email or forgot your password for the association, please 
+   <%= link_to "contact us.", contact_path %></p>
 <div style="display:none;">Need this div for flash notices in IE6</div>
 <%=flash_messages%>
 <% form_tag association_session_path(@form_options) do %>
