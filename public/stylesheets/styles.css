@@ -1056,6 +1056,10 @@ div#association_member_signin h3.first_time {
   margin-top: 2em;
 }
 
+div#association_question {
+  float: left;
+}
+
 
 /* Association Upload Form */
 

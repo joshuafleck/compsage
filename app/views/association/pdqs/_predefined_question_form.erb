@@ -9,6 +9,7 @@
 %>
 <%= error_messages_for :predefined_question, :question %>
 <br />
+<div id="association_question">
 <% form_for @predefined_question do |f| %>
   <p class="required">All fields are required.</p>
   <%= f.label :name, "Name", :class => 'discussion_label' %>
@@ -29,5 +30,10 @@
     <input    type="submit"  
               value="<%= predefined_question.new_record? ? 'Create' : 'Update' %>" /> or 
     <%= link_to "Cancel", association_settings_path %>
+  </div>
+  </div>
+  <div class="howto-left">
+    <img src="/images/association_question.png" alt="">
+    <div class="caption">An association question on a new association survey .</div>
   </div>
 <% end %>
