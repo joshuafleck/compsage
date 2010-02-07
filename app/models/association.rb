@@ -4,6 +4,8 @@ class Association < ActiveRecord::Base
   include PhoneNumberFormatter
   format_phone_fields :contact_phone
   
+  has_attached_file :logo, :styles => {:normal => '512>'}, :default_style => :normal
+ 
   has_and_belongs_to_many :organizations
   has_many :predefined_questions
 
@@ -22,7 +24,7 @@ class Association < ActiveRecord::Base
   validates_length_of       :contact_phone,  :is =>10, :allow_blank => true
  
   attr_accessible :contact_email, :password, :password_confirmation, :name, :subdomain, :member_greeting,
-                  :contact_person, :contact_name, :contact_phone, :contact_phone_extension
+                  :contact_person, :contact_name, :contact_phone, :contact_phone_extension, :logo
                   
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   #

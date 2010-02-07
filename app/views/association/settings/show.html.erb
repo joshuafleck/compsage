@@ -62,5 +62,10 @@ your contact email is the email address you use to access the system.</p>
   </div>
 <% end %>
 <h3>Branding</h3>
-<p>Logo Upload</p>
-
+<p class="instructions">The logo will appear on the front page where your members sign in.</p>
+<% form_for :association, :url => association_settings_path, :html => {:method => :put, :multipart => true} do |f| %>
+  <%= f.file_field :logo %>
+  <div class="submit">
+    <%= f.submit "Upload Logo" %>
+  </div>
+<% end %>

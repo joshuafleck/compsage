@@ -8,7 +8,9 @@
   <%=flash_messages%>
   <%=error_messages_for :association_member%>
 
-  <img width="512" height="100" src="/images/shawarma.gif" />
+  <% if current_association.logo.file? %>
+    <%= image_tag current_association.logo.url %>
+  <% end %>
   <% if current_association.member_greeting.blank? then %>
     <p>
     Welcome to CompSage, provided by <%= current_association.name %>. You may log in on the right. If this is your
