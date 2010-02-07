@@ -1,27 +1,44 @@
 class AssociationMemberImport
-  # Valid flags:
+  # Valid options:
   # * Update: Update existing members with new information. Default true.
   # * Create: Create new members that don't already exist. Default true.
   # * Destroy: Destroy members that aren't a part of the import. Default false.
   # * Headers: Whether the CSV file contains headers. Default false.
+  # * Classification: What industry classification is used. Valid options are naics2007, naics2002, and sic.
   #
   # Flags here are strings since the keys may come from form values.
-  DEFAULT_FLAGS = {'update' => true, 'create' => true, 'destroy' => false, 'headers' => false}.freeze
+  DEFAULT_OPTIONS = {'update' => true,
+                     'create' => true,
+                     'destroy' => false,
+                     'headers' => false,
+                     'classification' => 'naics2007'}.freeze
   
-  attr_accessor :association, :file, :column_map, :valid_members, :invalid_members, :deleted_members, :skipped_members, :flags
+  attr_accessor :association, :file, :column_map, :valid_members, :invalid_members, :deleted_members, :skipped_members,
+                :options
 
   # Maps CSV columns to organization attributes
-  DEFAULT_COLUMN_MAP = {:name => 0, :contact_name => 1, :email => 2, :zip_code => 3}
+  DEFAULT_COLUMN_MAP = {:name => 0,
+                        :contact_name => 1,
+                        :email => 2,
+                        :zip_code => 3,
+                        :size => 4,
+                        :naics_code => 5}
 
   class InvalidRow < RuntimeError; end
   class NoImportFile < RuntimeError; end
 
-  # Set flags an initialize our member arrays.
+  # Set options an initialize our member arrays.
   #
-  def initialize(flags = {})
+  def initialize(options = {})
     # Need to convert "true" to true and "false" to false to facilitate passing booleans from form params.
-    @flags = DEFAULT_FLAGS.merge(flags.inject({}) { |acc, value|
-      acc[value.first] = (value.last == "true" ? true : false )
+    @options = DEFAULT_OPTIONS.merge(options.inject({}) { |acc, value|
+      acc[value.first] = if value.last == "true" then
+                           true
+                         elsif value.last == "false" then
+                           false
+                         else
+                           value.last
+                         end
       acc
     })
     @valid_members   = []
@@ -36,7 +53,7 @@ class AssociationMemberImport
   def import!
     raise NoImportFile if @file.nil?
 
-    FCSV.parse(@file, :headers => @flags['headers']) do |row|
+    FCSV.parse(@file, :headers => @options['headers']) do |row|
       begin
         member = create_member_from_csv(row)
 
@@ -53,7 +70,7 @@ class AssociationMemberImport
       end
     end
 
-    if @flags['destroy']
+    if @options['destroy']
       current_org_ids = (@valid_members + @invalid_members).collect{|o| o.id}.compact
       existing_org_ids = @association.organization_ids
 
@@ -73,17 +90,17 @@ class AssociationMemberImport
   private
 
   # Creates an association member from the given row in the CSV import. May return nil if the member doesn't exist in
-  # the database yet and the flags tell us we can't create them.
+  # the database yet and the options tell us we can't create them.
   def create_member_from_csv(row)
     attributes = attributes_from_csv(row)
     member     = find_or_initialize_member(attributes)
     
-    # If the member isn't uninitialized, we can't update it. Also, don't update if the flags tell us not to.
-    if member.association_can_update? && @flags['update']
+    # If the member isn't uninitialized, we can't update it. Also, don't update if the options tell us not to.
+    if member.association_can_update? && @options['update']
       member.attributes = attributes
     end
 
-    if member.new_record? && !@flags['create']
+    if member.new_record? && !@options['create']
       # We can't create members.
       @skipped_members << member
 
@@ -102,6 +119,21 @@ class AssociationMemberImport
     attrs = {}
 
     map.each { |attr, index| attrs[attr] = (row[index] || "").strip }
+
+    if attrs[:naics_code] then
+      puts "Assigning industry with option '#{@options['classification']}'"
+      # Now assign industry.
+      case @options['classification']
+      when 'naics2007'
+        # Here we attempt to match against our database of codes because we don't want bogus codes sitting around. If the
+        # code isn't found, the organization's code will be null.
+        attrs[:naics_code] = NaicsClassification.from_2007_naics_code(attrs[:naics_code]).try(:code).try(:to_s)
+      when 'naics2002'
+        attrs[:naics_code] = NaicsClassification.from_2002_naics_code(attrs[:naics_code]).try(:code).try(:to_s)
+      when 'sic'
+        attrs[:naics_code] = NaicsClassification.from_sic_code(attrs[:naics_code]).try(:code).try(:to_s)
+      end
+    end
 
     return attrs
   end

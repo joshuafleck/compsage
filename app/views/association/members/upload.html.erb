@@ -33,6 +33,10 @@
   <label><%= radio_button_tag 'flags[create]', true, true %> Yes, add new members found in this import</label>
   <label><%= radio_button_tag 'flags[create]', false %> No, ignore any new members</label>
 
+  <h3>Industry Classification Used</h3>
+  <label><%= radio_button_tag 'flags[classification]', 'naics2007', true %> 2007 NAICS</label>
+  <label><%= radio_button_tag 'flags[classification]', 'naics2002' %> 2002 NAICS</label>
+  <label><%= radio_button_tag 'flags[classification]', 'sic' %> 1987 SIC</label>
   <div class="submit">
     <%= submit_tag "Upload Members" %>
   </div>

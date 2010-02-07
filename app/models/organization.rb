@@ -64,7 +64,7 @@ class Organization < ActiveRecord::Base
   attr_accessor :terms_of_use
 
   attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name,
-                  :terms_of_use, :phone, :phone_extension, :size
+                  :terms_of_use, :phone, :phone_extension, :size, :naics_code
 
   # Constant definition
   METERS_PER_MILE = 1609.344

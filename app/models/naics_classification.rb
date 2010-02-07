@@ -1,8 +1,14 @@
 class NaicsClassification < ActiveRecord::Base
   set_primary_key :code 
 
+  # In some cases we don't want to throw a record not found error if the naics code isn't found, so we can use this
+  # in place of NC.find()
+  def self.from_2007_naics_code(naics_2007)
+    find_by_code(naics_2007)
+  end
+
   def self.from_2002_naics_code(naics_2002)
-    find_by_naics_2002(naics_2002)
+    find_by_code_2002(naics_2002)
   end
 
   def self.from_sic_code(sic_code)
