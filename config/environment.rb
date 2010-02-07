@@ -20,7 +20,6 @@ Rails::Initializer.run do |config|
   config.gem 'mbleigh-subdomain-fu', :version => '0.5.3', :lib => 'subdomain-fu'
   config.gem "ambethia-recaptcha", :lib => "recaptcha/rails", :source => "http://gems.github.com", :version => '0.2.2'
   config.gem 'fastercsv', :version => '1.5.0'
-  config.gem 'csv-mapper', :version => '0.0.4'
 
   config.load_paths += [RAILS_ROOT + "/app/workers", RAILS_ROOT + "/app/builders"]
 end
