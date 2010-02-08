@@ -74,4 +74,10 @@ describe Association do
     @association.save
     Organization.authenticate(valid_organization_attributes[:email], valid_organization_attributes[:password]).should == @organization
   end
+  
+  it "should create a new member with valid input"
+  it "should not create a new member with bad input"
+  it "should delete a member if it's deletable"
+  it "should remove the memeber for the association if it isn't deletable"
+  
 end

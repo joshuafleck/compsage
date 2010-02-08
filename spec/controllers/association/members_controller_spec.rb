@@ -249,3 +249,34 @@ describe Association::MembersController, "handling delete" do
     @organization.associations.should_not include(@association)
   end
 end
+
+describe Association::MembersController, "handling upload" do
+  before(:each) do
+    @association  = Factory(:association)
+    @organization = Factory(:organization)
+
+    login_as(@association)
+  end
+
+  def do_upload
+    upload :upload, @params
+  end
+
+  describe "with a valid CSV file" do
+    
+    describe "with all valid parameters" do
+      it "should be successful"
+      it "should render the upload successful page"
+      it "should change the number of firms in the association"
+    end
+    
+    describe "with an invalid format" do
+      it "should give an error message"
+    end
+    
+  end
+  
+  describe "with an invalid file" do
+    it "should give an error message"
+  end
+end

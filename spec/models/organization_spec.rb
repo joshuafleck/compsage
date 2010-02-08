@@ -514,4 +514,7 @@ describe Organization, "That is in an association (and is initialized)" do
     @organization.leave_association(@association)
     @organization.associations.should_not include(@association)
   end
+  
+  it "should be deletable and updatable by association if uninitialized"
+  it "should not be deletable and updatable by association if initialized"
 end
