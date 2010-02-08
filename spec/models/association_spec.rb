@@ -5,7 +5,7 @@ describe Association do
     @valid_attributes = {
       :name => "Manufacturers Alliance",
       :subdomain => "mfrall",
-      :owner_email => "joe@domain.com",
+      :contact_email => "joe@domain.com",
       :password => 'test12',
       :password_confirmation => 'test12'
     }
@@ -43,30 +43,30 @@ describe Association do
   end
   
   it 'should require an email' do
-    @association.attributes = @valid_attributes.except(:owner_email)
-    @association.should have(3).errors_on(:owner_email)
+    @association.attributes = @valid_attributes.except(:contact_email)
+    @association.should have(3).errors_on(:contact_email)
   end
   
   it 'should require a unique email' do
     @association.attributes = @valid_attributes
     @association.save
     @association1 = Association.new(@valid_attributes.with(:subdomain => "another"))
-    @association1.should have(1).errors_on(:owner_email)
+    @association1.should have(1).errors_on(:contact_email)
   end
   
   it "should not be valid with a email shorter than 5 characters" do
-  	@association.attributes = @valid_attributes.with(:owner_email => '1234')
-    @association.should have(2).errors_on(:owner_email)
+  	@association.attributes = @valid_attributes.with(:contact_email => '1234')
+    @association.should have(2).errors_on(:contact_email)
   end
   
   it "should not be valid with a email longer than 100 characters" do
-  	@association.attributes = @valid_attributes.with(:owner_email => "0"*101)
-    @association.should have(2).errors_on(:owner_email)
+  	@association.attributes = @valid_attributes.with(:contact_email => "0"*101)
+    @association.should have(2).errors_on(:contact_email)
   end
   
   it "should not be valid with an invalid email address" do
-  	@association.attributes = @valid_attributes.with(:owner_email => '@johnson@.com')
-    @association.should have(1).errors_on(:owner_email)
+  	@association.attributes = @valid_attributes.with(:contact_email => '@johnson@.com')
+    @association.should have(1).errors_on(:contact_email)
   end
   
   it 'should authenticate an association by owner email and password' do
