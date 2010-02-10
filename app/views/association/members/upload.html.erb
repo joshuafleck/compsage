@@ -3,6 +3,8 @@
   highlight_tab "members"
 %>
 <h2>Upload Members</h2>
+<div style="display:none;">Need this div for flash notices in IE6</div>
+<%=flash_messages%>
 <% form_tag '', :multipart => true do %>
 
   <p class="info">Your CSV file must have the following columns in exactly the following order:
