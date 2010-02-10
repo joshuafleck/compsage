@@ -42,14 +42,15 @@ class Association::MembersController <  Association::AssociationController
     if request.post? then
       @importer = AssociationMemberImport.new(params[:flags])
       @importer.association = current_association_by_owner
-      if !params[:csv_file].nil? && params[:csv_file] != "" then
-        @importer.file = params[:csv_file]
-      else
+      
+      #ensure presence of some file
+      if params[:csv_file].nil? || params[:csv_file] == "" then
         flash[:notice] = "You must specify a CSV file to upload"
         render :upload
         return # do not try to import, no file!
       end
-
+      
+      @importer.file = params[:csv_file]
       @importer.import!
 
       render :upload_success
