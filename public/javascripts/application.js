@@ -1180,6 +1180,122 @@ function InviteList(survey_id) {
   initializeObservers();
 }
 
+/**
+ * Logic for browsing the NAICS taxonomy
+ * @param naics_classification The code for the current node
+ */
+function NaicsClassificationList(parent_code, selected_code) {
+
+  this.childrenMap = $H();
+  this.ancestors = $A();
+
+  function initializeObservers() {
+    RetrieveAncestorAndChildNaicsClassifications(parent_code, selected_code);
+
+    $('naics_classification_back').observe('click', GoBack);
+    $('naics_classification_forward').observe('click', DrillDeeper);
+    
+  };
+  
+  /**
+   * Will retrieve the list of child and ancestor nodes from the server, and update the UI with that information
+   * @param value A naics code, or null, if no naics code was selected.
+   */
+  function RetrieveAncestorAndChildNaicsClassifications(currentCode, nextCode) {
+    new Ajax.Request('/naics_classifications/children_and_ancestors.json', {
+      'method': 'get',
+      'parameters': {'id': currentCode},
+      'requestHeaders': {'Accept':'application/json'},
+      'onSuccess': function(transport) {
+        var children = transport.responseText.evalJSON().children.evalJSON();
+        ancestors = transport.responseText.evalJSON().ancestors.evalJSON();
+            
+        UpdateChildNaicsClassifications(children, nextCode);
+        UpdateAncestorNaicsClassifications();
+      },
+      'onCreate': function() {
+        $('live_load_indicator').show();
+      },
+      'onComplete': function() {
+        $('live_load_indicator').hide();
+      }
+    });
+  };
+  
+  /**
+   * Rebuild the naics select box with a new set of nodes
+   * @param children An array of naics nodes
+   */
+  function UpdateChildNaicsClassifications(children, selectedCode) {
+
+    var child_naics_classifications = $('organization_naics_code');
+    
+    childrenMap = $H();
+    
+    // Remove the existing options
+    while(child_naics_classifications.options.length > 1){child_naics_classifications.remove(1);}
+    
+    // Create options for the child nodes
+    for(var i=0; i<children.size(); i++) {
+      var child = children[i];
+      childrenMap.set(child.code, child);
+      var childOption = document.createElement("option");
+      childOption.text = child.code + ": " + child.description;
+      childOption.value = child.code;
+      if(child.code == selectedCode) {
+        childOption.selected = true;
+      }
+      child_naics_classifications.add(childOption, null);
+    }
+  };  
+  
+  function UpdateAncestorNaicsClassifications() {
+    var ancestorsUL = $('naics_classification_ancestors');
+    
+    // Remove the existing options
+    ancestorsUL.innerHTML = '';
+    
+    // Create options for the child nodes
+    for(var i=0; i<ancestors.size(); i++) {
+      var ancestor = ancestors[i];
+      var ancestorLI = document.createElement("li");
+      ancestorLI.innerHTML = ancestor.code + ": " + ancestor.description;
+      ancestorsUL.insert(ancestorLI, { 'position' : 'last'});
+    }
+  };   
+  
+  /**
+   *
+   */
+  function DrillDeeper() {
+    var child_naics_classifications = $('organization_naics_code');
+    
+    var code = child_naics_classifications.options[child_naics_classifications.selectedIndex].value;
+    
+    if(code) {
+      RetrieveAncestorAndChildNaicsClassifications(code);
+    }
+  }
+  
+  /**
+   *
+   */  
+  function GoBack() {
+    var parentOfSelectedNode = ancestors[ancestors.size() - 2];
+    var selectedNode = ancestors[ancestors.size() - 1];
+    
+    var parentCodeOfSelectedNode = null;
+    if(parentOfSelectedNode) {
+      parentCodeOfSelectedNode = parentOfSelectedNode.code
+    }
+    
+    RetrieveAncestorAndChildNaicsClassifications(parentCodeOfSelectedNode, selectedNode.code);    
+
+  }
+
+  initializeObservers();
+}
+
 /*
  * This will add observers to all form inputs that will call the specified method when enter is pushed
  * @form the form

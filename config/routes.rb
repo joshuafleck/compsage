@@ -57,4 +57,6 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :association_member, :member => {:sign_in => :any, :login_received => :get, :initialize_account => :get}
   map.resources :predefined_questions, :controller => "association/pdqs"
   
+  map.resources :naics_classifications, :collection => {:children_and_ancestors => :any}  
+  
 end

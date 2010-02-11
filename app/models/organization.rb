@@ -4,6 +4,8 @@ class Organization < ActiveRecord::Base
   include Authentication::ByCookieToken
   include PhoneNumberFormatter
   format_phone_fields :phone  
+  
+  xss_terminate :except => [ :naics_code ]
 
   before_save :assign_latitude_and_longitude
   after_create :send_pending_account_notification
@@ -35,6 +37,8 @@ class Organization < ActiveRecord::Base
   has_many :invitations, :class_name => "Invitation", :foreign_key => "invitee_id", :dependent => :destroy
 
   has_and_belongs_to_many :associations
+  
+  belongs_to :naics_classification, :foreign_key => :naics_code
   
   named_scope :is_not_uninitialized_association_member, :conditions => {:is_uninitialized_association_member => false}  
   
