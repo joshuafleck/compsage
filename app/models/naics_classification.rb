@@ -24,4 +24,15 @@ class NaicsClassification < ActiveRecord::Base
     find_by_sic_code(sic_code)
   end
   
+  # Some top-level nodes encompass multiple codes. This allows us to expose the hidden nodes to the users.
+  #
+  DISPLAY_MAP = { 31 => "31-33", 44 => "44-45", 48 => "48-49" }  
+  def display_code
+    if DISPLAY_MAP.has_key?(self.code) then
+      DISPLAY_MAP[self.code]
+    else
+      self.code
+    end      
+  end
+  
 end
