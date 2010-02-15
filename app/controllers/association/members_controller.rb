@@ -43,7 +43,7 @@ class Association::MembersController <  Association::AssociationController
       @importer = AssociationMemberImport.new(params[:flags])
       @importer.association = current_association_by_owner
       
-      #ensure presence of some file
+      # ensure presence of some file
       if params[:csv_file].nil? || params[:csv_file] == "" then
         flash[:notice] = "You must specify a CSV file to upload"
         render :upload
@@ -51,7 +51,10 @@ class Association::MembersController <  Association::AssociationController
       end
       
       @importer.file = params[:csv_file]
-      @importer.import!
+
+      Organization.suspended_delta do
+        @importer.import!
+      end
 
       render :upload_success
     end
