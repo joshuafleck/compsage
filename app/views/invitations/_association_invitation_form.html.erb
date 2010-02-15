@@ -6,8 +6,8 @@
   <label style="display: inline;">Within: </label>
   <select id="organization_location">
     <option value="">Anywhere</option>
-    <% (1..25).each do |i|%>
-    <option value="<%=(10*i).to_s%>"><%=(10*i).to_s%> miles</option>
+    <% [5, 10, 25, 50, 100, 250].each do |i|%>
+    <option value="<%=i %>"><%= i %> miles</option>
     <%end%>
   </select>
   <br />
@@ -25,7 +25,7 @@
   </select>
 </div>
 <div>
-  <a id="invite_link" href="#">Invite All! (Needs button)</a>
+  <a id="invite_link" href="#">Invite All</a>
   <a id="reset_link" href="#">Reset</a>
   <span id="invite_load_indicator" style="display: none;">
     <%= image_tag 'load_indicator.gif', :class => 'load_indicator' %>
