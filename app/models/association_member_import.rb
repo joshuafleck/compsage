@@ -121,7 +121,6 @@ class AssociationMemberImport
     map.each { |attr, index| attrs[attr] = (row[index] || "").strip }
 
     if attrs[:naics_code] then
-      puts "Assigning industry with option '#{@options['classification']}'"
       # Now assign industry.
       case @options['classification']
       when 'naics2007'
