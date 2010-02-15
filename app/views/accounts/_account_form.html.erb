@@ -64,7 +64,7 @@
       <%=f.hidden_field :naics_code%>
       <%=label_tag 'naics_select', 'Industry' %> 
       <ul id="naics_classification_ancestors"></ul>
-      <%=select_tag 'naics_select', "<option value=''>Select a naics code<option>", :style => "width: 210px;" %><%= image_tag "load_indicator_sm.gif", :id => "live_load_indicator", :class => 'invite_indicator', :style => "display:none;" %>&nbsp;<a id='naics_classification_back' href='#' style='display:none;'>Go back</a>
+      <%=select_tag 'naics_select', "", :style => "width: 210px;" %><%= image_tag "load_indicator_sm.gif", :id => "live_load_indicator", :class => 'invite_indicator', :style => "display:none;" %>&nbsp;<a id='naics_classification_back' href='#' style='display:none;'>Go back</a>
     </div>
   </div>  
   <div class="submit">
@@ -85,7 +85,7 @@
     <% elsif @organization.new_record? %>
       <%=link_to "Cancel", new_session_path %>
     <% else %>
-      <%=link_to "Finished", root_path %>
+      <%=link_to "Cancel", root_path %>
     <% end %>
   </div>
 <% end %>

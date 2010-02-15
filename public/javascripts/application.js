@@ -1236,7 +1236,17 @@ function NaicsClassificationList(selected_code) {
     var child_naics_classifications = $('naics_select');
         
     // Remove the existing options
-    while(child_naics_classifications.options.length > 1){child_naics_classifications.remove(1);}
+    while(child_naics_classifications.options.length > 0){child_naics_classifications.remove(0);}
+    
+    // Add a default option
+    var blankChildOption = document.createElement("option");
+    blankChildOption.text = $('organization_naics_code').value ? "Be more specific..." : "Select your industry" ;
+    blankChildOption.value = null;
+    try {
+      child_naics_classifications.add(blankChildOption, null);
+    } catch(ex) {
+      child_naics_classifications.add(blankChildOption);
+    }
     
     // Create options for the child nodes
     for(var i=0; i<children.size(); i++) {
@@ -1244,7 +1254,11 @@ function NaicsClassificationList(selected_code) {
       var childOption = document.createElement("option");
       childOption.text = child.display_code + ": " + child.description;
       childOption.value = child.code;
-      child_naics_classifications.add(childOption, null);
+      try {
+        child_naics_classifications.add(childOption, null);
+      } catch(ex) {
+        child_naics_classifications.add(childOption);
+      }
     }
     
     // Hide the select box if there are no more children
