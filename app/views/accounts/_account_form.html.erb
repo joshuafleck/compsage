@@ -89,4 +89,4 @@
     <% end %>
   </div>
 <% end %>
-<% content_for :initialize_js, "var naicsClassificationList = new NaicsClassificationList(#{!(@organization.naics_classification) ? 'null' : @organization.naics_classification.code});"%>
+<% content_for :initialize_js, "var naicsClassificationList = new NaicsClassificationList(#{!(@organization.naics_classification) ? '' : @organization.naics_classification.code});"%>

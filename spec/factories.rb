@@ -288,3 +288,8 @@ Factory.define :association do |a|
   a.crypted_password '27e5532e75526ff4574e3e8c8c2a48fb97415765'
   a.salt 'asdf'
 end
+
+Factory.define :naics_classification do |n|
+  n.code        { Factory.next(:counter) }
+  n.description { |a| "naics description #{a.code}" }
+end
