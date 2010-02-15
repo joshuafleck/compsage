@@ -39,12 +39,16 @@
         <%= organization.name %>
       </span> 
       <br /> 
+      <% if !organization.location.nil? then %>
       <span class="grey">
         Location: 
       </span>
       <span id="organization_<%= organization.id %>_location">
         <%= organization.location%>
       </span>
+      <% else %>
+      <span>&nbsp;</span>
+      <% end %>
       <a id="invite" href="#"><img src="/images/add_invitation_button.gif" /></a>
   </li>
 <% end %>  
