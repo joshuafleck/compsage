@@ -266,6 +266,14 @@ class Organization < ActiveRecord::Base
     return self.is_uninitialized_association_member? && self.associations.count == 1
   end
 
+  # See if the user entered a 10 digit zip code, and if so, just parse out the first 5 digits and call it a day.
+  def zip_code=(value)
+    if value.length == 10 && value.index("-") == 5 then
+      super(value[0, 5])
+    else
+      super
+    end
+  end
   private
   
   # Destroy the network if it has zero members.
