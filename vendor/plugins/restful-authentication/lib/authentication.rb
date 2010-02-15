@@ -6,7 +6,7 @@ module Authentication
     # RE_LOGIN_OK   = /\A[^[:cntrl:]\\<>\/&]*\z/              # Unicode, permissive
     MSG_LOGIN_BAD   = "use only letters, numbers, and .-_@ please."
 
-    RE_NAME_OK      = /\A[^[:cntrl:]\\<>\/]*\z/              # Unicode, permissive
+    RE_NAME_OK      = /\A[^[:cntrl:]<>]*\z/              # Unicode, permissive
     MSG_NAME_BAD    = "avoid non-printing characters and \\&gt;&lt;&amp;/ please."
 
     RE_EMAIL_OK     = /\A[A-Za-z0-9!#$\%&'*+\/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$\%&'*+\/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\Z/
