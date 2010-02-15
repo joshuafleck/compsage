@@ -7,12 +7,15 @@ describe AssociationMemberImport, "that has a valid CSV input" do
     @importer.file = valid_csv_file
     @association = Factory(:association)
     @importer.association = @association
-    
+    @importer.import!
   end
   
   it "should find valid members" do
-    @importer.import!
     @importer.valid_members.size.should == 5
+  end
+  
+  it "should add the member to the association" do
+    @association.organizations.size.should == @importer.valid_members.size
   end
 end
 
@@ -73,29 +76,117 @@ describe AssociationMemberImport, "that has a valid and invalid CSV input and va
   end
 end
 
-describe AssociationMemberImport, "that has existing members" do
-  
-  it "should remove exists organization from association if delete param is set" do
-    pending
+describe AssociationMemberImport, "that has existing members when the delete param" do
+  before(:each) do
+    @importer = AssociationMemberImport.new(valid_importer_params.with('destroy' => true))
+    @importer.file = valid_csv_file
+    @association = Factory(:association)
+    @importer.association = @association
+    
+    @org1 = Factory(:organization, :email => "josh@fleck.com", :name => "Imported Firm 2", :contact_name => "Josh Fleck")
+    @org2 = Factory(:organization, :email => "gone@gone.com", :name => "Delete this!", :contact_name => "Or else")
+    @uiorg1 = Factory( :uninitialized_association_member, 
+                      :email => "delete@me.com", 
+                      :name => "I should dissapear", 
+                      :contact_name => "From this app")
+    
+    @association.organizations << @org1
+    @association.organizations << @org2
+    
+    @importer.import!
   end
   
-  it "should find existing members by any attribute"
+  it "should remove existing organization from association if they aren't on the list" do
+    lambda { @association.organizations.find(@org2.id) }.should raise_error(ActiveRecord::RecordNotFound)
+    lambda { Organization.find(@org2.id) }.should_not raise_error(ActiveRecord::RecordNotFound)
+  end
+  
+  it "should not remove organizations on the list" do
+    lambda { @association.organizations.find(@org1.id) }.should_not raise_error(ActiveRecord::RecordNotFound)
+  end
+  
+  it "should delete uninitialized members" do
+    raise @importer.deleted_members.inspect
+    @importer.deleted_members.size.should == 1
+    lambda { Organization.find(@uiorg1.id) }.should raise_error(ActiveRecord::RecordNotFound)
+  end
+end
   
 
   
-  describe AssociationMemberImport, "that has uninitialized members" do
-    it "should successfully update an existing member from a csv row" do
-      pending
+describe AssociationMemberImport, "that has uninitialized and existing members" do
+  before(:each) do
+    @importer = AssociationMemberImport.new(valid_importer_params.with('update' => true))
+    @importer.file = valid_csv_file
+    @association = Factory(:association)
+    @importer.association = @association
+    
+    @org1 = Factory(:organization, 
+                    :email => "joe.wilson@importedfirm.com", 
+                    :name => "Imported Firm", 
+                    :contact_name => "This shouldn't change")
+                    
+    @uiorg1 = Factory(:uninitialized_association_member, 
+                      :email => "josh@fleck.com", 
+                      :name => "This should change", 
+                      :contact_name => "Josh Fleck")
+    
+    @uiorg2 = Factory(:uninitialized_association_member, 
+                      :email => "this@should.change", 
+                      :name => "Imported Firm 3", 
+                      :contact_name => "David Peterson")
+                      
+    @uiorg3 = Factory(:uninitialized_association_member, 
+                      :email => "brian.terlson@gmail.com", 
+                      :name => "Imported Firm 4", 
+                      :contact_name => "This Should Change")
+                                            
+    [@org1, @uiorg1, @uiorg2, @uiorg3].each do |o|
+      @importer.association.organizations << o
+    end
+                      
+    @importer.import!
+  end
+    it "should not update exiting non-uninitialized members" do
+      org = Organization.find(@org1.id)
+      org.contact_name.should == "This shouldn't change"
+    end
+        
+    it "should update uninitialized members name" do
+      org = Organization.find(@uiorg1.id)
+      org.name.should == "Imported Firm 2"
     end
     
-    it "should delete uninitialized members"
-  end
+    it "should update uninitialized members email" do
+      org = Organization.find(@uiorg2.id)
+      org.email.should == "david@peterson.com"
+    end
+    it "should update uninitialized members contact name" do
+      org = Organization.find(@uiorg3.id)
+      org.contact_name.should == "Brian Terlson"
+    end
 end
 
 describe AssociationMemberImport, "that has a missing CSV file" do
-    it "should fail if given bad file"
+  before(:each) do
+    @importer = AssociationMemberImport.new(valid_importer_params.with('destroy' => true))
+
+    @association = Factory(:association)
+    @importer.association = @association
+  end
+    it "should raise an error" do
+      lambda { @importer.import! }.should raise_error(AssociationMemberImport::NoImportFile)
+    end
 end
 
-describe AssociationMemberImport, "that has an invalid row" do
-  it "should identify the invalid rows"
+describe AssociationMemberImport, "that has special case input" do
+  describe AssociationMemberImport, "that has an ampersand" do
+    
+  end
+  
+  describe AssociationMemberImport, "that has a 10 digit zipcode" do
+  
+  end
+  
+  describe AssociationMemberImport, "that as random number of inputs"
 end
