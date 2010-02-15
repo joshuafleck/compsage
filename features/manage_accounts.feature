@@ -68,5 +68,13 @@ Feature: Manage accounts
     When I unsuccessfully reset my password 
     Then I should see "Please try again."    
     
+  Scenario: Selecting my industry
+    Given I am testing with firewatir
+    And I am on the new account page
+    When I select an industry
+    Then I should have an industry selected
+    When I traverse up the taxonomy
+    Then I should not have an industry selected
+    
 
 

@@ -1,4 +1,5 @@
 Given /I am on the new account page/ do
+  @naics = Factory(:naics_classification)
   visit add_subdomain(new_account_url)
 end
 
@@ -93,5 +94,29 @@ When /I unsuccessfully reset my password/ do
     fills_in "Password", :with => "reset password"
     fills_in "Confirm password", :with => "bad boy"
     clicks_button 'Reset My Password'
+end
+
+When /I select an industry/ do  
+  select @naics.code.to_s, :from => 'naics_select'
+  wait_for_javascript
+end
+
+When /I traverse up the taxonomy/ do  
+  click_link "naics_classification_back"
+  wait_for_javascript
+end
+
+Then /I should have an industry selected/ do
+  text = get_element_by_xpath("id('organization_naics_code')").value
+  text.should == @naics.code.to_s
+  text = get_element_by_xpath("id('naics_classification_ancestors')").text
+  text.should =~ /naics description/
+end
+
+Then /I should not have an industry selected/ do
+  text = get_element_by_xpath("id('organization_naics_code')").value
+  text.should == ""
+  text = get_element_by_xpath("id('naics_classification_ancestors')").text
+  text.should == ""
 end
 
