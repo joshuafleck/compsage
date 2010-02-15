@@ -1267,6 +1267,18 @@ div#recaptcha {
   margin-bottom: 1em;
 }
 
+ul#naics_classification_ancestors li.selected {
+  font-weight: bold;
+}
+
+/* Hack for stupid IE6 to prevent a big gap between the industry label and the select box */
+ul#naics_classification_ancestors {
+  height: 0px;
+}
+html > body ul#naics_classification_ancestors {
+  height: auto;
+}
+
 /* inline error description for survey fields eg. */
 div.error_description {
   display: inline;

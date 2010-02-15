@@ -1285,20 +1285,20 @@ function NaicsClassificationList(selected_code) {
       var description = ancestor.display_code + ": " + ancestor.description;
       // The selected node should be bold to signify its selection
       if(i == ancestors.size() - 1) {
-        var ancestorB = document.createElement("b");
-        ancestorB.innerHTML = description;
-        ancestorLI.insert(ancestorB, { 'position' : 'last'});
-      } else {
-        ancestorLI.innerHTML = description;
-      }
+        ancestorLI.className = 'selected';
+      } 
+      ancestorLI.innerHTML = description;
       ancestorsUL.insert(ancestorLI, { 'position' : 'last'});
     }
     
     // Hide the 'go back' link if we are at the level 1 option
+    // Hide the ancestors list if no ancestors are present (silly hack for IE6, otherwise there is a big gap in the form)
     if(ancestors.size() == 0) {
       $('naics_classification_back').hide();
+      ancestorsUL.hide();
     } else {
       $('naics_classification_back').show();
+      ancestorsUL.show();
     }
   };   
   
