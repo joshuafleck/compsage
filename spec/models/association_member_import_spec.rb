@@ -106,7 +106,6 @@ describe AssociationMemberImport, "that has existing members when the delete par
   end
   
   it "should delete uninitialized members" do
-    raise @importer.deleted_members.inspect
     @importer.deleted_members.size.should == 1
     lambda { Organization.find(@uiorg1.id) }.should raise_error(ActiveRecord::RecordNotFound)
   end
@@ -180,13 +179,61 @@ describe AssociationMemberImport, "that has a missing CSV file" do
 end
 
 describe AssociationMemberImport, "that has special case input" do
-  describe AssociationMemberImport, "that has an ampersand" do
+  before(:each) do
+    @importer = AssociationMemberImport.new(valid_importer_params.with('destroy' => true))
     
+    @association = Factory(:association)
+    @importer.association = @association
+  end
+  
+  describe AssociationMemberImport, "that has an ampersand" do
+    before(:each) do
+      @importer.file = "Imported & Firm, Joe Wilson, joe.wilson@importedfirm.com, 55407, 20, 30"
+      @importer.import!
+    end
+    
+    it "should consider the input valid" do
+       @importer.valid_members.size.should == 1
+    end
   end
   
   describe AssociationMemberImport, "that has a 10 digit zipcode" do
-  
+    before(:each) do
+      @importer.file = "Imported Firm, Joe Wilson, joe.wilson@importedfirm.com, 55407-1234, 20, 30"
+      @importer.import!
+    end
+    
+    it "should consider the input valid" do
+       @importer.valid_members.size.should == 1
+    end
   end
   
-  describe AssociationMemberImport, "that as random number of inputs"
+  describe AssociationMemberImport, "that is missing required of inputs" do
+    before(:each) do
+      @importer.file = "Imported Firm,,, 55407, 20, 30"
+      @importer.import!
+    end
+    
+    it "should not consider the input valid" do
+       @importer.invalid_members.size.should == 1
+    end
+  end
+  
+  describe AssociationMemberImport, "has a malformated row" do
+    before(:each) do
+      @importer.file = "Imported Firm 1, Joe Wilson, joe.wilson1@importedfirm.com
+                        Imported Firm 2, Joe Wilson, joe.wilson2@importedfirm.com, 55407, 20, 30, 12312, 12312, 123,12 312
+                        Imported Firm 3, Joe Wilson, joe.wilson3@importedfirm.com, , , 55407, 20, 3
+                         , , , , , "
+      @importer.import!
+    end
+    
+    it "should consider the input valid if there are no validation errors" do
+      @importer.valid_members.size.should == 3
+    end
+    
+    it "shouldn't consider the input valid or invalid if there's no useful info" do
+      @importer.invalid_members.size.should == 0
+    end
+  end
 end
