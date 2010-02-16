@@ -61,10 +61,7 @@
       <% end %>
       <%=f.label :size, 'Number of Employees' %> 
       <%=f.text_field :size, :size => 6 %>
-      <%=f.hidden_field :naics_code%>
-      <%=label_tag 'naics_select', 'Industry' %> 
-      <ul id="naics_classification_ancestors"></ul>
-      <%=select_tag 'naics_select', "", :style => "width: 210px;" %><%= image_tag "load_indicator_sm.gif", :id => "live_load_indicator", :class => 'invite_indicator', :style => "display:none;" %>&nbsp;<a id='naics_classification_back' href='#' style='display:none;'>Go back</a>
+      <%= render :partial => "naics_classifications/browse", :locals => {:code => !(@organization.naics_classification) ? '' : @organization.naics_classification.code} %>
     </div>
   </div>  
   <div class="submit">
@@ -89,4 +86,3 @@
     <% end %>
   </div>
 <% end %>
-<% content_for :initialize_js, "var naicsClassificationList = new NaicsClassificationList(#{!(@organization.naics_classification) ? '' : @organization.naics_classification.code});"%>

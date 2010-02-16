@@ -35,4 +35,10 @@ class NaicsClassification < ActiveRecord::Base
     end      
   end
   
+  # Required for thinking sphinx
+  #
+  def to_f
+    code.to_f
+  end
+  
 end

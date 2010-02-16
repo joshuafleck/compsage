@@ -83,6 +83,7 @@ class Organization < ActiveRecord::Base
     
     has is_uninitialized_association_member
     has associations(:id), :as => :association_ids
+    has naics_classification(:code), :as => :naics_code
     
     has 'latitude', :as => :latitude, :type => :float
     has 'longitude', :as => :longitude, :type => :float

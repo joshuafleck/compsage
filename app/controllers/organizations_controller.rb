@@ -84,6 +84,7 @@ class OrganizationsController < ApplicationController
     escaped_search_text = Riddle.escape(search_text)
     distance = params[:distance] || ""
     size = params[:size] || ""
+    naics = params[:naics] || ""
     
     search_options = {
     :per_page  => 1000,
@@ -98,10 +99,14 @@ class OrganizationsController < ApplicationController
       with_params.merge!("@geodist" => 0.0..(distance.to_f * Organization::METERS_PER_MILE) )
     end
     
-    if size  != "" then
+    if size != "" then
       #size should come in as a JSON array, so we need to convert to a rails array
       size_array = ActiveSupport::JSON.decode(size)
       with_params.merge!(:size => size_array[0].to_i..size_array[1].to_i)
+    end
+    
+    if naics != "" then
+      with_params.merge!(:naics_code => NaicsClassification.find(naics).full_set)
     end
 
     organizations = Organization.search escaped_search_text, search_options.merge!(:with => with_params)

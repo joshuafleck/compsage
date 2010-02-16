@@ -1,28 +1,37 @@
 <h3>Invite Members of <%=association.name%></h3>
 <div id="association_search">
   <span style="font-size: 95%; color: grey;">Filter firms by...</span> <br />
-  <label style="display: inline;">Name: </label>
-  <input id="organization_name" type="textbox"/>
-  <label style="display: inline;">Within: </label>
-  <select id="organization_location">
-    <option value="">Anywhere</option>
-    <% [5, 10, 25, 50, 100, 250].each do |i|%>
-    <option value="<%=i %>"><%= i %> miles</option>
-    <%end%>
-  </select>
+  <% form_row do %>
+    <% form_box do %>
+      <label for="organization_name">Name </label>
+      <input id="organization_name" type="textbox"/>
+    <% end %>
+    <% form_box do %>
+      <label for="organization_location">Distance </label>
+      <select id="organization_location">
+        <option value="">Anywhere</option>
+        <% [5, 10, 25, 50, 100, 250].each do |i|%>
+        <option value="<%=i %>"><%= i %> miles</option>
+        <%end%>
+      </select>
+    <% end %>
+    <% form_box do %>
+      <label for="organization_size">Size </label>
+      <select id="organization_size">
+        <option value="">Any Size</option>
+        <option value="[1,9]">1-9 Employees</option>
+        <option value="[10,24]">10-24 Employees</option>
+        <option value="[25,49]">25-49 Employees</option>
+        <option value="[50,99]">50-99 Employees</option>
+        <option value="[100,249]">100-249 Employees</option>
+        <option value="[250,499]">250-499 Employees</option>
+        <option value="[500,999]">500-999 Employees</option>
+        <option value="[1000,2147483647]">1,000+ Employees</option>
+      </select>
+    <% end %>
+  <% end %>
+  <%= render :partial => "naics_classifications/browse", :locals => {:code => ''} %>
   <br />
-  <label style="display: inline;">Size: </label>
-  <select id="organization_size">
-    <option value="">Any Size</option>
-    <option value="[1,9]">1-9 Employees</option>
-    <option value="[10,24]">10-24 Employees</option>
-    <option value="[25,49]">25-49 Employees</option>
-    <option value="[50,99]">50-99 Employees</option>
-    <option value="[100,249]">100-249 Employees</option>
-    <option value="[250,499]">250-499 Employees</option>
-    <option value="[500,999]">500-999 Employees</option>
-    <option value="[1000,2147483647]">1,000+ Employees</option>
-  </select>
 </div>
 <div>
   <a id="invite_link" href="#">Invite All</a>

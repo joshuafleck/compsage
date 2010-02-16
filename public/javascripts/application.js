@@ -994,6 +994,7 @@ function InviteList(survey_id) {
       $('organization_name').observe('keyup', liveAssociationFilter);
       $('organization_location').observe('change', liveAssociationFilter);
       $('organization_size').observe('change', liveAssociationFilter);
+      $('naics_select').observe('change', liveAssociationFilter);
       //observe invite button click for multi-select invitations
       $('invite_link').observe('click', submitMultipleInvitations);      
     }
@@ -1045,12 +1046,13 @@ function InviteList(survey_id) {
     value = value.length > 2 ? value : "";
     var distance = $('organization_location').value;
     var size = $('organization_size').value;
+    var naics = $('organization_naics_code').value;
     
     if(value != ""  || distance != "" || size !=""){
       new Ajax.Request('/organizations/search_for_association_list.json', {
         'method': 'get',
         'parameters': {'search_text': value, 'distance': distance,
-                        'size': size},
+                        'size': size, 'naics': naics},
         'requestHeaders': {'Accept':'application/json'},
         'onSuccess': function(transport) {
           toggleOrganizations(transport.responseText.evalJSON());

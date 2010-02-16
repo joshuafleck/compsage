@@ -1129,12 +1129,12 @@ label img {
   margin-bottom: 1px;
 }
 
-form div.box_container {
+div.box_container {
   overflow: hidden;
   width: 100%;
 }
 
-form div.box {
+div.box {
   float: left;
   margin-right: 10px;
 }
