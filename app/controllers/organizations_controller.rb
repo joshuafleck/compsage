@@ -105,7 +105,7 @@ class OrganizationsController < ApplicationController
       with_params.merge!(:size => size_array[0].to_i..size_array[1].to_i)
     end
     
-    if naics != "" then
+    if naics != "" && !naics.nil? then
       with_params.merge!(:naics_code => NaicsClassification.find(naics).full_set)
     end
 
