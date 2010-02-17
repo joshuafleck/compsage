@@ -72,8 +72,8 @@ class SurveyInvitationsController < ApplicationController
     @invitations = []
 
     @organizations.each do |organization_id|
-      organization = Organization.find(organization_id.to_s) 
-      invitation = @survey.invitations.create(:inviter => current_organization, :invitee => organization)
+      invitation = invite_organization organization_id.to_s
+      invitation.save
       @invitations << invitation if invitation.valid?
     end
     

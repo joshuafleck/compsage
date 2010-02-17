@@ -1,3 +1,7 @@
 @invitations.each do |invitation|
-  page.call 'inviteList.addInvitationToList', invitation.id, invitation.invitee.name_and_location, invitation.invitee_id
+  if invitation.is_a?(SurveyInvitation) then
+    page.call 'inviteList.addInvitationToList', invitation.id, invitation.invitee.name_and_location, invitation.invitee_id
+  elsif invitation.is_a?(ExternalSurveyInvitation) then
+    page.call 'inviteList.addInvitationToList', invitation.id, invitation.organization_name_and_email, nil 
+  end
 end
