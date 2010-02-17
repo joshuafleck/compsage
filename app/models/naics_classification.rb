@@ -24,6 +24,17 @@ class NaicsClassification < ActiveRecord::Base
     find_by_sic_code(sic_code)
   end
   
+  # Truncates the code to the specified length
+  #
+  def truncate(length = 3)
+    s_code = code.to_s
+    if s_code.length <= length then
+      s_code
+    else
+      s_code[0,length]
+    end
+  end
+  
   # Some top-level nodes encompass multiple codes. This allows us to expose the hidden nodes to the users.
   #
   DISPLAY_MAP = { 31 => "31-33", 44 => "44-45", 48 => "48-49" }  

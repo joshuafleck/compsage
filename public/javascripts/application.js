@@ -988,13 +988,15 @@ function InviteList(survey_id) {
       }
     });
     
+    var naics = $('organization_naics_code');
+    
     //test to see if the association integration form is present, it won't be if we are not an association member
     if( $('organization_name') ) {
       //observer for the association integration form
       $('organization_name').observe('keyup', liveAssociationFilter);
       $('organization_location').observe('change', liveAssociationFilter);
       $('organization_size').observe('change', liveAssociationFilter);
-      $('naics_select').observe('change', liveAssociationFilter);
+      naics.observe("naics:updated", liveAssociationFilter);
       //observe invite button click for multi-select invitations
       $('invite_link').observe('click', submitMultipleInvitations);      
     }
@@ -1005,6 +1007,13 @@ function InviteList(survey_id) {
       var invite_link = org_li.select('a').first();
       invite_link.observe('click', addAssociationInvitation.curry(id_match));
     });
+    
+   /* This is a bit of a hack. The initial naics event is fired before the live search 
+    * observer is bound. This ensures that the industry filter is applied on load
+    */
+    if(naics.value > 0) {
+      naics.fire("naics:updated");
+    }
     
   }
   
@@ -1048,7 +1057,7 @@ function InviteList(survey_id) {
     var size = $('organization_size').value;
     var naics = $('organization_naics_code').value;
     
-    if(value != ""  || distance != "" || size !=""){
+    if(value != ""  || distance != "" || size != "" || naics != ""){
       new Ajax.Request('/organizations/search_for_association_list.json', {
         'method': 'get',
         'parameters': {'search_text': value, 'distance': distance,
@@ -1208,6 +1217,7 @@ function NaicsClassificationList(selected_code) {
     // Keep track of the selected node here, this is what is passed to the model on submit
     var naics_classification = $('organization_naics_code');
     naics_classification.value = currentCode;
+    var event = naics_classification.fire("naics:updated");
   
     new Ajax.Request('/naics_classifications/children_and_ancestors.json', {
       'method': 'get',

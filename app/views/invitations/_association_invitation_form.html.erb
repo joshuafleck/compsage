@@ -34,7 +34,7 @@
       </select>
     <% end %>
   <% end %>
-  <%= render :partial => "naics_classifications/browse", :locals => {:code => ''} %>
+  <%= render :partial => "naics_classifications/browse", :locals => {:code => @current_organization.naics_classification ? @current_organization.naics_classification.truncate : ''} %>
   <br />
 </div>
 <div>
