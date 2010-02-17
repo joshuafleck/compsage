@@ -50,7 +50,8 @@
   <li id="organization_<%= organization.id %>"> 
       <span id="organization_<%= organization.id %>_name">
         <%= organization.name %>
-      </span> 
+      </span>
+      <a id="invite" href="#"><img src="/images/add_invitation_button.gif" /></a>
       <br /> 
       <% if !organization.location.nil? then %>
       <span class="grey">
@@ -62,7 +63,7 @@
       <% else %>
       <span>&nbsp;</span>
       <% end %>
-      <a id="invite" href="#"><img src="/images/add_invitation_button.gif" /></a>
+      
   </li>
 <% end %>  
 </ul>
