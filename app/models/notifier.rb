@@ -121,12 +121,12 @@ class Notifier < ActionMailer::Base
     body       :survey => survey, :invoice => survey.invoice
   end    
   
-  def new_organization_notification(organization)
+  def new_organization_notification(organization, association = false)
     recipients organization.email
     from       "CompSage <support@compsage.com>"
     reply_to   "support@compsage.com"
     subject    "Your compsage.com account has been created"
-    body       :organization => organization
+    body       :organization => organization, :association => association
   end
   
   def report_suspect_results_notification(survey, comment)

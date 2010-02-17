@@ -186,12 +186,7 @@ class Organization < ActiveRecord::Base
   def disabled?
     activation_window_has_expired? || has_exceeded_reporting_threshold?
   end
-  
-  # True, if the user has not requested initialization in the past minute
-  def can_create_login?
-    association_member_initialization_key_created_at.nil? || ((Time.now - association_member_initialization_key_created_at) > 1.minute)
-  end
-  
+
   # Will attempt to set the password for an uninitialized association member
   # If successful, the organization will receive an email with a link for activating their account
   # If unsuccessful, the organization will have errors
@@ -205,12 +200,12 @@ class Organization < ActiveRecord::Base
   
     # Attempt to set password
     if self.update_attributes(params)
-      self.association_member_initialization_key_created_at = Time.now
-      self.association_member_initialization_key = KeyGen.random
+      self.activated_at                        = nil
+      self.activation_key                      = KeyGen.random
+      self.activation_key_created_at           = Time.now
+      self.is_uninitialized_association_member = false
       self.save!
       # TODO move any objects such as survey responses and discussions to the new organization (from external invitation)
-      # TODO beef up notification email
-      Notifier.deliver_association_member_initialization_notification(self, association)
       return true
     end  
       
