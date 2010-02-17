@@ -1252,7 +1252,7 @@ function NaicsClassificationList(selected_code) {
 
     // Add a default option
     var blankChildOption = document.createElement("option");
-    blankChildOption.text = $('organization_naics_code').value > 0 ? "Be more specific..." : "Select your industry" ;
+    blankChildOption.text = $('organization_naics_code').value > 0 ? "Be more specific..." : "Select an industry" ;
     blankChildOption.value = null;
     try {
       child_naics_classifications.add(blankChildOption, null);
