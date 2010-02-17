@@ -13,11 +13,15 @@ class NaicsClassification < ActiveRecord::Base
   end
 
   def self.from_sic_code(sic_code)
-    sic_code = sic_code.to_s
+    # Parse out some 2-4 digit number in the SIC string.
+    sic_code_match = sic_code.to_s.match(/\d{2,4}/)
+    return if sic_code_match.nil?
+
+    sic_code = sic_code_match[0]
 
     if sic_code.length == 3 then
       sic_code.chop! # We don't support 3 digit sic codes, so turn it into a 2 digit.
-    elsif sic_code.length == 4 && sic_code[2,4] == "00" then
+    elsif sic_code.length == 4 && sic_code[2,2] == "00" then
       sic_code = sic_code[0, 2] # Sic codes ending in 00 are really 2 digit SIC codes.
     end
 
