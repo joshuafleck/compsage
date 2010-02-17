@@ -6,14 +6,18 @@
       <label for="organization_name">Name </label>
       <input id="organization_name" type="textbox"/>
     <% end %>
-    <% form_box do %>
-      <label for="organization_location">Distance </label>
-      <select id="organization_location">
-        <option value="">Anywhere</option>
-        <% [5, 10, 25, 50, 100, 250].each do |i|%>
-        <option value="<%=i %>"><%= i %> miles</option>
-        <%end%>
-      </select>
+    <% if !current_organization.zip_code.nil? && !current_organization.zip_code.blank?%>
+      <% form_box do %>
+        <label for="organization_location">Distance </label>
+        <select id="organization_location">
+          <option value="">Anywhere</option>
+          <% [5, 10, 25, 50, 100, 250].each do |i|%>
+          <option value="<%=i %>"><%= i %> miles</option>
+          <%end%>
+        </select>
+      <% end %>
+    <% else %>
+      <input type="hidden" id="organization_location" value="">
     <% end %>
     <% form_box do %>
       <label for="organization_size">Size </label>
