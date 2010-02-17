@@ -1056,6 +1056,7 @@ function InviteList(survey_id) {
     var distance = $('organization_location').value;
     var size = $('organization_size').value;
     var naics = $('organization_naics_code').value;
+    naics = naics > 0 ? naics : ""; // sometimes comes through as 'undefined', prevents this from being sent to the server
     
     if(value != ""  || distance != "" || size != "" || naics != ""){
       new Ajax.Request('/organizations/search_for_association_list.json', {
