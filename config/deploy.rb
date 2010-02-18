@@ -13,7 +13,7 @@ set :use_sudo, false
 ### Repository Setup ###
 set :scm, :git
 set :repository,  "deploy@dev.huminsight.com:/home/git/shawarma"
-set :branch, "master"
+set :branch, "ai"
 set :deploy_via, :remote_cache
 
 ### Custom Tasks ###
