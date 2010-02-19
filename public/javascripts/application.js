@@ -988,17 +988,25 @@ function InviteList(survey_id) {
       }
     });
     
-    var naics = $('organization_naics_code');
-    
     //test to see if the association integration form is present, it won't be if we are not an association member
     if( $('organization_name') ) {
       //observer for the association integration form
       $('organization_name').observe('keyup', liveAssociationFilter);
       $('organization_location').observe('change', liveAssociationFilter);
       $('organization_size').observe('change', liveAssociationFilter);
-      naics.observe("naics:updated", liveAssociationFilter);
+      
       //observe invite button click for multi-select invitations
-      $('invite_link').observe('click', submitMultipleInvitations);      
+      $('invite_link').observe('click', submitMultipleInvitations);  
+    
+     /* This is a bit of a hack. The initial naics event is fired before the live search 
+      * observer is bound. This ensures that the industry filter is applied on load
+      */
+      var naics = $('organization_naics_code');    
+      naics.observe("naics:updated", liveAssociationFilter);
+      if(naics.value > 0) {
+        naics.fire("naics:updated");
+      }
+                
     }
     
     //observers for each add invitation link
@@ -1007,14 +1015,7 @@ function InviteList(survey_id) {
       var invite_link = org_li.select('a').first();
       invite_link.observe('click', addAssociationInvitation.curry(id_match));
     });
-    
-   /* This is a bit of a hack. The initial naics event is fired before the live search 
-    * observer is bound. This ensures that the industry filter is applied on load
-    */
-    if(naics.value > 0) {
-      naics.fire("naics:updated");
-    }
-    
+
   }
   
   /* This function handles the invite link click for
