@@ -1199,22 +1199,28 @@ function InviteList(survey_id) {
  */
 function NaicsClassificationList(selected_code) {
 
+  // Make sure we always have a reference to this class
+  var my = this;
+
   // Keep track of the ancestors, as we need them in order to 'go back' up the taxonomy
-  this.ancestors = $A();
+  var ancestors = $A();
 
+  /**
+   * Will initialize the naics list, and observe the links for drilling up/down
+   */
   function initializeObservers() {
-    RetrieveAncestorAndChildNaicsClassifications(selected_code);
+    my.retrieveAncestorAndChildNaicsClassifications(selected_code);
 
-    $('naics_classification_back').observe('click', GoBack);
-    $('naics_select').observe('change', DrillDeeper);
+    $('naics_classification_back').observe('click', goBack);
+    $('naics_select').observe('change', drillDeeper);
     
   };
-  
+
   /**
    * Will retrieve the list of child and ancestor nodes from the server, and update the UI with that information
    * @param currentCode A naics code, or null, if no naics code was selected.
    */
-  function RetrieveAncestorAndChildNaicsClassifications(currentCode) {
+  this.retrieveAncestorAndChildNaicsClassifications = function(currentCode) {
   
     // Keep track of the selected node here, this is what is passed to the model on submit
     var naics_classification = $('organization_naics_code');
@@ -1227,10 +1233,10 @@ function NaicsClassificationList(selected_code) {
       'requestHeaders': {'Accept':'application/json'},
       'onSuccess': function(transport) {
         var children = transport.responseText.evalJSON().children.evalJSON();
-        ancestors = transport.responseText.evalJSON().ancestors.evalJSON();
+        my.ancestors = transport.responseText.evalJSON().ancestors.evalJSON();
             
-        UpdateChildNaicsClassifications(children);
-        UpdateAncestorNaicsClassifications();
+        updateChildNaicsClassifications(children);
+        updateAncestorNaicsClassifications();
       },
       'onCreate': function() {
         $('live_load_indicator').show();
@@ -1240,12 +1246,12 @@ function NaicsClassificationList(selected_code) {
       }
     });
   };
-  
+    
   /**
    * Rebuild the naics select box with a new set of nodes
    * @param children An array of naics nodes
    */
-  function UpdateChildNaicsClassifications(children) {
+  function updateChildNaicsClassifications(children) {
 
     var child_naics_classifications = $('naics_select');
         
@@ -1286,19 +1292,19 @@ function NaicsClassificationList(selected_code) {
   /**
    * Rebuilds the naics classification ancestor list
    */
-  function UpdateAncestorNaicsClassifications() {
+  function updateAncestorNaicsClassifications() {
     var ancestorsUL = $('naics_classification_ancestors');
     
     // Remove the existing options
     ancestorsUL.innerHTML = '';
     
     // Create options for the child nodes
-    for(var i=0; i<ancestors.size(); i++) {
-      var ancestor = ancestors[i];
+    for(var i=0; i<my.ancestors.size(); i++) {
+      var ancestor = my.ancestors[i];
       var ancestorLI = document.createElement("li");
       var description = ancestor.display_code + ": " + ancestor.description;
       // The selected node should be bold to signify its selection
-      if(i == ancestors.size() - 1) {
+      if(i == my.ancestors.size() - 1) {
         ancestorLI.className = 'selected';
       } 
       ancestorLI.innerHTML = description;
@@ -1307,7 +1313,7 @@ function NaicsClassificationList(selected_code) {
     
     // Hide the 'go back' link if we are at the level 1 option
     // Hide the ancestors list if no ancestors are present (silly hack for IE6, otherwise there is a big gap in the form)
-    if(ancestors.size() == 0) {
+    if(my.ancestors.size() == 0) {
       $('naics_classification_back').hide();
       ancestorsUL.hide();
     } else {
@@ -1319,27 +1325,29 @@ function NaicsClassificationList(selected_code) {
   /**
    * Drills into the selected taxonomy node
    */
-  function DrillDeeper() {
+  function drillDeeper(e) {
+    e.stop();
     var child_naics_classifications = $('naics_select');
     
     var code = child_naics_classifications.options[child_naics_classifications.selectedIndex].value;
     
     if(code) {
-      RetrieveAncestorAndChildNaicsClassifications(code);
+      my.retrieveAncestorAndChildNaicsClassifications(code);
     }
   }
   
   /**
    * Goes up the taxonomy tree one node
    */  
-  function GoBack() {
+  function goBack(e) {
+    e.stop();
     var parentNodeIndex = 2;
-    var parentOfSelectedNode = ancestors[ancestors.size() - parentNodeIndex];
+    var parentOfSelectedNode = my.ancestors[my.ancestors.size() - parentNodeIndex];
     
     // Find an ancestor with at least 2 children, since we do not show nodes with 1 child
     while(parentOfSelectedNode && parentOfSelectedNode.children_count == 1) {
       parentNodeIndex++;
-      parentOfSelectedNode = ancestors[ancestors.size() - parentNodeIndex];
+      parentOfSelectedNode = my.ancestors[my.ancestors.size() - parentNodeIndex];
     }
     
     var parentCodeOfSelectedNode = null;
@@ -1347,7 +1355,7 @@ function NaicsClassificationList(selected_code) {
       parentCodeOfSelectedNode = parentOfSelectedNode.code
     }
     
-    RetrieveAncestorAndChildNaicsClassifications(parentCodeOfSelectedNode);    
+    my.retrieveAncestorAndChildNaicsClassifications(parentCodeOfSelectedNode);    
 
   }
 

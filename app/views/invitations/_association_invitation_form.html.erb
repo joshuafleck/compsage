@@ -73,6 +73,7 @@
     $('organization_name').value = "";
     $('organization_location').selectedIndex = 0;
     $('organization_size').selectedIndex = 0;
+    naicsClassificationList.retrieveAncestorAndChildNaicsClassifications(null);
     
     $$('ul#association_organizations > li').each(function(org_li){
       org_li.show();
