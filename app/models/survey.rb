@@ -69,6 +69,10 @@ class Survey < ActiveRecord::Base
     event :billing_info_received do
       transition :pending => :running
     end
+    
+    event :association_billing_bypass do
+      transition :pending => :running
+    end
 
     event :finish do
       transition :running => :finished,      :if => [:closed?, :full_report?, :billing_successful?]

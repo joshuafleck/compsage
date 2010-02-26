@@ -1,5 +1,5 @@
 class BillingController < ApplicationController
-  before_filter :login_required, :find_or_initialize_invoice
+  before_filter :login_required, :find_or_initialize_invoice, :bypass_associations
   layout 'logged_in'
   
   # don't allow the credit card information to be logged
@@ -53,6 +53,13 @@ class BillingController < ApplicationController
   def find_or_initialize_invoice
     @survey = current_organization.sponsored_surveys.find(params[:survey_id])
     @invoice = Invoice.find_or_initialize_by_survey_id(@survey.id)
+  end
+  
+  def bypass_associations
+    if current_association then
+      @survey.association_billing_bypass if @survey.pending?
+      redirect_to survey_path(@survey)
+    end 
   end
 
 end 
