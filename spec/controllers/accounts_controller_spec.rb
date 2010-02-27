@@ -147,6 +147,23 @@ describe AccountsController, " handling GET /account/new" do
       get :new
       response.should render_template('new')
     end
+    
+    describe "when the invitee is already a member" do
+    
+      before(:each) do
+        @organization = Factory.create(:organization, :email => @invitation.email)
+      end
+      
+      after(:each) do
+        @organization.destroy
+      end  
+      
+      it "should redirect to the sign in page" do
+        get :new
+        response.should redirect_to(login_path(:email => @organization.email))
+      end
+    
+    end
         
   end  
   

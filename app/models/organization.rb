@@ -270,6 +270,13 @@ class Organization < ActiveRecord::Base
       super
     end
   end
+  
+  # Used to locate an organization's default association.
+  # Currently defined as the first association.
+  def association
+    self.associations.first
+  end
+  
   private
   
   # Destroy the network if it has zero members.

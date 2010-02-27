@@ -1,6 +1,7 @@
 class AccountsController < ApplicationController
   before_filter :login_required, :except => [ :new , :create, :forgot, :reset, :activate ]
   before_filter :locate_invitation, :only => [ :new , :create ]
+  before_filter :locate_existing_organization, :only => [ :new ]
   layout :logged_in_or_invited_layout 
   filter_parameter_logging :password
 
@@ -175,6 +176,34 @@ class AccountsController < ApplicationController
         
     end
     
+  end
+  
+  # The purpose of this filter is to determine if the invitation email is tied to an existing organization.
+  # If it is, redirect the user to the sign in page.
+  #
+  def locate_existing_organization
+  
+    if @invitation then
+    
+      email = @invitation.email
+      organization = Organization.find_by_email(email)
+      
+      if organization then
+      
+        association = organization.association
+        
+        if association then        
+          redirect_to(sign_in_association_member_url(
+            :email     => email,
+            :subdomain => association.subdomain))
+        else
+          redirect_to(login_path(:email => email))
+        end
+      
+      end
+    
+    end
+  
   end
 
 end
