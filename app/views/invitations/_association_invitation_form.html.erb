@@ -54,7 +54,7 @@
       </span>
       <a id="invite" href="#"><img src="/images/add_invitation_button.gif" /></a>
       <br /> 
-      <% if !organization.location.nil? then %>
+      <% if !organization.location.blank? then %>
       <span class="grey">
         Location: 
       </span>
