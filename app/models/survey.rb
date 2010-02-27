@@ -284,6 +284,9 @@ class Survey < ActiveRecord::Base
     
   # Calls the billing routine and returns whether or not billing was successful.
   def billing_successful?
+    #skip billing process if surveying through an association
+    return true if !self.association.nil?
+    #bill as usual 
     if self.invoice.paying_with_credit_card? then
       # If we are paying by credit card, bill the card
       bill_sponsor

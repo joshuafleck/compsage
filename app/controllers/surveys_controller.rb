@@ -45,7 +45,9 @@ class SurveysController < ApplicationController
       flash[:notice] = "You cannot edit the questions for a survey once a response has been collected."
       redirect_to survey_path(@survey)
     else
-      if @survey.update_attributes(params[:survey])
+      @survey.attributes = params[:survey]
+      @survey.association = current_association
+      if @survey.save
         if @survey.running? then         # Editing a running survey
           redirect_to preview_survey_questions_path(@survey)
         else                             # Pending, likely on survey creation path
@@ -58,7 +60,7 @@ class SurveysController < ApplicationController
   end
   
   def new
-    @survey = current_organization.sponsored_surveys.find_or_create_by_aasm_state('pending') 
+    @survey = current_organization.sponsored_surveys.find_or_create_by_aasm_state('pending')
     # If we came from a 'survey network' link, save the network in the session to be accessed later when sending
     # invitations
     session[:survey_network_id] = params[:network_id] unless params[:network_id].blank?
