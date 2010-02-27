@@ -991,7 +991,12 @@ function InviteList(survey_id) {
     //test to see if the association integration form is present, it won't be if we are not an association member
     if( $('organization_name') ) {
       //observer for the association integration form
-      $('organization_name').observe('keyup', liveAssociationFilter);
+      $('organization_name').observe('keyup', function(e){
+        //filter if more than two, or delete was pressed
+        if($('organization_name').value.length > 2 || e.keyCode == 8){
+          liveAssociationFilter();
+        }
+      });
       $('organization_location').observe('change', liveAssociationFilter);
       $('organization_size').observe('change', liveAssociationFilter);
       
