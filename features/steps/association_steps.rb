@@ -1,5 +1,5 @@
 def association_login
-  email = @current_association_by_owner.owner_email
+  email = @current_association_by_owner.contact_email
   password = "test12"
 
   logout
