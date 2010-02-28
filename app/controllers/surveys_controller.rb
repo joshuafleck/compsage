@@ -45,7 +45,10 @@ class SurveysController < ApplicationController
       flash[:notice] = "You cannot edit the questions for a survey once a response has been collected."
       redirect_to survey_path(@survey)
     else
-      if @survey.update_attributes(params[:survey])
+      @survey.attributes = params[:survey]
+      #save the association
+      @survey.association = current_association if @survey.pending?
+      if @survey.save
         if @survey.running? then         # Editing a running survey
           redirect_to preview_survey_questions_path(@survey)
         else                             # Pending, likely on survey creation path
