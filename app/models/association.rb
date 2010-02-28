@@ -39,6 +39,7 @@ class Association < ActiveRecord::Base
   #
   def new_member(attributes = {})
     if !attributes[:email].blank? && member = Organization.find_by_email(attributes[:email])
+      member.associations << self
       return member
     end
 
