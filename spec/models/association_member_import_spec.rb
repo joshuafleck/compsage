@@ -40,7 +40,7 @@ end
 
 describe AssociationMemberImport, "that has a valid CSV input and valid headers" do
   before(:each) do
-    @importer = AssociationMemberImport.new(valid_importer_params.with(:headers => true))
+    @importer = AssociationMemberImport.new(valid_importer_params.with('headers'=> true))
     @importer.file = "Firm Name, Contact Name, Contact Email, Zip Code, # of Employees, SIC Code / NAICS Code
     Imported Firm, Joe Wilson, joe.wilson@importedfirm.com, 55407, 20, 30
     "
@@ -50,14 +50,13 @@ describe AssociationMemberImport, "that has a valid CSV input and valid headers"
   end
   
   it "should find valid members" do
-    @importer.import!
     @importer.valid_members.size.should == 1
   end
 end
 
 describe AssociationMemberImport, "that has a valid and invalid CSV input and valid headers" do
   before(:each) do
-    @importer = AssociationMemberImport.new(valid_importer_params)
+    @importer = AssociationMemberImport.new(valid_importer_params.with('headers' => true))
     @importer.file = "Firm Name, Contact Name, Contact Email, Zip Code, # of Employees, SIC Code / NAICS Code
     Imported Firm, Joe Wilson, joe.wilson@importedfirm.com, 55407, 20, 30
     I cant follow instructions, 1234, asdfasdf"
@@ -67,7 +66,6 @@ describe AssociationMemberImport, "that has a valid and invalid CSV input and va
   end
   
   it "should find a valid member" do
-    puts @importer.valid_members[0].name
     @importer.valid_members.size.should == 1
   end
   
@@ -90,13 +88,13 @@ describe AssociationMemberImport, "that has existing members when the delete par
                       :name => "I should dissapear", 
                       :contact_name => "From this app")
     
-    @association.organizations << @org1
-    @association.organizations << @org2
+    @association.organizations += [@org1, @org2, @uiorg1]
     
     @importer.import!
   end
   
   it "should remove existing organization from association if they aren't on the list" do
+    @importer.deleted_members.size.should == 2
     lambda { @association.organizations.find(@org2.id) }.should raise_error(ActiveRecord::RecordNotFound)
     lambda { Organization.find(@org2.id) }.should_not raise_error(ActiveRecord::RecordNotFound)
   end
@@ -106,7 +104,7 @@ describe AssociationMemberImport, "that has existing members when the delete par
   end
   
   it "should delete uninitialized members" do
-    @importer.deleted_members.size.should == 1
+    @importer.deleted_members.size.should == 2
     lambda { Organization.find(@uiorg1.id) }.should raise_error(ActiveRecord::RecordNotFound)
   end
 end
