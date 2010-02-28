@@ -1,6 +1,6 @@
 The response deadline has been extended for the survey "<%=@survey.job_title%>". Results should be available in <%=better_time_ago_in_words(@survey.end_date)%>.
 
-If you would like to edit your response, go to: <%= @recipient.is_a?(ExternalSurveyInvitation) ? survey_login_path(:survey_id => @survey.id, :key => @recipient.key, :only_path => false) : url_for(survey_path(@survey, :only_path => false))%>
+If you would like to edit your response, go to: <%= @recipient.is_a?(ExternalSurveyInvitation) ? survey_login_path(:survey_id => @survey.id, :key => @recipient.key, :only_path => false, :subdomain => subdomain_for(:email => @recipient.email)) : url_for(survey_path(@survey, :only_path => false, :subdomain => subdomain_for(:organization => @recipient)))%>
 
 Thanks,
 CompSage.com

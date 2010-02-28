@@ -5,7 +5,7 @@ module DiscussionSpecHelper
   def valid_discussion_attributes
     {
       :survey => survey_mock,
-      :responder => organization_mock,
+      :responder => Factory(:organization),
       :subject => 'Discussion Title',
       :body => 'Discussion Body'
     }

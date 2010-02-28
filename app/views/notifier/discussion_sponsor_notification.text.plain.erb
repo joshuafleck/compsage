@@ -3,7 +3,7 @@ Someone has posted a question or comment for "<%=@discussion.survey.job_title%>"
 Subject: "<%=@discussion.root.subject%>"
 Message: "<%=@discussion.body%>"
 
-To respond, go to: <%=url_for(survey_path(@discussion.survey, :only_path => false))%>
+To respond, go to: <%=url_for(survey_path(@discussion.survey, :only_path => false, :subdomain => subdomain_for(:organization => @recipient)))%>
 
 Thanks,
 CompSage.com

@@ -136,7 +136,7 @@ def valid_survey_attributes
     :days_running => 7,
     :start_date => Time.now - 7.days,
     :job_title => 'TEST',
-    :sponsor => organization_mock,
+    :sponsor => Factory(:organization),
     :id => '1',
     :description => 'Descr'
   }

@@ -6,7 +6,7 @@
   The survey "<%=@survey.job_title%>" could not be successfully completed because only <%=@survey.participations.count%> of <%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%> required organizations provided responses. If you are still interested in conducting this survey, you may provide an extension to those already invited and invite additional participants.
 <% end %>
 
-To view the survey, provide an extension, and invite additional participants, go to: <%=url_for(survey_path(@survey, :only_path => false))%>
+To view the survey, provide an extension, and invite additional participants, go to: <%=url_for(survey_path(@survey, :only_path => false, :subdomain => subdomain_for(:organization => @survey.sponsor)))%>
 
 Thanks,
 CompSage.com

@@ -86,7 +86,7 @@ class Notifier < ActionMailer::Base
     from       "CompSage <support@compsage.com>"
     reply_to   "support@compsage.com"
     subject    "Clarification posted for \"#{discussion.survey.job_title}\""
-    body       :discussion => discussion
+    body       :discussion => discussion, :recipient => discussion.survey.sponsor
   end  
   
   def survey_rerun_notification_participant(survey,recipient)
@@ -121,12 +121,12 @@ class Notifier < ActionMailer::Base
     body       :survey => survey, :invoice => survey.invoice
   end    
   
-  def new_organization_notification(organization, association = false)
+  def new_organization_notification(organization)
     recipients organization.email
     from       "CompSage <support@compsage.com>"
     reply_to   "support@compsage.com"
     subject    "Your compsage.com account has been created"
-    body       :organization => organization, :association => association
+    body       :organization => organization
   end
   
   def report_suspect_results_notification(survey, comment)

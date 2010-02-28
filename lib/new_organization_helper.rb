@@ -4,7 +4,7 @@ module NewOrganizationHelper
   #  any existing external invitations to this organization
   def send_email_and_move_invitations_to_new_organization(organization, current_invitation)
   
-    Notifier.deliver_new_organization_notification(organization, current_association) 
+    Notifier.deliver_new_organization_notification(organization) 
     
     # If there is not a current invitation, do not attempt to move the external survey invitations
     #  this will be done upon activation        
