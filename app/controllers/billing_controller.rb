@@ -57,7 +57,11 @@ class BillingController < ApplicationController
   
   def bypass_associations
     if current_association then
-      @survey.association_billing_bypass if @survey.pending?
+      if @survey.pending? then
+        @survey.association = current_association
+        @survey.save
+        @survey.association_billing_bypass
+      end
       redirect_to survey_path(@survey)
     end 
   end
