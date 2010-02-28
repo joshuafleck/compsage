@@ -68,7 +68,7 @@ describe "accepting an invitation" do
   before(:each) do
     @invitee = Factory(:organization)
     @invitation = Factory(:sent_external_survey_invitation)
-    @participation = Factory(:participation, :participant => @invitation, :survey => @invitation.survey)
+    @participation = generate_participation(@invitation, @invitation.survey)
     @discussion = Factory(:discussion, :responder => @invitation, :survey => @invitation.survey)
   end
   

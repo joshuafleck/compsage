@@ -10,14 +10,6 @@ describe AssociationMembersController, "#route_for" do
     route_for(:controller => "association_members", :action => "sign_in").should == "/association_member/sign_in"
   end 
   
-  it "should map { :controller => 'association_members', :action => 'login_received' } to /association_member/login_received" do
-    route_for(:controller => "association_members", :action => "login_received").should == "/association_member/login_received"
-  end 
-  
-  it "should map { :controller => 'association_members', :action => 'initialize_account' } to /association_member/initialize_account" do
-    route_for(:controller => "association_members", :action => "initialize_account").should == "/association_member/initialize_account"
-  end   
-  
 end  
 
 describe AssociationMembersController, "handling GET /association_member/sign_in" do
@@ -64,8 +56,15 @@ describe AssociationMembersController, "handling POST /association_member/sign_i
     @params = {}
   end
   
+  after(:each) do
+      @uninitialized_organization.destroy
+      @association.destroy
+      @organization.destroy
+  end  
+  
   def do_post
     post :sign_in, @params
+     @uninitialized_organization.reload
   end
 
   it "should render the sign in page when the user is not an association member" do
@@ -104,9 +103,37 @@ describe AssociationMembersController, "handling POST /association_member/sign_i
     before(:each) do    
       @association.organizations << @uninitialized_organization
       @params[:email] = @uninitialized_organization.email
+      @params[:password] = "test12"
+      @params[:password_confirmation] = @params[:password]
+    end
+        
+    it "should unset the uninitialized flag on the association member" do
+      lambda{ do_post }.should change(@uninitialized_organization, :is_uninitialized_association_member).to(false)
     end
    
+    it "should send a new organization notification" do
+      Notifier.should_receive(:deliver_new_organization_notification)
+      do_post
+    end   
+    
+    it "should activate the organization member when an invitation is present" do
+      session[:invitation] = Factory(:external_network_invitation)
+      lambda{ do_post }.should change(@uninitialized_organization, :activated?).to(true)
+      session[:invitation].destroy
+    end    
+    
+    it "should accept the invitation when an invitation is present" do
+      session[:invitation] = Factory(:external_network_invitation)
+      lambda{ do_post }.should change(ExternalNetworkInvitation, :count).from(1).to(0)
+    end   
+    
+    it "should accept the invitation when an invitation key is present" do
+      @params[:key] = Factory(:external_network_invitation).key
+      lambda{ do_post }.should change(ExternalNetworkInvitation, :count).from(1).to(0)
+    end      
+           
     it "should render the sign in page when login creation fails" do
+      @params[:password_confirmation] = "qweqw"
       do_post
       response.should render_template('sign_in')
     end 
@@ -116,90 +143,14 @@ describe AssociationMembersController, "handling POST /association_member/sign_i
       assigns[:association_member].should == @uninitialized_organization
     end
     
-    it "should render the sign in page if the association member has recently requested initialization" do
-      @uninitialized_organization.association_member_initialization_key_created_at = Time.now
-      @uninitialized_organization.save!
+    it "should log the user in" do
       do_post
-      response.should render_template('sign_in')
-    end
-    
-    it "should redirect to the login received page if the association member when the login is created" do
-      @params[:password] = "test12"
-      @params[:password_confirmation] = @params[:password]
-      do_post
+      session[:organization_id].should_not be_nil
       response.should be_redirect
-    end    
+    end
+        
    
   end  
     
 end
 
-describe AssociationMembersController, "handling GET /association_member/login_received" do
-
-  before(:each) do
-  
-    @association = Factory.create(:association)
-    controller.stub!(:current_association).and_return(@association)
-    
-  end
-  
-  def do_get
-    get :login_received
-  end
-  
-  it "should be successful" do    
-    do_get
-    response.should be_success
-  end
-
-  it "should require an association" do
-    controller.stub!(:current_association).and_return(nil)
-    do_get
-    assert_response 404
-  end
-    
-end 
-
-describe AssociationMembersController, "handling GET /association_member/initialize_account" do
-
-  before(:each) do
-  
-    @association = Factory.create(:association)
-    controller.stub!(:current_association).and_return(@association)
-    
-    @organization = Factory.create(:uninitialized_association_member)
-    @organization.create_login(@association, { :password => 'test12', :password_confirmation => 'test12'})
-    
-    @association.organizations << @organization
-    
-    @params = { :key => @organization.association_member_initialization_key }
-  end
-  
-  def do_get
-    get :initialize_account, @params
-    @organization.reload
-  end
-  
-  it "should require an association" do
-    controller.stub!(:current_association).and_return(nil)
-    do_get
-    assert_response 404
-  end
-  
-  it "should unset the uninitialized flag on the association member" do
-    lambda{ do_get }.should change(@organization, :is_uninitialized_association_member).from(true).to(false)
-  end
-  
-  it "should render the new session path if the organization is not a member of the current association" do
-    @params[:key]='blah'
-    do_get
-    response.should render_template('sign_in')
-  end
-  
-  it "should log the user in" do
-    do_get
-    session[:organization_id].should_not be_nil
-    response.should be_redirect
-  end
-    
-end

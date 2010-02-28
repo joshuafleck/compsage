@@ -64,8 +64,9 @@ Factory.define :pending_organization, :parent => :organization do |o|
 end
 
 Factory.define :uninitialized_association_member, :parent => :organization do |o|
-  o.crypted_password nil
-  o.salt nil
+  o.activated_at      nil
+  o.crypted_password  nil
+  o.salt              nil
   o.is_uninitialized_association_member true
 end
 

@@ -15,8 +15,8 @@ class ApplicationController < ActionController::Base
     logged_in? ? "logged_in" : "front"
   end  
   
-
   def ssl_required?
     (Rails.env.staging? || Rails.env.production?) && super
   end
+    
 end

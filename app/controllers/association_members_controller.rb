@@ -1,4 +1,5 @@
 class AssociationMembersController < ApplicationController
+  include NewOrganizationHelper
   layout 'front'
   filter_parameter_logging :password  
   ssl_required :sign_in
@@ -7,14 +8,20 @@ class AssociationMembersController < ApplicationController
   # Association member login is handled here
   # This will also handle login creation for uninitialized association members
   def sign_in
-  
+        
     # If they are already logged in, send them to the surveys page
     if logged_in?
       redirect_to surveys_path
     end
   
-    @login = params[:email]
-      
+    @login         = params[:email]
+    invitation_key = params[:key]
+    
+    # If there was a redirect from account#new, the session may have been lost.
+    # Check to see if the user has an invitation, if so, we can activate the account.
+    # Save the invitation in the session, in case the key is lost (such as with a failed login)
+    session[:invitation] = ExternalInvitation.find_by_key(invitation_key) unless invitation_key.blank?
+    
     # For a GET request, show the sign in form  
     if request.get? then
     
@@ -42,7 +49,9 @@ class AssociationMembersController < ApplicationController
         if should_initialize        
 
           # Account is uninitialized; attempt to create the login
-          if @association_member.create_login(current_association, 
+          if @association_member.create_login(
+            current_association, 
+            !!(session[:invitation]), # Activate the organization if the invitation is present
             {
               :password => password, 
               :password_confirmation => password_confirmation
@@ -50,7 +59,8 @@ class AssociationMembersController < ApplicationController
             
             organization = @association_member
             
-            Notifier.deliver_new_organization_notification(@association_member, current_association)         
+            # Accepts the invitation, which will add the survey/network to the newly created organization
+            send_email_and_move_invitations_to_new_organization(organization, session[:invitation])
             
           else
           

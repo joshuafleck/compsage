@@ -190,7 +190,7 @@ class Organization < ActiveRecord::Base
   # Will attempt to set the password for an uninitialized association member
   # If successful, the organization will receive an email with a link for activating their account
   # If unsuccessful, the organization will have errors
-  def create_login(association, params = {})
+  def create_login(association, should_activate, params = {})
   
     # Hack to ensure authentication will check the password in the chance that the user forgot to enter one
     if params[:password].blank? then
@@ -199,14 +199,21 @@ class Organization < ActiveRecord::Base
     end
   
     # Attempt to set password
-    if self.update_attributes(params)
-      self.activated_at                        = nil
-      self.activation_key                      = KeyGen.random
-      self.activation_key_created_at           = Time.now
+    if self.update_attributes(params) then
+    
+      if should_activate then      
+        self.activated_at = Time.now      
+      else 
+        self.activated_at                        = nil
+        self.activation_key                      = KeyGen.random
+        self.activation_key_created_at           = Time.now
+      end
+      
       self.is_uninitialized_association_member = false
       self.save!
-      # TODO move any objects such as survey responses and discussions to the new organization (from external invitation)
+      
       return true
+      
     end  
       
     return false

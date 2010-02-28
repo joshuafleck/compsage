@@ -1,4 +1,5 @@
 class AccountsController < ApplicationController
+  include NewOrganizationHelper
   before_filter :login_required, :except => [ :new , :create, :forgot, :reset, :activate ]
   before_filter :locate_invitation, :only => [ :new , :create ]
   before_filter :locate_existing_organization, :only => [ :new ]
@@ -23,12 +24,8 @@ class AccountsController < ApplicationController
     # Do not require the captcha if the invitation is present, as we know it only a human can present a valid key
     if (@invitation || verify_recaptcha(:model => @organization, :message => 'You failed to match the captcha')) && @organization.save then
             
-      # If the organization was not invited, we need to review their account and have them activate their account
-      if @invitation then
-        @invitation.accept!(@organization)
-      end
-      
-      Notifier.deliver_new_organization_notification(@organization)
+      # Accepts the invitation, which will add the survey/network to the newly created organization
+      send_email_and_move_invitations_to_new_organization(@organization, @invitation)
   
       # Clear the existing session, we don't want any invitations hanging around
       logout_killing_session!
@@ -53,6 +50,9 @@ class AccountsController < ApplicationController
     
       organization.activate
       flash[:notice] = "Your account has been activated! Please take a few moments to tell us more about yourself."
+      
+      # Will attempt to tie external invitations that share the same email address as the organization
+      move_external_invitations_to_organization(organization)
       
       login_organization({
           :organization => organization, 
@@ -159,23 +159,20 @@ class AccountsController < ApplicationController
   #
   def locate_invitation
   
-    # Check for a survey invitation, this will be the most common use-case.
-    @invitation = current_survey_invitation
+    # See if a key was provided
+    if !params[:key].blank? then 
     
-    # Check the session to see if a user was invited, but navigated away (lost their key).
-    @invitation ||= session[:invitation]
-    
-    # If there was no survey invitation, see if a key was provided
-    if !@invitation && !params[:key].blank? then 
-    
-      # Check to see if this key belongs to an network invitation.
+      # Check to see if this key belongs to a network invitation.
       @invitation = ExternalNetworkInvitation.find_by_key(params[:key])
       
       # Save the invitation in the session, as the user may navigate to another page and lose their key.
       session[:invitation] = @invitation if @invitation
         
     end
-    
+  
+    # The user could be logged in with a survey invitation, or have already saved their invitation in the session.
+    @invitation ||= current_survey_invitation || session[:invitation]
+      
   end
   
   # The purpose of this filter is to determine if the invitation email is tied to an existing organization.
@@ -192,9 +189,13 @@ class AccountsController < ApplicationController
       
         association = organization.association
         
-        if association then        
+        if association then       
+      
+          # Note that if the redirect changes the subdomain, the session will be lost, that is why we need to send 
+          #  the invitation key in the redirect
           redirect_to(sign_in_association_member_url(
             :email     => email,
+            :key       => @invitation.key,
             :subdomain => association.subdomain))
         else
           redirect_to(login_path(:email => email))

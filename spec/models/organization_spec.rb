@@ -57,7 +57,11 @@ describe Organization do
   it "should have and belong to many associations" do
     Organization.reflect_on_association(:associations).should_not be_nil
   end
-  
+
+  it "should have and belong to a naics classification" do
+    Organization.reflect_on_association(:naics_classification).should_not be_nil
+  end
+    
   it 'should require a password' do
     @organization.attributes = valid_organization_attributes.except(:password)
     @organization.should have(2).errors_on(:password)
@@ -101,11 +105,6 @@ describe Organization do
   it "should be invalid when location is longer than 60 characters" do
   	@organization.attributes = valid_organization_attributes.with(:location => "0"*61)
     @organization.should have(1).errors_on(:location)
-  end
-  
-  it "should be invalid when industry is longer than 100 characters" do
-  	@organization.attributes = valid_organization_attributes.with(:industry => "0"*101)
-    @organization.should have(1).errors_on(:industry)
   end
   
   it "should be invalid when contact name is longer than 100 characters" do
@@ -440,13 +439,8 @@ describe Organization, "that is an uninitialized association member" do
     @association.destroy
   end  
   
-  it "should not be able to create a login if a login was created in the last minute" do
-    @organization.association_member_initialization_key_created_at = Time.now
-    @organization.can_create_login?.should be_false
-  end
-  
   it "should not allow a blank password when creating the login" do
-    @organization.create_login(@association, {
+    @organization.create_login(@association, false, {
       :password => "",
       :password_confirmation => ""
     }).should be_false  
@@ -455,7 +449,7 @@ describe Organization, "that is an uninitialized association member" do
   end
   
   it "should not allow a mismatched password when creating the login" do
-    @organization.create_login(@association, {
+    @organization.create_login(@association, false, {
       :password => "test12",
       :password_confirmation => ""
     }).should be_false  
@@ -463,26 +457,32 @@ describe Organization, "that is an uninitialized association member" do
     @organization.should have(1).errors_on(:password)
   end  
   
-  it "should set the initialization key when creating the login" do
-    lambda{ @organization.create_login(@association, {
+  it "should set the activation key when creating the login" do
+    lambda{ @organization.create_login(@association, false, {
       :password => "test12",
       :password_confirmation => "test12"
-    }) }.should change(@organization, :association_member_initialization_key).from(nil)
+    }) }.should change(@organization, :activation_key).from(nil)
   end
   
-  it "should set the initialization date when creating the login" do
-    lambda{ @organization.create_login(@association, {
+  it "should set the activation key created at date when creating the login" do
+    lambda{ @organization.create_login(@association, false, {
       :password => "test12",
       :password_confirmation => "test12"
-    }) }.should change(@organization, :association_member_initialization_key_created_at).from(nil)
+    }) }.should change(@organization, :activation_key_created_at).from(nil)
   end
   
-  it "should send a notification email when creating the login" do   
-    Notifier.should_receive(:deliver_association_member_initialization_notification).with(@organization,@association)
-    @organization.create_login(@association, {
+  it "should no longer be uninitialized" do   
+    lambda{ @organization.create_login(@association, false, {
       :password => "test12",
       :password_confirmation => "test12"
-    })
+    }) }.should change(@organization, :is_uninitialized_association_member).from(true).to(false)
+  end  
+  
+  it "should be active if specified" do   
+    lambda{ @organization.create_login(@association, true, {
+      :password => "test12",
+      :password_confirmation => "test12"
+    }) }.should change(@organization, :activated?).from(false).to(true)
   end  
 
   it "should delete itself when removed as an association member" do

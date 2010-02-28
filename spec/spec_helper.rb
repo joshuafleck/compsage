@@ -179,6 +179,24 @@ Imported Firm 3, David Peterson, david@peterson.com, 55407, 4000, 30
 Imported Firm 4, Brian Terlson, brian.terlson@gmail.com, 98004,  210,23
 "  
 end 
+
+# Participations are a bitch to get working in the factories, this eases the pain
+def generate_participation(participant, survey)
+
+  participation = Factory.build(:participation, 
+    :participant => participant, 
+    :survey      => survey, 
+    :responses   => [])
+    
+  survey.questions.each do |question|  
+    participation.responses << Factory.build(:numerical_response, :question => question, :response => 1)
+  end  
+  
+  participation.save 
+  
+  participation
+   
+end
   
 module AuthenticationRequiredSpecHelper
 

@@ -195,6 +195,12 @@ describe AccountsController, " handling GET /account/activate" do
     do_get
     response.should redirect_to(new_session_path)
   end
+  
+  it "should move external survey invitations to the activated organization with the same email" do
+    invitation = Factory(:external_survey_invitation, :email => @current_organization.email)
+    lambda{ do_get }.should change(ExternalSurveyInvitation, :count).from(1).to(0)
+    invitation.destroy
+  end
  
 end  
 
@@ -232,6 +238,8 @@ describe AccountsController, " handling POST /account/" do
     
     @organization = Factory.build(:organization)
     
+    @invitation2 = Factory.create(:external_survey_invitation, :email => @organization.email)
+      
     @params = { :organization => @organization.attributes }
     @params[:organization] = @params[:organization].merge(:password => "123456")
     @params[:organization] = @params[:organization].merge(:password_confirmation => "123456")
@@ -261,13 +269,23 @@ describe AccountsController, " handling POST /account/" do
      
     after(:each) do
       @invitation.destroy
+      @invitation2.destroy
     end
        
     it "should accept the invitation" do  
       @invitation.should_receive(:accept!)
       do_post
     end 
-    
+         
+    it "should find any previous external survey invitations an accept them as well" do  
+      lambda{ do_post }.should change(ExternalSurveyInvitation,:count).from(2).to(0)
+    end 
+            
+    it "should find any previous external network invitations an accept them as well" do  
+      @network_invitation = Factory.create(:external_network_invitation, :email => @organization.email)
+      lambda{ do_post }.should change(ExternalNetworkInvitation,:count).from(1).to(0)
+    end 
+        
     it "should not create a pending organization"   do 
       do_post
       assigns[:organization].is_pending?.should be_false
@@ -279,6 +297,11 @@ describe AccountsController, " handling POST /account/" do
     end
   
   end
+ 
+  it "should find not accept any previous external survey invitations" do  
+    lambda{ do_post }.should_not change(ExternalSurveyInvitation,:count)
+  end 
+        
   
   it "should create a pending organization"   do 
     do_post
