@@ -1,11 +1,10 @@
 <% if @survey.enough_responses? then %>
-  The survey "<%=@survey.job_title%>" could not be successfully completed because some of the questions did not receive the required number of responses. You may finish the survey now to view results for questions that met minimum response requirements, or you may provide an extension to those already invited and invite additional participants. 
+The survey "<%=@survey.job_title%>" could not be successfully completed because some of the questions did not receive the required number of responses. You may finish the survey now to view results for questions that met minimum response requirements, or you may provide an extension to those already invited and invite additional participants. 
 <% elsif @survey.enough_participations? then %>
-  The survey "<%=@survey.job_title%>" could not be successfully completed because none of the questions received the required number of responses. If you are still interested in conducting this survey, you may provide an extension to those already invited and invite additional participants.
+The survey "<%=@survey.job_title%>" could not be successfully completed because none of the questions received the required number of responses. If you are still interested in conducting this survey, you may provide an extension to those already invited and invite additional participants.
 <% else %>
-  The survey "<%=@survey.job_title%>" could not be successfully completed because only <%=@survey.participations.count%> of <%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%> required organizations provided responses. If you are still interested in conducting this survey, you may provide an extension to those already invited and invite additional participants.
+The survey "<%=@survey.job_title%>" could not be successfully completed because only <%=@survey.participations.count%> of <%=Survey::REQUIRED_NUMBER_OF_PARTICIPATIONS%> required organizations provided responses. If you are still interested in conducting this survey, you may provide an extension to those already invited and invite additional participants.
 <% end %>
-
 To view the survey, provide an extension, and invite additional participants, go to: <%=url_for(survey_path(@survey, :only_path => false, :subdomain => subdomain_for(:organization => @survey.sponsor)))%>
 
 Thanks,
