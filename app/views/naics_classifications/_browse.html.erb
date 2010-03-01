@@ -1,7 +1,7 @@
 <div class="industry_select">
 <%
   show_load_indicator = true if show_load_indicator.nil?
-  show_ancestors      = true unless defined?(:show_ancestors)
+  show_ancestors      = true if show_ancestors.nil?
 %>
 <%=label_tag 'naics_select', 'Industry' %> 
 <input id="organization_naics_code" type="hidden" name="organization[naics_code]"/>
