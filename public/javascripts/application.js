@@ -1203,6 +1203,8 @@ function InviteList(survey_id) {
  * @param selected_code The code for the current node
  */
 function NaicsClassificationList(selected_code) {
+  // Whether or not to show ancestors in the list.
+  this.showAncestors = true;
 
   // Make sure we always have a reference to this class
   var my = this;
@@ -1303,15 +1305,21 @@ function NaicsClassificationList(selected_code) {
     // Remove the existing options
     ancestorsUL.innerHTML = '';
     
+    var start = 0;
+
+    if(my.ancestors.length > 0 && !my.showAncestors)
+      start = my.ancestors.length - 1;
+
     // Create options for the child nodes
-    for(var i=0; i<my.ancestors.size(); i++) {
+    for(var i=start; i<my.ancestors.size(); i++) {
       var ancestor = my.ancestors[i];
       var ancestorLI = document.createElement("li");
       var description = ancestor.display_code + ": " + ancestor.description;
       // The selected node should be bold to signify its selection
-      if(i == my.ancestors.size() - 1) {
+      if(i == my.ancestors.size() - 1 && my.showAncestors) {
         ancestorLI.className = 'selected';
       } 
+
       ancestorLI.innerHTML = description;
       ancestorsUL.insert(ancestorLI, { 'position' : 'last'});
     }

@@ -33,16 +33,18 @@
       </select>
     <% end %>
   <% end %>
-  <%= render :partial => "naics_classifications/browse", :locals => {:code => @current_organization.naics_classification ? @current_organization.naics_classification.truncate : '',
-                                                                     :show_load_indicator => false} %>
-  <br />
+  <%= render :partial => "naics_classifications/browse",
+             :locals => {
+               :code => @current_organization.naics_classification ? @current_organization.naics_classification.truncate : '',
+               :show_load_indicator => false,
+               :show_ancestors      => false
+              } %>
 </div>
-<div>
-  <a id="invite_link" href="#">Invite All</a>
-  <a id="reset_link" href="#">Reset</a>
+<div style="text-align:right;">
   <span id="invite_load_indicator" style="display: none;">
     <%= image_tag 'load_indicator.gif', :class => 'load_indicator' %>
   </span>
+  <a id="invite_link" href="#">Invite All</a>
 </div>
 <div id="organization_list">
 <ul id="association_organizations" class="invitations">
@@ -66,17 +68,4 @@
   </li>
 <% end %>  
 </ul>
-<script>
-  $('reset_link').observe('click', function(e){
-    e.stop();
-    $('organization_name').value = "";
-    $('organization_location').selectedIndex = 0;
-    $('organization_size').selectedIndex = 0;
-    naicsClassificationList.retrieveAncestorAndChildNaicsClassifications(null);
-    
-    $$('ul#association_organizations > li').each(function(org_li){
-      org_li.show();
-    });
-  });
-</script>
 </div>

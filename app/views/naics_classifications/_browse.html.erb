@@ -1,6 +1,7 @@
 <div class="industry_select">
 <%
   show_load_indicator = true if show_load_indicator.nil?
+  show_ancestors      = true unless defined?(:show_ancestors)
 %>
 <%=label_tag 'naics_select', 'Industry' %> 
 <input id="organization_naics_code" type="hidden" name="organization[naics_code]"/>
@@ -12,4 +13,5 @@
 <a id='naics_classification_back' href='#' style='display:none;'>Less Specific</a>
 
 <% content_for :initialize_js, 
-               "naicsClassificationList = new NaicsClassificationList(#{code});"%>      
+  "naicsClassificationList = new NaicsClassificationList(#{code});naicsClassificationList.showAncestors=#{show_ancestors};"%>      
+</div>
