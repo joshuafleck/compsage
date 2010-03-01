@@ -250,6 +250,8 @@ class Survey < ActiveRecord::Base
   
   # This will either email the credit card receipt, or the invoice to the sponsor
   def email_receipt
+    return if self.invoice.nil?
+
     if self.invoice.paying_with_credit_card? then
       # TODO: implement
     else
