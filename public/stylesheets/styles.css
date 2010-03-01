@@ -778,6 +778,11 @@ ul.invitations a.remove {
   float: right;
 }
 
+#association_search label {
+  font-size: 0.9em;
+  letter-spacing: normal;
+}
+
 #association_organizations a {
   float: right;
   vertical-align: middle;
@@ -1271,13 +1276,20 @@ ul#naics_classification_ancestors li.selected {
   font-weight: bold;
 }
 
+.industry_select select {
+  margin-right: 10px;
+}
+
+
 /* Hack for stupid IE6 to prevent a big gap between the industry label and the select box */
 ul#naics_classification_ancestors {
   height: 0px;
 }
+
 html > body ul#naics_classification_ancestors {
   height: auto;
 }
+
 
 /* inline error description for survey fields eg. */
 div.error_description {

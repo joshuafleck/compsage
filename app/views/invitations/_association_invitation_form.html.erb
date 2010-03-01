@@ -1,9 +1,8 @@
 <h3>Invite Members of <%=association.name%></h3>
 <div id="association_search">
-  <span style="font-size: 95%; color: grey;">Filter firms by...</span> <br />
   <% form_row do %>
     <% form_box do %>
-      <label for="organization_name">Name </label>
+      <label for="organization_name">Filter by Name</label>
       <input id="organization_name" type="textbox"/>
     <% end %>
     <% if !current_organization.zip_code.nil? && !current_organization.zip_code.blank?%>
@@ -55,16 +54,15 @@
       <a id="invite" href="#"><img src="/images/add_invitation_button.gif" /></a>
       <br /> 
       <% if !organization.location.blank? then %>
-      <span class="grey">
-        Location: 
-      </span>
-      <span id="organization_<%= organization.id %>_location">
-        <%= organization.location%>
-      </span>
+        <span class="grey">
+          Location: 
+        </span>
+        <span id="organization_<%= organization.id %>_location">
+          <%= organization.location%>
+        </span>
       <% else %>
-      <span>&nbsp;</span>
+        <span>&nbsp;</span>
       <% end %>
-      
   </li>
 <% end %>  
 </ul>
