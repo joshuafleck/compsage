@@ -12,7 +12,13 @@ class Association::MembersController <  Association::AssociationController
   end
 
   def create
-    @member = current_association_by_owner.new_member(params[:organization])
+    begin
+      @member = current_association_by_owner.new_member(params[:organization])
+    rescue Association::MemberExists
+      flash[:message] = "Firm is already a member of the association" 
+      redirect_to association_members_path
+      return
+    end
 
     if @member.save then
       flash[:message] = "Member created" 

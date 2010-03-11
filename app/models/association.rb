@@ -33,13 +33,21 @@ class Association < ActiveRecord::Base
     
     u && u.authenticated?(password) ? u : nil
   end
+  
+   class MemberExists < RuntimeError; end
 
   # Creates a new organization that is a member of this association. If the organization already exists in the
   # database, we just add the org to the association and return the existing org.
   #
   def new_member(attributes = {})
     if !attributes[:email].blank? && member = Organization.find_by_email(attributes[:email])
-      member.associations << self
+      #check if the member is already part of the association
+      if member.associations.include?(self) then
+        raise MemberExists
+      # not already a member, add them to the association.
+      else
+        member.associations << self
+      end
       return member
     end
 
