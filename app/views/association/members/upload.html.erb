@@ -4,6 +4,11 @@
 %>
 <h2>Upload Members</h2>
 <div style="display:none;">Need this div for flash notices in IE6</div>
+<div id="attachment_error" class="flash_notice" style="display: none;">
+  <p>You are attempting to upload a document which does not appear to be a CSV file. To be eligible for
+      upload, your file must end with the extension ".csv". If you have created this file in Excel, please choose
+      the "Save As" option from the File menu, and choose the Format: Comma Seperated Values (.csv) option.</p>
+</div>
 <%=flash_messages%>
 <% form_tag '', :multipart => true do %>
 
@@ -19,7 +24,6 @@
     Zip code, number of employees, and NAICS code fields may be left blank if necessary, although this is
     not recommended. Get an example CSV file <%=link_to "here.", "/static/example.csv"%>
   </p>
-
   <label for="csv_file">Upload Member List in CSV format</label>
   <%= file_field_tag :csv_file %>
   
@@ -40,6 +44,18 @@
   <label><%= radio_button_tag 'flags[classification]', 'naics2002' %> 2002 NAICS</label>
   <label><%= radio_button_tag 'flags[classification]', 'sic' %> 1987 SIC</label>
   <div class="submit">
-    <%= submit_tag "Upload Members" %>
+    <%= submit_tag "Upload Members", :id => "upload_button" %>
   </div>
 <% end %>
+<script type="text/javascript">
+  $('upload_button').observe('click', function(e){
+    var re = new RegExp(/\.([^\.]+)$/);
+    var match = re.exec($F('csv_file'));
+    
+    if(match == null || match[0] != ".csv"){
+      $('attachment_error').show();
+      e.stop();
+    }
+    
+  });
+</script>

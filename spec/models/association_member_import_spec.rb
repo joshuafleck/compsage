@@ -235,3 +235,30 @@ describe AssociationMemberImport, "that has special case input" do
     end
   end
 end
+
+describe AssociationMemberImport, "that has data in the incorrect order" do
+  before(:each) do
+    @importer = AssociationMemberImport.new(valid_importer_params.with('destroy' => true))
+
+    @association = Factory(:association)
+    @importer.association = @association
+    
+    @importer.file = "Michele Ricci,Micheler@determan.com,Determan Brownie Inc
+    Mike Kuhl,mgk@viking-norseman.com,Viking Drill & Tool Inc.
+    Lee Koktan,lkoktan@burnsengineering.com,Burns Engineering Inc.
+    Gary Heyn,gary_heyn@tolomatic.com,Tolomatic Inc.
+    Patrick Thielen,pthielen@theintegrisgroup.com,Integris Group The
+    David Thompson,dthompson@qualitytool.com,Quality Tool Inc.
+    Steve Ragaller,Sragaller@cretexinc.com,Cretex Companies Inc."
+    
+    @importer.import!
+  end
+  
+  it "should have no valid members" do
+    @importer.valid_members.size.should == 0
+  end
+  
+  it "should be malformatted" do
+    @importer.malformatted?.should == true
+  end
+end

@@ -42,18 +42,25 @@ class Association::MembersController <  Association::AssociationController
     if request.post? then
       @importer = AssociationMemberImport.new(params[:flags])
       @importer.association = current_association_by_owner
-      
-      # ensure presence of some file
-      if params[:csv_file].nil? || params[:csv_file] == "" then
-        flash[:notice] = "You must specify a CSV file to upload"
-        render :upload
-        return # do not try to import, no file!
-      end
-      
       @importer.file = params[:csv_file]
 
-      Organization.suspended_delta do
-        @importer.import!
+      begin
+        Organization.suspended_delta do
+          @importer.import!
+        end
+      #The handle various errors the importer might throw
+      rescue AssociationMemberImport::NoImportFile, AssociationMemberImport::MalformattedCSV,
+        FasterCSV::MalformedCSVError => e
+        if e.is_a? AssociationMemberImport::NoImportFile then
+          flash[:notice] = "You must specify a CSV file to upload"
+        else
+          flash[:notice] = "The file you have tried to upload yielded no successful members. Make sure to follow
+          the instructions below about how to format your CSV file. You could also try using the example file. If
+          you created the file in Excel, make sure to choose the \"Save As\" option select Comma Seperated Values"
+        end
+        
+        render :upload
+        return
       end
 
       render :upload_success
