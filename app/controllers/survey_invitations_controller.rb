@@ -94,6 +94,28 @@ class SurveyInvitationsController < ApplicationController
     end
   end
   
+  def destroy_all
+    survey = current_organization.sponsored_surveys.find(params[:survey_id])
+    
+    invitations = survey.internal_and_external_invitations.all.select{|x| 
+      !x.invitee.eql?(current_organization) && x.pending?
+    }
+    
+    puts invitations.size
+    
+    #delete all
+    invitations.each do |invitation|
+      invitation.destroy
+    end
+    
+    respond_to do |wants|
+      wants.json do
+        render :json => invitations.to_json(
+          :only    => [:id])
+      end
+    end
+  end
+  
   def decline
     invitation = current_organization.survey_invitations.find(params[:id])
     invitation.decline!

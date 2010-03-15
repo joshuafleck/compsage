@@ -988,6 +988,9 @@ function InviteList(survey_id) {
       }
     });
     
+    //observe the remove all link
+    $('remove_all_invitations').observe('click', removeAllInvitations);
+    
     //test to see if the association integration form is present, it won't be if we are not an association member
     if( $('organization_name') ) {
       //observer for the association integration form
@@ -1036,8 +1039,16 @@ function InviteList(survey_id) {
         organizations.push(id_match);
       }
     });
-    //function for ajax request
-    addAssociationInvitations(organizations);
+    
+    //If there are more than 15 invitations, double check that this was intentional.
+    if(organizations.length > 15) {
+      if(confirm('You are about to invite ' + organizations.length + 
+                   'firms. Are you sure you want to do this?')){
+       //ajax request to invite array of orgs
+       addAssociationInvitations(organizations);
+      }
+    }
+    return;
   }
   
   /*
@@ -1182,6 +1193,25 @@ function InviteList(survey_id) {
 
     new Ajax.Request('/surveys/' + survey_id + '/invitations/' + invitation_id, {
       'method': 'delete'
+    });
+  }
+  
+  function removeAllInvitations(e){
+    e.stop();
+    if(confirm('This will remove all pending invitations. Are you sure you want to do this?')){
+      new Ajax.Request('/surveys/' + survey_id + '/invitations/destroy_all.json', {
+          'method': 'post',
+          'requestHeaders': {'Accept':'application/json'},
+          'onSuccess': function(transport) {
+            removeInvitationsFromPage(transport.responseText.evalJSON());
+          }
+      });
+    }
+  }
+  
+  function removeInvitationsFromPage(invitations){
+    invitations.each(function(invitation){
+      $('invitation_' + invitation.id).remove();
     });
   }
 
