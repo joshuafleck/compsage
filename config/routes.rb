@@ -51,6 +51,7 @@ ActionController::Routing::Routes.draw do |map|
     association.resource :session
     association.resources :members, :collection => {:upload => :any }
     association.resources :pdqs
+    association.resources :surveys
     association.resource :settings
 
     association.map '', :controller => 'sessions', :action => 'new'
