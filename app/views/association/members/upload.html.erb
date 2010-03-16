@@ -53,7 +53,7 @@
     var re = new RegExp(/\.([^\.]+)$/);
     var match = re.exec($F('csv_file'));
     
-    if(match == null || match[0] != ".csv"){
+    if(match == null || match[0].toLowerCase() != ".csv"){
       //display the explaination div if we didn't receive .csv
       $('attachment_error').show();
       e.stop();
