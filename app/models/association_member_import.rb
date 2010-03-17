@@ -26,7 +26,7 @@ class AssociationMemberImport
 
   class InvalidRow < RuntimeError; end
   class NoImportFile < RuntimeError; end
-  class MalformattedCSV < RuntimeError; end
+  class MalformedCSV < RuntimeError; end
 
   # Set options an initialize our member arrays.
   #
@@ -87,13 +87,13 @@ class AssociationMemberImport
       end
     end
     
-    raise MalformattedCSV if self.malformatted?
+    raise MalformedCSV if self.malformed?
   end
   
   # Returns true if the CSV was likely malformatted, which is probably true if there are no valid members
   # or any other members but some invalid members.
   
-  def malformatted?
+  def malformed?
     return self.invalid_members.size > 0 && self.valid_members.size == 0 && 
     self.deleted_members.size && self.skipped_members.size == 0
   end

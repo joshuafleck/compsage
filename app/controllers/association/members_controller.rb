@@ -55,13 +55,13 @@ class Association::MembersController <  Association::AssociationController
           @importer.import!
         end
       #The handle various errors the importer might throw
-      rescue AssociationMemberImport::NoImportFile, AssociationMemberImport::MalformattedCSV,
+      rescue AssociationMemberImport::NoImportFile, AssociationMemberImport::MalformedCSV,
         FasterCSV::MalformedCSVError => e
         if e.is_a? AssociationMemberImport::NoImportFile then
           flash[:notice] = "You must specify a CSV file to upload"
         else
           flash[:notice] = "The file you have tried to upload yielded no successful members. Follow the instructions 
-          below regarding about how to format your CSV file. You could also try using the example file. If you created
+          below regarding how to format your CSV file. You could also try using the example file. If you created
           the file in Excel, make sure to choose the \"Save As\" option and select Format: Comma Seperated Values (.csv)"
         end
         
