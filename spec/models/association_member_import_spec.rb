@@ -258,7 +258,7 @@ describe AssociationMemberImport, "that has data in the incorrect order" do
     @importer.valid_members.size.should == 0
   end
   
-  it "should be malformatted" do
-    @importer.malformatted?.should == true
+  it "should be malformed" do
+    @importer.malformws?.should == true
   end
 end
