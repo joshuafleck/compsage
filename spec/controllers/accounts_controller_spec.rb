@@ -30,6 +30,10 @@ describe AccountsController, "#route_for" do
     route_for(:controller => "accounts", :action => "activate").should == "/account/activate"
   end  
 
+  it "should map { :controller => 'accounts', :action => 'deactivate'} to /account/deactivate" do
+    route_for(:controller => "accounts", :action => "deactivate").should == "/account/deactivate"
+  end  
+
 end
 
 describe AccountsController, " handling GET /account/new" do
@@ -611,6 +615,47 @@ describe AccountsController, " handling PUT /account/reset" do
   
   end
 
+end
+
+
+describe AccountsController, " handling GET /account/deactivate" do
+
+  before(:each) do
+    @current_organization = Factory.create(:organization)
+    @params = { :key => @current_organization.deactivation_key }
+  end
+  
+  def do_get
+    get :deactivate, @params
+    @current_organization.reload
+  end
+  
+  it "should redirect to the new session page" do    
+    do_get
+    response.should redirect_to(new_session_path)
+  end
+  
+  it "should deactivate the organization" do  
+    lambda{ do_get }.should change(@current_organization, :deactivated?).from(false).to(true)
+  end
+  
+  it "should redirect to the login page if the organization is not found" do
+    @params[:key] = '1234'
+    do_get
+    response.should redirect_to(new_session_path)
+  end
+  
+  it "should notify the admin" do
+    Notifier.should_receive(:deliver_report_account_deactivation).with(@current_organization)
+    do_get
+  end
+  
+  it "should not deactivate if the organization is already deactivated" do
+    @current_organization.deactivate
+    @current_organization.should_not_receive(:deactivate)
+    do_get
+  end
+ 
 end
  
 

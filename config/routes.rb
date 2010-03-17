@@ -30,7 +30,7 @@ ActionController::Routing::Routes.draw do |map|
     network.resources :invitations, :controller => :network_invitations, :member => {:decline => :put}
   end
   
-  map.resource :account, :member => {:forgot => :any, :reset => :any, :activate => :any}
+  map.resource :account, :member => {:forgot => :any, :reset => :any, :activate => :any, :deactivate => :any}
  
   map.login 'login', :controller => 'sessions', :action => 'new'
   map.survey_login 'survey_login', :controller => 'sessions', :action => 'create_survey_session'

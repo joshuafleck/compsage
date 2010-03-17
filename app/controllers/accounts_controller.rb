@@ -1,6 +1,6 @@
 class AccountsController < ApplicationController
   include NewOrganizationHelper
-  before_filter :login_required, :except => [ :new , :create, :forgot, :reset, :activate ]
+  before_filter :login_required, :except => [ :new , :create, :forgot, :reset, :activate, :deactivate ]
   before_filter :locate_invitation, :only => [ :new , :create ]
   before_filter :locate_existing_organization, :only => [ :new ]
   layout :logged_in_or_invited_layout 
@@ -65,6 +65,30 @@ class AccountsController < ApplicationController
       redirect_to new_session_path
       
     end
+    
+  end
+  
+  # This method is called via a link in the welcome email. Its
+  #  purpose is to disable an account if a user believes someone
+  #  created a CS account using their email address without their
+  #  knowledge/permission
+  def deactivate
+   organization = Organization.find_by_deactivation_key(params[:key])
+    
+    if organization && !organization.deactivated? then 
+    
+      organization.deactivate
+      flash[:notice] = "This account has been disabled and the administrator has been notified."
+      
+      Notifier.deliver_report_account_deactivation(organization)
+      
+    else
+    
+      flash[:notice] = "We are unable to locate the account at this time. If the problem persists, <a href=\"#{contact_path}\">let us know</a>."
+      
+    end
+    
+    redirect_to new_session_path
     
   end
   

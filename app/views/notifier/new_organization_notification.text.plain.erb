@@ -1,6 +1,6 @@
 Welcome to CompSage!
 <% if !@organization.activated? then %>
-In order to activate your account, click, or copy and paste the link below into a web browser:
+Activate your account by clicking, or copying and pasting the link below into a web browser:
 <%=url_for(activate_account_path(:key => @organization.activation_key, :only_path => false, :subdomain => subdomain_for(:organization => @organization)))%>
 <% end %>
 Thank you for signing up for CompSage. To begin using your account, simply log in with the details you provided us at our homepage: <%=url_for(root_path(:only_path => false, :subdomain => subdomain_for(:organization => @organization)))%>. Should you wish to change your account settings, you may do so from there as well.
@@ -11,3 +11,7 @@ If you have any questions, feel free to email us at support@compsage.com.
 
 Thanks,
 CompSage.com
+<% if @organization.activated? then %>
+If you did not expect to receive this message, let us know by clicking, or copying and pasting the link below into a web browser:
+<%=url_for(deactivate_account_path(:key => @organization.deactivation_key, :only_path => false, :subdomain => subdomain_for(:organization => @organization)))%>
+<% end %>

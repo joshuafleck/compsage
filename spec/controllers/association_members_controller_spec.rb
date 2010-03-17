@@ -116,12 +116,6 @@ describe AssociationMembersController, "handling POST /association_member/sign_i
       do_post
     end   
     
-    it "should activate the organization member when an invitation is present" do
-      session[:invitation] = Factory(:external_network_invitation)
-      lambda{ do_post }.should change(@uninitialized_organization, :activated?).to(true)
-      session[:invitation].destroy
-    end    
-    
     it "should accept the invitation when an invitation is present" do
       session[:invitation] = Factory(:external_network_invitation)
       lambda{ do_post }.should change(ExternalNetworkInvitation, :count).from(1).to(0)

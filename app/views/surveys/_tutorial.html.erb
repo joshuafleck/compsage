@@ -7,4 +7,7 @@
   your account on this website at any time.</p>
   <p>Creating <%= link_to "networks of your peers", networks_path %> makes it easy for you to survey them and for them
   to survey you. Click the Networks &amp; Contacts to begin using networks.</p>
+  <% if !current_organization.activated? then %>  
+    <p>Remember to activate your account by following the activation link in the welcome email. If you did not receive the welcome email, verify it was not flagged as junk. Failure to activate will cause your account to be disabled in <%=Organization:: ACTIVATION_WINDOW_IN_DAYS%> days.</p>
+  <% end %>
 </div>

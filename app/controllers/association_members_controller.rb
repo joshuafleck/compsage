@@ -51,7 +51,6 @@ class AssociationMembersController < ApplicationController
           # Account is uninitialized; attempt to create the login
           if @association_member.create_login(
             current_association, 
-            !!(session[:invitation]), # Activate the organization if the invitation is present
             {
               :password => password, 
               :password_confirmation => password_confirmation

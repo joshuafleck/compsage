@@ -72,6 +72,7 @@ class Organization < ActiveRecord::Base
 
   # Constant definition
   METERS_PER_MILE = 1609.344
+  ACTIVATION_WINDOW_IN_DAYS = 3
   
   named_scope :pending, :conditions => {:is_pending => true}        
   
@@ -151,7 +152,7 @@ class Organization < ActiveRecord::Base
   def activated?
     !!self.activated_at
   end
-  
+
   # Sets the activated_at time to signify the organization has activated their account
   #
   def activate
@@ -162,9 +163,21 @@ class Organization < ActiveRecord::Base
   # If true, the user has waited too long before activating their account and will be prevented from logging in
   #
   def activation_window_has_expired?
-    !activated? && (Time.now - activation_key_created_at) > 3.days
+    !activated? && (Time.now - activation_key_created_at) > ACTIVATION_WINDOW_IN_DAYS.days
   end
   
+  # An organization is deactivated when a user determines that an account was 
+  #  created using their email address without their knowledge
+  def deactivated?
+    !!self.deactivated_at
+  end
+  
+  # This will mark an organization as deactivated, which disables the account
+  def deactivate
+    self.deactivated_at = Time.now
+    self.save!
+  end  
+    
   # Will increment the times_reported flag and notify the admin that the organization was reported
   #
   def report
@@ -184,13 +197,13 @@ class Organization < ActiveRecord::Base
   # If true, the user's account has been disabled and will not be able to log in
   #
   def disabled?
-    activation_window_has_expired? || has_exceeded_reporting_threshold?
+    activation_window_has_expired? || has_exceeded_reporting_threshold? || deactivated?
   end
 
   # Will attempt to set the password for an uninitialized association member
-  # If successful, the organization will receive an email with a link for activating their account
+  # If successful, the organization will now have login credentials
   # If unsuccessful, the organization will have errors
-  def create_login(association, should_activate, params = {})
+  def create_login(association, params = {})
   
     # Hack to ensure authentication will check the password in the chance that the user forgot to enter one
     if params[:password].blank? then
@@ -201,14 +214,6 @@ class Organization < ActiveRecord::Base
     # Attempt to set password
     if self.update_attributes(params) then
     
-      if should_activate then      
-        self.activated_at = Time.now      
-      else 
-        self.activated_at                        = nil
-        self.activation_key                      = KeyGen.random
-        self.activation_key_created_at           = Time.now
-      end
-      
       self.is_uninitialized_association_member = false
       self.save!
       
@@ -243,6 +248,8 @@ class Organization < ActiveRecord::Base
       self.activation_key_created_at = Time.now
       
     end
+    
+    self.deactivation_key = KeyGen.random
         
   end  
 

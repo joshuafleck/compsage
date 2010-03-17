@@ -183,7 +183,15 @@ describe Organization do
     @organization.is_uninitialized_association_member = true
     @organization.should have(0).errors_on(:password)
   end  
-
+  
+  it "should have a deactivation key" do
+    @organization.deactivation_key.should_not be_nil
+  end
+  
+  it "should not be deactivated" do
+    @organization.deactivated?.should be_false
+  end  
+  
 end
 
 describe Organization, "that already exists" do
@@ -440,7 +448,7 @@ describe Organization, "that is an uninitialized association member" do
   end  
   
   it "should not allow a blank password when creating the login" do
-    @organization.create_login(@association, false, {
+    @organization.create_login(@association, {
       :password => "",
       :password_confirmation => ""
     }).should be_false  
@@ -449,42 +457,21 @@ describe Organization, "that is an uninitialized association member" do
   end
   
   it "should not allow a mismatched password when creating the login" do
-    @organization.create_login(@association, false, {
+    @organization.create_login(@association, {
       :password => "test12",
       :password_confirmation => ""
     }).should be_false  
     
     @organization.should have(1).errors_on(:password)
   end  
-  
-  it "should set the activation key when creating the login" do
-    lambda{ @organization.create_login(@association, false, {
-      :password => "test12",
-      :password_confirmation => "test12"
-    }) }.should change(@organization, :activation_key).from(nil)
-  end
-  
-  it "should set the activation key created at date when creating the login" do
-    lambda{ @organization.create_login(@association, false, {
-      :password => "test12",
-      :password_confirmation => "test12"
-    }) }.should change(@organization, :activation_key_created_at).from(nil)
-  end
-  
+    
   it "should no longer be uninitialized" do   
-    lambda{ @organization.create_login(@association, false, {
+    lambda{ @organization.create_login(@association, {
       :password => "test12",
       :password_confirmation => "test12"
     }) }.should change(@organization, :is_uninitialized_association_member).from(true).to(false)
   end  
   
-  it "should be active if specified" do   
-    lambda{ @organization.create_login(@association, true, {
-      :password => "test12",
-      :password_confirmation => "test12"
-    }) }.should change(@organization, :activated?).from(false).to(true)
-  end  
-
   it "should delete itself when removed as an association member" do
     @organization.should_receive(:destroy).twice # once in leave, once in cleanup.
     @organization.associations << @association
@@ -518,3 +505,19 @@ describe Organization, "That is in an association (and is initialized)" do
   it "should be deletable and updatable by association if uninitialized"
   it "should not be deletable and updatable by association if initialized"
 end
+
+describe Organization, "that has be deactivated" do
+  before(:each) do
+    @organization = Factory.build(:organization)
+    @organization.deactivate
+  end
+  
+  it "should be deactivated" do
+    @organization.deactivated?.should be_true
+  end  
+  
+  it "should be disabled" do
+    @organization.disabled?.should be_true
+  end  
+  
+end  

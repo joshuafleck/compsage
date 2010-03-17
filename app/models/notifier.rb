@@ -160,4 +160,12 @@ class Notifier < ActionMailer::Base
     subject    "Suspicious activity was reported for a pending account" 
     body       :organization => organization  
   end
+  
+  def report_account_deactivation(organization)
+    recipients "CompSage <support@compsage.com>"
+    from       "CompSage <support@compsage.com>"
+    reply_to   "support@compsage.com"
+    subject    "A user has deactivated their account" 
+    body       :organization => organization  
+  end  
 end

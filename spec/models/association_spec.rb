@@ -79,5 +79,6 @@ describe Association do
   it "should not create a new member with bad input"
   it "should delete a member if it's deletable"
   it "should remove the memeber for the association if it isn't deletable"
+  it "should activate a new member"
   
 end
