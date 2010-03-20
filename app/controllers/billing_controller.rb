@@ -1,5 +1,8 @@
 class BillingController < ApplicationController
-  before_filter :login_required, :find_or_initialize_invoice, :bypass_associations
+  before_filter :login_required
+  before_filter :find_survey
+  before_filter :association_required, :only => [:instructions, :skip]
+  before_filter :find_or_initialize_invoice, :except => [:instructions, :skip]
   layout 'logged_in'
   
   # don't allow the credit card information to be logged
@@ -47,19 +50,27 @@ class BillingController < ApplicationController
     end
   end 
   
+  # displays the billing instructions provided by the association
+  def instructions
+  
+  end
+  
+  # bypasses billing for an association survey
+  def skip
+    @survey.association_billing_bypass if @survey.pending?
+    redirect_to survey_path(@survey)
+  end
+  
   private
   
-  # finds the survey and finds or initializes the invoice by survey id
+  # finds or initializes the invoice by survey id
   def find_or_initialize_invoice
-    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
     @invoice = Invoice.find_or_initialize_by_survey_id(@survey.id)
   end
   
-  def bypass_associations
-    if current_association then
-      @survey.association_billing_bypass if @survey.pending?
-      redirect_to survey_path(@survey)
-    end 
-  end
-
+  # finds the survey
+  def find_survey
+    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
+  end  
+  
 end 

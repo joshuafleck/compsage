@@ -1,0 +1,23 @@
+<% title "Billing Information" %>
+<% highlight_tab("surveys") %>
+<div class="breadcrumbs">
+  <%= image_tag 'step_1_inactive.gif' %>
+  <%= image_tag 'step_2_inactive.gif' %>
+  <%= image_tag 'step_3_inactive.gif' %>
+  <%= image_tag 'step_4_active.gif' %>
+</div>
+<div id="step_container">
+  <h3>Billing Information</h3>
+  <% if current_association.billing_instructions.blank? %>
+    <p>
+      The association has not provided any billing instructions. Contact <%= association_contact_information %> with any billing questions.
+    </p>
+  <% else %>
+    <%= simple_format current_association.billing_instructions%>
+  <% end %>
+  <div class="submit_row">
+    <%= button_to "Complete Survey Creation", skip_survey_billing_path(@survey), :class => "next", :method => :get %>
+    <input type="button" value='Back &ndash; Preview Survey' class="previous" onClick ="parent.location='<%=preview_survey_questions_path(@survey)%>'" />
+  </div>
+</div>
+

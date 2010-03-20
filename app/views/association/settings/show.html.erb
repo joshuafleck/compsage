@@ -43,11 +43,17 @@ These questions will be available to members when they create a survey through y
   <p class="info">If blank, a default greeting message will be used.</p>
   <%= f.submit "Update Greeting" %>
 <% end %>
-
+<h3>Billing Instructions</h3>
+<p class="instructions">Provide billing instructions for survey sponsorship. These instructions will be presented to your members during survey creation.</p>
+<% form_for :association, :url => association_settings_path, :html => {:method => :put} do |f| %>
+  <%= f.text_area :billing_instructions %>
+  <div class="submit">
+    <%= f.submit "Update Billing Instructions" %>
+  </div>
+<% end %>   
 <h3>Contact Information</h3>
 <p class="instructions">This information will be provided to your members should they have trouble logging in. Also,
 your contact email is the email address you use to access the system.</p>
-
 <% form_for :association, :url => association_settings_path, :html => {:method => :put} do |f| %>
   <%= f.label :contact_name, "Name" %>
   <%= f.text_field :contact_name, :size => 30 %>

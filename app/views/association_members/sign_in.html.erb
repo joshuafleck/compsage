@@ -14,17 +14,7 @@
   <% if current_association.member_greeting.blank? then %>
     <p>
     Welcome to CompSage, provided by <%= current_association.name %>. You may log in on the right. If this is your
-    first time logging in, fill out the form on the bottom. Contact
-
-    <% if current_association.contact_name.blank? then %>
-      <%= current_association.name %> 
-    <% else %>
-      Contact <a href="<%= current_association.contact_email %>"><%= current_association.contact_name %></a> at
-      <%= current_association.formatted_contact_phone %>
-      <% unless current_association.contact_phone_extension.blank? %>
-        ext. <%= current_association.contact_phone_extension %>
-      <% end %>
-    <% end %>
+    first time logging in, fill out the form on the bottom. Contact <%= association_contact_information %>
     if you have any problems.
     </p>
   <% else %>

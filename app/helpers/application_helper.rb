@@ -109,4 +109,15 @@ module ApplicationHelper
       ''
     end
   end
+  
+  # determines how to display the association contact information based on what fields are available
+  def association_contact_information
+      contact = "<a href='mailto: #{current_association.contact_email}'>#{current_association.contact_name.blank? ? current_association.name : current_association.contact_name}</a>"
+      
+      contact += " at #{current_association.formatted_contact_phone}" unless current_association.contact_phone.blank?
+      contact += " ext. #{current_association.contact_phone_extension}" unless current_association.contact_phone_extension.blank?
+      
+      return contact
+  end
+    
 end

@@ -22,7 +22,7 @@ ActionController::Routing::Routes.draw do |map|
                       :destroy_all => :post}
       
     survey.resource :report, :member => {:chart => :get, :suspect => :any}
-    survey.resource :billing, :controller => :billing, :member => {:invoice => :any}
+    survey.resource :billing, :controller => :billing, :member => {:invoice => :any, :instructions => :any, :skip => :any}
   end
   
   map.resources :networks, :member => {:join => :any, :leave => :any, :evict => :put} do |network|

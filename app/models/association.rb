@@ -24,7 +24,7 @@ class Association < ActiveRecord::Base
   validates_length_of       :contact_phone,  :is =>10, :allow_blank => true
  
   attr_accessible :contact_email, :password, :password_confirmation, :name, :subdomain, :member_greeting,
-                  :contact_person, :contact_name, :contact_phone, :contact_phone_extension, :logo
+                  :contact_person, :contact_name, :contact_phone, :contact_phone_extension, :logo, :billing_instructions
                   
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   #
