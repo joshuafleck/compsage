@@ -629,7 +629,20 @@ form.edit_survey textarea {
   display: inline;
 }
 
-.question_submit, .discussion_submit {
+.question_submit {
+  margin-top: .7em;
+}
+
+#new_question_form {  
+  padding-left: 20px;
+}
+
+#response_required_line {
+  display: block; 
+  margin-top: .5em;
+}
+
+.discussion_submit {
   margin-top: 5px;
 }
 

@@ -32,41 +32,45 @@
     <ol id="new_questions" class="entity_list">
       <%=render(:partial => "questions/question", :collection => @survey.top_level_questions, :locals => {:level => 0})%>
     </ol>
-    <label for='predefined_questions'>Add a Question</label>
-    <select id="predefined_questions">
-      <option value="">Choose which question...</option>
-      <optgroup label="Standard Questions">
-        <%= options_from_collection_for_select(PredefinedQuestion.system_wide, 'id', 'name') %>
-      </optgroup>
-      <% if !current_association.nil? and current_association.predefined_questions.any?%>
-      <optgroup label="Association Questions">
-        <%= options_from_collection_for_select(current_association.predefined_questions, 'id', 'name') %>
-      </optgroup>
-      <% end %>
-      <optgroup label="&nbsp;"></optgroup>
-      <option value="0">Custom question...</option>
-    </select>
-    <div id='custom_question_form' style='display: none;'>
-      <label for='custom_question_text' class='survey_question_label'><%=required('Question Text')%></label>
-      <input id='custom_question_text' type='text' size='40' />    
-      <div class="error_description" id="custom_question_warning"></div>
-      <label for='custom_question_response' class='survey_question_label'>Response Type</label>
-      <select id='custom_question_response'><%=options_for_select Question::QUESTION_TYPES.keys %></select>
-    </div>
-    <div style="margin-top: 1em;">
-      <label for='question_required' class='survey_question_label' style="display: inline;">Response Required?</label>
-      <input id='question_required' value='true' type='checkbox' class='required_check' />
-    </div>
-    <div id='follow_up_question' style='<%=@survey.questions.size > 0 ? "" : "display:none;"%>'>
-      <label for='follow_up_question_select' class='survey_question_label'>Add as a follow-up to</label>
-      <select id='follow_up_question_select'>
-        <option value=''>Nothing</option>
-        <%= options_from_collection_for_select(@survey.questions,'id','text')%>
-    </select>
-    </div>
-    <div>
-      <input id="question_submit" class="question_submit" type="submit" value="Add" />
-      <%= image_tag 'load_indicator.gif', :class => 'load_indicator', :id => 'load_indicator', :style => 'display:none;' %>
+    <div id="new_question_form">
+      <label for='predefined_questions'>Add a Question</label>
+      <select id="predefined_questions">
+        <option value="">Choose which question...</option>
+        <optgroup label="Standard Questions">
+          <%= options_from_collection_for_select(PredefinedQuestion.system_wide, 'id', 'name') %>
+        </optgroup>
+        <% if !current_association.nil? and current_association.predefined_questions.any?%>
+        <optgroup label="Association Questions">
+          <%= options_from_collection_for_select(current_association.predefined_questions, 'id', 'name') %>
+        </optgroup>
+        <% end %>
+        <optgroup label="&nbsp;"></optgroup>
+        <option value="0">Custom question...</option>
+      </select>
+      <div id='new_question_details'>
+        <div id='custom_question_form' style='display: none;'>
+          <label for='custom_question_text' class='survey_question_label'><%=required('Question Text')%></label>
+          <input id='custom_question_text' type='text' size='40' />    
+          <div class="error_description" id="custom_question_warning"></div>
+          <label for='custom_question_response' class='survey_question_label'>Response Type</label>
+          <select id='custom_question_response'><%=options_for_select Question::QUESTION_TYPES.keys %></select>
+        </div>
+        <div id="response_required_line">
+          <label for='question_required' class='survey_question_label' style="display: inline;">Response Required?</label>
+          <input id='question_required' value='true' type='checkbox' class='required_check' />
+        </div>
+        <div id='follow_up_question' style='<%=@survey.questions.size > 0 ? "" : "display:none;"%>'>
+          <label for='follow_up_question_select' class='survey_question_label'>Add as a follow-up to</label>
+          <select id='follow_up_question_select'>
+            <option value=''>Nothing</option>
+            <%= options_from_collection_for_select(@survey.questions,'id','text')%>
+        </select>
+        </div>
+        <div>
+          <input id="question_submit" class="question_submit" type="submit" value="Add Question" />
+          <%= image_tag 'load_indicator.gif', :class => 'load_indicator', :id => 'load_indicator', :style => 'display:none;' %>
+        </div>
+      </div>
     </div>
     <div class="submit_row">
       <% if @survey.pending? %>

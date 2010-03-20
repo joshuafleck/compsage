@@ -113,6 +113,7 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
     var questionParameters = null;
 
     if(!selectedQuestion){
+      alert('You must select a question to add');
       return false;
 	}
 
