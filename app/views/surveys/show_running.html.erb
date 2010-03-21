@@ -12,9 +12,14 @@
 
     <% if @survey.sponsor == current_organization then %>
       <h3>Manage Your Survey</h3>
-        <% if !@survey.participations.any? %>        
-          <p><%=link_to "Edit Questions &amp; Job Description", edit_survey_path(@survey)%><br />
-	    <% end %>
+        <p>
+        <% if !@survey.participations.any? then %>        
+          <%=link_to "Edit Questions &amp; Job Description", edit_survey_path(@survey)%><br />
+        <% else %>
+          <%=link_to "Edit Questions &amp; Job Description", "#", 
+             :onclick => 'javascript: alert("Responses have been collected, you may no longer edit this survey.")'%>
+	      <% end %>
+	      
         <%=link_to "Manage Invitation List", survey_invitations_path(@survey) %></p>
     <% end %>
     <h3>Invitation List</h3>
