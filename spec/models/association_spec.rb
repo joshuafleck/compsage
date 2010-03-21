@@ -12,6 +12,18 @@ describe Association do
     @association = Association.new
   end
 
+  it "should have and belong to many organizations" do
+    Association.reflect_on_association(:organizations).should_not be_nil
+  end
+
+  it "should have many predefined questions" do
+    Association.reflect_on_association(:predefined_questions).should_not be_nil
+  end
+
+  it "should have many surveys" do
+    Association.reflect_on_association(:surveys).should_not be_nil
+  end
+
   it "should be valid" do
     @association.attributes = @valid_attributes
     @association.should be_valid

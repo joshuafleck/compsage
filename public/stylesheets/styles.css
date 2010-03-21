@@ -1087,6 +1087,19 @@ div#association_question {
   font-weight: bold;
 }
 
+/* Association survey list */
+
+table#association_surveys td.status_good {
+}
+
+table#association_surveys td.status_bad {
+  font-weight: bold;
+}
+
+table#association_surveys td.status {
+  white-space: nowrap;
+}
+
 /* Flash Notices */
 div.flash_notice {
   border: 1px solid #6c8272;
@@ -1243,6 +1256,13 @@ a.editor_cancel_link {
 
 
 img.load_indicator {
+  vertical-align: middle;
+}
+
+div.load_indicator_sm_container {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
   vertical-align: middle;
 }
 

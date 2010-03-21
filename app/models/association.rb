@@ -8,6 +8,7 @@ class Association < ActiveRecord::Base
  
   has_and_belongs_to_many :organizations
   has_many :predefined_questions
+  has_many :surveys
 
   validates_presence_of   :name, :subdomain
   validates_uniqueness_of :name, :subdomain

@@ -107,6 +107,7 @@ class Survey < ActiveRecord::Base
   # the price of a surevy in cents
   PRICE = 9900
 
+  ASSOCIATION_BILLING_STATUSES = ['Not Billed', 'Billed']
   def closed?
     Time.now > end_date
   end
