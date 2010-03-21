@@ -33,7 +33,7 @@ class SurveysController < ApplicationController
     @survey = current_organization.sponsored_surveys.with_aasm_states(:running, :pending).find(params[:id])
 
     if @survey.participations.any? then # Can't make changes if there are participations.
-      flash[:notice] = "You cannot edit the questions for a survey once a response has been collected."
+      flash[:notice] = "You cannot edit the questions for a survey once any responses have been sent."
       redirect_to survey_path(@survey)
     end
   end
