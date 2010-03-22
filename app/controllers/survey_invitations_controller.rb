@@ -33,7 +33,8 @@ class SurveyInvitationsController < ApplicationController
   # If an external_invitation is passed (email and org name), an external invitation is created
   #
   def create
-    @survey = current_organization.sponsored_surveys.find(params[:survey_id])    
+    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
+    @method ||= params[:method]
 
     @invitation = if params[:organization_id] then
       invite_organization params[:organization_id]

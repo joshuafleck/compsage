@@ -1059,7 +1059,7 @@ function InviteList(survey_id) {
    */
   function addAssociationInvitation(organization_id, e){
     e.stop();
-    addInvitationByID(organization_id);
+    addInvitationByID(organization_id, 'association');
   }
   
   /*
@@ -1166,17 +1166,18 @@ function InviteList(survey_id) {
      @organization -  an object that contains an organization id.
    */
   function addInvitation(organization) {
-    addInvitationByID(organization.id);
+    addInvitationByID(organization.id, 'form');
   }
 
   /* Sends the ajax request to invite the specified organization.
   
     @organization_id -  the ID of the organization to invite.
    */
-  function addInvitationByID(organization_id) {
+  function addInvitationByID(organization_id, method) {
     new Ajax.Request('/surveys/' + survey_id + '/invitations', {
       'method': 'post',
-      'parameters': {'organization_id': organization_id},
+      'parameters': {'organization_id': organization_id, 
+                     'method': method},
       'onCreate': function() {$('submit_load_indicator').show();},
       'onComplete': function() {$('submit_load_indicator').hide();}
     });
