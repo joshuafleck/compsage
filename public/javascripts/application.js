@@ -66,6 +66,17 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
           followUpSelect.options.add(option);
         });
       });
+      
+      var followUpQuestionDiv = $('follow_up_question');
+      if(this.editableQuestions.length > 0) {
+        if(!followUpQuestionDiv.visible()) {
+          followUpQuestionDiv.show();
+        }
+      } else {
+        if(followUpQuestionDiv.visible()) {
+          followUpQuestionDiv.hide();
+        }
+      }
     }
   };
 
