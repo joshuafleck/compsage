@@ -10,7 +10,7 @@
   <h3>Billing Information</h3>
   <% if current_association.billing_instructions.blank? %>
     <p>
-      The association has not provided any billing instructions. Contact <%= association_contact_information %> with any billing questions.
+      Your association may send you an invoice for this survey upon completion. Contact <%= association_contact_information %> for more details.
     </p>
   <% else %>
     <%= simple_format current_association.billing_instructions%>
