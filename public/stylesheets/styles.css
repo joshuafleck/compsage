@@ -791,6 +791,11 @@ ul.invitations a.remove {
   float: right;
 }
 
+div.remove_all_invitations {
+  float: right; 
+  margin-top: -20px;
+}
+
 #association_search label {
   font-size: 0.9em;
   letter-spacing: normal;
