@@ -139,10 +139,6 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
                             'question[required]': questionRequired,
                             'question[parent_question_id]': selectedParentQuestion};
 
-      $('custom_question_text').clear();
-      $('custom_question_response').clear();
-      $('custom_question_warning').update('');
-      $('custom_question_form').blindUp({'duration': 0.5});
     } 
     else if(selectedQuestion != '') {  //The user selected a predefined question
       questionParameters = {'predefined_question_id': selectedQuestion,
@@ -155,15 +151,25 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
       parameters: questionParameters,
       'onSuccess' : function(transport) {
         questionSet.insertQuestions(transport.responseText, selectedParentQuestion);
+                
+        //Reset the select box
+        $('predefined_questions').clear();
+        $('follow_up_question_select').clear();
+        $('question_required').checked = false;
+        
+        //Reset the custom question form
+        $('custom_question_text').clear();
+        $('custom_question_response').clear();
+        $('custom_question_warning').update('');
+        
+        //Reset the question form
+        customQuestionSelect();
+        
       },
-      'onCreate':function() {$('load_indicator').show();},
-      'onComplete':function() {$('load_indicator').hide();}
+      'onCreate':function() {$('load_indicator').show(); },
+      'onComplete':function() { $('load_indicator').hide(); }
     }); 
 
-    //Reset the select box
-    $('predefined_questions').clear();
-    $('follow_up_question_select').clear();
-    $('question_required').checked = false;
   };
 
   /* Inserts the specified question under the specified parent question. Called when the server responds to a user's
@@ -231,17 +237,65 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
 
   /* Handles when the user selects a predefined question. This will hide or show the custom question form. */
   function customQuestionSelect(e) {
-    if($F(pdqSelect) == "0") {  //The user selected custom question, show the form
-      if (!$('custom_question_form').visible()) {
-        $('custom_question_form').blindDown({'duration': 0.5});
+    if(e) {
+      e.stop();
+    }
+  
+    var question_is_selected             = !!$F(pdqSelect);
+    var new_question_details             = $('new_question_details');
+    var new_question_details_are_visible = new_question_details.visible();
+    var custom_question_is_selected      = $F(pdqSelect) == "0";
+    var custom_question_form             = $('custom_question_form');
+    var custom_question_form_is_visible  = $('custom_question_form').visible();
+    
+    
+    if(!question_is_selected) {
+    
+      // Hide the new question details if no question type was selected
+      if(new_question_details_are_visible) {
+        new_question_details.blindUp({'duration': 0.3});
+      }
+      
+    } else {
+    
+      // A question was selected, determine if it was a custom question
+      if(custom_question_is_selected) {  
+      
+        //The user selected custom question, show the custom question form
+        if (!custom_question_form_is_visible) {
+          if(new_question_details_are_visible) {
+            custom_question_form.blindDown({'duration': 0.3});
+          } else {
+            custom_question_form.show();
+          }
+        }
+        
+      } 
+      
+    }
+      
+    if(!custom_question_is_selected && custom_question_form_is_visible) {
+      // A custom question was not selected, but the custom question form is visible, let's hide it
+    
+      if (question_is_selected) {
+        // Since a question was selected, we can assume the form is already visible, thus show the effect
+        custom_question_form.blindUp({'duration': 0.3});
+      } else {
+        // The new question form is being hidden, hide this afterward to prevent dual effects
+        custom_question_form.blindUp({'duration': 0.1, 'queue': 'end' });
+      }
+
+      
+      $('custom_question_warning').update('');
+    }
+      
+    // Show the new question details when a question type is selected
+    if(question_is_selected) {
+      if(!new_question_details_are_visible) {
+        new_question_details.blindDown({'duration': 0.3});
       }
     } 
-    else {                      //The user selected a non-custom question, hide the form
-      if ($('custom_question_form').visible()) {
-        $('custom_question_form').blindUp({'duration': 0.5});
-        $('custom_question_warning').update('');
-      }
-    }
+    
   }
 
   if(addForm){
