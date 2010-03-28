@@ -63,8 +63,6 @@ class Organization < ActiveRecord::Base
   validates_length_of       :phone,  :is =>10, :allow_blank => true
   validates_length_of       :phone_extension,  :maximum => 6, :allow_blank => true
   validates_numericality_of :size, :allow_blank => true
-  validates_presence_of      :password_confimation, :if => Proc.new { |user| user.is_uninitialized_association_member?},
-                            :message => 'must be entered on the "First Time Logging In" form.'
   
   validates_acceptance_of :terms_of_use, :on => :create  
   attr_accessor :terms_of_use

@@ -105,6 +105,7 @@ describe AssociationMembersController, "handling POST /association_member/sign_i
       @params[:email] = @uninitialized_organization.email
       @params[:password] = "test12"
       @params[:password_confirmation] = @params[:password]
+      @params[:first_time_logging_in] = "true"
     end
         
     it "should unset the uninitialized flag on the association member" do

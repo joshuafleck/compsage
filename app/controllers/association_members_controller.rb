@@ -36,20 +36,21 @@ class AssociationMembersController < ApplicationController
     
       logout_keeping_session!
       
-      password              = params[:password]
-      password_confirmation = params[:password_confirmation]
-      @remember_me          = params[:remember_me]
-      @association_member   = current_association.organizations.find_by_email(@login)
-      organization          = Organization.authenticate(@login, password)
-      should_initialize     = @association_member && @association_member.is_uninitialized_association_member?
+      password                = params[:password]
+      password_confirmation   = params[:password_confirmation]
+      first_time_logging_in   = !params[:first_time_logging_in].nil?
+      @remember_me            = params[:remember_me]
+      @association_member     = current_association.organizations.find_by_email(@login)
+      organization            = Organization.authenticate(@login, password)
+      should_initialize       = @association_member && @association_member.is_uninitialized_association_member?
       
       # The email belongs to an association member that either provided a valid login, or needs initialization
       if @association_member && (should_initialize || organization) then
                      
-        if should_initialize        
+        if first_time_logging_in && should_initialize
 
           # Account is uninitialized; attempt to create the login
-          if @association_member.create_login(
+          if  @association_member.create_login(
             current_association, 
             {
               :password => password, 
@@ -62,7 +63,6 @@ class AssociationMembersController < ApplicationController
             send_email_and_move_invitations_to_new_organization(organization, session[:invitation])
             
           else
-          
             # There was a problem updating the organization, 
             #  the view will display any errors on the organization      
             render :action => 'sign_in'  
