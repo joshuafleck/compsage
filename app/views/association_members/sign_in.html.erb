@@ -25,6 +25,7 @@
 <div class="third_column_left" id="association_member_signin">
   <h3 class="returning">Returning Firms</h3>
   <% form_tag sign_in_association_member_path(@form_options) do %>
+    <%= hidden_field_tag 'submitted_returning_firm_form', :true %>
     <label for="email">Email</label>
     <%= text_field_tag 'email', @login, :size => 25 %>
     <label for="password">Password</label>
@@ -36,7 +37,6 @@
   <% end %>
   <h3 class="first_time">First Time Logging In</h3>
   <% form_tag sign_in_association_member_path(@form_options) do %>
-    <%= hidden_field_tag 'first_time_logging_in', :true %>
     <p class="info">Email must match the one on file with <%= current_association.name %>.
     <a href="mailto:<%= current_association.contact_email %>">Contact them</a> with questions regarding registration.</p>
     <label for="email">Email</label>
