@@ -67,7 +67,7 @@ class AssociationMembersController < ApplicationController
             # It is the user's first time logging in, but they did not enter their information
             #  in the 'Firt Time Logging In' form
             if submitted_returning_firm_form then
-              flash.now[:notice] = "Create a new password by filling in the 'First Time Logging In' section at the bottom right."
+              flash.now[:error] = "Create a new password by filling in the 'First Time Logging In' section at the bottom right."
             end
           
             # There was a problem updating the organization, 
