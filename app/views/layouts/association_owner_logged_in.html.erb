@@ -33,14 +33,6 @@
     <br id="end_break" />
   </div>
   <div id="container_cap">&nbsp;</div>
-  <div id="footer">
-    <ul class="links">
-      <li><%= link_to "Contact", home_path('contact') %></li>
-      <li><%= link_to "Privacy", home_path('privacy') %></li>
-      <li><%= link_to "About", home_path('about') %></li>
-      <li><%= link_to "Terms of Use", home_path('terms') %></li>
-    </ul>
-    <div id="copyright">Copyright <a href="http://www.huminsight.com">HumInsight, Inc.</a></div>
-  </div>
+  <%= render :partial => 'layouts/footer' %>
 </body>
 </html>
