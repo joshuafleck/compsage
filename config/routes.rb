@@ -4,7 +4,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.root :controller => 'home'
   map.contact 'contact', :controller => 'home', :action => 'contact'
-  map.home ':page', :controller => 'home', :action => 'show', :page => /about|contact|privacy|how|tips|terms/
+  map.home ':page', :controller => 'home', :action => 'show', :page => /about|contact|privacy|how|tips|terms|help/
 
   map.resources :organizations, :collection => {:search => :any, :search_for_association_list => :any},
                 :member => {:invite_to_survey => :post, :invite_to_network => :post, :report_pending => :any}

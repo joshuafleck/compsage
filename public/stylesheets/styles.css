@@ -367,6 +367,22 @@ div.image_header {
   line-height: 1.4em;
 }
 
+.help_page h4 {
+  font-weight: bold;
+  font-size: 1em;
+}
+
+.help_page ul.toc {
+  margin-bottom: 4em;
+}
+
+.help_page ul.subsections {
+  margin-left: 1em;
+  list-style-type: circle;
+  font-size: 0.9em;
+  margin-bottom: 1em;
+}
+
 /* Survey Sidebar */
 #surveys_sidebar {
   width: 239px;
