@@ -142,6 +142,14 @@ describe AssociationMembersController, "handling POST /association_member/sign_i
       session[:organization_id].should_not be_nil
       response.should be_redirect
     end
+    
+    it "should display an error message when the user submits the 'returning firm' form" do
+      @params[:submitted_returning_firm_form] = 'true'
+      do_post
+      response.should render_template('sign_in')
+      # We can't spec flash.now
+      # flash.now[:error].should == "Create a new password by filling in the 'First Time Logging In' section at the bottom right."
+    end
         
    
   end  
