@@ -2,7 +2,7 @@
 <body>
 <p>
 Your organization has been invited by <%=@invitation.inviter.name%> to participate in a CompSage compensation survey.
-By taking a few minutes to respond to this survey, you will get the survey results for free.  There is no signup required.
+Taking a few minutes to respond to this survey will get you the survey report for free.  There is no signup required.
 <%=link_to 'Take the survey now', survey_login_path(:key => @invitation.key, :only_path => false, :subdomain => subdomain_for(:email => @invitation.email))%>!
 If you would like to verify this request, feel free to email the survey sponsor at
 <a href="mailto:<%= @survey.sponsor.email %>"><%= @survey.sponsor.email %></a>.
