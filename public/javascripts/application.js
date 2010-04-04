@@ -966,6 +966,7 @@ function inputMask(element, data_type, units) {
  */
 function InviteList(survey_id) {
   
+  // Called by server-side RJS to add pending invitations to the invitation list.
   this.addInvitationToList = function(invitation_id, invitation_display, organization_id) {
     $('external_invitation_organization_name').value = '';
     $('external_invitation_email').value = '';
@@ -989,6 +990,7 @@ function InviteList(survey_id) {
   };
 
   function initializeObservers() {
+    // Initialize invite form with autocomplete functionality.
     var cachedBackend = new Autocompleter.Cache(liveOrganizationSearch,{'choices': 10, 'dataToQueryParam': function(data) {return data.name;}});
     var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
 
@@ -1016,6 +1018,7 @@ function InviteList(survey_id) {
       }
     });
 
+    // For each network, observe the invite button and expand link.
     $$('#networks > li').each(function(network_li) {
       var network_id = network_li.id.match(/\d+/)[0];
       var expand_link = network_li.select('a.expand_network').first();
@@ -1038,15 +1041,15 @@ function InviteList(survey_id) {
 
     $('invitation_form').observe('submit', addInvitationByForm);
 
+    // For each invitation, observe the remove link if it exists (it won't if the invitation is already sent).
     $$('ul#invitations > li').each(function(invitation_li) {
       var id_match = invitation_li.id.match(/\d+/);
       var invitation_id = '';
-      if(id_match == null){
+
+      if(id_match == null)
         return;
-      }
-      else{
-        invitation_id = id_match[0];
-      }
+
+      invitation_id = id_match[0];
 
       var remove_link = invitation_li.select('a.remove').first();
       if(remove_link){
@@ -1092,9 +1095,9 @@ function InviteList(survey_id) {
 
   }
   
-  /* This function handles the invite link click for
-     the association pick list. It collects the checked
-     organizations and sends an ajax request to add the invites. */
+  /* This function handles the invite link click for the association pick list. It collects the checked
+   *  organizations and sends an ajax request to add the invites.
+   */
   function submitMultipleInvitations(e){
     e.stop();
     
@@ -1118,9 +1121,8 @@ function InviteList(survey_id) {
   }
   
   /*
-   * Passed along the organization ID to be invited and
-     stops the event to prevent
-     @ organization_id - the organization id to invite.
+   * Passed along the organization ID to be invited and stops the event
+   * @ organization_id - the organization id to invite.
    */
   function addAssociationInvitation(organization_id, e){
     e.stop();
@@ -1128,10 +1130,9 @@ function InviteList(survey_id) {
   }
   
   /*
-    event handler for association live search, filters the list based 
-    on the strings in the 'organization_name' and 'organization_location'
-    inputs and submits it to Thinking Sphinx to search.
-  */
+   * event handler for association live search, filters the list based on the strings in the 'organization_name' and
+   * 'organization_location' inputs and submits it to Thinking Sphinx to search.
+   */
   function liveAssociationFilter(){
     var value = $('organization_name').value
     //if value length is less than 3, set to blank so it is ignored.
@@ -1167,7 +1168,7 @@ function InviteList(survey_id) {
   
   /*
    * Shows or hides the organizations depending upon the passed list.
-     @ organizations - a list of organizations to show.
+   * @organizations - a list of organizations to show.
    */
   function toggleOrganizations(organizations) {
     $$('ul#association_organizations > li').each(function(organization_li){
@@ -1203,7 +1204,8 @@ function InviteList(survey_id) {
   }
 
   /* Sends the ajax request to invite an array of organizations.
-      @organizations - a JavaScript array of IDs.
+   * 
+   * @organizations - a JavaScript array of IDs.
    */
   function addAssociationInvitations(organizations) {
     new Ajax.Request('/surveys/' + survey_id + '/invitations/create_for_association', {
@@ -1225,18 +1227,18 @@ function InviteList(survey_id) {
     });
   }
 
-  /* Function to allow Polymorphism of the add invitation function. Takes
-     the organization and passed on only the needed params (id).
-     
-     @organization -  an object that contains an organization id.
+  /* Function to allow Polymorphism of the add invitation function. Takes the organization and passed on only the
+   * needed params (id).
+   * 
+   * @organization -  an object that contains an organization id.
    */
   function addInvitation(organization) {
     addInvitationByID(organization.id, 'form');
   }
 
   /* Sends the ajax request to invite the specified organization.
-  
-    @organization_id -  the ID of the organization to invite.
+   * 
+   * @organization_id -  the ID of the organization to invite.
    */
   function addInvitationByID(organization_id, method) {
     new Ajax.Request('/surveys/' + survey_id + '/invitations', {
@@ -1257,6 +1259,7 @@ function InviteList(survey_id) {
         $('invitation_' + invitation_id).remove();
       }
     });
+
 
     new Ajax.Request('/surveys/' + survey_id + '/invitations/' + invitation_id, {
       'method': 'delete'
