@@ -1208,7 +1208,7 @@ function InviteList(survey_id) {
   function addAssociationInvitations(organizations) {
     new Ajax.Request('/surveys/' + survey_id + '/invitations/create_for_association', {
       'method': 'post',
-      'parameters': {'organizations': Object.toJSON(organizations)},
+      'parameters': {'organizations': organizations.join(",")},
       'onCreate': function() {$('invite_load_indicator').show();},
       'onComplete': function() {$('invite_load_indicator').hide();}
     });

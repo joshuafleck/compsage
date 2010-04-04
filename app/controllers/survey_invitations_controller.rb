@@ -68,14 +68,15 @@ class SurveyInvitationsController < ApplicationController
     end
   end
   
-  # Used for invite all functionality. Creates an invitation for each organization passed.
+  # Used for invite all functionality. Creates an invitation for each organization passed in the organizations param.
+  # Expects a list of IDs separated by commas.
   def create_for_association
     @survey  = current_organization.sponsored_surveys.find(params[:survey_id])
-    @organizations = ActiveSupport::JSON.decode(params[:organizations]) #passed param is JSON array of IDs
+    @organizations = params[:organizations].split(",")
     @invitations = []
 
     @organizations.each do |organization_id|
-      invitation = invite_organization organization_id.to_s
+      invitation = invite_organization(organization_id.to_s)
       invitation.save
       @invitations << invitation if invitation.valid?
     end
