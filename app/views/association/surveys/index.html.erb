@@ -36,6 +36,7 @@
     $$('td.status select').each(function(s) {
         s.observe('change', function() {
           var form = s.up('form');
+          // derive the survey id from the form action
           var id = form.action.match(/\d+$/);
           new Ajax.Request(form.action, {
             asynchronous:true,
