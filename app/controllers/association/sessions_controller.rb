@@ -1,7 +1,9 @@
 class Association::SessionsController < Association::AssociationController
   ssl_required :sign_in
+  # Handles the authentication for association owners. This is seperate from a standard CompSage account.
+  # Login is handled on the /association level via the email stored on the Association model.
   
-  # This is the association owner login
+  # Association owner login
   def new
     if logged_in_as_association_owner?
       redirect_to association_members_path
@@ -28,13 +30,5 @@ class Association::SessionsController < Association::AssociationController
     logout_killing_session!
     redirect_back_or_default('/association')
   end
- 
-
-  private
-  # Track failed login attempts
-  def note_failed_signin
-    flash.now[:error] = "Incorrect email or password"
-    logger.warn "Failed association owner login for '#{params[:email]}' from #{request.remote_ip} at #{Time.now.utc}"
-  end
-
+  
 end

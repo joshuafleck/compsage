@@ -66,7 +66,13 @@ module AssociationSystem
       if !current_association then
         render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
       end
-    end    
+    end
+    
+    # Log a failed Association owner sign-in
+    def note_failed_signin
+      flash.now[:error] = "Incorrect email or password"
+      logger.warn "Failed association owner login for '#{params[:email]}' from #{request.remote_ip} at #{Time.now.utc}"
+    end  
     
     def self.included(base)
       base.send :helper_method, :current_association_by_owner, :logged_in_as_association_owner?, :association_owner_login_required, :association_required  if base.respond_to? :helper_method
