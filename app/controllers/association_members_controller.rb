@@ -25,7 +25,7 @@ class AssociationMembersController < ApplicationController
     # For a GET request, show the sign in form  
     if request.get? then
     
-      # Be sure the sign in request is submitted with https
+      # Be sure the sign in request is submitted with https on production
       @form_options = Rails.env.production? ? {
         :protocol => 'https://', 
         :host => "www.#{current_subdomain}.compsage.com", 
@@ -36,6 +36,8 @@ class AssociationMembersController < ApplicationController
     
       logout_keeping_session!
       
+      
+      # Gather all of the params into a readable variables
       password                      = params[:password]
       password_confirmation         = params[:password_confirmation]
       submitted_returning_firm_form = !params[:submitted_returning_firm_form].blank?
@@ -49,7 +51,7 @@ class AssociationMembersController < ApplicationController
                      
         if should_initialize
 
-          # Account is uninitialized; attempt to create the login
+          # Account is uninitialized; attempt to create the login if they aren't using the standard login
           if !submitted_returning_firm_form && @association_member.create_login(
             current_association, 
             {
@@ -62,6 +64,7 @@ class AssociationMembersController < ApplicationController
             # Accepts the invitation, which will add the survey/network to the newly created organization
             send_email_and_move_invitations_to_new_organization(organization, session[:invitation])
             
+          # Login failed or the user used the wrong form
           else
           
             # It is the user's first time logging in, but they did not enter their information
@@ -86,16 +89,13 @@ class AssociationMembersController < ApplicationController
         :new_cookie_flag => new_cookie_flag, 
         :url => '/'})
               
+      # User provided bad email/password or incorrect association when attempting to log in
       else
-      
-        # User provided bad email/password or incorrect association when attempting to log in
         note_failed_signin
         render :action => 'sign_in'   
       
       end
-      
     end
-   
   end
   
 end
