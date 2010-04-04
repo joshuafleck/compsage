@@ -1,4 +1,5 @@
 class Association::AssociationController < ApplicationController
+  # Parent class for all association controllers. Handles the layout.
   layout :association_layout
 
   protected
