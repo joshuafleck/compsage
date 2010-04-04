@@ -21,6 +21,10 @@ describe SurveyInvitationsController, " #route for" do
     route_for(:controller => "survey_invitations", :action => "create_for_network", :survey_id => '1').should == { :path => "/surveys/1/invitations/create_for_network", :method => :post }
   end 
   
+  it "should map { :controller => 'invitations', :action => 'create_for_association', :survey_id => '1'} to /surveys/1/invitations/create_for_association" do
+    route_for(:controller => "survey_invitations", :action => "create_for_association", :survey_id => '1').should == { :path => "/surveys/1/invitations/create_for_association", :method => :post }
+  end 
+
   it "should map { :controller => 'invitations', :action => 'update_message', :survey_id => '1'} to /surveys/1/invitations/update_message" do
     route_for(:controller => "survey_invitations", :action => "update_message", :survey_id => '1').should == { :path => "/surveys/1/invitations/update_message", :method => :post }
   end   
@@ -124,6 +128,12 @@ describe SurveyInvitationsController, " handling POST /surveys/1/invitations" do
     do_post
   end
    
+  it "should assign the method of invitation" do
+    @params[:method] = 'association'
+    do_post
+    assigns[:method].should == 'association'
+  end
+
   describe "when inviting an organization by id" do
     before do
       @other_organization = Factory(:organization)
@@ -185,6 +195,34 @@ describe SurveyInvitationsController, " handling POST /surveys/1/invitations/cre
     lambda{ do_post }.should change(@current_organization.survey_invitations,:count).by(0)
   end
  
+end
+
+describe SurveyInvitationsController, " handling POST /surveys/1/invitations/create_for_association" do
+  before do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
+
+    @survey = Factory(:survey, :sponsor => @current_organization)
+
+    @organization_1 = Factory(:organization)
+    @organization_2 = Factory(:organization)
+
+    @params = {:survey_id => @survey.id, :organizations => "#{@organization_1.id},#{@organization_2.id}"}
+  end
+
+  def do_post
+    post :create_for_association, @params
+  end
+
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_post
+  end
+
+  it "should invite the organizations passed" do
+    lambda{ do_post }.should change(@survey.invitations,:count).by(2)
+  end
+
 end
 
 describe SurveyInvitationsController, " handling DELETE /surveys/1/invitations/1" do
