@@ -46,7 +46,7 @@ class PredefinedQuestion < ActiveRecord::Base
     return new_questions.find_all { |q| q.level == new_questions.first.level }
   end
   
-  # Takes a Question and hashes it to work with a PredefinedQuestion
+  # Takes a Question and hashes it to be saved as a PredefinedQuestion 
   # question_hash attribute. This can be extended in the future to take a hash of
   # Question objects which have a parent/child relationship for related questions.
   def question=(question)
@@ -58,11 +58,13 @@ class PredefinedQuestion < ActiveRecord::Base
       question_attributes[:required] = question.required
     end
   
-    #save the hash into another hash.
+    #save the hash into an array.
     self.question_hash = [question_attributes]
   end
   
-  # Returns a Question object generated from the question_hash attribute
+  # Returns a Question object generated from the question_hash attribute. 
+  # This is a hash as it could be used to accomodate any number of questions, 
+  # but currently we only allow one question per PDQ.
   def question
     #pull the elements out of the hash as needed
     self.question_hash.each do |question_attributes|

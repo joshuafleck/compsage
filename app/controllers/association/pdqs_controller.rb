@@ -1,4 +1,5 @@
 class Association::PdqsController < Association::AssociationController
+  # Controls adding, editing and deleting predefined questions for an association owner.
     before_filter :association_owner_login_required
 
     def new
@@ -10,10 +11,10 @@ class Association::PdqsController < Association::AssociationController
       @question = Question.new(params[:question])
       @predefined_question = current_association_by_owner.predefined_questions.new(params[:predefined_question])
 
-      # gather PDQ errors
+      # This will add errors to the Active record object because we derive the question object from params.
       @predefined_question.valid?
 
-      #check if the question is valid and the PDQ saves
+      # Check if the question is valid and the PDQ saves
       if @question.valid? then
         @predefined_question.question = @question
         if @predefined_question.save then
@@ -22,7 +23,7 @@ class Association::PdqsController < Association::AssociationController
         end
       end
 
-      #this will only be reached something is not valid
+      # Re-render new template if question isn't valid
       render :action => 'new'
     end
 
@@ -32,8 +33,8 @@ class Association::PdqsController < Association::AssociationController
     end
 
     def update
-      @predefined_question = current_association_by_owner.predefined_questions.find(params[:id])
       @question = Question.new(params[:question])
+      @predefined_question = current_association_by_owner.predefined_questions.find(params[:id])
 
       # gather PDQ errors
       @predefined_question.attributes = params[:predefined_question]
@@ -48,14 +49,13 @@ class Association::PdqsController < Association::AssociationController
         end
       end
 
-      #this will only be reached something is not valid
+      # Re-render edit template if question isn't valid
       render :action => 'edit'
     end
 
     def destroy
        @question = current_association_by_owner.predefined_questions.find(params[:id])
 
-       # be sure to add confirm pop-up to view for this action link
        if @question.destroy then
          flash[:message] = "This question has been deleted."
          redirect_to association_settings_path

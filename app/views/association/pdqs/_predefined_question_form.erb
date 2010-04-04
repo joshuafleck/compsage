@@ -1,12 +1,3 @@
-<% #build the list of options for response type first
-    question_options = ''
-    Question::QUESTION_TYPES.each do |question_type, response_type|
-      question_options = question_options + '<option'
-      question_options = question_options + ' selected="selected"' if !@question.question_type.nil? && 
-                                                                      question_type == @question.question_type
-      question_options = question_options +'>' + question_type + '</option>'
-    end 
-%>
 <%= error_messages_for :predefined_question, :question %>
 <br />
 <div id="association_question">
@@ -24,7 +15,7 @@
     <%= question_fields.label :question_type, "Response Type:",
           :class => 'discussion_label',
           :style => 'display: inline;' %>
-    <%= select_tag 'question[question_type]', question_options %>
+    <%= select :question, :question_type, Question::QUESTION_TYPES.keys %>
   <% end %>
   <div class="discussion_submit">
     <input    type="submit"  
