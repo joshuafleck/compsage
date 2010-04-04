@@ -31,10 +31,11 @@ class SurveyInvitationsController < ApplicationController
   # This will attempt to create an internal or external invitation, depending on the params passed:
   # If an organization_id is passed, an internal survey invitation is created
   # If an external_invitation is passed (email and org name), an external invitation is created
+  # Set method to 'association' to not raise any error messages for invitation failures (such as duplicates).
   #
   def create
     @survey = current_organization.sponsored_surveys.find(params[:survey_id])
-    @method ||= params[:method]
+    @method = params[:method]
 
     @invitation = if params[:organization_id] then
       invite_organization params[:organization_id]
@@ -67,6 +68,7 @@ class SurveyInvitationsController < ApplicationController
     end
   end
   
+  # Used for invite all functionality. Creates an invitation for each organization passed.
   def create_for_association
     @survey  = current_organization.sponsored_surveys.find(params[:survey_id])
     @organizations = ActiveSupport::JSON.decode(params[:organizations]) #passed param is JSON array of IDs
@@ -99,20 +101,16 @@ class SurveyInvitationsController < ApplicationController
     survey = current_organization.sponsored_surveys.find(params[:survey_id])
     
     invitations = survey.internal_and_external_invitations.all.select{|x| 
-      !x.invitee.eql?(current_organization) && x.pending?
+      x.invitee == current_organization && x.pending?
     }
     
-    puts invitations.size
-    
-    #delete all
     invitations.each do |invitation|
       invitation.destroy
     end
     
     respond_to do |wants|
       wants.json do
-        render :json => invitations.to_json(
-          :only    => [:id])
+        render :json => invitations.to_json(:only => [:id])
       end
     end
   end
