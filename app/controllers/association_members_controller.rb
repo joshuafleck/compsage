@@ -42,7 +42,7 @@ class AssociationMembersController < ApplicationController
       @remember_me                  = params[:remember_me]
       @association_member           = current_association.organizations.find_by_email(@login)
       organization                  = Organization.authenticate(@login, password)
-      should_initialize             = @association_member && @association_member.is_uninitialized_association_member?
+      should_initialize             = @association_member && @association_member.uninitialized_association_member?
       
       # The email belongs to an association member that either provided a valid login, or needs initialization
       if @association_member && (should_initialize || organization) then

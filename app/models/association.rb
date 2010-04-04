@@ -55,8 +55,8 @@ class Association < ActiveRecord::Base
     member = organizations.new
     member.attributes = attributes
     member.associations << self
-    member.is_uninitialized_association_member = true
-    member.is_pending = false
+    member.uninitialized_association_member = true
+    member.pending = false
     member.activated_at = Time.now
 
     return member

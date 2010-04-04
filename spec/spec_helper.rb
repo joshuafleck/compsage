@@ -125,7 +125,7 @@ end
 
 # Will place the organization in the disabled state
 def disable_organization(organization)
-  organization.is_pending = true
+  organization.pending = true
   organization.increment(:times_reported)
   organization.save!
 end

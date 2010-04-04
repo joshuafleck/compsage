@@ -97,7 +97,7 @@ describe Organization do
   
   it 'should not authenticate uninitialized association members' do
     @organization.attributes = valid_organization_attributes
-    @organization.is_uninitialized_association_member = true
+    @organization.uninitialized_association_member = true
     @organization.save
     Organization.authenticate(valid_organization_attributes[:email], valid_organization_attributes[:password]).should be_nil
   end
@@ -170,7 +170,7 @@ describe Organization do
   end
   
   it "should not be an uninitialized association member" do
-    @organization.is_uninitialized_association_member.should be_false
+    @organization.uninitialized_association_member.should be_false
   end
 
   it "Should be invalid without accepting the Terms of Use" do
@@ -180,7 +180,7 @@ describe Organization do
   
   it 'should not require a password for uninitialized association members' do
     @organization.attributes = valid_organization_attributes.except(:password)
-    @organization.is_uninitialized_association_member = true
+    @organization.uninitialized_association_member = true
     @organization.should have(0).errors_on(:password)
   end  
   
@@ -314,7 +314,7 @@ describe Organization, "that already exists" do
   end  
   
   it "Should notify us when a pending account has been created" do
-    @organization.is_pending = true
+    @organization.pending = true
     Notifier.should_receive(:deliver_pending_account_creation_notification)
     @organization.save!
   end 
@@ -356,7 +356,7 @@ describe Organization, "built from an invitation" do
   end
   
   it "should not be pending" do
-    @organization.is_pending?.should be_false
+    @organization.pending?.should be_false
   end  
 
 end
@@ -367,7 +367,7 @@ describe Organization, "not built from an invitation" do
   end
     
   it "should be pending" do
-    @organization.is_pending?.should be_true
+    @organization.pending?.should be_true
   end   
   
   it "should not be activated" do
@@ -469,7 +469,7 @@ describe Organization, "that is an uninitialized association member" do
     lambda{ @organization.create_login(@association, {
       :password => "test12",
       :password_confirmation => "test12"
-    }) }.should change(@organization, :is_uninitialized_association_member).from(true).to(false)
+    }) }.should change(@organization, :uninitialized_association_member).from(true).to(false)
   end  
   
   it "should delete itself when removed as an association member" do

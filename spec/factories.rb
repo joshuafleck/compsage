@@ -51,13 +51,13 @@ Factory.define :organization do |o|
   o.contact_name      'David Peterson'
   o.terms_of_use      '1'
   o.activated_at      Time.now
-  o.is_pending        false
+  o.pending        false
   o.phone             '1234567890'
 end
 
 Factory.define :pending_organization, :parent => :organization do |o|
   o.activated_at      nil
-  o.is_pending        true 
+  o.pending        true 
   o.times_reported    0
   o.activation_key    '12345'
   o.activation_key_created_at Time.now
@@ -67,7 +67,7 @@ Factory.define :uninitialized_association_member, :parent => :organization do |o
   o.activated_at      nil
   o.crypted_password  nil
   o.salt              nil
-  o.is_uninitialized_association_member true
+  o.uninitialized_association_member true
 end
 
 #definition and set up for survey

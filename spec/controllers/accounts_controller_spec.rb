@@ -292,7 +292,7 @@ describe AccountsController, " handling POST /account/" do
         
     it "should not create a pending organization"   do 
       do_post
-      assigns[:organization].is_pending?.should be_false
+      assigns[:organization].pending?.should be_false
     end
     
     it "should create an organization that does not require activation" do
@@ -309,7 +309,7 @@ describe AccountsController, " handling POST /account/" do
   
   it "should create a pending organization"   do 
     do_post
-    assigns[:organization].is_pending?.should be_true
+    assigns[:organization].pending?.should be_true
   end
   
   it "should create an organization that requires activation" do

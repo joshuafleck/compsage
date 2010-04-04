@@ -283,7 +283,7 @@ describe OrganizationsController, "handling GET /organizations/1/report_pending"
   end
   
   it "should not report an organization that is not pending" do
-    @other_organization.is_pending = false
+    @other_organization.pending = false
     @other_organization.save!
     lambda{ do_get }.should raise_error
   end  

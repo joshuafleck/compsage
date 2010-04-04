@@ -59,7 +59,7 @@ module Authentication
       end
       def password_required?
         # Do not require a password for uninitialized association members
-        if (defined? is_uninitialized_association_member) && is_uninitialized_association_member? && password.blank? then
+        if (defined? uninitialized_association_member) && uninitialized_association_member? && password.blank? then
           false
         else
           crypted_password.blank? || !password.blank?

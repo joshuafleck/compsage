@@ -42,7 +42,7 @@ class OrganizationsController < ApplicationController
     
     # Search only non-uninitialized association members
     organizations = Organization.search escaped_search_text,
-      :with     => { :is_uninitialized_association_member => 0 },
+      :with     => { :uninitialized_association_member => 0 },
       :per_page => 1000,
       :star     => true      
     
@@ -52,7 +52,7 @@ class OrganizationsController < ApplicationController
       association_organizations = Organization.search escaped_search_text, 
         :with     => { 
           :association_ids                     => current_association.id, 
-          :is_uninitialized_association_member => 1 
+          :uninitialized_association_member => 1 
         },
         :per_page => 1000,
         :star     => true

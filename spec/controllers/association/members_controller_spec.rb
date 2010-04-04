@@ -119,7 +119,7 @@ describe Association::MembersController, "handling create" do
 
     it "should create a new member that is uninitialized" do
       do_post
-      Organization.last.is_uninitialized_association_member.should == true
+      Organization.last.uninitialized_association_member.should == true
     end
 
     it "should create a new org that is an association member" do

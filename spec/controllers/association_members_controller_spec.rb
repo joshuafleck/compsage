@@ -108,7 +108,7 @@ describe AssociationMembersController, "handling POST /association_member/sign_i
     end
         
     it "should unset the uninitialized flag on the association member" do
-      lambda{ do_post }.should change(@uninitialized_organization, :is_uninitialized_association_member).to(false)
+      lambda{ do_post }.should change(@uninitialized_organization, :uninitialized_association_member).to(false)
     end
    
     it "should send a new organization notification" do

@@ -11,7 +11,7 @@
       <%=f.text_field :contact_name, :size => 34 %>
       <%=f.label :email, 'Email address' %> 
       <%=f.text_field :email, :size => 34 %>
-      <% if @organization.is_pending? then %>
+      <% if @organization.pending? then %>
         <% form_row do %>
           <% form_box do %>
             <%=f.label :phone %> 

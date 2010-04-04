@@ -36,7 +36,7 @@ class Invitation < ActiveRecord::Base
   # Uninitialized organizations do not have logins, and thus cannot receive internal invitations.
   def self.new_invitation_to(network_or_survey, params = {})
     invitee = params[:invitee]
-    if invitee.is_uninitialized_association_member? then
+    if invitee.uninitialized_association_member? then
       return network_or_survey.external_invitations.new(
         params.merge({
           :email => invitee.email,

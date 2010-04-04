@@ -40,7 +40,7 @@ class Organization < ActiveRecord::Base
   
   belongs_to :naics_classification, :foreign_key => :naics_code
   
-  named_scope :is_not_uninitialized_association_member, :conditions => {:is_uninitialized_association_member => false}  
+  named_scope :is_not_uninitialized_association_member, :conditions => {:uninitialized_association_member => false}  
   
   validates_presence_of     :name
   validates_format_of       :name,     :with => RE_NAME_OK,  :message => MSG_NAME_BAD, :allow_blank => true
@@ -53,13 +53,13 @@ class Organization < ActiveRecord::Base
 
   validates_format_of       :zip_code, :with => /^\d{5}$/, :allow_blank => true
   validates_length_of       :location, :maximum => 60, :allow_blank => true
-  validates_presence_of     :contact_name, :if => Proc.new { |user| user.is_pending? }
+  validates_presence_of     :contact_name, :if => Proc.new { |user| user.pending? }
   validates_length_of       :contact_name, :maximum => 100, :allow_blank => true
   validates_length_of       :city, :maximum => 50, :allow_blank => true
   validates_length_of       :state, :maximum => 30, :allow_blank => true
   validates_length_of       :crypted_password, :maximum => 40, :allow_blank => true
   validates_length_of       :salt, :maximum => 40, :allow_blank => true
-  validates_presence_of     :phone, :if => Proc.new { |user| user.is_pending? }
+  validates_presence_of     :phone, :if => Proc.new { |user| user.pending? }
   validates_length_of       :phone,  :is =>10, :allow_blank => true
   validates_length_of       :phone_extension,  :maximum => 6, :allow_blank => true
   validates_numericality_of :size, :allow_blank => true
@@ -74,7 +74,7 @@ class Organization < ActiveRecord::Base
   METERS_PER_MILE = 1609.344
   ACTIVATION_WINDOW_IN_DAYS = 3
   
-  named_scope :pending, :conditions => {:is_pending => true}        
+  named_scope :pending, :conditions => {:pending => true}        
   
   # Sphinx setup
   define_index do
@@ -82,7 +82,7 @@ class Organization < ActiveRecord::Base
     indexes :contact_name
     indexes :email
     
-    has is_uninitialized_association_member
+    has uninitialized_association_member
     has associations(:id), :as => :association_ids
     has naics_classification(:code), :as => :naics_code
     
@@ -191,7 +191,7 @@ class Organization < ActiveRecord::Base
   # If true, the user was reported while in the pending state, and will be prevented from logging in
   #
   def has_exceeded_reporting_threshold?
-    is_pending? && times_reported > 0
+    pending? && times_reported > 0
   end
   
   # If true, the user's account has been disabled and will not be able to log in
@@ -214,7 +214,7 @@ class Organization < ActiveRecord::Base
     # Attempt to set password
     if self.update_attributes(params) then
     
-      self.is_uninitialized_association_member = false
+      self.uninitialized_association_member = false
       self.save!
       
       return true
@@ -242,7 +242,7 @@ class Organization < ActiveRecord::Base
     else
       # If the organization was not built from an invitation, we need to verify the user's email (activation),
       #  as well as set them as pending so that we may review their account details.
-      self.is_pending                = true
+      self.pending                = true
       self.activated_at              = nil
       self.activation_key            = KeyGen.random
       self.activation_key_created_at = Time.now
@@ -259,7 +259,7 @@ class Organization < ActiveRecord::Base
   def leave_association(association)
     return unless self.associations.include?(association)
 
-    if self.is_uninitialized_association_member?
+    if self.uninitialized_association_member?
       destroy
     else
       self.associations.delete(association)
@@ -268,12 +268,12 @@ class Organization < ActiveRecord::Base
 
   # Whether an association can update this org's information
   def association_can_update?
-    return self.is_uninitialized_association_member?
+    return self.uninitialized_association_member?
   end
 
   # Whether an association can just delete this org
   def association_can_delete?
-    return self.is_uninitialized_association_member? && self.associations.count == 1
+    return self.uninitialized_association_member? && self.associations.count == 1
   end
 
   # See if the user entered a 10 digit zip code, and if so, just parse out the first 5 digits and call it a day.
@@ -312,7 +312,7 @@ class Organization < ActiveRecord::Base
   # If the organization is pending, it will notify the admins so that they may verify the account
   # 
   def send_pending_account_notification
-    Notifier.deliver_pending_account_creation_notification(self) if self.is_pending?
+    Notifier.deliver_pending_account_creation_notification(self) if self.pending?
   end
   
   # Sponsored surveys must be destroyed before their sponsor is destroyed.
