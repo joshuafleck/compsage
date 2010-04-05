@@ -70,6 +70,7 @@ class Survey < ActiveRecord::Base
       transition :pending => :running
     end
     
+    # State used for associations which do not follow the standard billing process.
     event :association_billing_bypass do
       transition :pending => :running
     end
