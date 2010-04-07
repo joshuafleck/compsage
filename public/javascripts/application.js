@@ -1095,8 +1095,8 @@ function InviteList(survey_id) {
 
   }
   
-  /* This function handles the invite link click for the association pick list. It collects the checked
-   *  organizations and sends an ajax request to add the invites.
+  /* This function handles the invite link click for the association pick list. It invites all the organizations
+   * presently in the pick list.
    */
   function submitMultipleInvitations(e){
     e.stop();
