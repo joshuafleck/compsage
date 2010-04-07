@@ -61,7 +61,7 @@
       <% end %>
       <%=f.label :size, 'Number of Employees' %> 
       <%=f.text_field :size, :size => 6 %>
-      <%= render :partial => "naics_classifications/browse", :locals => {:code => !(@organization.naics_classification) ? '' : @organization.naics_classification.code} %>
+      <%= render :partial => "naics_classifications/browse", :locals => {:code => @organization.naics_classification.try(:code) || ''} %>
     </div>
   </div>  
   <div class="submit">

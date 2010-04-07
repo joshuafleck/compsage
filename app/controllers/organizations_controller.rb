@@ -100,8 +100,7 @@ class OrganizationsController < ApplicationController
     end
     
     if size != "" then
-      #size should come in as a JSON array, so we need to convert to a rails array
-      size_array = ActiveSupport::JSON.decode(size)
+      size_array = size.split(",")
       with_params.merge!(:size => size_array[0].to_i..size_array[1].to_i)
     end
     

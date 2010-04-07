@@ -2,6 +2,8 @@ class NaicsClassification < ActiveRecord::Base
   set_primary_key :code 
   acts_as_nested_set
 
+  DISPLAY_MAP = { 31 => "31-33", 44 => "44-45", 48 => "48-49" }  
+
   # In some cases we don't want to throw a record not found error if the naics code isn't found, so we can use this
   # in place of NC.find()
   def self.from_2007_naics_code(naics_2007)
@@ -41,7 +43,6 @@ class NaicsClassification < ActiveRecord::Base
   
   # Some top-level nodes encompass multiple codes. This allows us to expose the hidden nodes to the users.
   #
-  DISPLAY_MAP = { 31 => "31-33", 44 => "44-45", 48 => "48-49" }  
   def display_code
     if DISPLAY_MAP.has_key?(self.code) then
       DISPLAY_MAP[self.code]
