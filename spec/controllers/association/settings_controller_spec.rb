@@ -10,6 +10,17 @@ valid_association_attributes = {
   }
 }
 
+describe Association::SettingsController, "#route_for" do
+
+  it "should map { :controller => 'association/settings', :action => 'show' } to /association/settings/show" do
+    route_for(:controller => "association/settings", :action => "show").should == { :path => "/association/settings", :method => :get }
+  end
+  
+  it "should map { :controller => 'association/settings', :action => 'update' } to /association/settings/update" do
+    route_for(:controller => "association/settings", :action => "update").should == { :path => "/association/settings", :method => :put }
+  end
+end
+
 describe Association::SettingsController, "handling GET /association/settings" do
   def do_get
     get :show
