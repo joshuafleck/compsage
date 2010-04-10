@@ -1,9 +1,14 @@
 module AssociationSystem
+  # This library contains the functions used for the association/* controllers. It contains the current_association
+  # function and the authentication system for authenticating association owners. The Association.contact_email
+  # and password drive the authentication of an association owner. This is different than the rest of the application
+  # for which an Organization or Invitation provide the credentials.
 
   def self.included(base)
     base.send :helper_method, :current_association
   end
-
+  
+  # Returns the association as determined by the current subdomain
   def current_association
     return nil unless current_subdomain
     
@@ -14,14 +19,17 @@ module AssociationSystem
   module AssociationAuthenticatedSystem
     protected
     
+    # Used as a before_filter for association/* controllers to limit access
     def association_owner_login_required
       logged_in_as_association_owner? || association_access_denied
     end
     
+    # Confirms if user is currently logged in as an association owner
     def logged_in_as_association_owner?
       !!current_association_by_owner
     end
     
+    # Try to login the current owner from the session or authentication if not already logged in
     def current_association_by_owner
       @current_association_by_owner ||= (login_owner_from_session || login_owner_from_basic_auth ) unless @current_association_owner == false
     end
@@ -32,16 +40,19 @@ module AssociationSystem
       @current_association_owner = new_association_owner || false
     end
     
+    # Used by association session controller to login an association owner via HTTP
     def login_owner_from_basic_auth
       authenticate_with_http_basic do |login, password|
         self.current_association_by_owner = Association.authenticate(login, password)
       end
     end
     
+    # If the owner already has a login in the session, finds the association owner
     def login_owner_from_session
       self.current_association_by_owner = Association.find_by_id(session[:association_id]) if session[:association_id]
     end
     
+    # Logouts out the owner, but does not destroy the session
     def logout_killing_owner_session
       logout_keeping_owner_session
       reset_session
@@ -52,6 +63,7 @@ module AssociationSystem
       session[:association_id] = nil
     end
     
+    # Called by the association_owner_login_required if the user is not already logged in.
     def association_access_denied
       respond_to do |format|
         format.html do
