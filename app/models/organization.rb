@@ -242,7 +242,7 @@ class Organization < ActiveRecord::Base
     else
       # If the organization was not built from an invitation, we need to verify the user's email (activation),
       #  as well as set them as pending so that we may review their account details.
-      self.pending                = true
+      self.pending                   = true
       self.activated_at              = nil
       self.activation_key            = KeyGen.random
       self.activation_key_created_at = Time.now

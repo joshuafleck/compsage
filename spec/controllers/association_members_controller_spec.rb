@@ -125,7 +125,14 @@ describe AssociationMembersController, "handling POST /association_member/sign_i
       @params[:key] = Factory(:external_network_invitation).key
       lambda{ do_post }.should change(ExternalNetworkInvitation, :count).from(1).to(0)
     end      
-           
+ 
+    it "should locate any external invitations by email and move them to the organization" do
+      invitation_id = Factory(:external_survey_invitation, :email => @uninitialized_organization.email).id
+      do_post
+      invitation = Invitation.find(invitation_id)
+      invitation.invitee.should == @uninitialized_organization
+    end      
+               
     it "should render the sign in page when login creation fails" do
       @params[:password_confirmation] = "qweqw"
       do_post

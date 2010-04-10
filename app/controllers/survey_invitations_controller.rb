@@ -101,9 +101,10 @@ class SurveyInvitationsController < ApplicationController
   def destroy_all
     survey = current_organization.sponsored_surveys.find(params[:survey_id])
     
-    invitations = survey.internal_and_external_invitations.all.select{|x| 
-      x.invitee == current_organization && x.pending?
-    }
+    invitations = survey.internal_and_external_invitations.all.select do |x|  
+      # Note that this will not remove the sponsor's invite, as that is already fulfilled
+      x.inviter == current_organization && x.pending?
+    end
     
     invitations.each do |invitation|
       invitation.destroy

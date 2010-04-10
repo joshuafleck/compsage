@@ -9,6 +9,10 @@ describe SurveyInvitationsController, " #route for" do
     route_for(:controller => "survey_invitations", :action => "destroy", :id => '1', :survey_id => '1').should == { :path => "/surveys/1/invitations/1", :method => :delete }
   end
 
+  it "should map { :controller => 'invitations', :action => 'destroy_all', :survey_id => '1'} to /surveys/1/invitations/destroy_all" do
+    route_for(:controller => "survey_invitations", :action => "destroy_all", :survey_id => '1').should == { :path => "/surveys/1/invitations/destroy_all", :method => :post }
+  end
+
   it "should map { :controller => 'invitations', :action => 'create', :survey_id => '1'} to /surveys/1/invitations" do
     route_for(:controller => "survey_invitations", :action => "create", :survey_id => '1').should == { :path => "/surveys/1/invitations", :method => :post }
   end
@@ -35,8 +39,6 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
   before do
     @current_organization = Factory.create(:organization)
     login_as(@current_organization)
-    @current_association = Factory.create(:association)
-    controller.stub!(:current_association).and_return(@current_association)
     
     @survey = Factory.create(:survey, :sponsor => @current_organization)
     @network = Factory.create(:network, :owner => @current_organization)
@@ -105,6 +107,29 @@ describe SurveyInvitationsController, " handling GET /surveys/1/invitations" do
   it "should remove the survey-network from the session" do
     do_get
     session[:survey_network_id].should be_nil
+  end
+  
+  describe "with current association" do
+    before(:each) do
+      @association = Factory(:association)
+      @current_organization.associations << @association
+      controller.stub!(:current_association).and_return(@association)
+      @invited_organization = Factory.create(:organization)
+      @uninvited_organization = Factory.create(:organization)
+      @invited_organization.associations << @association
+      @uninvited_organization.associations << @association
+      Factory.create(:pending_survey_invitation, 
+        :survey => @survey, 
+        :inviter => @current_organization, 
+        :invitee => @invited_organization)
+    end
+    
+    it "should assign un-invited organizations to the view" do
+      do_get
+      assigns[:organizations].size.should == 1
+      assigns[:organizations][0].should == @uninvited_organization
+    end
+    
   end
  
 end
@@ -354,4 +379,40 @@ describe SurveyInvitationsController, "updating the invitation message and invit
       response.should redirect_to(survey_path(@survey))
     end
   end
+end
+
+describe SurveyInvitationsController, " handling POST /surveys/1/invitations/destroy_all" do
+  before do
+    @current_organization = Factory(:organization)
+    login_as(@current_organization)
+    
+    @survey = Factory(:survey, :sponsor => @current_organization)
+    @invitation = Factory(:pending_survey_invitation, :survey => @survey, :inviter => @current_organization)
+    @invitation_sent = Factory(:sent_survey_invitation, :survey => @survey, :inviter => @current_organization)
+    
+    @params = {:survey_id => @survey.id}
+  end
+ 
+  def do_post
+    post :destroy_all, @params
+  end
+  
+  it "should require being logged in" do
+    controller.should_receive(:login_required)
+    do_post
+  end
+  
+  it "should destroy the pending invitations" do
+    lambda{ do_post }.should change(@survey.invitations,:count).by(-1)
+  end
+  
+  describe "with an external invitation" do
+  
+    it "should destroy the invitation requested" do
+      @external_invitation = Factory(:pending_external_survey_invitation, :survey => @survey, :inviter => @current_organization)
+      lambda{ do_post }.should change(@survey.external_invitations,:count).by(-1)
+    end
+     
+  end
+      
 end

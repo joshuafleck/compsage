@@ -166,16 +166,6 @@ describe BillingController, " handling POST /surveys/1/billing" do
     @survey.reload
   end
 
-  it "should set the association if the current org is logged in through an association" do
-    association = Factory(:association)
-    controller.stub!(:current_association).and_return(association)
-
-    do_post
-    @survey.reload
-
-    @survey.association.should == association
-  end
-
   it "should place the survey in a running state" do
     lambda{ do_post }.should change(@survey, :aasm_state).from("pending").to("running")
   end  
@@ -280,7 +270,7 @@ describe BillingController, " handling GET /surveys/1/billing/skip" do
     login_as(@current_organization)    
     controller.stub!(:current_association).and_return(@association)
     
-    @survey = Factory.create(:survey, :sponsor => @current_organization)
+    @survey = Factory.create(:pending_survey, :sponsor => @current_organization)
   end
   
   after(:each) do
@@ -301,7 +291,11 @@ describe BillingController, " handling GET /surveys/1/billing/skip" do
   
   it "should start the survey" do
     lambda{ do_get }.should change(@survey, :aasm_state).from("pending").to("running")
-  end    
+  end   
+  
+  it "should set the association id on the survey" do
+    lambda{ do_get }.should change(@survey, :association).from(nil).to(@association)
+  end     
   
   it "should not redirect if there is not a current association" do
     controller.stub!(:current_association).and_return(nil)

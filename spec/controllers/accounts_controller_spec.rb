@@ -166,6 +166,16 @@ describe AccountsController, " handling GET /account/new" do
         get :new
         response.should redirect_to(login_path(:email => @organization.email))
       end
+      
+      it "should redirect to the association sign in page when the user is an association member" do
+        association = Factory(:association)
+        @organization.associations << association
+        get :new
+        response.should redirect_to(sign_in_association_member_url(
+            :email     => @organization.email,
+            :key       => @invitation.key,
+            :subdomain => association.subdomain))
+      end
     
     end
         
@@ -331,12 +341,6 @@ describe AccountsController, " handling POST /account/" do
     do_post
     session[:first_login].should be_true
   end
-
-  # TODO this is failing because it can't find the invitation, not sure why this is
-  #it "should require an invitation" do
-  #  controller.should_receive(:invitation_or_pending_account_required)
-  #  do_post
-  #end
 
   it "should assign the current organization to the view" do
     do_post

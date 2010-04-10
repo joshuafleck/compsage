@@ -506,7 +506,7 @@ describe Organization, "That is in an association (and is initialized)" do
   it "should not be deletable and updatable by association if initialized"
 end
 
-describe Organization, "that has be deactivated" do
+describe Organization, "that has been deactivated" do
   before(:each) do
     @organization = Factory.build(:organization)
     @organization.deactivate
