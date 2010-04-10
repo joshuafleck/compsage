@@ -6,12 +6,11 @@ class AssociationMemberImport
   # * Headers: Whether the CSV file contains headers. Default false.
   # * Classification: What industry classification is used. Valid options are naics2007, naics2002, and sic.
   #
-  # Flags here are strings since the keys may come from form values.
-  DEFAULT_OPTIONS = {'update' => true,
-                     'create' => true,
-                     'destroy' => false,
-                     'headers' => false,
-                     'classification' => 'naics2007'}.freeze
+  DEFAULT_OPTIONS = {:update => true,
+                     :create => true,
+                     :destroy => false,
+                     :headers => false,
+                     :classification => 'naics2007'}.freeze
   
   attr_accessor :association, :file, :column_map, :valid_members, :invalid_members, :deleted_members, :skipped_members,
                 :options
@@ -32,8 +31,10 @@ class AssociationMemberImport
   #
   def initialize(options = {})
     # Need to convert "true" to true and "false" to false to facilitate passing booleans from form params.
+    # This also flattens the options array from a nested array to a hash
+    #  acc is the resulting hash, value is an array such that value = [key, value]
     @options = DEFAULT_OPTIONS.merge(options.inject({}) { |acc, value|
-      acc[value.first] = if value.last == "true" then
+      acc[value.first.to_sym] = if value.last == "true" then
                            true
                          elsif value.last == "false" then
                            false
@@ -54,7 +55,7 @@ class AssociationMemberImport
   def import!
     raise NoImportFile if @file.nil?
 
-    FCSV.parse(@file, :headers => @options['headers']) do |row|
+    FCSV.parse(@file, :headers => @options[:headers]) do |row|
       begin
         member = create_member_from_csv(row)
 
@@ -71,15 +72,15 @@ class AssociationMemberImport
       end
     end
 
-    if @options['destroy']
-      current_org_ids = (@valid_members + @invalid_members).collect{|o| o.id}.compact
-      existing_org_ids = @association.organization_ids
+    if @options[:destroy]
 
       # removed = previous - current (eg. anything in previous not present in current)
       # We may have some valid IDs in invalid members that were simply not updated because of some invalid data, so we
       # pull in those IDs as well.
-      removed_org_ids = @association.organization_ids - (@valid_members + @invalid_members).collect{|o| o.id}.compact
-      removed_orgs = @association.organizations.find(removed_org_ids)
+      current_org_ids  = (@valid_members + @invalid_members).collect{|o| o.id}.compact
+      existing_org_ids = @association.organization_ids
+      removed_org_ids  = existing_org_ids - current_org_ids
+      removed_orgs     = @association.organizations.find(removed_org_ids)
 
       removed_orgs.each do |org|
         @association.remove_member(org) 
@@ -92,10 +93,9 @@ class AssociationMemberImport
   
   # Returns true if the CSV was likely malformatted, which is probably true if there are no valid members
   # or any other members but some invalid members.
-  
+  #
   def malformed?
-    return self.invalid_members.size > 0 && self.valid_members.size == 0 && 
-    self.deleted_members.size && self.skipped_members.size == 0
+    return @invalid_members.size > 0 && @valid_members.size == 0 && @skipped_members.size == 0
   end
   
   private
@@ -107,11 +107,11 @@ class AssociationMemberImport
     member     = find_or_initialize_member(attributes)
     
     # If the member isn't uninitialized, we can't update it. Also, don't update if the options tell us not to.
-    if member.association_can_update? && @options['update']
+    if member.association_can_update? && @options[:update]
       member.attributes = attributes
     end
 
-    if member.new_record? && !@options['create']
+    if member.new_record? && !@options[:create]
       # We can't create members.
       @skipped_members << member
 
@@ -133,7 +133,7 @@ class AssociationMemberImport
 
     if attrs[:naics_code] then
       # Now assign industry.
-      case @options['classification']
+      case @options[:classification]
       when 'naics2007'
         # Here we attempt to match against our database of codes because we don't want bogus codes sitting around. If the
         # code isn't found, the organization's code will be null.
@@ -144,7 +144,7 @@ class AssociationMemberImport
         attrs[:naics_code] = NaicsClassification.from_sic_code(attrs[:naics_code]).try(:code).try(:to_s)
       end
     end
-
+    
     return attrs
   end
 
@@ -154,11 +154,11 @@ class AssociationMemberImport
   # Note: New member may return an existing org if an org with that contact email is already in the database.
   #
   def find_or_initialize_member(attributes)
-    member = if attributes[:name].blank? && attributes[:email].blank?
+    member = if attributes[:name].blank? && attributes[:email].blank? then
                raise InvalidRow
-             elsif attributes[:name].blank?   # Find by contact email
+             elsif attributes[:name].blank? then  # Find by contact email
                @association.organizations.find_by_email(attributes[:email])
-             elsif attributes[:email].blank?  # Find by organization name
+             elsif attributes[:email].blank? then # Find by organization name (guaranteed to return 1 org)
                @association.organizations.find_by_name(attributes[:name])
              else                             # Find by either name or email
                @association.organizations.find(:first,

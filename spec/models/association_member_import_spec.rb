@@ -195,6 +195,43 @@ describe AssociationMemberImport, "that has special case input" do
     end
   end
   
+  describe AssociationMemberImport, "that is missing an email" do
+    before(:each) do
+      name = "Imported & Firm"
+      @organization = Factory(:organization, :name => name)
+      @organization.associations << @association
+      @importer.file = "#{name}, Joe Wilson, 55407, 20, 30"
+      @importer.column_map = {:name => 0,
+                        :contact_name => 1,
+                        :zip_code => 2,
+                        :size => 3,
+                        :naics_code => 4}
+      @importer.import!
+    end
+    
+    it "should find a member by name" do
+       @importer.valid_members.size.should == 1
+    end
+  end  
+  
+  describe AssociationMemberImport, "that is missing a name" do
+    before(:each) do
+      @organization = Factory(:organization)
+      @organization.associations << @association
+      @importer.file = "#{@organization.email}, Joe Wilson, 55407, 20, 30"
+      @importer.column_map = {:email => 0,
+                        :contact_name => 1,
+                        :zip_code => 2,
+                        :size => 3,
+                        :naics_code => 4}
+      @importer.import!
+    end
+    
+    it "should find a member by email" do
+       @importer.valid_members.size.should == 1
+    end
+  end   
+  
   describe AssociationMemberImport, "that has a 10 digit zipcode" do
     before(:each) do
       @importer.file = "Imported Firm, Joe Wilson, joe.wilson@importedfirm.com, 55407-1234, 20, 30"
@@ -209,12 +246,12 @@ describe AssociationMemberImport, "that has special case input" do
   describe AssociationMemberImport, "that is missing required of inputs" do
     before(:each) do
       @importer.file = "Imported Firm,,, 55407, 20, 30"
-      @importer.import!
+    end
+
+    it "should not consider the input valid" do    
+     lambda { @importer.import! }.should raise_error(AssociationMemberImport::MalformedCSV)
     end
     
-    it "should not consider the input valid" do
-       @importer.invalid_members.size.should == 1
-    end
   end
   
   describe AssociationMemberImport, "has a malformated row" do
@@ -251,14 +288,43 @@ describe AssociationMemberImport, "that has data in the incorrect order" do
     David Thompson,dthompson@qualitytool.com,Quality Tool Inc.
     Steve Ragaller,Sragaller@cretexinc.com,Cretex Companies Inc."
     
-    @importer.import!
   end
   
-  it "should have no valid members" do
-    @importer.valid_members.size.should == 0
+  it "should have no valid members" do    
+   lambda { @importer.import! }.should raise_error(AssociationMemberImport::MalformedCSV)
   end
   
-  it "should be malformed" do
-    @importer.malformws?.should == true
-  end
 end
+
+describe AssociationMemberImport, "Industry resolution" do
+  before(:each) do
+    @importer = AssociationMemberImport.new(valid_importer_params)
+    @association = Factory(:association)
+    @importer.association = @association    
+    @industry = Factory(:naics_classification, :code_2002 => "1", :code => "2", :sic_code => "3345")
+    @importer.column_map = {:email => 0,
+                      :name => 1,
+                      :naics_code => 2}
+  end
+  
+  it "should set the industry from 2007 naics" do
+      @importer.file = "test@example.com, Josh inc, #{@industry.code}"
+      @importer.options[:classification] = 'naics2007'
+      @importer.import!
+      Organization.find_by_naics_code(@industry.code).should_not be_nil
+  end
+  
+  it "should set the industry from 2002 naics" do
+      @importer.file = "test@example.com, Josh inc, #{@industry.code_2002}"
+      @importer.options[:classification] = 'naics2002'
+      @importer.import!
+      Organization.find_by_naics_code(@industry.code).should_not be_nil
+  end  
+  
+  it "should set the industry from sic code" do
+      @importer.file = "test@example.com, Josh inc, #{@industry.sic_code}"
+      @importer.options[:classification] = 'sic'
+      @importer.import!
+      Organization.find_by_naics_code(@industry.code).should_not be_nil
+  end    
+end 
