@@ -87,10 +87,53 @@ describe Association do
     Organization.authenticate(valid_organization_attributes[:email], valid_organization_attributes[:password]).should == @organization
   end
   
-  it "should create a new member with valid input"
-  it "should not create a new member with bad input"
-  it "should delete a member if it's deletable"
-  it "should remove the memeber for the association if it isn't deletable"
-  it "should activate a new member"
+end
+
+describe Association, "adding a member" do
+  before(:each) do
+    @association = Factory(:association)
+  end
+  
+  it "should fail if the member already exists" do
+    member = Factory(:organization)
+    member.associations << @association
+    lambda{ @association.new_member(:email => member.email) }.should raise_error(Association::MemberExists)
+  end
+  
+  it "should locate an existing organization and add it as a member" do
+    member = Factory(:organization)
+    @association.new_member(:email => member.email).should == member
+    member.reload
+    member.associations.include?(@association).should be_true
+  end
+  
+  it "should build a new member" do
+    member_params = Factory.build(:organization).attributes
+    member = @association.new_member(member_params)
+    member.should be_valid
+    member.associations.include?(@association).should be_true
+    member.uninitialized_association_member?.should be_true
+    member.pending?.should be_false
+    member.activated?.should be_true
+  end
+  
+end
+
+describe Association, "removing a member" do
+  before(:each) do
+    @association = Factory(:association)
+  end
+  
+  it "should delete an uninitialized member" do
+    member = Factory(:uninitialized_association_member)
+    member.associations << @association
+    lambda{ @association.remove_member(member) }.should change(Organization, :count).by(-1)
+  end
+  
+  it "should dis-associate an intitialized member" do
+    member = Factory(:organization)
+    member.associations << @association
+    lambda{ @association.remove_member(member) }.should change(@association.organizations, :count).by(-1)
+  end
   
 end
