@@ -23,7 +23,10 @@ end
 
 def create_survey(state, sponsor)
   state = 'pending' if state == ''
-  Factory("#{state}_survey".to_sym, :sponsor => sponsor)
+  survey = Factory("#{state}_survey".to_sym, :sponsor => sponsor)
+  survey.questions[1..-1].each(&:destroy) # remove standard questions.
+
+  return survey
 end
 
 Given /^I am testing javascript$/ do
