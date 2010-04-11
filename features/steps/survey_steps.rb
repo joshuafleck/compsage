@@ -19,8 +19,11 @@ Given "I am sponsoring a survey with every question type" do
 
   @survey = Factory(:survey,
                     :aasm_state => 'running',
-                    :sponsor => @current_organization,
-                    :questions => @questions)
+                    :sponsor => @current_organization)
+
+  @survey.questions.destroy_all # Remove standard questions.
+  @survey.questions += @questions
+  @survey.save
 end
 
 Given /^I am sponsoring a survey with a follow\-up to a (.*) question$/ do |type|
