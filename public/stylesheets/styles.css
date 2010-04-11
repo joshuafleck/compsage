@@ -1099,6 +1099,23 @@ div#association_question {
   float: left;
 }
 
+/* Association member edit form */
+dl#initialized_member {
+}
+
+dl#initialized_member dt {
+  float: left;
+  margin-right: .5em;
+  width: 10em;
+  margin-right: 1em;
+  text-align: right;
+  font-weight: bold;
+}
+
+dl#initialized_member dd {
+  letter-spacing: .1em;
+}
+
 
 /* Association Upload Form */
 

@@ -125,7 +125,15 @@ describe Association::MembersController, "handling create" do
     it "should create a new org that is an association member" do
       lambda { do_post }.should change(@association.organizations, :count).by(1)
     end
-  end
+    
+    it "should flash a message and redirect, if the member already exists" do
+      organization = Factory(:organization, :email => valid_member_attributes[:email])
+      organization.associations << @association
+      do_post
+      response.should redirect_to(association_members_path)
+      flash[:message].should_not be_blank
+    end
+  end  
 
   describe "with validation errors" do
     before do
@@ -182,7 +190,7 @@ end
 describe Association::MembersController, "handling update" do
   before(:each) do
     @association  = Factory(:association)
-    @organization = Factory(:organization)
+    @organization = Factory(:uninitialized_association_member)
     @association.organizations << @organization
 
     @params = {:id => @organization.id}
@@ -227,6 +235,26 @@ describe Association::MembersController, "handling update" do
       response.should render_template('edit')
     end
   end
+  
+  describe "with initialized organization" do
+    before do
+      @params[:organization] = valid_member_attributes
+      organization = Factory(:organization)
+      organization.associations << @association
+      @params[:id] = organization.id
+      do_post
+    end
+
+    it "should be successful" do
+      do_post
+      response.should be_success
+    end
+
+    it "should render to the edit page" do
+      do_post
+      response.should render_template('edit')
+    end
+  end  
 end
 
 describe Association::MembersController, "handling delete" do
@@ -254,29 +282,54 @@ describe Association::MembersController, "handling upload" do
   before(:each) do
     @association  = Factory(:association)
     @organization = Factory(:organization)
+    @params       = {:flags => {}}
 
     login_as(@association)
   end
 
   def do_upload
-    upload :upload, @params
+    post :upload, @params
   end
 
   describe "with a valid CSV file" do
+    before(:each) do
+      @params[:csv_file] = valid_csv_file
+    end  
     
     describe "with all valid parameters" do
-      it "should be successful"
-      it "should render the upload successful page"
-      it "should change the number of firms in the association"
+      it "should be successful" do
+        do_upload
+        response.should be_success
+      end
+      
+      it "should render the upload successful page" do
+        do_upload
+        response.should render_template('upload_success')
+      end
+      
+      it "should change the number of firms in the association" do
+        lambda{ do_upload }.should change(@association.organizations, :count).by(5)
+      end
+      
     end
     
     describe "with an invalid format" do
-      it "should give an error message"
+    
+      it "should give an error message" do
+        do_upload
+        response.should render_template('upload')
+      end
+      
     end
     
   end
   
   describe "with an invalid file" do
-    it "should give an error message"
+  
+    it "should give an error message" do
+      do_upload
+      response.should render_template('upload')
+    end
+      
   end
 end

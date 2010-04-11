@@ -1,15 +1,25 @@
 <% highlight_tab "members" %>
 <% title         @member.name %>
 <h2><%= @member.name %></h2>
-<% form_for @member, :url => association_member_path(@member), :method => :put do |f| %>
-  <%= render :partial => 'form', :locals => {:f => f} %>
+<% if @member.association_can_update? then %>
+  <% form_for @member, :url => association_member_path(@member), :method => :put do |f| %>
+    <%= render :partial => 'form', :locals => {:f => f} %>
 
-  <div class="submit">
-    <%= f.submit "Save Changes" %>
-    or <%= link_to "Cancel", association_members_path %>
-  </div>
+    <div class="submit">
+      <%= f.submit "Save Changes" %>
+      or <%= link_to "Cancel", association_members_path %>
+    </div>
+  <% end %>
+  <br />
+<% else %>
+  <dl id="initialized_member">
+    <dt>Firm Name</dt><dd><%=@member.name%></dd>
+    <%if !@member.contact_name.blank? then %><dt>Contact Name</dt><dd><%=@member.contact_name%></dd><%end%>
+    <dt>Contact Email Addres</dt><dd><%=@member.email%></dd>
+    <%if !@member.zip_code.blank? then %><dt>Zip Code</dt><dd><%=@member.zip_code%></dd><%end%>
+  </dl>
+  <%= link_to 'Go Back', request.env['HTTP_REFERER'] %>
 <% end %>
-<br />
 <p>
 <%= button_to "Remove #{@member.name}", association_member_path(@member), :method => :delete,
       :confirm => "Are you sure you want to remove #{@member.name} from your association?", 

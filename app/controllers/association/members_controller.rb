@@ -1,5 +1,6 @@
 class Association::MembersController <  Association::AssociationController
   before_filter :association_owner_login_required
+  before_filter :find_member, :only => [:edit, :update, :destroy]
 
   def index
     @members = current_association_by_owner.organizations.paginate(:order => 'name',
@@ -29,14 +30,10 @@ class Association::MembersController <  Association::AssociationController
   end
 
   def edit
-    @member = current_association_by_owner.organizations.find(params[:id])
   end
 
   def update
-    @member = current_association_by_owner.organizations.find(params[:id])
-    @member.attributes = params[:organization]
-
-    if @member.save then
+    if @member.association_can_update? && @member.update_attributes(params[:organization]) then
       flash[:message] = "Member updated" 
       redirect_to association_members_path
     else
@@ -58,11 +55,11 @@ class Association::MembersController <  Association::AssociationController
       rescue AssociationMemberImport::NoImportFile, AssociationMemberImport::MalformedCSV,
         FasterCSV::MalformedCSVError => e
         if e.is_a? AssociationMemberImport::NoImportFile then
-          flash[:notice] = "You must specify a CSV file to upload"
+          flash.now[:notice] = "You must specify a CSV file to upload"
         else
-          flash[:notice] = "The file you have tried to upload yielded no successful members. Follow the instructions 
-          below regarding how to format your CSV file. You could also try using the example file. If you created
-          the file in Excel, make sure to choose the \"Save As\" option and select Format: Comma Seperated Values (.csv)"
+          flash.now[:notice] = "The file you have tried to upload yielded no successful members. Follow the instructions 
+          below regarding how to format your CSV file. If you have created this file in Excel, please choose
+          the \"Save As\" option from the File menu, and choose the Format: Comma Separated Values (.csv) option."
         end
         
         render :upload
@@ -74,11 +71,16 @@ class Association::MembersController <  Association::AssociationController
   end
 
   def destroy
-    @member = current_association_by_owner.organizations.find(params[:id])
-
     @member.leave_association(current_association_by_owner)
     
     flash[:message] = "Member removed"
     redirect_to association_members_path
   end
+  
+  private 
+  
+  def find_member
+    @member = current_association_by_owner.organizations.find(params[:id])
+  end  
+  
 end

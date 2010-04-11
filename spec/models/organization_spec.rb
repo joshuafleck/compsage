@@ -477,6 +477,10 @@ describe Organization, "that is an uninitialized association member" do
     @organization.associations << @association
     @organization.leave_association(@association)
   end
+  
+  it "should be deletable and updatable by association" do
+    @organization.association_can_update?.should be_true
+  end
 end
 
 
@@ -502,8 +506,9 @@ describe Organization, "That is in an association (and is initialized)" do
     @organization.associations.should_not include(@association)
   end
   
-  it "should be deletable and updatable by association if uninitialized"
-  it "should not be deletable and updatable by association if initialized"
+  it "should not be deletable and updatable by association" do
+    @organization.association_can_update?.should be_false
+  end
 end
 
 describe Organization, "that has been deactivated" do
