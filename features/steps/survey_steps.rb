@@ -199,7 +199,7 @@ end
 When "I add a predefined question" do
   select "6", :from => 'predefined_questions'
 
-  click_button "Add"
+  click_button "Add Question"
 end
 
 When "I add a custom question" do
@@ -207,13 +207,13 @@ When "I add a custom question" do
   fill_in 'custom_question_text', :with => "Is this position exempt"
   select "Yes/No", :from => 'custom_question_response'
 
-  click_button "Add"
+  click_button "Add Question"
 end
 
 When "I attempt to add an invalid custom question" do
   select "0", :from => 'predefined_questions'
 
-  click_button "Add"
+  click_button "Add Question"
 end
 
 When "I move the first question down" do
