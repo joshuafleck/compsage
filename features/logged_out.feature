@@ -18,11 +18,6 @@ Feature: Logged Out
     When I login with invalid invitation credentials
     Then I should see "We are unable to process your request at this time."
   
-  Scenario: Access How it works
-    Given I am on the home page
-    When I click "How it works"
-    Then I should see "Becoming a member"
-    
   Scenario: Access Contact
     Given I am on the home page
     When I click "Contact"
@@ -37,3 +32,8 @@ Feature: Logged Out
     Given I am on the home page
     When I click "About"
     Then I should see "Legal Disclaimer"
+
+  Scenario: Access help
+    Given I am on the home page
+    When I click "Help"
+    Then I should see "Help"
