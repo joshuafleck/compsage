@@ -398,6 +398,7 @@ end
 
 Given "I have a survey invitation" do
   @invited_survey = Factory(:running_survey)
+  @invited_survey.questions[1..-1].each(&:destroy) # Remove the standard questions.
   @invitation     = Factory(:sent_survey_invitation,
                             :survey => @invited_survey,
                             :invitee => @current_organization)
