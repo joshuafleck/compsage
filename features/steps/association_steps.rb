@@ -1,8 +1,14 @@
+def association_logout
+  visit add_subdomain(new_association_session_url)
+  sleep(4)
+  click_link "Log Out" if response_body =~ /Log Out/m
+end
+
 def association_login
   email = @current_association_by_owner.contact_email
   password = "test12"
 
-  logout
+  association_logout
   visit add_subdomain(new_association_session_url)
 
   fill_in("email", :with => email)
