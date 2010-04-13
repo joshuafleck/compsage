@@ -15,7 +15,7 @@
   <dl id="initialized_member">
     <dt>Firm Name</dt><dd><%=@member.name%></dd>
     <%if !@member.contact_name.blank? then %><dt>Contact Name</dt><dd><%=@member.contact_name%></dd><%end%>
-    <dt>Contact Email Addres</dt><dd><%=@member.email%></dd>
+    <dt>Contact Email Address</dt><dd><%=@member.email%></dd>
     <%if !@member.zip_code.blank? then %><dt>Zip Code</dt><dd><%=@member.zip_code%></dd><%end%>
   </dl>
   <%= link_to 'Go Back', request.env['HTTP_REFERER'] %>
