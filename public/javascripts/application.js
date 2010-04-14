@@ -1110,13 +1110,11 @@ function InviteList(survey_id) {
     });
     
     //If there are more than 15 invitations, double check that this was intentional.
-    if(organizations.length > 15) {
-      if(confirm('You are about to invite ' + organizations.length + 
-                   ' firms. Are you sure you want to do this?')){
+    if(organizations.length <= 15 || confirm('You are about to invite ' + organizations.length + ' firms. Are you sure you want to do this?')) {
        //ajax request to invite array of orgs
-       addAssociationInvitations(organizations);
-      }
+       addAssociationInvitations(organizations);     
     }
+    
     return;
   }
   
