@@ -120,3 +120,19 @@ Then /I should not have an industry selected/ do
   text.should == ""
 end
 
+Given /^there is an account requiring activation$/ do
+  @pending_organization = Factory(:pending_organization)
+end
+
+When /^I activate the pending account$/ do
+  visit add_subdomain(activate_account_url(:key =>  @pending_organization.activation_key))
+end
+
+Given /^there is an account requiring deactivation$/ do
+  @deactivation_organization = Factory(:organization)
+end
+
+When /^I deactivate the account$/ do
+  visit add_subdomain(deactivate_account_url(:key =>  @deactivation_organization.deactivation_key))
+end
+
