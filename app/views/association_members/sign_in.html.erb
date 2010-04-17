@@ -40,11 +40,11 @@
     <p class="info">Email must match the one on file with <%= current_association.name %>.
     <a href="mailto:<%= current_association.contact_email %>">Contact them</a> with questions regarding registration.</p>
     <label for="email">Email</label>
-    <%= text_field_tag 'email', @login, :size => 25 %>
+    <%= text_field_tag 'email', @login, :size => 25, :class=> 'email1' %>
     <div class="box_container">
       <div class="box">
         <label for="password">New Password</label>
-        <%= password_field_tag 'password', '', :size => 11 %>  
+        <%= password_field_tag 'password', '', :size => 11, :class=> 'password1' %>  
       </div>
       <div class="box">
         <label for="password_confirmation">Confirmation</label>
