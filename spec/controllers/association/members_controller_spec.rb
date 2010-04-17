@@ -316,6 +316,10 @@ describe Association::MembersController, "handling upload" do
     describe "with an invalid format" do
     
       it "should give an error message" do
+        @params[:csv_file] = 
+        "Junk
+         More junk
+        "
         do_upload
         response.should render_template('upload')
       end
@@ -326,10 +330,16 @@ describe Association::MembersController, "handling upload" do
   
   describe "with an invalid file" do
   
-    it "should give an error message" do
+    it "should give an error message if the file is nil" do
       do_upload
       response.should render_template('upload')
     end
+    
+    it "should give an error message if the file is empty" do
+       @params[:csv_file] = ""
+      do_upload
+      response.should render_template('upload')
+    end    
       
   end
 end

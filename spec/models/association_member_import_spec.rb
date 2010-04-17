@@ -296,6 +296,27 @@ describe AssociationMemberImport, "that has data in the incorrect order" do
   
 end
 
+describe AssociationMemberImport, "with bad input file" do
+  before(:each) do
+    @importer = AssociationMemberImport.new(valid_importer_params.with('destroy' => true))
+
+    @association = Factory(:association)
+    @importer.association = @association
+    
+  end
+  
+  it "should fail if the input file is nil" do    
+    @importer.file = nil    
+   lambda { @importer.import! }.should raise_error(AssociationMemberImport::NoImportFile)
+  end
+    
+  it "should fail if the input file is empty" do    
+    @importer.file = ""    
+   lambda { @importer.import! }.should raise_error(AssociationMemberImport::EmptyImportFile)
+  end
+  
+end
+
 describe AssociationMemberImport, "Industry resolution" do
   before(:each) do
     @importer = AssociationMemberImport.new(valid_importer_params)

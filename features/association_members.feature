@@ -64,3 +64,27 @@ Scenario: Removing a firm
   And I press the remove button
   
   Then I should see "Member removed"
+  
+Scenario: Uploading a firm with no file
+  Given I am testing javascript
+  And I am logged in as an association owner
+  And I am on the upload members page
+  When I enter "" in Browse
+  And I press the upload button
+  Then I should see "You must specify a CSV file to upload"  
+  
+Scenario: Uploading a firm
+  Given I am logged in as an association owner
+  And I am on the upload members page
+  When I enter "./public/static/example.csv" in Browse
+  And I press the upload button
+  Then I should see "You have successfully imported 1 member"  
+  
+Scenario: Uploading a firm with a non-csv file
+  Given I am testing javascript
+  And I am logged in as an association owner
+  And I am on the upload members page
+  When I enter "test.cvs" in Browse
+  And I press the upload button
+  Then I should see "You are attempting to upload a document which does not appear to be a CSV file"
+  

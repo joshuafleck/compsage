@@ -68,4 +68,14 @@ When /^I click the firm link$/ do
   click_link "edit_#{@current_association_by_owner.organizations.first.id}"
 end
 
+When /^I enter "([^\"]*)" in Browse$/ do |file|
+    attach_file("csv_file", file)
+end
 
+Given /^I am on the upload members page$/ do
+  visit add_subdomain(upload_association_members_url)
+end
+
+When /^I press the upload button$/ do
+  click_button "upload_button"
+end

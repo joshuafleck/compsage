@@ -52,7 +52,7 @@ class Association::MembersController <  Association::AssociationController
           @importer.import!
         end
       #The handle various errors the importer might throw
-      rescue AssociationMemberImport::NoImportFile, AssociationMemberImport::MalformedCSV,
+      rescue AssociationMemberImport::NoImportFile, AssociationMemberImport::MalformedCSV, AssociationMemberImport::EmptyImportFile,
         FasterCSV::MalformedCSVError => e
         if e.is_a? AssociationMemberImport::NoImportFile then
           flash.now[:notice] = "You must specify a CSV file to upload"

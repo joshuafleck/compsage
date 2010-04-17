@@ -51,21 +51,23 @@
 <% end %>
 <script type="text/javascript">
   $('upload_button').observe('click', function(e){
-    // Will only accept .csv file extension
-    var re = new RegExp(/\.([^\.]+)$/);
-    var match = re.exec($F('csv_file'));
-    
-    if(match == null || match[0].toLowerCase() != ".csv"){
-      // We don't want to display both the flash message from the server, and the ajax explanation
-      $$('div.flash_notice').each(function(s) {
-        if(s.visible()) {
-          s.hide();
-        }
-      });
-      // Display the explaination div if we didn't receive .csv
-      $('attachment_error').show();
-      e.stop();
+    // Allow empty files to pass through, we validate this on the server side
+    if($F('csv_file') != null && $F('csv_file') != "") {
+      // Will only accept .csv file extension
+      var re = new RegExp(/\.([^\.]+)$/);
+      var match = re.exec($F('csv_file'));
+      
+      if(match == null || match[0].toLowerCase() != ".csv"){
+        // We don't want to display both the flash message from the server, and the ajax explanation
+        $$('div.flash_notice').each(function(s) {
+          if(s.visible()) {
+            s.hide();
+          }
+        });
+        // Display the explaination div if we didn't receive .csv
+        $('attachment_error').show();
+        e.stop();
+      }
     }
-    
   });
 </script>

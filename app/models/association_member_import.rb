@@ -25,6 +25,7 @@ class AssociationMemberImport
 
   class InvalidRow < RuntimeError; end
   class NoImportFile < RuntimeError; end
+  class EmptyImportFile < RuntimeError; end
   class MalformedCSV < RuntimeError; end
 
   # Set options an initialize our member arrays.
@@ -54,7 +55,8 @@ class AssociationMemberImport
   #
   def import!
     raise NoImportFile if @file.nil?
-
+    raise EmptyImportFile if @file.size == 0
+    
     FCSV.parse(@file, :headers => @options[:headers]) do |row|
       begin
         member = create_member_from_csv(row)

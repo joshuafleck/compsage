@@ -41,7 +41,7 @@ module DomInterfaceHelper
     end
 
     def attach_file(locator, path, content_type = nil)
-      raise RuntimeException, "Not Implemented"
+      FirewatirUtils.locate_element(@_browser, :file_field, locator).send(:value=, path)
     end
     
     def check(locator)
