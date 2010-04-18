@@ -1,5 +1,8 @@
 class BillingController < ApplicationController
-  before_filter :login_required, :find_or_initialize_invoice
+  before_filter :login_required
+  before_filter :find_survey
+  before_filter :association_required, :only => [:instructions, :skip]
+  before_filter :find_or_initialize_invoice, :except => [:instructions, :skip]
   layout 'logged_in'
   
   # don't allow the credit card information to be logged
@@ -21,14 +24,14 @@ class BillingController < ApplicationController
 
     respond_to do |wants| 
       wants.html do
-
-        if (!@invoice.paying_with_credit_card? || @credit_card.valid?) && @invoice.save then        
-          @survey.billing_info_received!               
-          redirect_to survey_path(@survey)          
-        else        
-          render :action => :new                  
-        end
+        if (!@invoice.paying_with_credit_card? || @credit_card.valid?) && @invoice.save then      
         
+          @survey.billing_info_received!(current_association)
+
+          redirect_to survey_path(@survey)
+        else
+          render :action => :new
+        end
       end      
     end
   end
@@ -46,12 +49,32 @@ class BillingController < ApplicationController
     end
   end 
   
+  # displays the billing instructions provided by the association
+  def instructions
+  
+  end
+  
+  # bypasses billing for an association survey
+  def skip  
+    if @survey.pending? then
+      # At this time, set the association to the users current association.
+      @survey.association = current_association
+      @survey.save
+      @survey.association_billing_bypass
+    end
+    redirect_to survey_path(@survey)
+  end
+  
   private
   
-  # finds the survey and finds or initializes the invoice by survey id
+  # finds or initializes the invoice by survey id
   def find_or_initialize_invoice
-    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
     @invoice = Invoice.find_or_initialize_by_survey_id(@survey.id)
   end
-
+  
+  # finds the survey
+  def find_survey
+    @survey = current_organization.sponsored_surveys.find(params[:survey_id])
+  end  
+  
 end 

@@ -58,7 +58,12 @@ module Authentication
         self.crypted_password = encrypt(password)
       end
       def password_required?
-        crypted_password.blank? || !password.blank?
+        # Do not require a password for uninitialized association members
+        if (defined? uninitialized_association_member) && uninitialized_association_member? && password.blank? then
+          false
+        else
+          crypted_password.blank? || !password.blank?
+        end
       end
     end # instance methods
   end

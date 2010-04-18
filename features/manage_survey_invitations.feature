@@ -89,3 +89,51 @@ Feature: Manage Survey Invitations
     When I remove the invitation
     Then I should not see the invitation
     
+  Scenario: Using association member live search
+    Given I am testing javascript
+    And I am logged in
+    And I am sponsoring a "pending" survey
+    And I belong to an association with members
+    And I am on the survey invitations page
+    When I enter an organization name "ASDF" and location "10"
+    Then I should see no association members
+
+  Scenario: Inviting association member
+    Given I am testing javascript
+    And I am logged in
+    And I am sponsoring a "pending" survey
+    And I belong to an association with members
+    And I am on the survey invitations page
+    When I enter an organization name "Exist" and location "10"
+    And I click the invite button for an organization
+    Then I should see the invitation
+    
+  Scenario: Inviting association member whom you have already invited without saving
+    Given I am testing javascript
+    And I am logged in
+    And I am sponsoring a "pending" survey
+    And I belong to an association with members    
+    And I am on the survey invitations page
+    When I enter an organization name "Exist" and location "10"
+    And I click the invite button for an organization
+    And I click the invite button for an organization
+    Then I should see an error message
+    
+  Scenario: Inviting association member whom you have already invited with saving
+    Given I am testing javascript
+    And I am logged in
+    And I am sponsoring a "pending" survey
+    And I belong to an association with members
+    And an organization has already been invited to the survey
+    And I am on the survey invitations page
+    Then I should not see the organization  
+    
+  Scenario: Inviting all association member after using association member live search
+    Given I am testing javascript
+    And I am logged in
+    And I am sponsoring a "pending" survey
+    And I belong to an association with members
+    And I am on the survey invitations page
+    When I click invite all
+    Then I should see the organizations in the invited list
+    

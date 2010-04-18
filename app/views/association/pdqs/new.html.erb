@@ -1,0 +1,5 @@
+<%  title "New Question" 
+    highlight_tab "settings"%>
+<h2>Create a Standard Question</h2>
+<%=render :partial => "predefined_question_form", :locals => { :predefined_question => @predefined_question,
+                                                              :question => @question } %>

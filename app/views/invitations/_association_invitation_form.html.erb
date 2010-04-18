@@ -1,0 +1,71 @@
+<h3>Invite Members of <%=association.name%></h3>
+<div id="association_search">
+  <% form_row do %>
+    <% form_box do %>
+      <label for="organization_name">Filter by Name</label>
+      <input id="organization_name" type="textbox"/>
+    <% end %>
+    <% if !current_organization.zip_code.nil? && !current_organization.zip_code.blank?%>
+      <% form_box do %>
+        <label for="organization_location">Distance </label>
+        <select id="organization_location">
+          <option value="">Anywhere</option>
+          <% [5, 10, 25, 50, 100, 250].each do |i|%>
+            <option value="<%=i %>"><%= i %> miles</option>
+          <%end%>
+        </select>
+      <% end %>
+    <% else %>
+      <input type="hidden" id="organization_location" value="">
+    <% end %>
+    <% form_box do %>
+      <label for="organization_size">Size </label>
+      <select id="organization_size">
+        <option value="">Any Size</option>
+        <option value="1,9">1-9 Employees</option>
+        <option value="10,24">10-24 Employees</option>
+        <option value="25,49">25-49 Employees</option>
+        <option value="50,99">50-99 Employees</option>
+        <option value="100,249">100-249 Employees</option>
+        <option value="250,499">250-499 Employees</option>
+        <option value="500,999">500-999 Employees</option>
+        <option value="1000,2147483647">1,000+ Employees</option>
+      </select>
+    <% end %>
+  <% end %>
+  <%= render :partial => "naics_classifications/browse",
+             :locals => {
+               :code => @current_organization.naics_classification ? @current_organization.naics_classification.truncate : '',
+               :show_load_indicator => false,
+               :show_ancestors      => false
+              } %>
+</div>
+<div style="text-align:right;">
+  <span id="invite_load_indicator" style="display: none;">
+    <%= image_tag 'load_indicator.gif', :class => 'load_indicator' %>
+  </span>
+  <a id="invite_link" href="#">Invite All</a>
+</div>
+<div id="organization_list">
+<ul id="association_organizations" class="invitations">
+<% organizations.each do |organization| %>
+  <li id="organization_<%= organization.id %>"> 
+      <span id="organization_<%= organization.id %>_name">
+        <%= organization.name %>
+      </span>
+      <a id="invite" href="#"><img src="/images/add_invitation_button.gif" /></a>
+      <br /> 
+      <% if !organization.location.blank? then %>
+        <span class="grey">
+          Location: 
+        </span>
+        <span id="organization_<%= organization.id %>_location">
+          <%= organization.location%>
+        </span>
+      <% else %>
+        <span>&nbsp;</span>
+      <% end %>
+  </li>
+<% end %>  
+</ul>
+</div>

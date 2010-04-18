@@ -66,6 +66,17 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
           followUpSelect.options.add(option);
         });
       });
+      
+      var followUpQuestionDiv = $('follow_up_question');
+      if(this.editableQuestions.length > 0) {
+        if(!followUpQuestionDiv.visible()) {
+          followUpQuestionDiv.show();
+        }
+      } else {
+        if(followUpQuestionDiv.visible()) {
+          followUpQuestionDiv.hide();
+        }
+      }
     }
   };
 
@@ -113,6 +124,7 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
     var questionParameters = null;
 
     if(!selectedQuestion){
+      alert('You must select a question to add');
       return false;
 	}
 
@@ -127,10 +139,6 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
                             'question[required]': questionRequired,
                             'question[parent_question_id]': selectedParentQuestion};
 
-      $('custom_question_text').clear();
-      $('custom_question_response').clear();
-      $('custom_question_warning').update('');
-      $('custom_question_form').blindUp({'duration': 0.5});
     } 
     else if(selectedQuestion != '') {  //The user selected a predefined question
       questionParameters = {'predefined_question_id': selectedQuestion,
@@ -143,15 +151,25 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
       parameters: questionParameters,
       'onSuccess' : function(transport) {
         questionSet.insertQuestions(transport.responseText, selectedParentQuestion);
+                
+        //Reset the select box
+        $('predefined_questions').clear();
+        $('follow_up_question_select').clear();
+        $('question_required').checked = false;
+        
+        //Reset the custom question form
+        $('custom_question_text').clear();
+        $('custom_question_response').clear();
+        $('custom_question_warning').update('');
+        
+        //Reset the question form
+        customQuestionSelect();
+        
       },
-      'onCreate':function() {$('load_indicator').show();},
-      'onComplete':function() {$('load_indicator').hide();}
+      'onCreate':function() {$('load_indicator').show(); },
+      'onComplete':function() { $('load_indicator').hide(); }
     }); 
 
-    //Reset the select box
-    $('predefined_questions').clear();
-    $('follow_up_question_select').clear();
-    $('question_required').checked = false;
   };
 
   /* Inserts the specified question under the specified parent question. Called when the server responds to a user's
@@ -219,17 +237,65 @@ function EditableQuestionSet(list, addForm, surveyId, parentQuestionSet) {
 
   /* Handles when the user selects a predefined question. This will hide or show the custom question form. */
   function customQuestionSelect(e) {
-    if($F(pdqSelect) == "0") {  //The user selected custom question, show the form
-      if (!$('custom_question_form').visible()) {
-        $('custom_question_form').blindDown({'duration': 0.5});
+    if(e) {
+      e.stop();
+    }
+  
+    var question_is_selected             = !!$F(pdqSelect);
+    var new_question_details             = $('new_question_details');
+    var new_question_details_are_visible = new_question_details.visible();
+    var custom_question_is_selected      = $F(pdqSelect) == "0";
+    var custom_question_form             = $('custom_question_form');
+    var custom_question_form_is_visible  = $('custom_question_form').visible();
+    
+    
+    if(!question_is_selected) {
+    
+      // Hide the new question details if no question type was selected
+      if(new_question_details_are_visible) {
+        new_question_details.blindUp({'duration': 0.3});
+      }
+      
+    } else {
+    
+      // A question was selected, determine if it was a custom question
+      if(custom_question_is_selected) {  
+      
+        //The user selected custom question, show the custom question form
+        if (!custom_question_form_is_visible) {
+          if(new_question_details_are_visible) {
+            custom_question_form.blindDown({'duration': 0.3});
+          } else {
+            custom_question_form.show();
+          }
+        }
+        
+      } 
+      
+    }
+      
+    if(!custom_question_is_selected && custom_question_form_is_visible) {
+      // A custom question was not selected, but the custom question form is visible, let's hide it
+    
+      if (question_is_selected) {
+        // Since a question was selected, we can assume the form is already visible, thus show the effect
+        custom_question_form.blindUp({'duration': 0.3});
+      } else {
+        // The new question form is being hidden, hide this afterward to prevent dual effects
+        custom_question_form.blindUp({'duration': 0.1, 'queue': 'end' });
+      }
+
+      
+      $('custom_question_warning').update('');
+    }
+      
+    // Show the new question details when a question type is selected
+    if(question_is_selected) {
+      if(!new_question_details_are_visible) {
+        new_question_details.blindDown({'duration': 0.3});
       }
     } 
-    else {                      //The user selected a non-custom question, hide the form
-      if ($('custom_question_form').visible()) {
-        $('custom_question_form').blindUp({'duration': 0.5});
-        $('custom_question_warning').update('');
-      }
-    }
+    
   }
 
   if(addForm){
@@ -900,6 +966,7 @@ function inputMask(element, data_type, units) {
  */
 function InviteList(survey_id) {
   
+  // Called by server-side RJS to add pending invitations to the invitation list.
   this.addInvitationToList = function(invitation_id, invitation_display, organization_id) {
     $('external_invitation_organization_name').value = '';
     $('external_invitation_email').value = '';
@@ -923,6 +990,7 @@ function InviteList(survey_id) {
   };
 
   function initializeObservers() {
+    // Initialize invite form with autocomplete functionality.
     var cachedBackend = new Autocompleter.Cache(liveOrganizationSearch,{'choices': 10, 'dataToQueryParam': function(data) {return data.name;}});
     var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
 
@@ -950,6 +1018,7 @@ function InviteList(survey_id) {
       }
     });
 
+    // For each network, observe the invite button and expand link.
     $$('#networks > li').each(function(network_li) {
       var network_id = network_li.id.match(/\d+/)[0];
       var expand_link = network_li.select('a.expand_network').first();
@@ -972,19 +1041,142 @@ function InviteList(survey_id) {
 
     $('invitation_form').observe('submit', addInvitationByForm);
 
+    // For each invitation, observe the remove link if it exists (it won't if the invitation is already sent).
     $$('ul#invitations > li').each(function(invitation_li) {
       var id_match = invitation_li.id.match(/\d+/);
       var invitation_id = '';
-      if(id_match == null){
+
+      if(id_match == null)
         return;
-      }
-      else{
-        invitation_id = id_match[0];
-      }
+
+      invitation_id = id_match[0];
 
       var remove_link = invitation_li.select('a.remove').first();
       if(remove_link){
         remove_link.observe('click', removeInvitation.curry(invitation_id));
+      }
+    });
+    
+    //observe the remove all link
+    $('remove_all_invitations').observe('click', removeAllInvitations);
+    
+    //test to see if the association integration form is present, it won't be if we are not an association member
+    if( $('organization_name') ) {
+      //observer for the association integration form
+      $('organization_name').observe('keyup', function(e){
+        //filter if more than two, or delete was pressed
+        if($('organization_name').value.length > 2 || e.keyCode == 8){
+          liveAssociationFilter();
+        }
+      });
+      $('organization_location').observe('change', liveAssociationFilter);
+      $('organization_size').observe('change', liveAssociationFilter);
+      
+      //observe invite button click for multi-select invitations
+      $('invite_link').observe('click', submitMultipleInvitations);  
+    
+     /* This is a bit of a hack. The initial naics event is fired before the live search 
+      * observer is bound. This ensures that the industry filter is applied on load
+      */
+      var naics = $('organization_naics_code');    
+      naics.observe("naics:updated", liveAssociationFilter);
+      if(naics.value > 0) {
+        naics.fire("naics:updated");
+      }
+                
+    }
+    
+    //observers for each add invitation link
+    $$('ul#association_organizations > li').each(function(org_li){
+      var id_match = org_li.id.match(/\d+/);
+      var invite_link = org_li.select('a').first();
+      invite_link.observe('click', addAssociationInvitation.curry(id_match));
+    });
+
+  }
+  
+  /* This function handles the invite link click for the association pick list. It invites all the organizations
+   * presently in the pick list.
+   */
+  function submitMultipleInvitations(e){
+    e.stop();
+    
+    var organizations = new Array();
+    $$('ul#association_organizations > li').each(function(org_li){
+      var id_match = org_li.id.match(/\d+/);
+      if(org_li.visible()){
+        organizations.push(id_match);
+      }
+    });
+    
+    //If there are more than 15 invitations, double check that this was intentional.
+    if(organizations.length <= 15 || confirm('You are about to invite ' + organizations.length + ' firms. Are you sure you want to do this?')) {
+       //ajax request to invite array of orgs
+       addAssociationInvitations(organizations);     
+    }
+    
+    return;
+  }
+  
+  /*
+   * Passed along the organization ID to be invited and stops the event
+   * @ organization_id - the organization id to invite.
+   */
+  function addAssociationInvitation(organization_id, e){
+    e.stop();
+    addInvitationByID(organization_id, 'association');
+  }
+  
+  /*
+   * event handler for association live search, filters the list based on the strings in the 'organization_name' and
+   * 'organization_location' inputs and submits it to Thinking Sphinx to search.
+   */
+  function liveAssociationFilter(){
+    var value = $('organization_name').value
+    //if value length is less than 3, set to blank so it is ignored.
+    value = value.length > 2 ? value : "";
+    var distance = $('organization_location').value;
+    var size = $('organization_size').value;
+    var naics = $('organization_naics_code').value;
+    naics = naics > 0 ? naics : ""; // sometimes comes through as 'undefined', prevents this from being sent to the server
+    
+    if(value != ""  || distance != "" || size != "" || naics != ""){
+      new Ajax.Request('/organizations/search_for_association_list.json', {
+        'method': 'get',
+        'parameters': {'search_text': value, 'distance': distance,
+                        'size': size, 'naics': naics},
+        'requestHeaders': {'Accept':'application/json'},
+        'onSuccess': function(transport) {
+          toggleOrganizations(transport.responseText.evalJSON());
+        },
+        'onCreate': function() {
+          $('invite_load_indicator').show();
+        },
+        'onComplete': function() {
+          $('invite_load_indicator').hide();
+        }
+      });
+    }
+    else {
+      $$('ul#association_organizations > li').each(function(org_li){
+        org_li.show();
+      });
+    }
+  }
+  
+  /*
+   * Shows or hides the organizations depending upon the passed list.
+   * @organizations - a list of organizations to show.
+   */
+  function toggleOrganizations(organizations) {
+    $$('ul#association_organizations > li').each(function(organization_li){
+      organization_li.hide();
+    });
+    
+    organizations.each(function(organization) {
+      //invited orgs are not in the list, so do not toggle.
+      if($("organization_" + organization.id)){
+        $("organization_" + organization.id).show();
       }
     });
   }
@@ -1009,14 +1201,16 @@ function InviteList(survey_id) {
     });
   }
 
-  /* Sends the ajax request to invite the specified organization.
+  /* Sends the ajax request to invite an array of organizations.
+   * 
+   * @organizations - a JavaScript array of IDs.
    */
-  function addInvitation(organization) {
-    new Ajax.Request('/surveys/' + survey_id + '/invitations', {
+  function addAssociationInvitations(organizations) {
+    new Ajax.Request('/surveys/' + survey_id + '/invitations/create_for_association', {
       'method': 'post',
-      'parameters': {'organization_id': organization.id},
-      'onCreate': function() {$('submit_load_indicator').show();},
-      'onComplete': function() {$('submit_load_indicator').hide();}
+      'parameters': {'organizations': organizations.join(",")},
+      'onCreate': function() {$('invite_load_indicator').show();},
+      'onComplete': function() {$('invite_load_indicator').hide();}
     });
   }
 
@@ -1031,7 +1225,28 @@ function InviteList(survey_id) {
     });
   }
 
+  /* Function to allow Polymorphism of the add invitation function. Takes the organization and passed on only the
+   * needed params (id).
+   * 
+   * @organization -  an object that contains an organization id.
+   */
+  function addInvitation(organization) {
+    addInvitationByID(organization.id, 'form');
+  }
 
+  /* Sends the ajax request to invite the specified organization.
+   * 
+   * @organization_id -  the ID of the organization to invite.
+   */
+  function addInvitationByID(organization_id, method) {
+    new Ajax.Request('/surveys/' + survey_id + '/invitations', {
+      'method': 'post',
+      'parameters': {'organization_id': organization_id, 
+                     'method': method},
+      'onCreate': function() {$('submit_load_indicator').show();},
+      'onComplete': function() {$('submit_load_indicator').hide();}
+    });
+  }
   
 
   function removeInvitation(invitation_id, e) {
@@ -1043,8 +1258,28 @@ function InviteList(survey_id) {
       }
     });
 
+
     new Ajax.Request('/surveys/' + survey_id + '/invitations/' + invitation_id, {
       'method': 'delete'
+    });
+  }
+  
+  function removeAllInvitations(e){
+    e.stop();
+    if(confirm('This will remove all pending invitations. Are you sure you want to do this?')){
+      new Ajax.Request('/surveys/' + survey_id + '/invitations/destroy_all.json', {
+          'method': 'post',
+          'requestHeaders': {'Accept':'application/json'},
+          'onSuccess': function(transport) {
+            removeInvitationsFromPage(transport.responseText.evalJSON());
+          }
+      });
+    }
+  }
+  
+  function removeInvitationsFromPage(invitations){
+    invitations.each(function(invitation){
+      $('invitation_' + invitation.id).remove();
     });
   }
 
@@ -1056,6 +1291,183 @@ function InviteList(survey_id) {
       'onCreate': function() {$('load_indicator_' + network_id).show();$('network_' + network_id + '_invite').hide();},
       'onComplete': function() {$('load_indicator_' + network_id).hide();$('network_' + network_id + '_invite').show();}
     });
+  }
+
+  initializeObservers();
+}
+
+/**
+ * Logic for browsing the NAICS taxonomy
+ * @param selected_code The code for the current node
+ */
+function NaicsClassificationList(selected_code) {
+  // Whether or not to show ancestors in the list.
+  this.showAncestors = true;
+
+  // Make sure we always have a reference to this class
+  var my = this;
+
+  // Keep track of the ancestors, as we need them in order to 'go back' up the taxonomy
+  var ancestors = $A();
+
+  /**
+   * Will initialize the naics list, and observe the links for drilling up/down
+   */
+  function initializeObservers() {
+    my.retrieveAncestorAndChildNaicsClassifications(selected_code);
+
+    $('naics_classification_back').observe('click', goBack);
+    $('naics_select').observe('change', drillDeeper);
+    
+  };
+
+  /**
+   * Will retrieve the list of child and ancestor nodes from the server, and update the UI with that information
+   * @param currentCode A naics code, or null, if no naics code was selected.
+   */
+  this.retrieveAncestorAndChildNaicsClassifications = function(currentCode) {
+  
+    // Keep track of the selected node here, this is what is passed to the model on submit
+    var naics_classification = $('organization_naics_code');
+    naics_classification.value = currentCode;
+    var event = naics_classification.fire("naics:updated");
+  
+    new Ajax.Request('/naics_classifications/children_and_ancestors.json', {
+      'method': 'get',
+      'parameters': {'id': currentCode},
+      'requestHeaders': {'Accept':'application/json'},
+      'onSuccess': function(transport) {
+        var children = transport.responseText.evalJSON().children.evalJSON();
+        my.ancestors = transport.responseText.evalJSON().ancestors.evalJSON();
+            
+        updateChildNaicsClassifications(children);
+        updateAncestorNaicsClassifications();
+      },
+      'onCreate': function() {
+        $('live_load_indicator').show();
+      },
+      'onComplete': function() {
+        $('live_load_indicator').hide();
+      }
+    });
+  };
+    
+  /**
+   * Rebuild the naics select box with a new set of nodes
+   * @param children An array of naics nodes
+   */
+  function updateChildNaicsClassifications(children) {
+
+    var child_naics_classifications = $('naics_select');
+        
+    // Remove the existing options
+    while(child_naics_classifications.options.length > 0){child_naics_classifications.remove(0);}
+
+    // Add a default option
+    var blankChildOption = document.createElement("option");
+    blankChildOption.text = $('organization_naics_code').value > 0 ? "More Specific..." : "Select an industry" ;
+    blankChildOption.value = null;
+    try {
+      child_naics_classifications.add(blankChildOption, null);
+    } catch(ex) {
+      child_naics_classifications.add(blankChildOption);
+    }
+    
+    // Create options for the child nodes
+    for(var i=0; i<children.size(); i++) {
+      var child = children[i];
+      var childOption = document.createElement("option");
+      childOption.text = child.display_code + ": " + child.description;
+      childOption.value = child.code;
+      try {
+        child_naics_classifications.add(childOption, null);
+      } catch(ex) {
+        child_naics_classifications.add(childOption);
+      }
+    }
+    
+    // Hide the select box if there are no more children
+    if(children.size() == 0) {
+      $('naics_select').hide();
+    } else {
+      $('naics_select').show();
+    }    
+  };  
+  
+  /**
+   * Rebuilds the naics classification ancestor list
+   */
+  function updateAncestorNaicsClassifications() {
+    var ancestorsUL = $('naics_classification_ancestors');
+    
+    // Remove the existing options
+    ancestorsUL.innerHTML = '';
+    
+    var start = 0;
+
+    if(my.ancestors.length > 0 && !my.showAncestors)
+      start = my.ancestors.length - 1;
+
+    // Create options for the child nodes
+    for(var i=start; i<my.ancestors.size(); i++) {
+      var ancestor = my.ancestors[i];
+      var ancestorLI = document.createElement("li");
+      var description = ancestor.display_code + ": " + ancestor.description;
+      // The selected node should be bold to signify its selection
+      if(i == my.ancestors.size() - 1 && my.showAncestors) {
+        ancestorLI.className = 'selected';
+      } 
+
+      ancestorLI.innerHTML = description;
+      ancestorsUL.insert(ancestorLI, { 'position' : 'last'});
+    }
+    
+    // Hide the 'go back' link if we are at the level 1 option
+    // Hide the ancestors list if no ancestors are present (silly hack for IE6, otherwise there is a big gap in the form)
+    if(my.ancestors.size() == 0) {
+      $('naics_classification_back').hide();
+      ancestorsUL.hide();
+    } else {
+      $('naics_classification_back').show();
+      ancestorsUL.show();
+    }
+  };   
+  
+  /**
+   * Drills into the selected taxonomy node
+   */
+  function drillDeeper(e) {
+    e.stop();
+    var child_naics_classifications = $('naics_select');
+    
+    var code = child_naics_classifications.options[child_naics_classifications.selectedIndex].value;
+    
+    if(code) {
+      my.retrieveAncestorAndChildNaicsClassifications(code);
+    }
+  }
+  
+  /**
+   * Goes up the taxonomy tree one node
+   */  
+  function goBack(e) {
+    e.stop();
+    var parentNodeIndex = 2;
+    var parentOfSelectedNode = my.ancestors[my.ancestors.size() - parentNodeIndex];
+    
+    // Find an ancestor with at least 2 children, since we do not show nodes with 1 child
+    while(parentOfSelectedNode && parentOfSelectedNode.children_count == 1) {
+      parentNodeIndex++;
+      parentOfSelectedNode = my.ancestors[my.ancestors.size() - parentNodeIndex];
+    }
+    
+    var parentCodeOfSelectedNode = null;
+    if(parentOfSelectedNode) {
+      parentCodeOfSelectedNode = parentOfSelectedNode.code
+    }
+    
+    my.retrieveAncestorAndChildNaicsClassifications(parentCodeOfSelectedNode);    
+
   }
 
   initializeObservers();

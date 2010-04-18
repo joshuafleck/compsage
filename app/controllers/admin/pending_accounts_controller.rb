@@ -7,7 +7,7 @@ class Admin::PendingAccountsController < Admin::AdminController
     @pending_account = Organization.pending.find(params[:id])
 
     #update the account status to approved
-    @pending_account.is_pending = false
+    @pending_account.pending = false
     @pending_account.save!
     
     respond_to do |wants|

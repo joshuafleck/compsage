@@ -1,0 +1,77 @@
+<%
+  highlight_tab "settings"
+  title "Settings &amp; Branding"
+%>
+<h2>Settings &amp; Branding</h2>
+<%= error_messages_for :association %>
+<%= flash_messages %>
+<h3>Standard Questions</h3>
+<p class="instructions">
+These questions will be available to members when they create a survey through your association members' page.
+</p>
+<%=link_to "Create a new  standard question.", new_association_pdq_path%>
+<br />
+<br />
+<% if @association.predefined_questions.any? %>
+  <table id="association_predefined_questions">
+    <thead>
+      <th>Name</th>
+      <th>Question Text</th>
+      <th>Response Type</th>
+      <th>&nbsp;</th>
+    </thead>
+    <tbody>
+      <% @association.predefined_questions.each do |predefined_question|
+        question = predefined_question.question %>
+        <tr class="<%= cycle("even", "odd") %>">
+          <td><%=link_to predefined_question.name, edit_association_pdq_path(predefined_question)%></td>
+          <td><%=question.text%></td>
+          <td><%=question.question_type%></td>
+          <td><%=link_to "Delete",
+                          association_pdq_path(predefined_question),
+                          :id => "delete_link",
+                          :method => :delete,
+                          :confirm => "Are you sure? This cannot be undone."%></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+<h3>Custom Greeting</h3>
+<% form_for :association, :url => association_settings_path, :html => {:method => :put} do |f| %>
+  <%= f.text_area :member_greeting %>
+  <p class="info">If blank, a default greeting message will be used.</p>
+  <%= f.submit "Update Greeting" %>
+<% end %>
+<h3>Billing Instructions</h3>
+<p class="instructions">Provide billing instructions for survey sponsorship. These instructions will be presented to your members during survey creation.</p>
+<% form_for :association, :url => association_settings_path, :html => {:method => :put} do |f| %>
+  <%= f.text_area :billing_instructions %>
+  <div class="submit">
+    <%= f.submit "Update Billing Instructions" %>
+  </div>
+<% end %>   
+<h3>Contact Information</h3>
+<p class="instructions">This information will be provided to your members should they have trouble logging in. Also,
+your contact email is the email address you use to access the system.</p>
+<% form_for :association, :url => association_settings_path, :html => {:method => :put} do |f| %>
+  <%= f.label :contact_name, "Name" %>
+  <%= f.text_field :contact_name, :size => 30 %>
+
+  <%= f.label :contact_email, required('Email') %>
+  <%= f.text_field :contact_email, :size => 30 %>
+
+  <%= f.label :contact_phone, "Phone" %>
+  <%= f.text_field :contact_phone, :size => 12 %> ext. <%= f.text_field :contact_phone_extension, :size => 6%>
+  <div class="submit">
+    <%= f.submit "Update Contact Information" %>
+  </div>
+<% end %>
+<h3>Branding</h3>
+<p class="instructions">The logo will appear on the front page where your members sign in.</p>
+<% form_for :association, :url => association_settings_path, :html => {:method => :put, :multipart => true} do |f| %>
+  <%= f.file_field :logo %>
+  <div class="submit">
+    <%= f.submit "Upload Logo" %>
+  </div>
+<% end %>

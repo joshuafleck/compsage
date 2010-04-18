@@ -13,7 +13,7 @@ set :use_sudo, false
 ### Repository Setup ###
 set :scm, :git
 set :repository,  "deploy@dev.huminsight.com:/home/git/shawarma"
-set :branch, "master"
+set :branch, "ai"
 set :deploy_via, :remote_cache
 
 ### Custom Tasks ###
@@ -38,11 +38,6 @@ namespace :deploy do
     run "cd #{release_path}; rake spec:db:fixtures:load FIXTURES=predefined_questions RAILS_ENV=#{rails_env}"
   end 
   
-  desc "Link the logos directory"
-  task :link_logos, :role => :app do
-    run "ln -s #{shared_path}/logos/ #{release_path}/public/logos; ln -s #{shared_path}/attachment_fu/ #{release_path}/tmp/attachment_fu"
-  end
- 
   desc "Link thinking_sphinx data directory"
   task :link_ts, :roles => :app do
     run "ln -s #{shared_path}/sphinx #{release_path}/db/sphinx"
@@ -59,4 +54,4 @@ namespace :deploy do
   end
 end
 
-before 'deploy:restart', 'deploy:link_logos', 'deploy:link_ts', 'deploy:install_gems', 'deploy:copy_database_yml', 'deploy:migrate', 'deploy:load_pdq', 'deploy:merge_files'
+before 'deploy:restart', 'deploy:link_ts', 'deploy:copy_database_yml', 'deploy:migrate', 'deploy:load_pdq', 'deploy:merge_files'

@@ -61,6 +61,10 @@ describe Survey do
   it "should have many subscribed organiations" do
     Survey.reflect_on_association(:subscribed_organizations).should_not be_nil
   end
+
+  it "should belong to an association" do
+    Survey.reflect_on_association(:association).should_not be_nil
+  end
   
   it "should be invalid with a job title longer then 128 characters" do
     @survey.save
@@ -141,16 +145,6 @@ describe Survey do
     @survey.days_to_extend.should be_blank
     @survey.destroy
   end  
-  
-  it "should update the aasm_state_number on save" do
-    @survey.aasm_state = 'running'
-    @survey.save!
-    @survey.aasm_state_number.should eql(1)
-    @survey.aasm_state = 'stalled'
-    @survey.save!
-    @survey.aasm_state_number.should eql(2)
-    @survey.destroy
-  end
 
 end
 

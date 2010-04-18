@@ -14,6 +14,7 @@ require 'features/helpers/wait_helper'
 require 'features/helpers/dom_interface_helper'
 
 include WaitHelper
+include URLHelper
 
 Webrat.configure do |config|
   config.mode = :rails
@@ -45,8 +46,9 @@ ThinkingSphinx.deltas_enabled = true
 ThinkingSphinx.updates_enabled = true
 ThinkingSphinx.suppress_delta_output = true
 ts = ThinkingSphinx::Configuration.instance
-ts.controller.start
 ts.controller.index
+ts.controller.start
+
 
 # This will clear the test database between scenario runs.
 # We cannot use cucumber transactional fixtures with watir, 
@@ -62,6 +64,11 @@ class << Cucumber::Rails::World
   def use_transactional_fixtures=(other)
     # do nothing
   end
+end
+
+# another hack regarding errors coming from redirects via subdomain
+class Webrat::Session
+  alias internal_redirect? redirect?
 end
 
 
@@ -81,7 +88,8 @@ end
 # Creates a test instance of mongrel on port 3001
 FireWatir::TextField.send(:include, TextBoxExtension)
 port = 3001
-base_url = "http://localhost:#{port}"
+subdomain = "sub"
+base_url = "http://#{subdomain}.localhost:#{port}"
 KILL_COMMAND = "kill `ps aux | grep -e '<process>' | grep -v grep | awk '{ print $2 }'`"
 MONGREL = "ruby script/server -p #{port} -e #{ENV["RAILS_ENV"]} -d"
 system 'rm log/test.log' # Remove any logs from the previous test run
@@ -91,6 +99,7 @@ wait_for_process(MONGREL)
 begin
   browser = FireWatir::Firefox.new
 rescue Watir::Exception::UnableToStartJSShException
+  ts.controller.stop
   system KILL_COMMAND.gsub("<process>",MONGREL)
   raise Watir::Exception::UnableToStartJSShException
 end
@@ -99,6 +108,7 @@ end
 World(OrganizationHelper)
 World(WaitHelper)
 World(DomInterfaceHelper)
+World(URLHelper)
 
 # This block is run before every feature test
 Before do
@@ -107,13 +117,20 @@ Before do
   @testing_javascript = false # This flag tells our cucumber steps how to test (webrat or watir)
   @browser = browser # This is the browser to be used in watir tests
   @base_url = base_url # This is the base URL for watir tests
+  @subdomain = subdomain # This is the subdomain for all webrat tests for AI. Need to set variable in route creation.
   @current_organization = Factory.create(:organization) # We need an organization for most steps, have one ready
+  @current_association_by_owner = Factory.create(:association) # association owner for setting steps
   @current_survey_invitation = Factory.create(:sent_external_survey_invitation) # We need an external invitation for many steps, have one ready
+  @current_association = Factory.create(:association, :subdomain => @subdomain) # association for association based specs
 end
 
 # This block is run after every feature test
 After do
   DatabaseCleaner.clean # Clears the test database
+  #We need to delete created PDQs, but not all, so it must be done seperately
+  @current_association_by_owner.predefined_questions.each do |pdq|
+    pdq.delete
+  end
 end
 
 # This will close the browser and kill the mongrel instance when testing is complete

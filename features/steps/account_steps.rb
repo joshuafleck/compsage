@@ -1,9 +1,10 @@
 Given /I am on the new account page/ do
-  visit new_account_url
+  @naics = Factory(:naics_classification)
+  visit add_subdomain(new_account_url)
 end
 
 Given /I am on the edit account page/ do
-  visit edit_account_url
+  visit add_subdomain(edit_account_url)
 end
 
 Given /I have requested a password reset/ do
@@ -16,12 +17,12 @@ Given /the password reset request is expired/ do
 end
 
 Given /I am on the reset password page/ do
-  visit reset_account_url(:key => @current_organization.reset_password_key)
+  visit add_subdomain(reset_account_url(:key => @current_organization.reset_password_key))
 end
 
 Given "I am logged in via network invitation" do
   invitation = Factory(:external_network_invitation)
-  visit new_account_path(:key => invitation.key)
+  visit add_subdomain(new_account_url(:key => invitation.key))
 end
 
 When /^I add an account without an invitation$/ do
@@ -93,5 +94,45 @@ When /I unsuccessfully reset my password/ do
     fills_in "Password", :with => "reset password"
     fills_in "Confirm password", :with => "bad boy"
     clicks_button 'Reset My Password'
+end
+
+When /I select an industry/ do  
+  select @naics.code.to_s, :from => 'naics_select'
+  wait_for_javascript
+end
+
+When /I traverse up the taxonomy/ do  
+  click_link "naics_classification_back"
+  wait_for_javascript
+end
+
+Then /I should have an industry selected/ do
+  text = get_element_by_xpath("id('organization_naics_code')").value
+  text.should == @naics.code.to_s
+  text = get_element_by_xpath("id('naics_classification_ancestors')").text
+  text.should =~ /naics description/
+end
+
+Then /I should not have an industry selected/ do
+  text = get_element_by_xpath("id('organization_naics_code')").value
+  text.should == ""
+  text = get_element_by_xpath("id('naics_classification_ancestors')").text
+  text.should == ""
+end
+
+Given /^there is an account requiring activation$/ do
+  @pending_organization = Factory(:pending_organization)
+end
+
+When /^I activate the pending account$/ do
+  visit add_subdomain(activate_account_url(:key =>  @pending_organization.activation_key))
+end
+
+Given /^there is an account requiring deactivation$/ do
+  @deactivation_organization = Factory(:organization)
+end
+
+When /^I deactivate the account$/ do
+  visit add_subdomain(deactivate_account_url(:key =>  @deactivation_organization.deactivation_key))
 end
 

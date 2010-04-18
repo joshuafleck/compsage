@@ -53,7 +53,15 @@ describe Organization do
   it "should have many participations" do
     Organization.reflect_on_association(:participations).should_not be_nil
   end
-  
+
+  it "should have and belong to many associations" do
+    Organization.reflect_on_association(:associations).should_not be_nil
+  end
+
+  it "should have and belong to a naics classification" do
+    Organization.reflect_on_association(:naics_classification).should_not be_nil
+  end
+    
   it 'should require a password' do
     @organization.attributes = valid_organization_attributes.except(:password)
     @organization.should have(2).errors_on(:password)
@@ -87,14 +95,16 @@ describe Organization do
     Organization.authenticate(valid_organization_attributes[:email], valid_organization_attributes[:password]).should == @organization
   end
   
+  it 'should not authenticate uninitialized association members' do
+    @organization.attributes = valid_organization_attributes
+    @organization.uninitialized_association_member = true
+    @organization.save
+    Organization.authenticate(valid_organization_attributes[:email], valid_organization_attributes[:password]).should be_nil
+  end
+  
   it "should be invalid when location is longer than 60 characters" do
   	@organization.attributes = valid_organization_attributes.with(:location => "0"*61)
     @organization.should have(1).errors_on(:location)
-  end
-  
-  it "should be invalid when industry is longer than 100 characters" do
-  	@organization.attributes = valid_organization_attributes.with(:industry => "0"*101)
-    @organization.should have(1).errors_on(:industry)
   end
   
   it "should be invalid when contact name is longer than 100 characters" do
@@ -154,16 +164,34 @@ describe Organization do
     @organization.should have(1).errors_on(:zip_code)
   end
 
-  it "Should be invalid with a zip code that is not numbers" do
+  it "should be invalid with a zip code that is not numbers" do
     @organization.attributes = valid_organization_attributes.with(:zip_code => 'adamm')
     @organization.should have(1).errors_on(:zip_code)
   end
   
+  it "should not be an uninitialized association member" do
+    @organization.uninitialized_association_member.should be_false
+  end
+
   it "Should be invalid without accepting the Terms of Use" do
     @organization.attributes = valid_organization_attributes.with(:terms_of_use => false)
     @organization.should have(1).errors_on(:terms_of_use)
   end
-     
+  
+  it 'should not require a password for uninitialized association members' do
+    @organization.attributes = valid_organization_attributes.except(:password)
+    @organization.uninitialized_association_member = true
+    @organization.should have(0).errors_on(:password)
+  end  
+  
+  it "should have a deactivation key" do
+    @organization.deactivation_key.should_not be_nil
+  end
+  
+  it "should not be deactivated" do
+    @organization.deactivated?.should be_false
+  end  
+  
 end
 
 describe Organization, "that already exists" do
@@ -286,7 +314,7 @@ describe Organization, "that already exists" do
   end  
   
   it "Should notify us when a pending account has been created" do
-    @organization.is_pending = true
+    @organization.pending = true
     Notifier.should_receive(:deliver_pending_account_creation_notification)
     @organization.save!
   end 
@@ -328,7 +356,7 @@ describe Organization, "built from an invitation" do
   end
   
   it "should not be pending" do
-    @organization.is_pending?.should be_false
+    @organization.pending?.should be_false
   end  
 
 end
@@ -339,7 +367,7 @@ describe Organization, "not built from an invitation" do
   end
     
   it "should be pending" do
-    @organization.is_pending?.should be_true
+    @organization.pending?.should be_true
   end   
   
   it "should not be activated" do
@@ -407,3 +435,94 @@ describe Organization, "that is pending and requires activation" do
 
 end
 
+describe Organization, "that is an uninitialized association member" do
+  
+  before(:each) do
+    @organization = Factory.create(:uninitialized_association_member)
+    @association  = Factory.create(:association)
+  end
+  
+  after(:each) do
+    @organization.destroy
+    @association.destroy
+  end  
+  
+  it "should not allow a blank password when creating the login" do
+    @organization.create_login(@association, {
+      :password => "",
+      :password_confirmation => ""
+    }).should be_false  
+    
+    @organization.should have(1).errors_on(:password)
+  end
+  
+  it "should not allow a mismatched password when creating the login" do
+    @organization.create_login(@association, {
+      :password => "test12",
+      :password_confirmation => ""
+    }).should be_false  
+    
+    @organization.should have(1).errors_on(:password)
+  end  
+    
+  it "should no longer be uninitialized" do   
+    lambda{ @organization.create_login(@association, {
+      :password => "test12",
+      :password_confirmation => "test12"
+    }) }.should change(@organization, :uninitialized_association_member).from(true).to(false)
+  end  
+  
+  it "should delete itself when removed as an association member" do
+    @organization.should_receive(:destroy).twice # once in leave, once in cleanup.
+    @organization.associations << @association
+    @organization.leave_association(@association)
+  end
+  
+  it "should be deletable and updatable by association" do
+    @organization.association_can_update?.should be_true
+  end
+end
+
+
+describe Organization, "That is in an association (and is initialized)" do
+  before(:each) do
+    @organization = Factory.create(:organization)
+    @association  = Factory.create(:association)
+    @association.organizations << @organization
+  end
+  
+  after(:each) do
+    @organization.destroy
+    @association.destroy
+  end
+
+  it "should not delete itself when leaving the association" do
+    @organization.leave_association(@association)
+    @organization.should_receive(:destroy).once # In cleanup.
+  end
+
+  it "should no longer be a member of the association after leaving" do
+    @organization.leave_association(@association)
+    @organization.associations.should_not include(@association)
+  end
+  
+  it "should not be deletable and updatable by association" do
+    @organization.association_can_update?.should be_false
+  end
+end
+
+describe Organization, "that has been deactivated" do
+  before(:each) do
+    @organization = Factory.build(:organization)
+    @organization.deactivate
+  end
+  
+  it "should be deactivated" do
+    @organization.deactivated?.should be_true
+  end  
+  
+  it "should be disabled" do
+    @organization.disabled?.should be_true
+  end  
+  
+end  

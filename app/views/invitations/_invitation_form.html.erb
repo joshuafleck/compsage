@@ -32,7 +32,12 @@
 </div>
 <div class="two_third_main_column">
   <h3>Invitation List</h3>
-  <ul id="invitations" class="entity_list">
+    <div class="remove_all_invitations">
+      <%=link_to "Remove All",  
+                 "#", 
+                 :id => "remove_all_invitations"%>
+    </div>
+  <ul id="invitations" class="invitations entity_list">
     <% @invitations.each do |invitation| %>
       <li id="invitation_<%= invitation.id %>">
         <% if invitation.pending? then %>
@@ -51,7 +56,14 @@
     <% end %>
     <p>This message will be included in the email invitations.</p>
   </div>
-  <%= render :partial => 'invitations/invite_organization' %>
+  <%if !current_association.nil? then %>
+    <%= render :partial => 'invitations/association_invitation_form',
+               :locals => { :association => current_association, 
+                            :survey => @survey, 
+                            :organizations => @organizations} %>
+  <% end %>
+  <%= render :partial => 'invitations/invite_organization', 
+             :locals => {:association => current_association, :organizations => @organizations} %>
 </div>
 <script type="text/javascript" src="/javascripts/fast_autocompleter.js"></script>
 <% content_for :initialize_js, "inviteList = new InviteList(#{@survey.id});initializeObservers();"%>

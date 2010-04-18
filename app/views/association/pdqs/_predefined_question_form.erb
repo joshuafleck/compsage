@@ -1,0 +1,30 @@
+<%= error_messages_for :predefined_question, :question %>
+<br />
+<div id="association_question">
+<% form_for @predefined_question do |f| %>
+  <p class="required">All fields are required.</p>
+  <%= f.label :name, "Name", :class => 'discussion_label' %>
+  <%= f.text_field :name, :size => 30 %>
+  <p class="required">The name will appear when an association member is creating a new survey.</p>
+  <% fields_for :question, @question do |question_fields| %>
+    <%= question_fields.label :text, "Question Text", 
+                    :class => 'discussion_label' %>
+    <%= question_fields.text_field :text, :size => 40%>
+    <br />
+    <br />
+    <%= question_fields.label :question_type, "Response Type:",
+          :class => 'discussion_label',
+          :style => 'display: inline;' %>
+    <%= select :question, :question_type, Question::QUESTION_TYPES.keys %>
+  <% end %>
+  <div class="discussion_submit">
+    <input    type="submit"  
+              value="<%= predefined_question.new_record? ? 'Create' : 'Update' %>" /> or 
+    <%= link_to "Cancel", association_settings_path %>
+  </div>
+  </div>
+  <div class="howto-left">
+    <img src="/images/association_question.png" alt="">
+    <div class="caption">An association question on a new association survey .</div>
+  </div>
+<% end %>

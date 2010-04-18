@@ -11,7 +11,7 @@
       <%=f.text_field :contact_name, :size => 34 %>
       <%=f.label :email, 'Email address' %> 
       <%=f.text_field :email, :size => 34 %>
-      <% if @organization.is_pending? then %>
+      <% if @organization.pending? then %>
         <% form_row do %>
           <% form_box do %>
             <%=f.label :phone %> 
@@ -59,8 +59,9 @@
           <%=f.text_field :zip_code, :size => 6 %>
         <% end %>
       <% end %>
-      <%=f.label :industry %>  
-      <%=f.select :industry, AccountsHelper::INDUSTRIES, :include_blank => true %>
+      <%=f.label :size, 'Number of Employees' %> 
+      <%=f.text_field :size, :size => 6 %>
+      <%= render :partial => "naics_classifications/browse", :locals => {:code => @organization.naics_classification.try(:code) || ''} %>
     </div>
   </div>  
   <div class="submit">
@@ -81,7 +82,7 @@
     <% elsif @organization.new_record? %>
       <%=link_to "Cancel", new_session_path %>
     <% else %>
-      <%=link_to "Finished", root_path %>
+      <%=link_to "Cancel", root_path %>
     <% end %>
   </div>
 <% end %>

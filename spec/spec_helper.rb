@@ -125,7 +125,7 @@ end
 
 # Will place the organization in the disabled state
 def disable_organization(organization)
-  organization.is_pending = true
+  organization.pending = true
   organization.increment(:times_reported)
   organization.save!
 end
@@ -136,7 +136,7 @@ def valid_survey_attributes
     :days_running => 7,
     :start_date => Time.now - 7.days,
     :job_title => 'TEST',
-    :sponsor => organization_mock,
+    :sponsor => Factory(:organization),
     :id => '1',
     :description => 'Descr'
   }
@@ -150,6 +150,15 @@ def valid_question_attributes
   }
 end
 
+def valid_importer_params
+  {'update' => true,
+   'create' => true,
+   'destroy' => false,
+   'headers' => false,
+   'classification' => 'naics2007'
+   }  
+end
+
 def survey_mock 
   mock_model(
       Survey, 
@@ -160,7 +169,34 @@ def valid_survey(attributes = valid_survey_attributes)
     survey = Survey.new(attributes)
     survey.questions.build(valid_question_attributes)
     survey
+end
+
+def valid_csv_file
+"Imported Firm, Joe Wilson, joe.wilson@importedfirm.com, 55407, 20, 30
+Durgan-Kunze, Mrs. Christy Bogisich, laurence@brekkewintheiser.info, 59432,234,23
+Imported Firm 2, Josh Fleck, josh@fleck.com,,20,
+Imported Firm 3, David Peterson, david@peterson.com, 55407, 4000, 30
+Imported Firm 4, Brian Terlson, brian.terlson@gmail.com, 98004,  210,23
+"  
 end 
+
+# Participations are a bitch to get working in the factories, this eases the pain
+def generate_participation(participant, survey)
+
+  participation = Factory.build(:participation, 
+    :participant => participant, 
+    :survey      => survey, 
+    :responses   => [])
+    
+  survey.questions.each do |question|  
+    participation.responses << Factory.build(:numerical_response, :question => question, :response => 1)
+  end  
+  
+  participation.save 
+  
+  participation
+   
+end
   
 module AuthenticationRequiredSpecHelper
 

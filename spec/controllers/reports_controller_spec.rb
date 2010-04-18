@@ -52,7 +52,7 @@ describe ReportsController, "handling GET /survey/1/report" do
   end
 end
 
-describe ReportsController, "handling GET /survey/1/report with an undelivered invoiced" do
+describe ReportsController, "handling GET /survey/1/report with an undelivered invoice" do
   before(:each) do
     @current_organization_or_survey_invitation = Factory(:organization)
      login_as(@current_organization_or_survey_invitation)

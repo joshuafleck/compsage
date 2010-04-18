@@ -68,5 +68,21 @@ Feature: Manage accounts
     When I unsuccessfully reset my password 
     Then I should see "Please try again."    
     
-
+  Scenario: Selecting my industry
+    Given I am testing with firewatir
+    And I am on the new account page
+    When I select an industry
+    Then I should have an industry selected
+    When I traverse up the taxonomy
+    Then I should not have an industry selected
+    
+  Scenario: Activating a pending account
+    Given there is an account requiring activation
+    When I activate the pending account
+    Then I should see "Your account has been activated!"
+    
+  Scenario: De-activating an account
+    Given there is an account requiring deactivation
+    When I deactivate the account
+    Then I should see "This account has been disabled"
 

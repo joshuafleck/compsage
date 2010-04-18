@@ -30,6 +30,10 @@ describe AccountsController, "#route_for" do
     route_for(:controller => "accounts", :action => "activate").should == "/account/activate"
   end  
 
+  it "should map { :controller => 'accounts', :action => 'deactivate'} to /account/deactivate" do
+    route_for(:controller => "accounts", :action => "deactivate").should == "/account/deactivate"
+  end  
+
 end
 
 describe AccountsController, " handling GET /account/new" do
@@ -147,6 +151,33 @@ describe AccountsController, " handling GET /account/new" do
       get :new
       response.should render_template('new')
     end
+    
+    describe "when the invitee is already a member" do
+    
+      before(:each) do
+        @organization = Factory.create(:organization, :email => @invitation.email)
+      end
+      
+      after(:each) do
+        @organization.destroy
+      end  
+      
+      it "should redirect to the sign in page" do
+        get :new
+        response.should redirect_to(login_path(:email => @organization.email))
+      end
+      
+      it "should redirect to the association sign in page when the user is an association member" do
+        association = Factory(:association)
+        @organization.associations << association
+        get :new
+        response.should redirect_to(sign_in_association_member_url(
+            :email     => @organization.email,
+            :key       => @invitation.key,
+            :subdomain => association.subdomain))
+      end
+    
+    end
         
   end  
   
@@ -177,6 +208,12 @@ describe AccountsController, " handling GET /account/activate" do
     @params[:key] = '1234'
     do_get
     response.should redirect_to(new_session_path)
+  end
+  
+  it "should move external survey invitations to the activated organization with the same email" do
+    invitation = Factory(:external_survey_invitation, :email => @current_organization.email)
+    lambda{ do_get }.should change(ExternalSurveyInvitation, :count).from(1).to(0)
+    invitation.destroy
   end
  
 end  
@@ -215,6 +252,8 @@ describe AccountsController, " handling POST /account/" do
     
     @organization = Factory.build(:organization)
     
+    @invitation2 = Factory.create(:external_survey_invitation, :email => @organization.email)
+      
     @params = { :organization => @organization.attributes }
     @params[:organization] = @params[:organization].merge(:password => "123456")
     @params[:organization] = @params[:organization].merge(:password_confirmation => "123456")
@@ -244,16 +283,26 @@ describe AccountsController, " handling POST /account/" do
      
     after(:each) do
       @invitation.destroy
+      @invitation2.destroy
     end
        
     it "should accept the invitation" do  
       @invitation.should_receive(:accept!)
       do_post
     end 
-    
+         
+    it "should find any previous external survey invitations an accept them as well" do  
+      lambda{ do_post }.should change(ExternalSurveyInvitation,:count).from(2).to(0)
+    end 
+            
+    it "should find any previous external network invitations an accept them as well" do  
+      @network_invitation = Factory.create(:external_network_invitation, :email => @organization.email)
+      lambda{ do_post }.should change(ExternalNetworkInvitation,:count).from(1).to(0)
+    end 
+        
     it "should not create a pending organization"   do 
       do_post
-      assigns[:organization].is_pending?.should be_false
+      assigns[:organization].pending?.should be_false
     end
     
     it "should create an organization that does not require activation" do
@@ -262,10 +311,15 @@ describe AccountsController, " handling POST /account/" do
     end
   
   end
+ 
+  it "should find not accept any previous external survey invitations" do  
+    lambda{ do_post }.should_not change(ExternalSurveyInvitation,:count)
+  end 
+        
   
   it "should create a pending organization"   do 
     do_post
-    assigns[:organization].is_pending?.should be_true
+    assigns[:organization].pending?.should be_true
   end
   
   it "should create an organization that requires activation" do
@@ -287,12 +341,6 @@ describe AccountsController, " handling POST /account/" do
     do_post
     session[:first_login].should be_true
   end
-
-  # TODO this is failing because it can't find the invitation, not sure why this is
-  #it "should require an invitation" do
-  #  controller.should_receive(:invitation_or_pending_account_required)
-  #  do_post
-  #end
 
   it "should assign the current organization to the view" do
     do_post
@@ -571,6 +619,47 @@ describe AccountsController, " handling PUT /account/reset" do
   
   end
 
+end
+
+
+describe AccountsController, " handling GET /account/deactivate" do
+
+  before(:each) do
+    @current_organization = Factory.create(:organization)
+    @params = { :key => @current_organization.deactivation_key }
+  end
+  
+  def do_get
+    get :deactivate, @params
+    @current_organization.reload
+  end
+  
+  it "should redirect to the new session page" do    
+    do_get
+    response.should redirect_to(new_session_path)
+  end
+  
+  it "should deactivate the organization" do  
+    lambda{ do_get }.should change(@current_organization, :deactivated?).from(false).to(true)
+  end
+  
+  it "should redirect to the login page if the organization is not found" do
+    @params[:key] = '1234'
+    do_get
+    response.should redirect_to(new_session_path)
+  end
+  
+  it "should notify the admin" do
+    Notifier.should_receive(:deliver_report_account_deactivation).with(@current_organization)
+    do_get
+  end
+  
+  it "should not deactivate if the organization is already deactivated" do
+    @current_organization.deactivate
+    @current_organization.should_not_receive(:deactivate)
+    do_get
+  end
+ 
 end
  
 

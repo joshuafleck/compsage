@@ -16,12 +16,15 @@ And "the report has a wage response" do
                       :survey => @survey,
                       :response_type => "WageResponse", 
                       :text => "How much does a hammer make per year?")
+                      
   5.times do
-    Factory(:wage_response,
+    
+    participation = Factory.build(:participation, :survey => @survey, :responses => [])
+    participation.responses <<  Factory.build(:wage_response,
             :question => wage_question,
-            :participation => Factory(:participation, :survey => @survey),
             :response => '$45,000.00',
             :unit => "Annually")
+    participation.save
   end
 end
 
@@ -35,7 +38,7 @@ Then "I should see the new wage format" do
 end
 
 And "the download link text should change" do
-  assert(get_element_by_xpath("//a[@class='print_link']").href.to_s == 'http://localhost:3001' + survey_report_path(@survey, :format => "pdf", :wage_format => "Hourly").to_s)
+  assert(get_element_by_xpath("//a[@class='print_link']").href.to_s =~ Regexp.new(Regexp.escape(survey_report_path(@survey, :format => "pdf", :wage_format => "Hourly").to_s) + "$"))
 end
 
 And "I should not see the old wage format" do
@@ -43,6 +46,6 @@ And "I should not see the old wage format" do
 end
 
 When /^I download the hourly "([^\"]*)" report$/ do |format|
-  visit survey_report_url(@survey, :format => format, :wage_format => "Hourly")
+  visit add_subdomain(survey_report_url(@survey, :format => format, :wage_format => "Hourly"))
 end
 

@@ -1,0 +1,17 @@
+<%
+  show_load_indicator = true if show_load_indicator.nil?
+  show_ancestors      = true if show_ancestors.nil?
+%>
+<div class="industry_select">
+<%=label_tag 'naics_select', 'Industry' %> 
+<input id="organization_naics_code" type="hidden" name="organization[naics_code]"/>
+<ul id="naics_classification_ancestors"></ul>
+<%=select_tag 'naics_select', "", :style => "width: 210px;" %>
+<% if show_load_indicator %>
+  <%= image_tag "load_indicator_sm.gif", :id => "live_load_indicator", :class => 'invite_indicator', :style => "display:none;" %>
+<%end%>
+<a id='naics_classification_back' href='#' style='display:none;'>Less Specific</a>
+
+<% content_for :initialize_js, 
+  "naicsClassificationList = new NaicsClassificationList(#{code});naicsClassificationList.showAncestors=#{show_ancestors};"%>      
+</div>

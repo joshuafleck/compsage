@@ -1,10 +1,10 @@
 Given "I am on the organization page" do
   @organization = Factory(:organization, :name => "Phillip McCracken")
-  visit organization_url(@organization)
+  visit add_subdomain(organization_url(@organization))
 end
 
 Given "I am on the organization page of a survey sponsor" do
-  visit organization_url(@current_survey_invitation.survey.sponsor)
+  visit add_subdomain(organization_url(@current_survey_invitation.survey.sponsor))
 end
 
 Given "there is a survey sponsored by a pending organization" do

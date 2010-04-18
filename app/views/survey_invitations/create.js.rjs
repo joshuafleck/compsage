@@ -7,5 +7,7 @@ if @invitation.valid? then
     page.call 'inviteList.addInvitationToList', @invitation.id, @invitation.organization_name_and_email, nil 
   end
 else
-  page['error_content'].replace_html error_messages_for(:invitation)
+  if @method != 'association' then
+    page['error_content'].replace_html error_messages_for(:invitation)
+  end
 end

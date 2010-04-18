@@ -6,6 +6,7 @@ salary_questions:
   - :question_type: "Pay or wage response"
     :text: "Average base salary:"
     :required: true
+  default: 1
     
 salary_range_questions:
   id: 2
@@ -17,7 +18,8 @@ salary_range_questions:
   - :question_type: "Pay or wage response"
     :text: "Salary range midpoint:"
   - :question_type: "Pay or wage response"
-    :text: "Salary range maximum:"    
+    :text: "Salary range maximum:"
+  default: 1    
   
 incentive_question:
   id: 3

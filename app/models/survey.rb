@@ -1,6 +1,6 @@
 class Survey < ActiveRecord::Base
-
   belongs_to :sponsor, :class_name => "Organization"
+  belongs_to :association
   has_one  :invoice, :dependent => :destroy
   has_many :discussions, :dependent => :destroy
   has_many :invitations, :class_name => 'SurveyInvitation'
@@ -31,7 +31,7 @@ class Survey < ActiveRecord::Base
     
   after_create :add_sponsor_subscription, :add_default_questions, :invite_sponsor
   before_destroy :cancel_survey
-  before_save :set_aasm_state_number, :recalculate_end_date
+  before_save :recalculate_end_date
   
   # The number of days to extend the survey deadline.
   # Used for recalculating the end date.
@@ -42,12 +42,11 @@ class Survey < ActiveRecord::Base
   define_index do
     indexes job_title
     indexes description
-    indexes sponsor.industry, :as => :industry
     
-    has subscriptions.organization_id, :as => :subscribed_by
     has sponsor.latitude, :as => :latitude, :type => :float
     has sponsor.longitude, :as => :longitude, :type => :float
-    has aasm_state_number
+    
+    where "aasm_state = 'running'"
 
     set_property :latitude_attr   => "latitude"
     set_property :longitude_attr  => "longitude"
@@ -68,6 +67,11 @@ class Survey < ActiveRecord::Base
     after_transition any => :finished,      :do => [:email_results_available, :email_receipt]
 
     event :billing_info_received do
+      transition :pending => :running
+    end
+    
+    # State used for associations which do not follow the standard billing process.
+    event :association_billing_bypass do
       transition :pending => :running
     end
 
@@ -91,15 +95,6 @@ class Survey < ActiveRecord::Base
     end
   end
 
-  # hack, for filtering surveys by aasm_state in sphinx
-  AASM_STATE_NUMBER_MAP = {
-    'pending' => 0,
-    'running' => 1,
-    'stalled' => 2,
-    'billing_error' => 3,
-    'finished' => 4
-  }
-
   ############### State Machine Configuration: END ###################
        
   # the minumum number of days a survey can be extended
@@ -113,13 +108,7 @@ class Survey < ActiveRecord::Base
   # the price of a surevy in cents
   PRICE = 9900
 
-  # Default set of questions to prepopulate when sponsoring a survey. This will find the PDQs when the model is first
-  # loaded, meaning changes to PDQs will require a server bounce.
-  DEFAULT_QUESTIONS = [
-    PredefinedQuestion.find_by_name('Base salary'),
-    PredefinedQuestion.find_by_name('Salary range')
-  ]
-
+  ASSOCIATION_BILLING_STATUSES = ['Not Billed', 'Billed']
   def closed?
     Time.now > end_date
   end
@@ -263,6 +252,8 @@ class Survey < ActiveRecord::Base
   
   # This will either email the credit card receipt, or the invoice to the sponsor
   def email_receipt
+    return if self.invoice.nil?
+
     if self.invoice.paying_with_credit_card? then
       # TODO: implement
     else
@@ -297,6 +288,9 @@ class Survey < ActiveRecord::Base
     
   # Calls the billing routine and returns whether or not billing was successful.
   def billing_successful?
+    #skip billing process if surveying through an association
+    return true if !self.association.nil?
+    #bill as usual 
     if self.invoice.paying_with_credit_card? then
       # If we are paying by credit card, bill the card
       bill_sponsor
@@ -321,11 +315,6 @@ class Survey < ActiveRecord::Base
   def questions_exist
     errors.add_to_base("You must choose at least one question to ask") if questions.empty?
   end
-  
-  # Set the aasm state number using the current aasm_state (hack for survey sphinx search filter by state attribute)
-  def set_aasm_state_number
-    self.aasm_state_number = AASM_STATE_NUMBER_MAP[self.aasm_state]
-  end
 
   # Once the survey is finalized, we need to send the invitations.
   def send_invitations
@@ -334,9 +323,11 @@ class Survey < ActiveRecord::Base
   
   # This adds the default questions.
   def add_default_questions
-    DEFAULT_QUESTIONS.each do |pdq|
-      pdq.build_questions(self) unless pdq.nil? # Don't blow up if we've changed PDQs...
+    PredefinedQuestion.system_wide.reject { |pdq| !pdq.default }.each do |pdq| 
+      pdq.build_questions(self) unless pdq.nil? 
     end
+    
+    # Possible TODO: Add Association PDQs
   end
   
   # Creates an invitation for the survey sponsor. This invitation has only one state, since we do not need to 

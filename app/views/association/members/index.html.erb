@@ -1,0 +1,26 @@
+<%
+  highlight_tab 'members'
+  title 'Members'
+%>
+<h2>Members</h2>
+<%= flash_messages %>
+<p><%= link_to "Add Firm", new_association_member_path, :id => "add" %> or
+<%= link_to "Upload Member List", upload_association_members_path %>.</p>
+<%= will_paginate @members %>
+<table>
+  <thead>
+    <tr>
+      <th width="66%">Firm</th>
+      <th>Contact</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @members.each do |member| %>
+      <tr class="<%= cycle("even", "odd") %>">
+        <td><%= link_to member.name, edit_association_member_path(member), :id => "edit_#{member.id}" %></td>
+        <td><%= member.contact_name %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= will_paginate @members %>

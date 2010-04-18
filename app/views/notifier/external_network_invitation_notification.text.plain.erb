@@ -1,16 +1,17 @@
 Your organization has been invited by <%=@invitation.inviter.name%> to join CompSage. Joining now will give your
 colleague the ability to quickly and easily notify you of new surveys to participate in.
 
-CompSage is a tool to create online, customized compensation surveys. Joining CompSage comes with a variety of
+CompSage is a tool to create online customized compensation surveys. Joining CompSage comes with a variety of
 benefits. You can:
 
-  * Design surveys using our standard questions or add questions of your own desgin.
-  * Participate in a survey and get results for free. Sponsor a survey for free and get great data that won't put you over-budget.
-  * Survey turnaround in as little as 3 days.
-  * Guaranteed results, otherwise you will not pay a cent.
+  * Design surveys using our standard questions or add questions of your own design.
+  * Participate in a survey and get results for free.
+  * Sponsor a survey for free and get great data that won't put you over-budget.
+  * Survey turnaround in as few as 3 days.
+  * Get guaranteed results, or you pay nothing.
   * Access compensation data in use right now by the companies of your choosing.
 
-Becoming a member of CompSage is easy and free! Click here to sign up: <%= url_for(new_account_path(:key => @invitation.key, :only_path => false))%>.
+Becoming a member of CompSage is easy and free! Click here to sign up: <%= url_for(new_account_path(:key => @invitation.key, :only_path => false, :subdomain => subdomain_for(:email => @invitation.email)))%>.
 
 Thanks,
 CompSage.com

@@ -1,5 +1,5 @@
 Given "I am on the survey response page" do
-  visit survey_questions_url(@survey)
+  visit add_subdomain(survey_questions_url(@survey))
 end
 
 Given /^I am sponsoring a running survey with a (.*) question/ do |type|
@@ -19,8 +19,11 @@ Given "I am sponsoring a survey with every question type" do
 
   @survey = Factory(:survey,
                     :aasm_state => 'running',
-                    :sponsor => @current_organization,
-                    :questions => @questions)
+                    :sponsor => @current_organization)
+
+  @survey.questions.destroy_all # Remove standard questions.
+  @survey.questions += @questions
+  @survey.save
 end
 
 Given /^I am sponsoring a survey with a follow\-up to a (.*) question$/ do |type|
@@ -51,8 +54,8 @@ Given "the survey has a partial response" do
     Factory(:participation, :survey => @survey)
   end
   question = Factory(:text_question, :survey => @survey)
-  response = Factory.build(:response, :question => question)
   Factory(:invoice, :survey => @survey)
+  response = Factory.build(:response, :question => question)
   participation = Factory(:participation, :survey => @survey, :responses => [response])
 end
 
@@ -65,7 +68,7 @@ Given "I am invoicing the survey" do
 end
 
 Given "I have previously responded to the survey" do
-  participation = Factory(:participation, :survey => @survey, :participant => @current_organization)
+  participation = Factory.build(:participation, :survey => @survey, :participant => @current_organization, :responses => [])
 
   @survey.questions.each do |question|
     response = participation.responses.build(:question => question, :type => question.response_type)
@@ -80,8 +83,9 @@ Given "I have previously responded to the survey" do
       response.response = 0
     end
 
-    response.save
   end
+  
+  participation.save
 end
 
 When /^I enter "([^"]*)"$/ do |text|
@@ -100,11 +104,11 @@ When /^I choose the (hourly|annual) pay type$/ do |type|
 end
 
 When "I am on the survey show page" do
-  visit survey_url(@survey)
+  visit add_subdomain(survey_url(@survey))
 end
 
 When "I am on the edit survey page" do
-  visit edit_survey_url(@survey)
+  visit add_subdomain(edit_survey_url(@survey))
 end
 
 When "I create the survey" do
@@ -198,7 +202,7 @@ end
 When "I add a predefined question" do
   select "6", :from => 'predefined_questions'
 
-  click_button "Add"
+  click_button "Add Question"
 end
 
 When "I add a custom question" do
@@ -206,13 +210,13 @@ When "I add a custom question" do
   fill_in 'custom_question_text', :with => "Is this position exempt"
   select "Yes/No", :from => 'custom_question_response'
 
-  click_button "Add"
+  click_button "Add Question"
 end
 
 When "I attempt to add an invalid custom question" do
   select "0", :from => 'predefined_questions'
 
-  click_button "Add"
+  click_button "Add Question"
 end
 
 When "I move the first question down" do
@@ -351,13 +355,13 @@ Then "I should see my comments" do
 end
 
 When "I am on the survey report page" do
-  visit survey_report_url(@survey)
+  visit add_subdomain(survey_report_url(@survey))
 end
 
 When "I search for a running survey by name" do
   @name = "Searchable survey"
   @survey = Factory(:running_survey,:job_title => @name)
-  visit surveys_url
+  visit add_subdomain(surveys_url)
   fills_in 'search_text', :with => @name
   field_with_id('submit', 'submit').click
 end
@@ -367,23 +371,34 @@ Then "I should see the survey I searched for" do
 end
 
 Given "I am on the survey reports index" do
-  visit reports_surveys_url
+  visit add_subdomain(reports_surveys_url)
 end
 
 Given "I am on the surveys index" do
-  visit surveys_url
+  visit add_subdomain(surveys_url)
 end
 
 Given "I have been invited, sponsored, participated, and finished surveys" do
   @invited_survey = Factory(:sent_survey_invitation, :invitee => @current_organization).survey
   @sponsored_survey = Factory(:running_survey, :sponsor => @current_organization)
   @survey = Factory(:running_survey)
-  @participated_survey = Factory(:participation, :participant => @current_organization).survey
+  
+  @participated_survey =  Factory(:running_survey, :sponsor => Factory(:organization))
+  participation = Factory.build(:participation, 
+    :participant => @current_organization, 
+    :survey => @participated_survey, 
+    :responses => [])
+  @participated_survey.questions.each do |question|  
+    participation.responses << Factory.build(:numerical_response, :question => question, :response => 1)
+  end  
+  participation.save 
+    
   @finished_survey = Factory(:finished_survey, :sponsor => @current_organization)
 end
 
 Given "I have a survey invitation" do
   @invited_survey = Factory(:running_survey)
+  @invited_survey.questions[1..-1].each(&:destroy) # Remove the standard questions.
   @invitation     = Factory(:sent_survey_invitation,
                             :survey => @invited_survey,
                             :invitee => @current_organization)
@@ -407,7 +422,7 @@ Then "I should be on the survey index" do
 end
 
 Given "I am on the new survey page" do
-  visit new_survey_url
+  visit add_subdomain(new_survey_url)
 end
 
 Then "I should be on the survey invitations page" do
@@ -425,11 +440,11 @@ Then "I should be on the survey preview page" do
 end
 
 Given "I am on the survey preview page" do
-  visit preview_survey_questions_url(@survey)
+  visit add_subdomain(preview_survey_questions_url(@survey))
 end
 
 Given "I am on the survey billing page" do
-  visit new_survey_billing_url(@survey)
+  visit add_subdomain(new_survey_billing_url(@survey))
 end
 
 When "I preview the survey" do

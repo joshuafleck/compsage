@@ -20,9 +20,11 @@
       <% if current_survey_invitation then %>
         <li id="surveys"><%= link_to "Survey", survey_path(current_survey_invitation.survey_id) %></li>
       <% end %>
-      <li id="join">
-      		<%= link_to "Sign Up", new_account_path() %>
-      </li>
+      <% unless current_subdomain then %>
+        <li id="join">
+            <%= link_to "Sign Up", new_account_path() %>
+        </li>
+      <% end %>
 		</ul> 
 	</div>
 	<div id="container">

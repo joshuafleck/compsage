@@ -93,4 +93,31 @@ module ApplicationHelper
   def auto_link_new_window(text)
     auto_link(text, :html => {:target => '_blank'})
   end
+  
+  # Determines the subdomain that should be used when creating a CS link for the organization
+  # Checks to see if the email address passed belongs to an uninitialized association member
+  def subdomain_for(params)
+  
+    organization = params[:organization]
+    email        = params[:email]
+    
+    organization = Organization.find_by_email(email) if email
+    
+    if organization && organization.association then
+      organization.association.subdomain      
+    else
+      ''
+    end
+  end
+  
+  # determines how to display the association contact information based on what fields are available
+  def association_contact_information
+      contact = "<a href='mailto: #{current_association.contact_email}'>#{current_association.contact_name.blank? ? current_association.name : current_association.contact_name}</a>"
+      
+      contact += " at #{current_association.formatted_contact_phone}" unless current_association.contact_phone.blank?
+      contact += " ext. #{current_association.contact_phone_extension}" unless current_association.contact_phone_extension.blank?
+      
+      return contact
+  end
+    
 end

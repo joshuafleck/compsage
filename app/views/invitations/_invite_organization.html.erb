@@ -1,3 +1,4 @@
+<% header = "Invite other firms" if !association.nil?%>
 <% form_for 'external_invitation', @invitation,
   :url => (defined?(form_action) ? form_action : ""),
   :html => {:method => :post, :id => "invitation_form"} do |f| %>

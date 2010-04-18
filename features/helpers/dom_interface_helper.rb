@@ -41,7 +41,7 @@ module DomInterfaceHelper
     end
 
     def attach_file(locator, path, content_type = nil)
-      raise RuntimeException, "Not Implemented"
+      FirewatirUtils.locate_element(@_browser, :file_field, locator).send(:value=, path)
     end
     
     def check(locator)
@@ -99,7 +99,7 @@ module DomInterfaceHelper
     end
 
     def visit(url)
-      @_browser.goto(url.gsub('http://www.example.com', @base_url))
+      @_browser.goto(url)
     end
 
     def set_hidden_field(locator, options)
@@ -121,6 +121,16 @@ module DomInterfaceHelper
       else
         elem
       end
+    end
+    
+    # This method will similuate the visible? method, which does not work in FireWatir.
+    # @id is the id in the DOM of the element, we use this ID via some JS to get the
+    # style information and utilize that to determine if the element is visible
+    def visible?(elem)
+      displayed = @_browser.js_eval "document.getElementById('#{elem.id.to_s}').style.display"
+      visibility = @_browser.js_eval "document.getElementById('#{elem.id.to_s}').style.display"
+      @@current_level = 0
+      return !(displayed == "none" || visibility == "hidden")
     end
   end
 

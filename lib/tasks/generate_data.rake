@@ -86,7 +86,17 @@ namespace :data_generator do
     end
     puts "External invitation link: /survey_login?key=#{CGI.escape(invite.key)}&survey_id=#{survey.id}"
   end
+  
+  #usage: rake 'data_generator:association NAME="Manufacturers Alliance" SUBDOMAIN="mfrall" MEMBERS=20'
+  desc "Generate an association with a given number of organizations"
+  task :association, :name, :subdomain, :members, :needs => [:environment] do |task,args|
+    members = (args[:members] || NUM_ORGANIZATIONS).to_i
+    
+    before
 
+    generate_association_organizations(args.name, args.subdomain, members)
+    after
+  end
 
   # usage: rake 'data_generator:load_all[5]'
   desc "Generate a fake set of data for all types."
@@ -203,7 +213,38 @@ namespace :data_generator do
         :city => Faker::Address.city,
         :state => Faker::Address.us_state_abbr,
         :zip_code => Faker::Address.zip_code.slice(0..4),
-        :industry => AccountsHelper::INDUSTRIES[rand(53)])
+        :size => rand(1200))
+    end
+    
+    puts "generating organizations complete"
+  end
+  
+  def generate_association_organizations(name, subdomain, total)
+    puts "creating association"
+    association = Factory(:association, 
+                          :name => name || Faker::Company.name,
+                          :subdomain => subdomain || Faker::Internet.domain_word
+                          )
+    puts "Association created with subdomain #{association.subdomain}"
+    puts "generating #{total} organizations..."
+    
+    Organization.suspended_delta do
+      total.times do |index|
+        print_percent_complete(index,total)
+        organization = Factory(:organization, 
+          :password => 'test12', 
+          :password_confirmation => 'test12', 
+          :name => Faker::Company.name, 
+          :email => Faker::Internet.email,
+          :location => Faker::Address.city,
+          :contact_name => Faker::Name.name,
+          :city => Faker::Address.city,
+          :state => Faker::Address.us_state_abbr,
+          :zip_code => Faker::Address.zip_code.slice(0..4),
+          :size => rand(1200))
+          
+          association.organizations << organization
+      end
     end
     
     puts "generating organizations complete"

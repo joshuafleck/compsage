@@ -15,10 +15,6 @@
     <dt>Contact:</dt>
     <dd><%= @organization.contact_name %></dd>
   <% end %>
-  <% unless @organization.industry.blank? then %> 
-    <dt>Industry:</dt>
-    <dd><%= @organization.industry %></dd>
-  <% end %>
 </dl>
 
 <% if current_organization && (current_organization.sponsored_surveys.with_aasm_state(:running).any? || current_organization.owned_networks.any?) then %>

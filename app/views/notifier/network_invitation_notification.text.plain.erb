@@ -1,6 +1,6 @@
 You have been invited by <%=@invitation.inviter.name%> to join the network "<%=@invitation.network.name%>".
 
-If you would like to join this network, go to: <%=url_for(join_network_path(@invitation.network, :only_path => false))%>
+If you would like to join this network, go to: <%=url_for(join_network_path(@invitation.network, :only_path => false, :subdomain => subdomain_for(:organization => @invitation.invitee)))%>
 
 Network: <%=@invitation.network.name%>
 Description: <%=@invitation.network.description%>

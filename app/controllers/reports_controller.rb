@@ -11,25 +11,21 @@ class ReportsController < ApplicationController
     respond_to do |wants|
       wants.html do
         #check to see if we need to display the invoice         
-        if current_organization == @survey.sponsor && @survey.invoice.should_be_delivered? then
+        if @survey.invoice && current_organization == @survey.sponsor && @survey.invoice.should_be_delivered? then
           redirect_to survey_billing_path(@survey)
         end
       end
       wants.pdf do 
-        # Required for IE6 PDF DL over SSL to allow the browser to cache the report, see issue 299
-        response.headers["Cache-Control"] = "cache, must-revalidate"
-        response.headers["Pragma"] = "public"
-        send_data render_to_string(:layout => false), :disposition => 'attachment', :filename => "CompSage Report on #{@survey.job_title}.pdf", :type => 'application/ms-excel'
+        set_export_headers
+        send_data render_to_string(:layout => false), :disposition => 'attachment', :filename => export_file_name('pdf'), :type => 'application/ms-excel'
       end
       wants.xls do
-        response.headers["Cache-Control"] = "cache, must-revalidate"
-        response.headers["Pragma"] = "public"
-        send_data render_to_string(:layout => false), :disposition => 'attachment', :filename => "CompSage Report on #{@survey.job_title}.xls", :type => 'application/ms-excel'
+        set_export_headers
+        send_data render_to_string(:layout => false), :disposition => 'attachment', :filename => export_file_name('xls'), :type => 'application/ms-excel'
       end
       wants.doc do
-        response.headers["Cache-Control"] = "cache, must-revalidate"
-        response.headers["Pragma"] = "public"
-        send_data render_to_string(:layout => false), :disposition => 'attachment', :filename => "CompSage Report on #{@survey.job_title}.doc", :type => 'application/ms-excel'
+        set_export_headers
+        send_data render_to_string(:layout => false), :disposition => 'attachment', :filename => export_file_name('doc'), :type => 'application/ms-excel'
       end
     end
     
@@ -78,6 +74,18 @@ class ReportsController < ApplicationController
       
       return false
     end
+  end
+  
+  # Strips out any invalid characters from the filename that would prevent someone 
+  #  from saving the file on a Windows machine
+  def export_file_name(extension)
+    "CompSage Report on #{@survey.job_title.gsub(/[\\\/:\*\?"<>\|]/,' ')}.#{extension}"
+  end
+  
+  # Required for IE6 PDF DL over SSL to allow the browser to cache the report, see issue 299
+  def set_export_headers
+    response.headers["Cache-Control"] = "cache, must-revalidate"
+    response.headers["Pragma"] = "public"
   end
   
 end

@@ -1,0 +1,2 @@
+module Association::PdqsHelper
+end

@@ -3,6 +3,7 @@ class SurveysController < ApplicationController
 
   before_filter :login_required, :except => [:show, :respond]
   before_filter :login_or_survey_invitation_required, :only => [:show, :respond]
+  before_filter :prevent_edit_of_survey_with_participations, :only => [:edit, :update]
 
  
   ssl_required :respond
@@ -30,61 +31,40 @@ class SurveysController < ApplicationController
   end
 
   def edit
-    @survey = current_organization.sponsored_surveys.with_aasm_states(:running, :pending).find(params[:id])
-
-    if @survey.participations.any? then # Can't make changes if there are participations.
-      flash[:notice] = "You cannot edit the questions for a survey once a response has been collected."
-      redirect_to survey_path(@survey)
-    end
   end
   
   def update
-    @survey = current_organization.sponsored_surveys.with_aasm_states(:running, :pending).find(params[:id])
-
-    if @survey.participations.any? then  # Can't make changes if there are participations.
-      flash[:notice] = "You cannot edit the questions for a survey once a response has been collected."
-      redirect_to survey_path(@survey)
-    else
-      if @survey.update_attributes(params[:survey])
-        if @survey.running? then         # Editing a running survey
-          redirect_to preview_survey_questions_path(@survey)
-        else                             # Pending, likely on survey creation path
-          redirect_to survey_invitations_path(@survey)
-        end
-      else
-        render :action => :edit
+    @survey.attributes = params[:survey]
+    #save the association
+    @survey.association = current_association if @survey.pending?
+    if @survey.save
+      if @survey.running? then         # Editing a running survey
+        redirect_to preview_survey_questions_path(@survey)
+      else                             # Pending, likely on survey creation path
+        redirect_to survey_invitations_path(@survey)
       end
+    else
+      render :action => :edit
     end
   end
   
   def new
-    @survey = current_organization.sponsored_surveys.find_or_create_by_aasm_state('pending') 
-    
+    @survey = current_organization.sponsored_surveys.find_or_create_by_aasm_state('pending')
     # If we came from a 'survey network' link, save the network in the session to be accessed later when sending
     # invitations
     session[:survey_network_id] = params[:network_id] unless params[:network_id].blank?
   end
 
   # Search running surveys.
-  # TODO: Hightlight search text in survey description (if applicable)
+  # TODO: Hightlight search text in survey description (if applicable) - see TS 'Excerpts' feature
   def search
     @search_text = params[:search_text] || ""
     
     escaped_search_text = Riddle.escape(@search_text)
       
-    # Escaped search text is included twice in order to allow for weighting by industry (TODO: Clarify)
-    search_query = "#{escaped_search_text} #{escaped_search_text} | @industry \"#{current_organization.industry}\""
-
-    search_params = {
+    @surveys = Survey.search escaped_search_text,
       :geo => [current_organization.latitude, current_organization.longitude],
-      :with => {
-        :aasm_state_number => Survey::AASM_STATE_NUMBER_MAP['running']
-      },
-      :match_mode => :extended,              # Allows us to use boolean operators in the search query
       :order => '@weight desc, @geodist asc' # Sort by relevance, then distance
-    }
-    
-    @surveys = Survey.search search_query, search_params
   end
   
   # Respond to a survey. Creates the participatoin object for either the organization or invitation responding.
@@ -138,4 +118,15 @@ class SurveysController < ApplicationController
     
     redirect_to surveys_path
   end  
+  
+  private 
+  
+  # Don't let the sponsor make changes to the survey once a response has been submitted
+  def prevent_edit_of_survey_with_participations
+    @survey = current_organization.sponsored_surveys.with_aasm_states(:running, :pending).find(params[:id])
+    if @survey.participations.any? then  # Can't make changes if there are participations.
+      flash[:notice] = "Surveys cannot be edited once responses have been submitted."
+      redirect_to survey_path(@survey)
+    end
+  end
 end

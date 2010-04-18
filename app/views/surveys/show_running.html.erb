@@ -12,9 +12,8 @@
 
     <% if @survey.sponsor == current_organization then %>
       <h3>Manage Your Survey</h3>
-        <% if !@survey.participations.any? %>        
-          <p><%=link_to "Edit Questions &amp; Job Description", edit_survey_path(@survey)%><br />
-	    <% end %>
+        <p>
+        <%=link_to "Edit Questions &amp; Job Description", edit_survey_path(@survey)%><br />
         <%=link_to "Manage Invitation List", survey_invitations_path(@survey) %></p>
     <% end %>
     <h3>Invitation List</h3>
@@ -33,7 +32,7 @@
     <div class="sponsor">Sponsored by <%=link_to_organization(@survey.sponsor)%></div>
   </h2>
   <div class="main_description"><%=link_and_format(@survey.description)%></div>
-  <% if @survey.sponsor.is_pending? && current_organization_or_survey_invitation != @survey.sponsor then %>
+  <% if @survey.sponsor.pending? && current_organization_or_survey_invitation != @survey.sponsor then %>
     <%=link_to "Report Inappropriate Content", report_pending_organization_path(:id => @survey.sponsor.id), :class=> "abuse", :id => "report_user", :confirm => "Are you sure you want to report this user?" %>
   <% end %>   
   <%=flash_messages%>

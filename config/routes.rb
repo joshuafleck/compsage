@@ -1,9 +1,13 @@
 ActionController::Routing::Routes.draw do |map|
+  # If a subdomain is specified (excludes www) will direct to association member login
+  map.root :controller => 'association_members', :action => 'sign_in', :conditions =>{ :subdomain => /[^(www)]/ }
+
   map.root :controller => 'home'
   map.contact 'contact', :controller => 'home', :action => 'contact'
   map.home ':page', :controller => 'home', :action => 'show', :page => /about|contact|privacy|how|tips|terms|help/
 
-  map.resources :organizations, :collection => {:search => :any}, :member => {:invite_to_survey => :post, :invite_to_network => :post, :report_pending => :any}
+  map.resources :organizations, :collection => {:search => :any, :search_for_association_list => :any},
+                :member => {:invite_to_survey => :post, :invite_to_network => :post, :report_pending => :any}
   
   map.resource :session
 
@@ -13,9 +17,12 @@ ActionController::Routing::Routes.draw do |map|
     survey.resources :discussions, :member => {:report => :any}
     survey.resources :invitations, :controller => :survey_invitations,
       :member => {:decline => :put},
-      :collection => {:create_for_network => :post, :update_message => :post}
+      :collection => {:create_for_network => :post, :send_pending => :post, 
+                      :create_for_association => :post, :update_message => :post, 
+                      :destroy_all => :post}
+      
     survey.resource :report, :member => {:chart => :get, :suspect => :any}
-    survey.resource :billing, :controller => :billing, :member => {:invoice => :any}
+    survey.resource :billing, :controller => :billing, :member => {:invoice => :any, :instructions => :any, :skip => :any}
   end
   
   map.resources :networks, :member => {:join => :any, :leave => :any, :evict => :put} do |network|
@@ -23,7 +30,7 @@ ActionController::Routing::Routes.draw do |map|
     network.resources :invitations, :controller => :network_invitations, :member => {:decline => :put}
   end
   
-  map.resource :account, :member => {:forgot => :any, :reset => :any, :activate => :any}
+  map.resource :account, :member => {:forgot => :any, :reset => :any, :activate => :any, :deactivate => :any}
  
   map.login 'login', :controller => 'sessions', :action => 'new'
   map.survey_login 'survey_login', :controller => 'sessions', :action => 'create_survey_session'
@@ -39,4 +46,20 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   map.path '', :controller => 'surveys', :action => 'index'
+ 
+  map.namespace 'association' do |association|
+    association.resource :session
+    association.resources :members, :collection => {:upload => :any }
+    association.resources :pdqs
+    association.resources :surveys
+    association.resource :settings
+
+    association.map '', :controller => 'sessions', :action => 'new'
+  end
+
+  map.resource :association_member, :member => {:sign_in => :any}
+  map.resources :predefined_questions, :controller => "association/pdqs"
+  
+  map.resources :naics_classifications, :collection => {:children_and_ancestors => :any}  
+  
 end

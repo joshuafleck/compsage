@@ -174,6 +174,29 @@ describe OrganizationsController, "handling GET /organizations/search" do
     response.body.should == @organizations.to_json(:only    => [:name, :location, :id, :contact_name],
                                                    :methods => 'name_and_location')
   end
+  
+  describe "when logged in as an association member" do
+  
+    before(:each) do
+          
+      @association = Factory.create(:association)
+      controller.stub!(:current_association).and_return(@association)
+        
+    end
+  
+    it "should find the organizations that match the search terms for association/non-association members" do
+      Organization.should_receive(:search).twice
+      do_get
+    end
+    
+    it "should append the 2 sets of search results together and render as JSON" do
+      do_get
+      response.body.should == [@organization,@organization].to_json(
+        :only    => [:name, :location, :id, :contact_name],
+        :methods => 'name_and_location')
+    end
+  
+  end
     
 end
 
@@ -260,7 +283,7 @@ describe OrganizationsController, "handling GET /organizations/1/report_pending"
   end
   
   it "should not report an organization that is not pending" do
-    @other_organization.is_pending = false
+    @other_organization.pending = false
     @other_organization.save!
     lambda{ do_get }.should raise_error
   end  

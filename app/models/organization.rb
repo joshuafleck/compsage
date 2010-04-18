@@ -4,27 +4,13 @@ class Organization < ActiveRecord::Base
   include Authentication::ByCookieToken
   include PhoneNumberFormatter
   format_phone_fields :phone  
+  
+  xss_terminate :except => [ :naics_code ]
 
   before_save :assign_latitude_and_longitude
   after_create :send_pending_account_notification
   before_destroy :remove_sponsored_surveys
   
-  define_index do
-    indexes :name, :sortable => true
-    indexes :contact_name
-    indexes :email
-    indexes :industry
-    
-    has 'latitude', :as => :latitude, :type => :float
-    has 'longitude', :as => :longitude, :type => :float
-
-    set_property :latitude_attr   => "latitude"
-    set_property :longitude_attr  => "longitude"
-    
-    # This will cause any changes to surveys between index rebuilds to be stored in a delta index until the next rebuild
-    set_property :delta => true
-  end
-    
   has_many :networks, :through => :network_memberships, :after_remove => :delete_empty_network_or_promote_owner
   has_many :network_memberships, :dependent => :destroy
   has_many :owned_networks, :class_name => "Network", :foreign_key => "owner_id", :after_add => :join_created_network, :dependent => :destroy
@@ -49,6 +35,12 @@ class Organization < ActiveRecord::Base
   has_many :network_invitations, :class_name => "NetworkInvitation", :foreign_key => "invitee_id", :dependent => :destroy
   has_many :survey_invitations, :class_name => "SurveyInvitation", :foreign_key => "invitee_id", :dependent => :destroy  
   has_many :invitations, :class_name => "Invitation", :foreign_key => "invitee_id", :dependent => :destroy
+
+  has_and_belongs_to_many :associations
+  
+  belongs_to :naics_classification, :foreign_key => :naics_code
+  
+  named_scope :is_not_uninitialized_association_member, :conditions => {:uninitialized_association_member => false}  
   
   validates_presence_of     :name
   validates_format_of       :name,     :with => RE_NAME_OK,  :message => MSG_NAME_BAD, :allow_blank => true
@@ -61,25 +53,51 @@ class Organization < ActiveRecord::Base
 
   validates_format_of       :zip_code, :with => /^\d{5}$/, :allow_blank => true
   validates_length_of       :location, :maximum => 60, :allow_blank => true
-  validates_length_of       :industry, :maximum => 100, :allow_blank => true
-  validates_presence_of     :contact_name, :if => Proc.new { |user| user.is_pending? }
+  validates_presence_of     :contact_name, :if => Proc.new { |user| user.pending? }
   validates_length_of       :contact_name, :maximum => 100, :allow_blank => true
   validates_length_of       :city, :maximum => 50, :allow_blank => true
   validates_length_of       :state, :maximum => 30, :allow_blank => true
   validates_length_of       :crypted_password, :maximum => 40, :allow_blank => true
   validates_length_of       :salt, :maximum => 40, :allow_blank => true
-  validates_presence_of     :phone, :if => Proc.new { |user| user.is_pending? }
+  validates_presence_of     :phone, :if => Proc.new { |user| user.pending? }
   validates_length_of       :phone,  :is =>10, :allow_blank => true
   validates_length_of       :phone_extension,  :maximum => 6, :allow_blank => true
+  validates_numericality_of :size, :allow_blank => true
   
   validates_acceptance_of :terms_of_use, :on => :create  
   attr_accessor :terms_of_use
 
   attr_accessible :email, :password, :password_confirmation, :name, :location, :city, :state, :zip_code, :contact_name,
-                  :industry, :terms_of_use, :phone, :phone_extension
-                  
-  named_scope :pending, :conditions => {:is_pending => true}                  
+                  :terms_of_use, :phone, :phone_extension, :size, :naics_code
+
+  # Constant definition
+  METERS_PER_MILE = 1609.344
+  ACTIVATION_WINDOW_IN_DAYS = 3
   
+  named_scope :pending, :conditions => {:pending => true}        
+  
+  # Sphinx setup
+  define_index do
+    indexes :name, :sortable => true
+    indexes :contact_name
+    indexes :email
+    
+    has uninitialized_association_member
+    has associations(:id), :as => :association_ids
+    has naics_classification(:code), :as => :naics_code
+    
+    has 'latitude', :as => :latitude, :type => :float
+    has 'longitude', :as => :longitude, :type => :float
+    has 'size', :as => :size, :type => :integer
+
+    set_property :latitude_attr   => "latitude"
+    set_property :longitude_attr  => "longitude"
+    
+    # This will cause any changes to surveys between index rebuilds to be 
+    #  stored in a delta index until the next rebuild
+    set_property :delta => true
+  end
+      
   # This organization's name and location if they have one.
   #
   def name_and_location
@@ -93,7 +111,7 @@ class Organization < ActiveRecord::Base
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   #
   def self.authenticate(email, password)
-    u = find_by_email(email) # need to get the salt
+    u = Organization.is_not_uninitialized_association_member.find_by_email(email) # need to get the salt
     u && u.authenticated?(password) ? u : nil
   end
   
@@ -134,7 +152,7 @@ class Organization < ActiveRecord::Base
   def activated?
     !!self.activated_at
   end
-  
+
   # Sets the activated_at time to signify the organization has activated their account
   #
   def activate
@@ -145,9 +163,21 @@ class Organization < ActiveRecord::Base
   # If true, the user has waited too long before activating their account and will be prevented from logging in
   #
   def activation_window_has_expired?
-    !activated? && (Time.now - activation_key_created_at) > 3.days
+    !activated? && (Time.now - activation_key_created_at) > ACTIVATION_WINDOW_IN_DAYS.days
   end
   
+  # An organization is deactivated when a user determines that an account was 
+  #  created using their email address without their knowledge
+  def deactivated?
+    !!self.deactivated_at
+  end
+  
+  # This will mark an organization as deactivated, which disables the account
+  def deactivate
+    self.deactivated_at = Time.now
+    self.save!
+  end  
+    
   # Will increment the times_reported flag and notify the admin that the organization was reported
   #
   def report
@@ -161,13 +191,38 @@ class Organization < ActiveRecord::Base
   # If true, the user was reported while in the pending state, and will be prevented from logging in
   #
   def has_exceeded_reporting_threshold?
-    is_pending? && times_reported > 0
+    pending? && times_reported > 0
   end
   
   # If true, the user's account has been disabled and will not be able to log in
   #
   def disabled?
-    activation_window_has_expired? || has_exceeded_reporting_threshold?
+    activation_window_has_expired? || has_exceeded_reporting_threshold? || deactivated?
+  end
+
+  # Will attempt to set the password for an uninitialized association member
+  # If successful, the organization will now have login credentials
+  # If unsuccessful, the organization will have errors
+  def create_login(association, params = {})
+  
+    # Hack to ensure authentication will check the password in the chance that the user forgot to enter one
+    if params[:password].blank? then
+      params[:password] = "*"
+      params[:password_confirmation] = params[:password]
+    end
+  
+    # Attempt to set password
+    if self.update_attributes(params) then
+    
+      self.uninitialized_association_member = false
+      self.save!
+      
+      return true
+      
+    end  
+      
+    return false
+    
   end
   
   # overriding the default constructor in order to autofill some attributes
@@ -187,15 +242,55 @@ class Organization < ActiveRecord::Base
     else
       # If the organization was not built from an invitation, we need to verify the user's email (activation),
       #  as well as set them as pending so that we may review their account details.
-      self.is_pending                = true
+      self.pending                   = true
       self.activated_at              = nil
       self.activation_key            = KeyGen.random
       self.activation_key_created_at = Time.now
       
     end
+    
+    self.deactivation_key = KeyGen.random
         
   end  
 
+  # Leaves the given association. If this org is uninitialized (eg. the user has not created their account), we simply
+  # delete the organization. Otherwise, we remove the association affiliation.
+  #
+  def leave_association(association)
+    return unless self.associations.include?(association)
+
+    if self.uninitialized_association_member?
+      destroy
+    else
+      self.associations.delete(association)
+    end
+  end
+
+  # Whether an association can update this org's information
+  def association_can_update?
+    return self.uninitialized_association_member?
+  end
+
+  # Whether an association can just delete this org
+  def association_can_delete?
+    return self.uninitialized_association_member? && self.associations.count == 1
+  end
+
+  # See if the user entered a 10 digit zip code, and if so, just parse out the first 5 digits and call it a day.
+  def zip_code=(value)
+    if value.length == 10 && value.index("-") == 5 then
+      super(value[0, 5])
+    else
+      super
+    end
+  end
+  
+  # Used to locate an organization's default association.
+  # Currently defined as the first association.
+  def association
+    self.associations.first
+  end
+  
   private
   
   # Destroy the network if it has zero members.
@@ -217,7 +312,7 @@ class Organization < ActiveRecord::Base
   # If the organization is pending, it will notify the admins so that they may verify the account
   # 
   def send_pending_account_notification
-    Notifier.deliver_pending_account_creation_notification(self) if self.is_pending?
+    Notifier.deliver_pending_account_creation_notification(self) if self.pending?
   end
   
   # Sponsored surveys must be destroyed before their sponsor is destroyed.

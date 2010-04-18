@@ -13,7 +13,15 @@ describe BillingController, "#route_for" do
   it "should map { :controller => 'billing', :action => 'invoice' } to /surveys/1/billing/invoice" do
     route_for(:controller => "billing", :action => "invoice", :survey_id => '1').should == "/surveys/1/billing/invoice"
   end
-    
+  
+  it "should map { :controller => 'billing', :action => 'instructions' } to /surveys/1/billing/instructions" do
+    route_for(:controller => "billing", :action => "instructions", :survey_id => '1').should == "/surveys/1/billing/instructions"
+  end
+     
+  it "should map { :controller => 'billing', :action => 'skip' } to /surveys/1/billing/skip" do
+    route_for(:controller => "billing", :action => "skip", :survey_id => '1').should == "/surveys/1/billing/skip"
+  end
+       
 end  
 
 describe BillingController, " handling GET /surveys/1/billing" do
@@ -153,21 +161,21 @@ describe BillingController, " handling POST /surveys/1/billing" do
     @current_organization.destroy   
   end  
   
-  def do_get
+  def do_post
     post :create, @params
     @survey.reload
   end
 
   it "should place the survey in a running state" do
-    lambda{ do_get }.should change(@survey, :aasm_state).from("pending").to("running")
+    lambda{ do_post }.should change(@survey, :aasm_state).from("pending").to("running")
   end  
  
   it "should create an invoice" do
-    lambda{ do_get }.should change(Invoice, :count).by(1)
+    lambda{ do_post }.should change(Invoice, :count).by(1)
   end  
      
   it "should redirect to the survey" do
-    do_get
+    do_post
     response.should redirect_to(survey_path(@survey))
   end  
   
@@ -179,13 +187,12 @@ describe BillingController, " handling POST /surveys/1/billing" do
     end
     
     it "should render the new template" do
-      do_get
+      do_post
       response.should render_template(:new)
     end
     
     it "should not create an invoice" do
-      do_get
-    lambda{ do_get }.should_not change(Invoice, :count)
+      lambda{ do_post }.should_not change(Invoice, :count)
     end    
       
   end
@@ -197,16 +204,104 @@ describe BillingController, " handling POST /surveys/1/billing" do
     end
     
     it "should render the new template" do
-      do_get
+      do_post
       response.should render_template(:new)
     end
      
     it "should not create an invoice" do
-      do_get
-    lambda{ do_get }.should_not change(Invoice, :count)
+      lambda{ do_post }.should_not change(Invoice, :count)
     end    
         
   end
    
+end
+
+describe BillingController, " handling GET /surveys/1/billing/instructions" do
+
+  before(:each) do
+    @association          = Factory.create(:association)
+    @current_organization = Factory.create(:organization)
+    @association.organizations << @current_organization
+    login_as(@current_organization)    
+    controller.stub!(:current_association).and_return(@association)
+    
+    @survey = Factory.create(:survey, :sponsor => @current_organization)
+  end
+  
+  after(:each) do
+    @survey.destroy
+    @association.destroy
+    @current_organization.destroy   
+  end  
+  
+  def do_get
+    get :instructions, :survey_id => @survey.id.to_s
+  end
+  
+  it "should be successful" do
+    do_get
+    response.should be_success
+  end  
+  
+  it "should render instructions template" do
+    do_get
+    response.should render_template("instructions")
+  end  
+  
+  it "should assign the survey to the view" do
+    do_get
+    assigns[:survey].should == @survey
+  end
+  
+  it "should not render the view if there is not a current association" do
+    controller.stub!(:current_association).and_return(nil)
+    do_get
+    response.should_not render_template("instructions")
+  end
+     
+end
+
+describe BillingController, " handling GET /surveys/1/billing/skip" do
+
+  before(:each) do
+    @association          = Factory.create(:association)
+    @current_organization = Factory.create(:organization)
+    @association.organizations << @current_organization
+    login_as(@current_organization)    
+    controller.stub!(:current_association).and_return(@association)
+    
+    @survey = Factory.create(:pending_survey, :sponsor => @current_organization)
+  end
+  
+  after(:each) do
+    @survey.destroy
+    @association.destroy
+    @current_organization.destroy   
+  end  
+  
+  def do_get
+    get :skip, :survey_id => @survey.id.to_s
+    @survey.reload
+  end
+  
+  it "should redirect to the survey" do
+    do_get
+    response.should redirect_to(survey_path(@survey))
+  end  
+  
+  it "should start the survey" do
+    lambda{ do_get }.should change(@survey, :aasm_state).from("pending").to("running")
+  end   
+  
+  it "should set the association id on the survey" do
+    lambda{ do_get }.should change(@survey, :association).from(nil).to(@association)
+  end     
+  
+  it "should not redirect if there is not a current association" do
+    controller.stub!(:current_association).and_return(nil)
+    do_get
+    response.should_not be_redirect
+  end
+     
 end
     
