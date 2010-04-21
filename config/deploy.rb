@@ -47,11 +47,6 @@ namespace :deploy do
   task :merge_files, :role => :app do
     run "cd #{release_path}; rake asset:packager:build_all"
   end
-
-  desc "Install new gems"
-  task :install_gems, :role => :app do
-    run "cd #{release_path} && sudo rake gems:install RAILS_ENV=#{rails_env}"
-  end
 end
 
 before 'deploy:restart', 'deploy:link_ts', 'deploy:copy_database_yml', 'deploy:migrate', 'deploy:load_pdq', 'deploy:merge_files'
