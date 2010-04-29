@@ -28,7 +28,7 @@ class AssociationMembersController < ApplicationController
       # Be sure the sign in request is submitted with https on production
       @form_options = Rails.env.production? ? {
         :protocol => 'https://', 
-        :host => "www.#{current_subdomain}.compsage.com", 
+        :host => "#{current_subdomain}.compsage.com", 
         :only_path => false} : {} 
     
     # For a PUT or POST request, attempt to authenticate and/or create a login    
