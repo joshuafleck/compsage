@@ -2,7 +2,7 @@ The survey sponsor posted a clarification for "<%=@discussion.survey.job_title%>
 
 Message: "<%=@discussion.body%>"
 
-To view this response, go to: <%=url_for(survey_path(@discussion.survey, :only_path => false, :subdomain => subdomain_for(:organization => @recipient)))%>
+To view this response, go to: <%= @recipient.is_a?(ExternalSurveyInvitation) ? survey_login_path(:survey_id => @discussion.survey.id, :key => @recipient.key, :only_path => false, :subdomain => subdomain_for(:email => @recipient.email)) : url_for(survey_path(@discussion.survey, :only_path => false, :subdomain => subdomain_for(:organization => @recipient)))%>
 
 Thanks,
 CompSage.com
