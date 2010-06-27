@@ -1,32 +1,52 @@
 <html>
 <body>
-<p>
-Your organization has been invited by <%=@invitation.inviter.name%> to participate in a CompSage compensation survey.
-Taking a few minutes to respond to this survey will get you the survey report for free.  There is no signup required.
-<%=link_to 'Take the survey now', survey_login_path(:key => @invitation.key, :only_path => false, :subdomain => subdomain_for(:email => @invitation.email))%>!
-If you would like to verify this request, feel free to email the survey sponsor at
-<a href="mailto:<%= @survey.sponsor.email %>"><%= @survey.sponsor.email %></a>.
-</p>
-<p>
-  The details of the survey are as follows:
-  <br />
-  <b>Job Title: </b><%=@survey.job_title%>
-  <br />
-  <b>Description: </b><%=@survey.description%>
-  <br />
-  <b>Sponsor: </b><%=@survey.sponsor.name%>
-  <br />
-  <b>Response deadline: </b><%=better_time_ago_in_words(@survey.end_date)%>
-  </p>
-<% unless @survey.custom_invitation_message.blank? %>
-  <p><b>Sponsor's Message:</b><br />
-  <%= simple_format(@survey.custom_invitation_message) %></p>
-<% end %>
-<p>
-  Thanks,
-  <br />
-  CompSage.com
-</p>
-<p><i style="color: gray;">This email was intended for your organization's Human Resources contact. If you are not the Human Resources contact, please forward them this message.</i></p>
+<table border="0" align="center" width="600">
+  <tbody>
+    <tr>
+      <td align="center" style="padding: 5px 0px;color: #999;font-size:0.9em;font-style:italic;">This email is intended for Human Resources. Please forward if necessary.</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc;padding:15px 30px;">
+        <p>
+        Your organization has been invited by <%=@invitation.inviter.name%> to participate in a CompSage compensation survey.
+        <%=link_to 'Participate in this survey now', survey_login_path(:key => @invitation.key, :only_path => false, :subdomain => subdomain_for(:email => @invitation.email))%>
+        and receive the survey report completely free. There is no signup required.</p>
+        </p>
+        <table>
+          <tbody>
+            <tr>
+              <td align="right"><b>Survey Job Title: </b></td>
+              <td>Accountant Level II<%=@survey.job_title%></td>
+            </tr>
+            <tr>
+              <td align="right" valign="top"><b>Description: </b></td>
+              <td><%= simple_format(@survey.description) %></td>
+            </tr>
+            <tr>
+              <td align="right"><b>Sponsor: </b></td>
+              <td><%=@survey.sponsor.name%></td>
+            </tr>
+            <tr>
+              <td align="right"><b>Response deadline: </b></td>
+              <td><%=better_time_ago_in_words(@survey.end_date)%></td>
+            </tr>
+            <% unless @survey.custom_invitation_message.blank? %>
+              <tr>
+                <td align="right"><b>Sponsor's Message:</b></td>
+                <td><%= simple_format(@survey.custom_invitation_message) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+        <p><%=link_to 'Participate in this survey now', survey_login_path(:key => @invitation.key, :only_path => false, :subdomain => subdomain_for(:email => @invitation.email))%>.</p>
+      </td>
+    </tr>
+    <tr>
+      <td align="Center" style="padding: 20px 0px; color: #999;font-size: 0.9em">If you would like to verify this request, email the survey sponsor at
+        <a href="mailto:<%= @survey.sponsor.email %>" style="color:#66c;"><%= @survey.sponsor.email %></a> 
+      </td>
+    </tr>
+  </tbody>
+</table>
 </body>
 </html>

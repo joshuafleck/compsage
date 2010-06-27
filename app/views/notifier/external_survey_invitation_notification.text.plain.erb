@@ -4,8 +4,6 @@ There is no signup required. Go to the following link to get started.
 
 <%=url_for(survey_login_path(:key => @invitation.key, :only_path => false, :subdomain => subdomain_for(:email => @invitation.email)))%>
 
-If you would like to verify this request, feel free to email the survey sponsor at <%= @survey.sponsor.email %>.
-
 The details of the survey are as follows:
 Job Title: <%=@survey.job_title%>
 Description: <%=@survey.description%>
@@ -16,8 +14,6 @@ Sponsor's Message:
 <%= @survey.custom_invitation_message %>
 <% end %>
 
-Thanks,
-CompSage.com
+If you would like to verify this request, feel free to email the survey sponsor at <%= @survey.sponsor.email %>.
 
-**This email was intended for your organization's Human Resources contact. If you are not the Human Resources contact, please forward them this message.**
-
+** This email is intended for Human Resources. Please forward if necessary. **

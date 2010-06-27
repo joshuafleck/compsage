@@ -1,29 +1,34 @@
 <html>
 <body>
-<p>
-Your organization has been invited by <%=@invitation.inviter.name%> to join CompSage! Joining now will give your
-colleague the ability to quickly and easily notify you of new surveys to participate in.
-</p>
-<p>CompSage is a tool to create online customized compensation surveys. Joining CompSage comes with a variety of
-benefits. You can:
-  <ul>  
-    <li>Design surveys using our standard questions or add questions of your own design.</li>
-    <li>Participate in a survey and get results for free.</li>
-    <li>Sponsor a survey for free and get great data that won't put you over-budget.</li>
-    <li>Survey turnaround in as few as 3 days.</li>
-    <li>Get guaranteed results, or you pay nothing.</li>
-    <li>Access compensation data in use right now by the companies of your choosing.</li>
-  </ul>  
-</p>
-<p>
-  Becoming a member of CompSage is easy and free! To get started, please <%=link_to "click here", new_account_path(:key => @invitation.key, :only_path => false, :subdomain => subdomain_for(:email => @invitation.email))%>.
-</p>
-<p>
-  Thanks,
-  <br />
-  CompSage.com
-</p>
-<p><i style="color: gray;">This email was intended for your organization's Human Resources contact. If you are not the Human Resources contact, please forward them this message.</i></p>
+<table border="0" align="center" width="700">
+  <tbody>
+    <tr>
+      <td align="center" style="padding: 5px 0px;color: #999;font-size:0.9em;font-style:italic;">This email is intended for Human Resources. Please forward if necessary.</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc;padding:15px 30px;">
+        <p>
+        Your organization has been invited by <%=@invitation.inviter.name%> to join CompSage! Joining now will give your
+        colleague the ability to quickly and easily notify you of new surveys to participate in.
+        </p>
+        <p>CompSage is a tool to create online customized compensation surveys. Joining CompSage comes with a variety of
+        benefits. You can:
+          <ul>  
+            <li>Design surveys using our standard questions or add questions of your own design.</li>
+            <li>Participate in a survey and get results for free.</li>
+            <li>Sponsor a survey for free and get great data that won't put you over-budget.</li>
+            <li>Survey turnaround in as few as 3 days.</li>
+            <li>Get guaranteed results, or you pay nothing.</li>
+            <li>Access compensation data in use right now by the companies of your choosing.</li>
+          </ul>  
+        </p>
+        <p>
+          Becoming a member of CompSage is easy and free! To get started, please <%=link_to "click here", new_account_path(:key => @invitation.key, :only_path => false, :subdomain => subdomain_for(:email => @invitation.email))%>.
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
 </body>
 </html>
 
