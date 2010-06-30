@@ -15,25 +15,25 @@
         <table>
           <tbody>
             <tr>
-              <td align="right"><b>Survey Job Title: </b></td>
-              <td>Accountant Level II<%=@survey.job_title%></td>
+              <td align="right" style="white-space:nowrap;"><b>Survey Job Title: </b></td>
+              <td><%=@survey.job_title%></td>
             </tr>
             <tr>
-              <td align="right" valign="top"><b>Description: </b></td>
-              <td><%= simple_format(@survey.description) %></td>
+              <td align="right" valign="top" style="white-space:nowrap;"><b>Description: </b></td>
+              <td><%= simple_format(@survey.description, :style => "margin: 0 0 1em 0;") %></td>
             </tr>
             <tr>
-              <td align="right"><b>Sponsor: </b></td>
+              <td align="right" style="white-space:nowrap;"><b>Sponsor: </b></td>
               <td><%=@survey.sponsor.name%></td>
             </tr>
             <tr>
-              <td align="right"><b>Response deadline: </b></td>
+              <td align="right" style="white-space:nowrap;"><b>Response deadline: </b></td>
               <td><%=better_time_ago_in_words(@survey.end_date)%></td>
             </tr>
             <% unless @survey.custom_invitation_message.blank? %>
               <tr>
-                <td align="right"><b>Sponsor's Message:</b></td>
-                <td><%= simple_format(@survey.custom_invitation_message) %></td>
+                <td align="right" style="white-space:nowrap;"><b>Sponsor's Message:</b></td>
+                <td><%= simple_format(@survey.custom_invitation_message, :style => "margin: 0 0 1em 0;") %></td>
               </tr>
             <% end %>
           </tbody>
