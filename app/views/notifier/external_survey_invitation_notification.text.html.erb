@@ -32,7 +32,7 @@
             </tr>
             <% unless @survey.custom_invitation_message.blank? %>
               <tr>
-                <td align="right" style="white-space:nowrap;"><b>Sponsor's Message:</b></td>
+                <td align="right" valign="top" style="white-space:nowrap;"><b>Sponsor's Message:</b></td>
                 <td><%= simple_format(@survey.custom_invitation_message, :style => "margin: 0 0 1em 0;") %></td>
               </tr>
             <% end %>
