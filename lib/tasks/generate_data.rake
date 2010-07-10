@@ -129,14 +129,14 @@ namespace :data_generator do
     'participations',
     'responses',
     'invitations',
-    'pending_accounts',
     'discussions',
-    'logos',
     'networks',
     'network_memberships',
     'organizations',
     'questions',
-    'invoices']
+    'invoices',
+    'associations',
+    'associations_organizations']
   
   # defaults
   NUM_ORGANIZATIONS = 5
