@@ -1063,11 +1063,9 @@ function InviteList(survey_id) {
     //test to see if the association integration form is present, it won't be if we are not an association member
     if( $('organization_name') ) {
       //observer for the association integration form
-      $('organization_name').observe('keyup', function(e){
-        //filter if more than two, or delete was pressed
-        if($('organization_name').value.length > 2 || e.keyCode == 8){
+      //use a timed observer to prevent mutltiple requests from queing up behind each other with fast typers
+      new Form.Element.Observer($('organization_name'), 0.5, function(e){
           liveAssociationFilter();
-        }
       });
       $('organization_location').observe('change', liveAssociationFilter);
       $('organization_size').observe('change', liveAssociationFilter);
@@ -1140,6 +1138,10 @@ function InviteList(survey_id) {
     var naics = $('organization_naics_code').value;
     naics = naics > 0 ? naics : ""; // sometimes comes through as 'undefined', prevents this from being sent to the server
     
+    //always show the organizations result div during the search, so the activity indicator is visible
+    $("organizations_found").show();
+    $("no_organizations_found").hide();
+      
     if(value != ""  || distance != "" || size != "" || naics != ""){
       new Ajax.Request('/organizations/search_for_association_list.json', {
         'method': 'get',
@@ -1148,8 +1150,13 @@ function InviteList(survey_id) {
         'requestHeaders': {'Accept':'application/json'},
         'onSuccess': function(transport) {
           toggleOrganizations(transport.responseText.evalJSON());
+          // If no firms were found, show the 'no firms found' message
+          if (transport.responseText.evalJSON().size() == 0) {            
+            $("organizations_found").hide();
+            $("no_organizations_found").show();
+          }
         },
-        'onCreate': function() {
+        'onCreate': function() {        
           $('invite_load_indicator').show();
         },
         'onComplete': function() {
@@ -1179,6 +1186,7 @@ function InviteList(survey_id) {
         $("organization_" + organization.id).show();
       }
     });
+
   }
 
   /*

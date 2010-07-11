@@ -40,32 +40,37 @@
                :show_ancestors      => false
               } %>
 </div>
-<div style="text-align:right;">
-  <span id="invite_load_indicator" style="display: none;">
-    <%= image_tag 'load_indicator.gif', :class => 'load_indicator' %>
-  </span>
-  <a id="invite_link" href="#">Invite All</a>
+<div id="organizations_found">
+  <div style="text-align:right;">
+    <span id="invite_load_indicator" style="display: none;">
+      <%= image_tag 'load_indicator.gif', :class => 'load_indicator' %>
+    </span>
+    <a id="invite_link" href="#">Invite All</a>
+  </div>
+  <div id="organization_list">
+  <ul id="association_organizations" class="invitations">
+  <% organizations.each do |organization| %>
+    <li id="organization_<%= organization.id %>"> 
+        <span id="organization_<%= organization.id %>_name">
+          <%= organization.name %>
+        </span>
+        <a id="invite" href="#"><img src="/images/add_invitation_button.gif" /></a>
+        <br /> 
+        <% if !organization.location.blank? then %>
+          <span class="grey">
+            Location: 
+          </span>
+          <span id="organization_<%= organization.id %>_location">
+            <%= organization.location%>
+          </span>
+        <% else %>
+          <span>&nbsp;</span>
+        <% end %>
+    </li>
+  <% end %>  
+  </ul>
+  </div>
 </div>
-<div id="organization_list">
-<ul id="association_organizations" class="invitations">
-<% organizations.each do |organization| %>
-  <li id="organization_<%= organization.id %>"> 
-      <span id="organization_<%= organization.id %>_name">
-        <%= organization.name %>
-      </span>
-      <a id="invite" href="#"><img src="/images/add_invitation_button.gif" /></a>
-      <br /> 
-      <% if !organization.location.blank? then %>
-        <span class="grey">
-          Location: 
-        </span>
-        <span id="organization_<%= organization.id %>_location">
-          <%= organization.location%>
-        </span>
-      <% else %>
-        <span>&nbsp;</span>
-      <% end %>
-  </li>
-<% end %>  
-</ul>
+<div id="no_organizations_found" style="display: none;">
+No firms were found matching your criteria. Try making your search less specific.
 </div>

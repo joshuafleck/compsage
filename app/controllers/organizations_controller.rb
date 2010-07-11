@@ -111,7 +111,8 @@ class OrganizationsController < ApplicationController
     organizations = Organization.search escaped_search_text, search_options.merge!(:with => with_params)
     respond_to do |wants|
       wants.json do
-        render :json => organizations.sort {|x,y| x.name <=> y.name }.to_json(
+        # Remove the current organization, as returning it in the search tricks the JS into thinking there are valid search results
+        render :json => organizations.delete_if{|x| x == current_organization}.sort {|x,y| x.name <=> y.name }.to_json(
           :only    => [:id])
       end
     end
