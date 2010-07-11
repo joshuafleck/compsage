@@ -1,0 +1,80 @@
+--- 
+- !ruby/object:PredefinedQuestion 
+  attributes: 
+    name: Base salary
+    position: "1"
+    default: "1"
+    association_id: 
+    id: "1"
+    description: 
+    question_hash: 
+    - :text: "Average base salary:"
+      :required: true
+      :question_type: Pay or wage response
+  attributes_cache: {}
+
+- !ruby/object:PredefinedQuestion 
+  attributes: 
+    name: Salary range
+    position: "2"
+    default: "1"
+    association_id: 
+    id: "2"
+    description: 
+    question_hash: 
+    - :text: "Salary range minimum:"
+      :question_type: Pay or wage response
+    - :text: "Salary range midpoint:"
+      :question_type: Pay or wage response
+    - :text: "Salary range maximum:"
+      :question_type: Pay or wage response
+  attributes_cache: {}
+
+- !ruby/object:PredefinedQuestion 
+  attributes: 
+    name: Eligibility and target incentive bonus
+    position: "3"
+    default: "0"
+    association_id: 
+    id: "3"
+    description: 
+    question_hash: 
+    - :text: Is this position eligible for incentive bonus?
+      :question_type: Yes/No
+    - :text: What is this position's incentive target as percent of base salary?
+      :question_type: Percent
+      :parent_question_index: 0
+    - :text: Is there a maximum incentive that can be earned?
+      :question_type: Yes/No
+      :parent_question_index: 0
+    - :text: If yes, what is the maximum incentive as a percent of base salary?
+      :question_type: Percent
+      :parent_question_index: 2
+  attributes_cache: {}
+
+- !ruby/object:PredefinedQuestion 
+  attributes: 
+    name: Membership in a collective bargaining unit
+    position: "5"
+    default: "0"
+    association_id: 
+    id: "5"
+    description: 
+    question_hash: 
+    - :text: Is this position part of a bargaining unit?
+      :question_type: Yes/No
+  attributes_cache: {}
+
+- !ruby/object:PredefinedQuestion 
+  attributes: 
+    name: FLSA status
+    position: "6"
+    default: "0"
+    association_id: 
+    id: "6"
+    description: 
+    question_hash: 
+    - :text: Is this position exempt from FLSA overtime provisions?
+      :question_type: Yes/No
+  attributes_cache: {}
+

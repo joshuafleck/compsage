@@ -38,8 +38,7 @@ end
 # Load the predefined questions
 Rake.application.add_import(RAILS_ROOT + "/Rakefile")
 Rake.application.load_imports
-ENV["FIXTURES"] = "predefined_questions"
-Rake::Task["spec:db:fixtures:load"].invoke
+Rake::Task["pdq:load"].invoke
 
 # Setup thinking sphinx
 ThinkingSphinx.deltas_enabled = true
