@@ -9,10 +9,13 @@
       <td style="border: 1px solid #ccc;padding:15px 30px;">
         <p>The response deadline has been extended for the survey "<%=@survey.job_title%>". The original survey details are below.</p>
         <p>
-        <%=@invitation.inviter.name%> invited your organization to participate in a CompSage compensation survey provided by <%= @survey.association.name %>.
-        <%=link_to 'Participate in this survey now', survey_login_path(:key => @invitation.key, :only_path => false, :subdomain => subdomain_for(:email => @invitation.email))%>
-        on our secure website and receive the survey report completely free. There is no signup required, and your data will only be reported in aggregate
-        with other survey participants and in compliance with Safe Harbor guidelines.</p>
+          <% if @survey.association %>
+            <%= @survey.sponsor.contact_name %> with <%=@survey.sponsor.name%> invited your organization to
+            participate in a CompSage compensation survey provided by <%= @survey.association.name %>.
+          <% else %>
+            <%= @survey.sponsor.contact_name %> with <%=@survey.sponsor.name%> invited your organization to
+            participate in a CompSage compensation survey.
+          <% end %>
         </p>
         <table>
           <tbody>
@@ -40,7 +43,7 @@
             <% end %>
           </tbody>
         </table>
-        <p><%=link_to 'Participate in this survey now', survey_login_path(:key => @invitation.key, :only_path => false, :subdomain => subdomain_for(:email => @invitation.email))%>.</p>
+        <p><%=link_to 'Participate in this survey now', survey_login_path(:key => @recipient.key, :only_path => false, :subdomain => subdomain_for(:email => @recipient.email))%>.</p>
         <p>CompSage is a tool to create online customized compensation surveys. With CompSage, you can:
           <ul>  
             <li>Design surveys using our standard questions or add questions of your own design.</li>
@@ -56,6 +59,13 @@
     <tr>
       <td align="Center" style="padding: 20px 0px; color: #999;font-size: 0.9em">If you would like to verify this request, email the survey sponsor at
         <a href="mailto:<%= @survey.sponsor.email %>" style="color:#66c;"><%= @survey.sponsor.email %></a> 
+      </td>
+    </tr>
+    <tr>
+      <td align="Center" style="padding: 20px 0px; color: #999;font-size: 0.9em">
+        HumInsight, Inc.<br />
+        929 Portland Ave #1208<br />
+        Minneapolis, MN 55404
       </td>
     </tr>
   </tbody>

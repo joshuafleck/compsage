@@ -1,11 +1,29 @@
-The response deadline has been extended for the survey "<%=@survey.job_title%>"
+The response deadline has been extended for the survey "<%=@survey.job_title%>".
 
-If you would like to participate in this survey, go to: <%= @recipient.is_a?(ExternalSurveyInvitation) ? survey_login_path(:survey_id => @survey.id, :key => @recipient.key, :only_path => false, :subdomain => subdomain_for(:email => @recipient.email)) : url_for(survey_path(@survey, :only_path => false, :subdomain => subdomain_for(:organization => @recipient)))%>
+<% if @survey.association %>
+<%= @survey.sponsor.contact_name %> with <%=@survey.sponsor.name%> invited your organization to participate in a CompSage compensation survey provided by <%= @survey.association.name %>. Participate in this survey now on our secure website and receive the survey report completely free. There is no signup required, and your data will only be reported in aggregate with other survey participants and in compliance with Safe Harbor guidelines. Visit the link below to participate now:
+<% else %>
+<%= @survey.sponsor.contact_name %> with <%=@survey.sponsor.name%> invited your organization to participate in a CompSage compensation survey. Participate in this survey now on our secure website and receive the survey report completely free. There is no signup required, and your data will only be reported in aggregate with other survey participants and in compliance with Safe Harbor guidelines. Visit the link below to participate now:
+<% end %>
+<%=url_for(survey_login_path(:key => @recipient.key, :only_path => false, :subdomain => subdomain_for(:email => @recipient.email)))%>
 
-Survey: <%=@survey.job_title%>
-Description: <%=@survey.description%>
-Sponsor: <%=@survey.sponsor.name%>
+=== Survey Details ===
+Job Title: <%=@survey.job_title%>
+Description:
+<%=@survey.description%>
+
 Response deadline: <%=better_time_ago_in_words(@survey.end_date)%>
+Sponsor: <%=@survey.sponsor.name%>
+<% unless @survey.custom_invitation_message.blank? %>
+Sponsor's Message:
+<%= @survey.custom_invitation_message %>
+<% end %>
 
-Thanks,
-CompSage.com
+=== This email is intended for Human Resources. Please forward if necessary. ===
+If you would like to verify this request, feel free to email the survey sponsor at <%= @survey.sponsor.email %>.
+
+
+
+HumInsight, Inc.
+929 Portland Ave #1208
+Minneapolis, MN 55404

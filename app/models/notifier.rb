@@ -15,7 +15,7 @@ class Notifier < ActionMailer::Base
     recipients invitation.email
     from       "CompSage <support@compsage.com>"
     reply_to   "support@compsage.com"
-    subject    "#{invitation.inviter.name} invited you to participate in the survey \"#{invitation.survey.job_title}\""
+    subject    "#{invitation.inviter.contact_name} with #{invitation.inviter.name} invited you to participate in the survey \"#{invitation.survey.job_title}\""
     body       :invitation => invitation, :survey => invitation.survey  
   end
 

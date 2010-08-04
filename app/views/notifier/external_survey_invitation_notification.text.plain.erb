@@ -1,12 +1,15 @@
-Your organization has been invited by <%=@invitation.inviter.name%> to participate in a CompSage compensation survey.
-Taking a few minutes to respond to this survey will get you the survey report for free.
-There is no signup required. Go to the following link to get started.
-
+<% if @survey.association %>
+<%= @invitation.inviter.contact_name %> with <%=@invitation.inviter.name%> invited your organization to participate in a CompSage compensation survey provided by <%= @survey.association.name %>. Participate in this survey now on our secure website and receive the survey report completely free. There is no signup required, and your data will only be reported in aggregate with other survey participants and in compliance with Safe Harbor guidelines. Visit the link below to participate now:
+<% else %>
+<%= @invitation.inviter.contact_name %> with <%=@invitation.inviter.name%> invited your organization to participate in a CompSage compensation survey. Participate in this survey now on our secure website and receive the survey report completely free. There is no signup required, and your data will only be reported in aggregate with other survey participants and in compliance with Safe Harbor guidelines. Visit the link below to participate now:
+<% end %>
 <%=url_for(survey_login_path(:key => @invitation.key, :only_path => false, :subdomain => subdomain_for(:email => @invitation.email)))%>
 
-The details of the survey are as follows:
+=== Survey Details ===
 Job Title: <%=@survey.job_title%>
-Description: <%=@survey.description%>
+Description:
+<%=@survey.description%>
+
 Response deadline: <%=better_time_ago_in_words(@survey.end_date)%>
 Sponsor: <%=@survey.sponsor.name%>
 <% unless @survey.custom_invitation_message.blank? %>
@@ -14,6 +17,11 @@ Sponsor's Message:
 <%= @survey.custom_invitation_message %>
 <% end %>
 
+=== This email is intended for Human Resources. Please forward if necessary. ===
 If you would like to verify this request, feel free to email the survey sponsor at <%= @survey.sponsor.email %>.
 
-** This email is intended for Human Resources. Please forward if necessary. **
+
+
+HumInsight, Inc.
+929 Portland Ave #1208
+Minneapolis, MN 55404
