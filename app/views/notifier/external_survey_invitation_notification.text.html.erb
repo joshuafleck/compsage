@@ -61,10 +61,18 @@
             <li>Access compensation data in use right now by the companies of your choosing.</li>
           </ul>  
         </p>
+        <p align="center">
+          <a href="<%=root_path()%>"><%= image_tag("compsage_logo_email.gif", :size=> "200x47", :alt=>"CompSage", :style => "border: none") %></a>
+        </p>
+      </td>
+    </tr>
+    <tr>      
+      <td align="Center">
+        <a href="http://www.mfrall.com"><%= image_tag("MAG-LOGO-for-Print.png", :size=> "297x57", :alt=>"Manufacturers Alliance", :style => "border: none") %></a>
       </td>
     </tr>
     <tr>
-      <td align="Center" style="padding: 20px 0px; color: #999;font-size: 0.9em">If you would like to verify this request, email the survey sponsor at
+      <td align="Center" style="padding: 0px 0px; color: #999;font-size: 0.9em">CompSage is a service offered by Manufacturers Alliance. If you would like to verify this request, email the survey sponsor at
         <a href="mailto:<%= @survey.sponsor.email %>" style="color:#66c;"><%= @survey.sponsor.email %></a> 
       </td>
     </tr>
