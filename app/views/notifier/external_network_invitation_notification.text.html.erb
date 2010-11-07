@@ -26,7 +26,7 @@
           Becoming a member of CompSage is easy and free! To get started, please <%=link_to "click here", new_account_path(:key => @invitation.key, :only_path => false, :subdomain => subdomain_for(:email => @invitation.email))%>.
         </p>
         <p align="center">
-          <a href="<%=root_path()%>"><%= image_tag("compsage_logo_email.gif", :size=> "200x47", :alt=>"CompSage", :style => "border: none") %></a>
+          <%=link_to(image_tag("https://dev.huminsight.com/compsage_logo_email.gif", :size=> "200x47", :alt=>"CompSage", :style => "border: none"), root_path(:only_path => false, :subdomain => subdomain_for(:email => @invitation.email))) %>
         </p>
       </td>
     </tr>
