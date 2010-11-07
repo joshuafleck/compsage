@@ -35,7 +35,7 @@ namespace :deploy do
    
   desc "Load predefined questions"
   task :load_pdq, :roles => :app do
-    run "cd #{release_path}; rake pdq:load RAILS_ENV=#{rails_env}"
+    run "cd #{release_path}; rake pdq:load RAILS_ENV=#{rails_env} DONT_CACHE_CLASSES=true"
   end 
   
   desc "Link thinking_sphinx data directory"

@@ -21,6 +21,7 @@ Rails::Initializer.run do |config|
   config.gem "ambethia-recaptcha", :lib => "recaptcha/rails", :source => "http://gems.github.com", :version => '0.2.2'
   config.gem 'fastercsv', :version => '1.5.0'
   config.gem 'paperclip', :version => '2.3.1.1'
+  config.gem 'JasonKing-inline_attachment', :version => '0.4.4', :lib => 'inline_attachment'
 
   config.load_paths += [RAILS_ROOT + "/app/workers", RAILS_ROOT + "/app/builders"]
 end
