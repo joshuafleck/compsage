@@ -22,7 +22,7 @@ class AccountsController < ApplicationController
     @organization = Organization.new(params[:organization].merge(:invitation => @invitation))
 
     # Do not require the captcha if the invitation is present, as we know it only a human can present a valid key
-    if (@invitation || verify_recaptcha(:model => @organization, :message => 'You failed to match the captcha')) && @organization.save then
+    if (@invitation || verify_recaptcha(:model => @organization, :message => 'The Captcha input was incorrect. Please try again.')) && @organization.save then
             
       # Accepts the invitation, which will add the survey/network to the newly created organization
       send_email_and_move_invitations_to_new_organization(@organization, @invitation)
