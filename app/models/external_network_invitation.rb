@@ -2,7 +2,7 @@ class ExternalNetworkInvitation < ExternalInvitation
   belongs_to :network  
   
   validates_presence_of :network
-  validate_on_create :not_already_invited
+  validate_on_create :not_already_invited, :not_opted_out
   
   after_create :send_invitation_email
   
@@ -12,6 +12,13 @@ class ExternalNetworkInvitation < ExternalInvitation
     destroy
   end
    
+  # Checks to make sure this email address hasn't opted out from our communications.
+  def not_opted_out
+    if !OptOut.find_by_email(self.email).nil?
+      errors.add_to_base "We cannot send this invitation because #{self.email} has opted out of receiving email from CompSage."
+    end
+  end
+
   private
   
   # Adds an error if the invitee is already invited

@@ -8,7 +8,7 @@ class Organization < ActiveRecord::Base
   xss_terminate :except => [ :naics_code ]
 
   before_save :assign_latitude_and_longitude
-  after_create :send_pending_account_notification
+  after_create :send_pending_account_notification, :expire_opt_out
   before_destroy :remove_sponsored_surveys
   
   has_many :networks, :through => :network_memberships, :after_remove => :delete_empty_network_or_promote_owner
@@ -315,6 +315,15 @@ class Organization < ActiveRecord::Base
     Notifier.deliver_pending_account_creation_notification(self) if self.pending?
   end
   
+  # Since we have created an organization with this email address, they agree to receive periodic
+  # communications from us. Let's remove them from the opt-out list.
+  #
+  def expire_opt_out
+    opt_out = OptOut.find_by_email(self.email)
+
+    opt_out.destroy unless opt_out.nil?
+  end
+
   # Sponsored surveys must be destroyed before their sponsor is destroyed.
   # 
   def remove_sponsored_surveys

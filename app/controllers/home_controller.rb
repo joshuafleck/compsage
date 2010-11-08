@@ -28,4 +28,14 @@ class HomeController < ApplicationController
       end
     end
   end
+
+  def opt_out
+    if request.post?
+      @opt_out = OptOut.new(params[:opt_out])
+
+      if @opt_out.save then
+        render :opt_out_success
+      end
+    end
+  end
 end

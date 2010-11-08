@@ -1,0 +1,11 @@
+<% title "Opt Out Compsage" %>
+<p>If you would like to opt out of further communications from CompSage, please enter your email address below. CompSage will no longer send you any communications, including survey invitations from your peers.</p>
+
+<% form_for :opt_out do |f| %>
+  <%= f.error_messages %>
+  <p>
+    <%= f.label required('Email Address') %>
+    <%= f.text_field :email, :size => 40 %>
+  </p>
+  <p><input type="submit" value="Opt Out" /></p>
+<% end %>
