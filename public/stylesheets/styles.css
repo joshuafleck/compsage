@@ -1441,6 +1441,36 @@ div.howto-left div.caption, div.howto-right div.caption {
   top: -5px;
 }
 
+/* Association sign-in styles */
+div.association_greeting {
+  float: left;
+  width: 575px;
+}
+div.association_member_login {
+  font-size: 75%;
+  width: 189px;
+  float:left;
+  padding-left: 15px;
+  padding-top: 15px;
+}
+
+div.association_member_login a {
+  color: gray;
+}
+
+p.association_sign_in_info {
+  font-size: 90%;
+  color: gray;
+}
+
+span.info {
+  color: gray;
+}
+
+div.association_sign_in_more {
+  width: 50%; float:left;
+}
+
 /* Lightbox styles */
 #lightbox{	position: absolute;	left: 0; width: 100%; z-index: 100; text-align: center; line-height: 0;}
 #lightbox img{ width: auto; height: auto;}
