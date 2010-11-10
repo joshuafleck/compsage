@@ -3,6 +3,9 @@
   highlight_tab 'home_no_graphic'
 %>
 <div class="main_page">
+  <div style="display: none";>Need this div for flash notices in IE6</div>
+  <%=flash_messages%>
+  <%=error_messages_for :association_member%>
   <div class="association_greeting">
     <% if current_association.logo.file? %>
       <% image_tag current_association.logo.url %>
