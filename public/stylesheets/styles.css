@@ -1094,14 +1094,6 @@ form.edit_network ul li label {
   font-weight: normal;
 }
 
-div#association_member_signin h3.returning {
-  margin-top: 0;
-}
-
-div#association_member_signin h3.first_time {
-  margin-top: 2em;
-}
-
 div#association_question {
   float: left;
 }
@@ -1442,19 +1434,19 @@ div.howto-left div.caption, div.howto-right div.caption {
 }
 
 /* Association sign-in styles */
-div.association_greeting {
+div#association_greeting {
   float: left;
-  width: 575px;
-}
-div.association_member_login {
-  font-size: 75%;
-  width: 189px;
-  float:left;
-  padding-left: 15px;
-  padding-top: 15px;
+  width: 512px;
+  padding-right: 20px;
 }
 
-div.association_member_login a {
+div#association_member_signin {
+  width: 200px;
+  padding-left: 10px;
+  float:left;
+}
+
+div#association_member_signin a {
   color: gray;
 }
 
@@ -1463,12 +1455,44 @@ p.association_sign_in_info {
   color: gray;
 }
 
-span.info {
-  color: gray;
+span.already_used {
+  font-size: 110%;
 }
 
 div.association_sign_in_more {
-  width: 50%; float:left;
+  width: 50%; 
+  float:left;
+  margin-left: 10px;
+}
+
+div.association_sign_in_more_right {
+  width: 45%; 
+  float:left;
+  margin-left: 10px;
+}
+
+div.association_sign_in_more ul {
+  list-style-type: disc;
+}
+
+div.default_logo {
+  width: 512px;
+  height: 98px;
+  border: 1px solid black;
+  background-color: gray;
+  text-align: center;
+  margin-right:auto;
+  margin-left:auto;
+  vertical-align: bottom;
+}
+
+div#association_member_signin h3.returning {
+  margin-top: 0;
+}
+
+h2.first_time {
+  margin-top: 0em;
+  margin-bottom: 0em;
 }
 
 /* Lightbox styles */
