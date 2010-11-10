@@ -42,6 +42,15 @@
     <br clear="all">
   </div>
   <br clear="all">
+  <div class="association_sign_in_more">
+    <h3>Learn about CompSage Surveys</h3>
+    <ul>
+      <li><%= current_association.name %> has provided you with contacts to survey.</li>      
+      <li>Get results in as little as 3 days.</li>
+      <li>Ask our standard questions or add questions of your own.</li>
+      <li>Get compensation data in use right now by companies you choose.</li>
+    </ul>
+  </div>
   <div class="association_sign_in_more association_sign_in_more_right">
     <h3>Get started now!</h3>
     <% form_tag sign_in_association_member_path(@form_options) do %>
@@ -64,15 +73,6 @@
         <%= submit_tag 'Sign Up' %>
       </div>
     <% end %>
-  </div>
-  <div class="association_sign_in_more">
-    <h3>Learn about CompSage Surveys</h3>
-    <ul>
-      <li><%= current_association.name %> has provided you with contacts to survey.</li>      
-      <li>Get results in as little as 3 days.</li>
-      <li>Ask our standard questions or add questions of your own.</li>
-      <li>Get compensation data in use right now by companies you choose.</li>
-    </ul>
   </div>
   <br clear="all">
 </div>
