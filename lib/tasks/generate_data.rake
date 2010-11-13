@@ -174,7 +174,6 @@ namespace :data_generator do
       Rake::Task["ts:stop"].invoke
     rescue
     end    
-    Rake::Task["beanstalk_dispatcher:stop"].invoke
     clear_database
   end
   
@@ -183,7 +182,6 @@ namespace :data_generator do
     optimize_database
     Rake::Task["ts:start"].invoke
     Rake::Task["ts:index"].invoke
-    Rake::Task["beanstalk_dispatcher:start"].invoke
   end    
   
   def clear_database

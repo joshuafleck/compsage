@@ -7,7 +7,6 @@ Rails::Initializer.run do |config|
   config.action_controller.use_accept_header = false
 
   config.gem 'state_machine', :version => '0.7.6'
-  config.gem 'beanstalk-client', :version => '1.0.2'
   config.gem 'will_paginate', :version => '2.2.2'
   config.gem 'activemerchant', :version => '1.4.2', :lib => 'active_merchant'  
   config.gem 'prawn', :version => '0.5.1'
@@ -23,5 +22,5 @@ Rails::Initializer.run do |config|
   config.gem 'paperclip', :version => '2.3.1.1'
   config.gem 'JasonKing-inline_attachment', :version => '0.4.4', :lib => 'inline_attachment', :source => 'http://gems.github.com'
 
-  config.load_paths += [RAILS_ROOT + "/app/workers", RAILS_ROOT + "/app/builders"]
+  config.load_paths += [RAILS_ROOT + "/app/builders"]
 end

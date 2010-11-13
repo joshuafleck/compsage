@@ -1,0 +1,13 @@
+##
+# This should be deployed under the user 'www' crontab
+# It contains maintenance commands for compsage. This includes:
+# - Finishing ended surveys
+# - Rebuilding the sphinx indexes
+##
+MAILTO=support@compsage.com
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV=<staging|production>
+RAILS_ROOT=/var/www/compsage/current
+# m h  dom mon dow   command
+# * *  *   *   *     rake -f $RAILS_ROOT/Rakefile sf:run   RAILS_ENV=$ENV 1>/dev/null
+  0 4  *   *   *     rake -f $RAILS_ROOT/Rakefile ts:index RAILS_ENV=$ENV INDEX_ONLY=true 1>/dev/null
