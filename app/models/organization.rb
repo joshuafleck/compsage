@@ -63,6 +63,8 @@ class Organization < ActiveRecord::Base
   validates_length_of       :phone,  :is =>10, :allow_blank => true
   validates_length_of       :phone_extension,  :maximum => 6, :allow_blank => true
   validates_numericality_of :size, :allow_blank => true
+
+  validate_on_create :not_on_opt_out_list
   
   validates_acceptance_of :terms_of_use, :on => :create  
   attr_accessor :terms_of_use
@@ -324,6 +326,11 @@ class Organization < ActiveRecord::Base
     opt_out.destroy unless opt_out.nil?
   end
 
+  def not_on_opt_out_list
+    if self.uninitialized_association_member? && !OptOut.find_by_email(self.email).nil? then
+      errors.add_to_base("This email address has been opted out of the service.")
+    end
+  end
   # Sponsored surveys must be destroyed before their sponsor is destroyed.
   # 
   def remove_sponsored_surveys

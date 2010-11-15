@@ -49,4 +49,10 @@ describe ExternalInvitation do
     @invitation.destroy
   end
 
+  it "should be invalid if the email address has opted out" do
+    opt_out = Factory.create(:opt_out, :email => @invitation.email)
+
+    @invitation.should_not be_valid
+  end
+
 end

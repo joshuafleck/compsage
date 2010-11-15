@@ -294,3 +294,7 @@ Factory.define :naics_classification do |n|
   n.code        { Factory.next(:counter) }
   n.description { |a| "naics description #{a.code}" }
 end
+
+Factory.define :opt_out do |o|
+  o.email { Factory.next(:email) }
+end

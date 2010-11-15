@@ -330,7 +330,15 @@ describe Organization, "that already exists" do
     
     lambda{ @organization.destroy }.should change(@organization.sponsored_surveys, :count).from(1).to(0)
   end 
-    
+  
+  it "should expire any opt outs" do
+    Factory.create(:opt_out, :email => @organization.email)
+    OptOut.find_by_email(@organization.email).should_not be_nil
+
+    @organization.save
+
+    OptOut.find_by_email(@organization.email).should be_nil
+  end
 end
 
 describe Organization, "built from an invitation" do
@@ -367,6 +375,12 @@ describe Organization, "not built from an invitation" do
   end
     
   it "should be pending" do
+  # Checks to make sure this email address hasn't opted out from our communications.
+  def not_opted_out
+    if !OptOut.find_by_email(self.email).nil?
+      errors.add_to_base "We cannot send this invitation because #{self.email} has opted out of receiving email from CompSage."
+    end
+  end
     @organization.pending?.should be_true
   end   
   
@@ -435,6 +449,24 @@ describe Organization, "that is pending and requires activation" do
 
 end
 
+describe Organization, "that is going to be an uninitialized association member" do
+  before(:each) do
+    @association  = Factory.create(:association)
+  end
+  
+  after(:each) do
+    @association.destroy
+  end  
+
+  it "should be invalid if the org has opted out" do
+    opt_out = Factory.create(:opt_out)
+    org = Factory.build(:uninitialized_association_member, :email => opt_out.email)
+
+    org.should_not be_valid
+  end
+
+end
+
 describe Organization, "that is an uninitialized association member" do
   
   before(:each) do
@@ -481,6 +513,7 @@ describe Organization, "that is an uninitialized association member" do
   it "should be deletable and updatable by association" do
     @organization.association_can_update?.should be_true
   end
+
 end
 
 
