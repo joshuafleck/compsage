@@ -7,7 +7,10 @@
     </tr>
     <tr>
       <td style="border: 1px solid #ccc;padding:15px 30px;">
-        <p>
+        <p align="center" style="margin: 0px">
+          <%=link_to(image_tag("compsage_logo_email.gif", :size=> "200x47", :alt=>"CompSage", :border=>0), root_path(:only_path => false, :subdomain => subdomain_for(:email => @invitation.email))) %>
+        </p>
+        <p style="margin-top: 5px">
           <% if @survey.association %>
             <%= @invitation.inviter.contact_name %> with <%=@invitation.inviter.name%> invited your organization to
             participate in a CompSage compensation survey provided by <%= @survey.association.name %>.
@@ -60,9 +63,6 @@
             <li>Get guaranteed results, or you pay nothing.</li>
             <li>Access compensation data in use right now by the companies of your choosing.</li>
           </ul>  
-        </p>
-        <p align="center">
-          <%=link_to(image_tag("compsage_logo_email.gif", :size=> "200x47", :alt=>"CompSage", :border=>0), root_path(:only_path => false, :subdomain => subdomain_for(:email => @invitation.email))) %>
         </p>
       </td>
     </tr>

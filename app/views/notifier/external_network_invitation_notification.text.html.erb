@@ -7,7 +7,10 @@
     </tr>
     <tr>
       <td style="border: 1px solid #ccc;padding:15px 30px;">
-        <p>
+        <p align="center" style="margin: 0px">
+          <%=link_to(image_tag("compsage_logo_email.gif", :size=> "200x47", :alt=>"CompSage", :border=>0), root_path(:only_path => false, :subdomain => subdomain_for(:email => @invitation.email))) %>
+        </p>
+        <p style="margin-top: 5px">
         Your organization has been invited by <%=@invitation.inviter.name%> to join CompSage! Joining now will give your
         colleague the ability to quickly and easily notify you of new surveys to participate in.
         </p>
@@ -24,9 +27,6 @@
         </p>
         <p>
           Becoming a member of CompSage is easy and free! To get started, please <%=link_to "click here", new_account_path(:key => @invitation.key, :only_path => false, :subdomain => subdomain_for(:email => @invitation.email))%>.
-        </p>
-        <p align="center">
-          <%=link_to(image_tag("compsage_logo_email.gif", :size=> "200x47", :alt=>"CompSage", :border=>0), root_path(:only_path => false, :subdomain => subdomain_for(:email => @invitation.email))) %>
         </p>
       </td>
     </tr>
