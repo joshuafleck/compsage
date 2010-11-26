@@ -7,10 +7,11 @@
     </tr>
     <tr>
       <td style="border: 1px solid #ccc;padding:15px 30px;">
-        <p align="center" style="margin: 0px">
+        <div style="margin: 0px; text-align: center;">
           <%=link_to(image_tag("compsage_logo_email.gif", :size=> "200x47", :alt=>"CompSage", :border=>0), root_path(:only_path => false, :subdomain => subdomain_for(:email => @invitation.email))) %>
-        </p>
-        <p style="margin-top: 5px">
+          <hr style="width: 75%; color: #ccc; background-color: #ccc; height: 1px;" />
+        </div>
+        <p>
         Your organization has been invited by <%=@invitation.inviter.name%> to join CompSage! Joining now will give your
         colleague the ability to quickly and easily notify you of new surveys to participate in.
         </p>

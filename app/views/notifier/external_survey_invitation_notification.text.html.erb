@@ -7,10 +7,11 @@
     </tr>
     <tr>
       <td style="border: 1px solid #ccc;padding:15px 30px;">
-        <p align="center" style="margin: 0px">
+        <div style="margin: 0px; text-align: center;">
           <%=link_to(image_tag("compsage_logo_email.gif", :size=> "200x47", :alt=>"CompSage", :border=>0), root_path(:only_path => false, :subdomain => subdomain_for(:email => @invitation.email))) %>
-        </p>
-        <p style="margin-top: 5px">
+          <hr style="width: 75%; color: #ccc; background-color: #ccc; height: 1px;" />
+        </div>
+        <p>
           <% if @survey.association %>
             <%= @invitation.inviter.contact_name %> with <%=@invitation.inviter.name%> invited your organization to
             participate in a CompSage compensation survey provided by <%= @survey.association.name %>.
