@@ -2,47 +2,29 @@
   title "#{current_association.name} &ndash; Sign In"
   highlight_tab 'home_no_graphic'
 %>
-<div class="main_page">
-  <div style="display: none";>Need this div for flash notices in IE6</div>
+
+<div class="two_third_main_column_left main_page">
+  <div style="display:none;">Need this div for flash notices in IE6</div>
   <%=flash_messages%>
   <%=error_messages_for :association_member%>
-  <div id="association_greeting">
-    <% if current_association.logo.file? %>
-      <% image_tag current_association.logo.url %>
-    <%else%>
-      <div class="default_logo">
-        <h1><%= current_association.name %></h1>
-      </div>
-    <% end %>
-    <% if current_association.member_greeting.blank? then %>
-      <p>
-      Welcome to CompSage, provided by <%= current_association.name %>! You may log in on the right. If this is your
-      first time logging in, fill out the form on the bottom. Contact <%= association_contact_information %>
-      if you have any problems.
-      </p>
-    <% else %>
-      <%= simple_format current_association.member_greeting %>
-    <% end %>
-  </div>  
-  <div id="association_member_signin">
-    <h3 class="returning">Returning Firms</h3>
-    <% form_tag sign_in_association_member_path(@form_options) do %>
-      <%= hidden_field_tag 'submitted_returning_firm_form', :true %>
-      <div style="float: left;">
-      <label for="email">Email</label>
-      <%= text_field_tag 'email', @login, :size => 30, :style=>"display:inline;"%><br />
-      <label for="remember_me" style="display:inline;"><%= check_box_tag 'remember_me' %>Remember me</label>
-      </div>
-      <div style="float: left;">
-        <label for="password">Password</label>
-        <%= password_field_tag 'password', '', :size => 30, :style=>"display:inline;" %> <br />
-        <%= submit_tag 'Log in' %>&nbsp;&nbsp;<%=link_to "Forgot password?", forgot_account_path%>
-      </div>
-    <% end %>
-    <br clear="all">
-  </div>
-  <br clear="all">
-  <div class="association_sign_in_more">
+
+  <% if current_association.logo.file? %>
+    <%= image_tag current_association.logo.url %>
+  <%else%>
+    <div class="default_logo">
+      <h1><%= current_association.name %></h1>
+    </div>
+  <% end %>
+  <% if current_association.member_greeting.blank? then %>
+    <p>
+    Welcome to CompSage, provided by <%= current_association.name %>. You may log in on the right. If this is your
+    first time logging in, fill out the form on the bottom. Contact <%= association_contact_information %>
+    if you have any problems.
+    </p>
+  <% else %>
+    <%= simple_format current_association.member_greeting %>
+  <% end %>
+  <div id="association_sign_in_more">
     <h3>Learn about CompSage Surveys</h3>
     <ul>
       <li>Sending compensation surveys has never been easier! Select 
@@ -52,30 +34,41 @@
       <li>Get compensation data in use right now by companies you choose.</li>
     </ul>
   </div>
-  <div class="association_sign_in_more association_sign_in_more_right">
-    <h3>Get started now!</h3>
-    <% form_tag sign_in_association_member_path(@form_options) do %>
-      <p class="association_sign_in_info">Email must match the one on file with <%= current_association.name %>.
-      <a href="mailto:<%= current_association.contact_email %>">Contact them</a> with questions
-       regarding registration.</p>
-      <label for="email">Email</label>
-      <%= text_field_tag 'email', @login, :size => 25, :class=> 'email1' %>
-      <div class="box_container">
-        <div class="box">
-          <label for="password">Password</label>
-          <%= password_field_tag 'password', '', :size => 20, :class=> 'password1' %>  
-        </div>
-        <div class="box">
-          <label for="password_confirmation">Confirm Password</label>
-          <%= password_field_tag 'password_confirmation', '', :size => 20 %>
-        </div>
+</div>
+
+<div class="third_column_left" id="association_member_signin">
+  <h3 class="returning">Returning Firms</h3>
+  <% form_tag sign_in_association_member_path(@form_options) do %>
+    <%= hidden_field_tag 'submitted_returning_firm_form', :true %>
+    <label for="email">Email</label>
+    <%= text_field_tag 'email', @login, :size => 25 %>
+    <label for="password">Password</label>
+    <%= password_field_tag 'password', '', :size => 20 %>  
+    <label for="remember_me">Remember me <%= check_box_tag 'remember_me' %></label>  
+    <div class="submit">
+      <%= submit_tag 'Log in' %> &nbsp;&nbsp;<%=link_to "Forgot your password?", forgot_account_path%>
+    </div>
+  <% end %>
+  <h3 class="first_time">First Time Logging In</h3>
+  <% form_tag sign_in_association_member_path(@form_options) do %>
+    <p class="info">Email must match the one on file with <%= current_association.name %>.
+    <a href="mailto:<%= current_association.contact_email %>">Contact them</a> with questions regarding registration.</p>
+    <label for="email">Email</label>
+    <%= text_field_tag 'email', @login, :size => 25, :class=> 'email1' %>
+    <div class="box_container">
+      <div class="box">
+        <label for="password">New Password</label>
+        <%= password_field_tag 'password', '', :size => 20, :class=> 'password1' %>  
       </div>
-      <div class="submit">
-        <%= submit_tag 'Sign Up' %>
+      <div class="box">
+        <label for="password_confirmation">Confirmation</label>
+        <%= password_field_tag 'password_confirmation', '', :size => 20 %>
       </div>
-    <% end %>
-  </div>
-  <br clear="all">
+    </div>
+    <div class="submit">
+      <%= submit_tag 'Sign Up' %>
+    </div>
+  <% end %>
 </div>
 <div id="how_container">
 <%= render :partial => 'home/how' %>

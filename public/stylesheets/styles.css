@@ -1434,18 +1434,6 @@ div.howto-left div.caption, div.howto-right div.caption {
 }
 
 /* Association sign-in styles */
-div#association_greeting {
-  float: left;
-  width: 512px;
-  padding-right: 20px;
-}
-
-div#association_member_signin {
-  width: 200px;
-  padding-left: 10px;
-  float:left;
-}
-
 div#association_member_signin a {
   color: gray;
 }
@@ -1460,23 +1448,16 @@ span.already_used {
 }
 
 div.association_sign_in_more {
-  width: 50%; 
-  float:left;
-  margin-left: 10px;
+  width: 100%; 
 }
 
-div.association_sign_in_more_right {
-  width: 45%; 
-  float:left;
-  margin-left: 10px;
-}
-
-div.association_sign_in_more h3 {
+div#association_sign_in_more h3 {
   margin-top: 0;
 }
 
-div.association_sign_in_more ul {
+div#association_sign_in_more ul {
   list-style-type: disc;
+  padding-left: 17px;
 }
 
 div.default_logo {
@@ -1488,10 +1469,6 @@ div.default_logo {
   margin-right:auto;
   margin-left:auto;
   vertical-align: bottom;
-}
-
-div#association_member_signin h3.returning {
-  margin-top: 0;
 }
 
 h2.first_time {
