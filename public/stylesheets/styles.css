@@ -1455,6 +1455,10 @@ div#association_sign_in_more h3 {
   margin-top: 0;
 }
 
+div#association_member_signin h3.returning {
+  margin-top: 0;
+}
+
 div#association_sign_in_more ul {
   list-style-type: disc;
   padding-left: 17px;
