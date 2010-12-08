@@ -74,7 +74,7 @@
     </tr>
     <tr>
       <td align="Center" style="padding: 0px 0px; color: #999;font-size: 0.9em">CompSage is a service offered by Manufacturers Alliance. If you would like to verify this request, email the survey sponsor at
-        <a href="mailto:<%= @survey.sponsor.email %>" style="color:#66c;"><%= @survey.sponsor.email %></a>. <%=link_to "Unsubscribe", opt_out_path %> to cancel further communication from CompSage.
+        <a href="mailto:<%= @survey.sponsor.email %>" style="color:#66c;"><%= @survey.sponsor.email %></a>. <%=link_to "Unsubscribe", opt_out_path(:only_path => false) %> to cancel further communication from CompSage.
       </td>
     </tr>
     <tr>
@@ -84,7 +84,6 @@
         Minneapolis, MN 55404
       </td>
     </tr>
-  </tbody>
   </tbody>
 </table>
 </body>

@@ -7,6 +7,10 @@
     </tr>
     <tr>
       <td style="border: 1px solid #ccc;padding:15px 30px;">
+        <div style="margin: 0px; text-align: center;">
+          <%=link_to(image_tag("compsage_logo_email.gif", :size=> "200x47", :alt=>"CompSage", :border=>0), root_path(:only_path => false, :subdomain => subdomain_for(:email => @invitation.email))) %>
+          <hr style="width: 75%; color: #ccc; background-color: #ccc; height: 1px;" />
+        </div>
         <p>The response deadline has been extended for the survey "<%=@survey.job_title%>". The original survey details are below.</p>
         <p>
           <% if @survey.association %>
@@ -56,11 +60,16 @@
         </p>
       </td>
     </tr>
-    <tr>
-      <td align="Center" style="padding: 20px 0px; color: #999;font-size: 0.9em">If you would like to verify this request, email the survey sponsor at
-        <a href="mailto:<%= @survey.sponsor.email %>" style="color:#66c;"><%= @survey.sponsor.email %></a> 
+    <tr>      
+      <td align="Center">
+        <a href="http://www.mfrall.com"><%= image_tag("MAG-LOGO-for-Print.png", :size=> "297x57", :alt=>"Manufacturers Alliance", :border=>0) %></a>
       </td>
     </tr>
+    <tr>
+      <td align="Center" style="padding: 0px 0px; color: #999;font-size: 0.9em">CompSage is a service offered by Manufacturers Alliance. If you would like to verify this request, email the survey sponsor at
+        <a href="mailto:<%= @survey.sponsor.email %>" style="color:#66c;"><%= @survey.sponsor.email %></a>. <%=link_to "Unsubscribe", opt_out_path(:only_path => false) %> to cancel further communication from CompSage.
+      </td>
+    </tr>    
     <tr>
       <td align="Center" style="padding: 20px 0px; color: #999;font-size: 0.9em">
         HumInsight, Inc.<br />
