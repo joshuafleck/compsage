@@ -47,7 +47,7 @@
             <% end %>
           </tbody>
         </table>
-        <p><%=link_to 'Participate in this survey now', survey_login_path(:key => @recipient.key, :only_path => false, :subdomain => subdomain_for(:email => @recipient.email))%>.</p>
+        <p><%=link_to 'Participate in this survey now', @recipient.is_a?(ExternalSurveyInvitation) ? survey_login_path(:survey_id => @survey.id, :key => @recipient.key, :only_path => false, :subdomain => subdomain_for(:email => @recipient.email)) : survey_path(@survey, :only_path => false, :subdomain => subdomain_for(:organization => @recipient))%>.</p>
         <p>CompSage is a tool to create online customized compensation surveys. With CompSage, you can:
           <ul>  
             <li>Design surveys using our standard questions or add questions of your own design.</li>

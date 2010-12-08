@@ -5,7 +5,7 @@ The response deadline has been extended for the survey "<%=@survey.job_title%>".
 <% else %>
 <%= @survey.sponsor.contact_name %> with <%=@survey.sponsor.name%> invited your organization to participate in a CompSage compensation survey. Participate in this survey now on our secure website and receive the survey report completely free. There is no signup required, and your data will only be reported in aggregate with other survey participants and in compliance with Safe Harbor guidelines. Visit the link below to participate now:
 <% end %>
-<%=url_for(survey_login_path(:key => @recipient.key, :only_path => false, :subdomain => subdomain_for(:email => @recipient.email)))%>
+<%= @recipient.is_a?(ExternalSurveyInvitation) ? survey_login_path(:survey_id => @survey.id, :key => @recipient.key, :only_path => false, :subdomain => subdomain_for(:email => @recipient.email)) : url_for(survey_path(@survey, :only_path => false, :subdomain => subdomain_for(:organization => @recipient)))%>
 
 === Survey Details ===
 Job Title: <%=@survey.job_title%>
