@@ -8,7 +8,7 @@
     <tr>
       <td style="border: 1px solid #ccc;padding:15px 30px;">
         <div style="margin: 0px; text-align: center;">
-          <%=link_to(image_tag("compsage_logo_email.gif", :size=> "200x47", :alt=>"CompSage", :border=>0), root_path(:only_path => false, :subdomain => subdomain_for(:email => @invitation.email))) %>
+          <%=link_to(image_tag("compsage_logo_email.gif", :size=> "200x47", :alt=>"CompSage", :border=>0), root_path(:only_path => false, :subdomain => subdomain_for(:email => @recipient.email))) %>
           <hr style="width: 75%; color: #ccc; background-color: #ccc; height: 1px;" />
         </div>
         <p>The response deadline has been extended for the survey "<%=@survey.job_title%>". The original survey details are below.</p>
